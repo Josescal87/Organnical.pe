@@ -139,8 +139,8 @@ const steps = [
   {
     number: "03",
     title: "Recibe tu tratamiento",
-    description: "Tu médico emite una receta digital válida en el Perú. Accede a tus productos directamente.",
-    detail: "Receta con firma digital",
+    description: "Tu médico elabora un plan de tratamiento personalizado y te acompaña en el seguimiento continuo.",
+    detail: "Plan de tratamiento documentado",
     photo: "1631217868264-e5b90bb7e133",
   },
 ];
@@ -250,7 +250,7 @@ export default function LandingPage() {
 
               <p className="mt-7 text-xl text-white/65 leading-relaxed max-w-xl">
                 Conectamos pacientes con médicos especializados en medicina integrativa.
-                Tratamientos personalizados, receta legal y seguimiento continuo.
+                Tratamientos personalizados, documentación médica oficial y seguimiento continuo.
               </p>
 
               {/* CTAs */}
@@ -273,7 +273,7 @@ export default function LandingPage() {
 
               {/* Trust badges */}
               <div className="mt-14 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/55">
-                {["Médicos con CMP activo", "Recetas válidas en Perú", "Consulta 100% online"].map((t) => (
+                {["Médicos con CMP activo", "Documentación médica oficial", "Consulta 100% online"].map((t) => (
                   <span key={t} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#22c55e]" />
                     {t}
@@ -311,7 +311,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-8 md:gap-14">
             {[
               { icon: Shield, text: "Médicos certificados MINSA" },
-              { icon: FileText, text: "Receta con firma digital" },
+              { icon: FileText, text: "Documentación médica oficial" },
               { icon: Clock, text: "Primera cita en < 48h" },
               { icon: Heart, text: "+2,400 pacientes" },
               { icon: Lock, text: "100% confidencial" },

@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans:    var(--font-geist-sans);
+  --font-display: var(--font-nunito);
+
+  /* Verde para CTAs (mismo tono que el sitio original) */
+  --color-brand-50:  #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #16a34a;
+  --color-brand-700: #15803d;
+
+  /* Lavender/púrpura — acento en headings */
+  --color-accent-400: #9b8ff5;
+  --color-accent-500: #7c6fed;
+  --color-accent-600: #6558d4;
+
+  /* Salmón — subtítulos secundarios */
+  --color-warm-400: #e8836e;
+  --color-warm-500: #d96a52;
+}
+
+body {
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  background: #ffffff;
+  color: #1a1a1a;
+}

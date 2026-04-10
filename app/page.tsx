@@ -8,6 +8,18 @@ import {
   Heart, Phone, Lock, FileText, Zap,
 } from "lucide-react";
 
+/* Brand tokens */
+const BRAND = {
+  gradient: "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)",
+  gradientReverse: "linear-gradient(135deg, #38BDF8 0%, #A78BFA 50%, #F472B6 100%)",
+  pink: "#F472B6",
+  violet: "#A78BFA",
+  cyan: "#38BDF8",
+  dark: "#0F0F0F",
+  cta: "#7C3AED",        // violet-600 — CTA solid
+  ctaHover: "#6D28D9",
+};
+
 const u = (id: string, w = 1200, h = 800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=85`;
 
@@ -167,14 +179,14 @@ export default function LandingPage() {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 h-[72px]">
-          <Link
-            href="/"
-            className={`text-2xl font-extrabold tracking-tight transition-colors duration-300 ${
-              scrolled ? "text-[#1a1a1a]" : "text-white"
-            }`}
-            style={{ fontFamily: "var(--font-nunito)" }}
-          >
-            organnical
+          <Link href="/" className="flex items-center">
+            <Image
+              src={scrolled ? "/logo-color.svg" : "/logo-white.svg"}
+              alt="organnical.pe"
+              width={160}
+              height={38}
+              priority
+            />
           </Link>
 
           <nav
@@ -182,23 +194,24 @@ export default function LandingPage() {
               scrolled ? "text-zinc-500" : "text-white/80"
             }`}
           >
-            <a href="#especialidades" className="hover:text-[#7c6fed] transition-colors">Especialidades</a>
-            <a href="#medicos" className="hover:text-[#7c6fed] transition-colors">Médicos</a>
-            <a href="#como-funciona" className="hover:text-[#7c6fed] transition-colors">Cómo funciona</a>
+            <a href="#especialidades" className="hover:text-[#A78BFA] transition-colors">Especialidades</a>
+            <a href="#medicos" className="hover:text-[#A78BFA] transition-colors">Médicos</a>
+            <a href="#como-funciona" className="hover:text-[#A78BFA] transition-colors">Cómo funciona</a>
           </nav>
 
           <div className="flex items-center gap-3">
             <Link
               href="/login"
               className={`text-sm font-medium transition-colors hidden sm:block ${
-                scrolled ? "text-zinc-500 hover:text-[#1a1a1a]" : "text-white/80 hover:text-white"
+                scrolled ? "text-zinc-500 hover:text-[#0F0F0F]" : "text-white/80 hover:text-white"
               }`}
             >
               Iniciar sesión
             </Link>
             <Link
               href="/registro"
-              className="rounded-full bg-[#16a34a] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#15803d] transition-colors shadow-lg shadow-green-900/20"
+              className="rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all shadow-lg"
+              style={{ background: BRAND.gradient }}
             >
               Comenzar
             </Link>
@@ -228,7 +241,7 @@ export default function LandingPage() {
             <div className="max-w-2xl pt-32 pb-24">
               {/* Pill badge */}
               <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-2">
-                <span className="h-2 w-2 rounded-full bg-[#22c55e] animate-pulse" />
+                <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: BRAND.pink }} />
                 <span className="text-sm font-medium text-white/90">Telemedicina Integrativa · Perú</span>
               </div>
 
@@ -240,7 +253,7 @@ export default function LandingPage() {
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
-                    backgroundImage: "linear-gradient(135deg, #9b8ff5 0%, #e8836e 100%)",
+                    backgroundImage: BRAND.gradient,
                   }}
                 >
                   te escucha
@@ -257,7 +270,8 @@ export default function LandingPage() {
               <div className="mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/registro"
-                  className="group inline-flex items-center gap-2 rounded-full bg-[#16a34a] px-8 py-4 text-base font-semibold text-white hover:bg-[#15803d] transition-all shadow-2xl shadow-green-900/40"
+                  className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-white transition-all shadow-2xl"
+                  style={{ background: BRAND.gradient, boxShadow: "0 20px 40px rgba(167,139,250,0.35)" }}
                 >
                   Agenda tu primera consulta
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -275,7 +289,7 @@ export default function LandingPage() {
               <div className="mt-14 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/55">
                 {["Médicos con CMP activo", "Documentación médica oficial", "Consulta 100% online"].map((t) => (
                   <span key={t} className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-[#22c55e]" />
+                    <CheckCircle className="w-4 h-4 text-[#A78BFA]" />
                     {t}
                   </span>
                 ))}
@@ -287,7 +301,7 @@ export default function LandingPage() {
           <div className="absolute bottom-12 right-10 hidden xl:block">
             <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl p-5 text-white shadow-2xl min-w-[220px]">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full bg-[#16a34a] flex items-center justify-center flex-shrink-0">
+                <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: BRAND.gradient }}>
                   <Video className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -297,10 +311,10 @@ export default function LandingPage() {
               </div>
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 text-white/60">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#22c55e] animate-pulse" />
+                  <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: BRAND.cyan }} />
                   3 médicos online ahora
                 </span>
-                <span className="text-[#22c55e] font-semibold">Ver →</span>
+                <span className="font-semibold" style={{ color: BRAND.cyan }}>Ver →</span>
               </div>
             </div>
           </div>
@@ -317,7 +331,7 @@ export default function LandingPage() {
               { icon: Lock, text: "100% confidencial" },
             ].map(({ icon: Icon, text }) => (
               <div key={text} className="flex items-center gap-2 text-sm text-zinc-500">
-                <Icon className="w-4 h-4 text-[#7c6fed]" />
+                <Icon className="w-4 h-4 text-[#A78BFA]" />
                 {text}
               </div>
             ))}
@@ -329,7 +343,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-6xl">
             {/* Section header — left aligned */}
             <div className="mb-16 max-w-xl">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#e8836e] mb-3">
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Especialidades
               </p>
               <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
@@ -339,7 +353,7 @@ export default function LandingPage() {
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
-                    backgroundImage: "linear-gradient(135deg, #7c6fed 0%, #e8836e 100%)",
+                    backgroundImage: BRAND.gradient,
                   }}
                 >
                   importa
@@ -391,7 +405,7 @@ export default function LandingPage() {
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-16 flex items-end justify-between gap-6">
               <div>
-                <p className="text-sm font-semibold uppercase tracking-widest text-[#e8836e] mb-3">
+                <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                   Nuestro equipo
                 </p>
                 <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
@@ -400,7 +414,7 @@ export default function LandingPage() {
               </div>
               <Link
                 href="/registro"
-                className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-[#7c6fed] hover:gap-3 transition-all"
+                className="hidden md:inline-flex items-center gap-2 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all"
               >
                 Ver todos <ArrowRight className="w-4 h-4" />
               </Link>
@@ -429,7 +443,7 @@ export default function LandingPage() {
                   {/* Info */}
                   <div className="p-5">
                     <h3 className="font-bold text-[#1a1a1a] mb-0.5">{d.name}</h3>
-                    <p className="text-sm text-[#7c6fed] font-medium mb-1">{d.specialty}</p>
+                    <p className="text-sm text-[#A78BFA] font-medium mb-1">{d.specialty}</p>
                     <p className="text-xs text-zinc-400 mb-3">{d.cmp}</p>
 
                     {/* Rating */}
@@ -452,7 +466,8 @@ export default function LandingPage() {
 
                     <Link
                       href="/registro"
-                      className="block w-full text-center rounded-full bg-[#eef0ff] text-[#7c6fed] text-sm font-semibold py-2.5 hover:bg-[#7c6fed] hover:text-white transition-colors"
+                      className="block w-full text-center rounded-full text-sm font-semibold py-2.5 text-white transition-all"
+                      style={{ background: BRAND.gradient }}
                     >
                       Agendar consulta
                     </Link>
@@ -467,7 +482,7 @@ export default function LandingPage() {
         <section id="como-funciona" className="py-28 bg-white">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-20 text-center">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#e8836e] mb-3">
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Proceso
               </p>
               <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
@@ -477,7 +492,7 @@ export default function LandingPage() {
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
-                    backgroundImage: "linear-gradient(135deg, #7c6fed 0%, #e8836e 100%)",
+                    backgroundImage: BRAND.gradient,
                   }}
                 >
                   tu bienestar
@@ -507,12 +522,12 @@ export default function LandingPage() {
 
                   {/* Text */}
                   <div className="lg:w-1/2">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#eef0ff] mb-6">
-                      <span className="text-2xl font-extrabold text-[#7c6fed]">{step.number}</span>
+                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F3F0FF] mb-6">
+                      <span className="text-2xl font-extrabold text-[#A78BFA]">{step.number}</span>
                     </div>
                     <h3 className="text-3xl font-extrabold text-[#1a1a1a] mb-4">{step.title}</h3>
                     <p className="text-lg text-zinc-500 leading-relaxed mb-6">{step.description}</p>
-                    <div className="inline-flex items-center gap-2 rounded-full bg-[#f0fdf4] px-4 py-2 text-sm font-semibold text-[#16a34a]">
+                    <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white" style={{ background: BRAND.gradient }}>
                       <Zap className="w-4 h-4" />
                       {step.detail}
                     </div>
@@ -527,7 +542,7 @@ export default function LandingPage() {
         <section className="py-28 bg-[#0f172a]">
           <div className="mx-auto max-w-6xl px-6">
             <div className="mb-16 text-center">
-              <p className="text-sm font-semibold uppercase tracking-widest text-[#e8836e] mb-3">
+              <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Testimonios
               </p>
               <h2 className="text-4xl font-extrabold text-white leading-tight md:text-5xl">
@@ -537,7 +552,7 @@ export default function LandingPage() {
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
                     color: "transparent",
-                    backgroundImage: "linear-gradient(135deg, #9b8ff5 0%, #e8836e 100%)",
+                    backgroundImage: BRAND.gradient,
                   }}
                 >
                   pacientes
@@ -588,7 +603,7 @@ export default function LandingPage() {
         </section>
 
         {/* ══════════════════════════════ STATS ══════════════════════════════ */}
-        <section className="py-24 bg-[#16a34a]">
+        <section className="py-24" style={{ background: BRAND.gradient }}>
           <div className="mx-auto max-w-5xl px-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
               {stats.map((s) => (
@@ -613,7 +628,7 @@ export default function LandingPage() {
             <div className="absolute inset-0 bg-[#0f172a]/82" />
           </div>
           <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
-            <p className="text-sm font-semibold uppercase tracking-widest text-[#e8836e] mb-5">
+            <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-5">
               ¿Listo para empezar?
             </p>
             <h2 className="text-4xl font-extrabold text-white leading-tight md:text-6xl mb-6">
@@ -625,7 +640,8 @@ export default function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/registro"
-                className="group inline-flex items-center gap-2 justify-center rounded-full bg-[#16a34a] px-10 py-4 text-base font-semibold text-white hover:bg-[#15803d] transition-all shadow-2xl shadow-green-900/50"
+                className="group inline-flex items-center gap-2 justify-center rounded-full px-10 py-4 text-base font-semibold text-white transition-all shadow-2xl"
+                style={{ background: BRAND.gradient, boxShadow: "0 20px 40px rgba(167,139,250,0.4)" }}
               >
                 Crear cuenta gratis
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
@@ -648,12 +664,12 @@ export default function LandingPage() {
           <div className="grid gap-10 md:grid-cols-4 mb-14">
             {/* Brand */}
             <div className="md:col-span-1">
-              <span
-                className="text-xl font-extrabold text-white"
-                style={{ fontFamily: "var(--font-nunito)" }}
-              >
-                organnical
-              </span>
+              <Image
+                src="/logo-white.svg"
+                alt="organnical.pe"
+                width={140}
+                height={33}
+              />
               <p className="mt-3 text-sm leading-relaxed text-zinc-500">
                 Clínica virtual de medicina integrativa en el Perú.
               </p>

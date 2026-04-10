@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 100" fill="none">
+  <defs>
+    <linearGradient id="peGradW" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F472B6"/>
+      <stop offset="50%" stop-color="#A78BFA"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+  </defs>
+  <!-- "organnical" text white -->
+  <text
+    x="0" y="76"
+    font-family="'Nunito', 'Varela Round', sans-serif"
+    font-weight="800"
+    font-size="72"
+    fill="white"
+    letter-spacing="-2"
+  >organnical</text>
+  <!-- gradient circle -->
+  <circle cx="388" cy="50" r="32" fill="url(#peGradW)"/>
+  <!-- ".pe" text in circle -->
+  <text
+    x="388" y="60"
+    font-family="'Nunito', Georgia, serif"
+    font-weight="700"
+    font-size="26"
+    font-style="italic"
+    fill="white"
+    text-anchor="middle"
+  >.pe</text>
+</svg>

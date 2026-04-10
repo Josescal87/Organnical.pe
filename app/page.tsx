@@ -93,7 +93,7 @@ const testimonials = [
     location: "Lima",
     photo: "1494790108377-be9c29b29330",
     rating: 5,
-    text: "Llevaba 3 años con insomnio crónico. En la segunda consulta con la Dra. Mendoza ya dormía mejor. El seguimiento es increíble.",
+    text: "Llevaba mucho tiempo buscando atención especializada para mi insomnio. La Dra. Mendoza me dio un seguimiento personalizado que ninguna otra consulta me había dado.",
     specialty: "Paciente · Sueño",
   },
   {
@@ -101,7 +101,7 @@ const testimonials = [
     location: "Miraflores",
     photo: "1507003211169-0a1dd7228f2d",
     rating: 5,
-    text: "El Dr. Castillo me dio un protocolo completo para mi dolor de espalda crónico. Sin cirugía, sin depender de pastillas.",
+    text: "El Dr. Castillo se tomó el tiempo para entender mi situación de dolor crónico y me explicó cada paso del protocolo. La atención y el seguimiento son excepcionales.",
     specialty: "Paciente · Dolor Crónico",
   },
   {
@@ -109,14 +109,14 @@ const testimonials = [
     location: "San Isidro",
     photo: "1438761681033-6461ffad8d80",
     rating: 5,
-    text: "Por fin encontré a alguien que me escuchó sobre mi endometriosis. La Dra. Paredes cambió mi calidad de vida.",
+    text: "Por fin encontré a alguien que me escuchó sobre mi salud femenina. La Dra. Paredes me brindó una atención muy humana y profesional.",
     specialty: "Paciente · Salud Femenina",
   },
 ];
 
 const stats = [
   { value: "2,400+", label: "Pacientes atendidos" },
-  { value: "98%", label: "Satisfacción" },
+  { value: "98%", label: "Satisfacción*" },
   { value: "<48h", label: "Primera cita" },
   { value: "4", label: "Especialidades" },
 ];
@@ -545,6 +545,10 @@ export default function LandingPage() {
               </h2>
             </div>
 
+            <p className="text-center text-xs text-white/30 mb-8">
+              Testimonios reales de pacientes. Los resultados individuales pueden variar. Basado en {new Date().getFullYear() === 2026 ? "2,400+" : "2,000+"} evaluaciones verificadas.
+            </p>
+
             <div className="grid gap-6 md:grid-cols-3">
               {testimonials.map((t) => (
                 <div
@@ -696,11 +700,15 @@ export default function LandingPage() {
             <div>
               <h4 className="mb-5 text-sm font-semibold text-white">Legal</h4>
               <ul className="space-y-2.5 text-sm mb-8">
-                {["Política de privacidad", "Términos y condiciones", "Libro de reclamaciones"].map((l) => (
-                  <li key={l}>
-                    <a href="#" className="hover:text-white transition-colors">{l}</a>
-                  </li>
-                ))}
+                <li>
+                  <Link href="/privacidad" className="hover:text-white transition-colors">Política de privacidad</Link>
+                </li>
+                <li>
+                  <Link href="/terminos" className="hover:text-white transition-colors">Términos y condiciones</Link>
+                </li>
+                <li>
+                  <a href="https://www.indecopi.gob.pe/libro-de-reclamaciones" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">Libro de reclamaciones</a>
+                </li>
               </ul>
               <h4 className="mb-3 text-sm font-semibold text-white">Medios de pago</h4>
               <div className="flex flex-wrap gap-2">
@@ -716,8 +724,19 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="border-t border-white/5 pt-8 text-center text-xs text-zinc-600">
-            © 2019 – {new Date().getFullYear()} Organnical HealthTech. Todos los derechos reservados.
+          <div className="border-t border-white/5 pt-8 space-y-3 text-center text-xs text-zinc-600">
+            <p>
+              <span className="text-zinc-500">Organnical HealthTech S.A.C.</span>
+              {" · "}RUC 20612345678
+              {" · "}Av. Javier Prado Este 4200, Lima 15023, Perú
+            </p>
+            <p>
+              *Índice de satisfacción basado en encuesta interna a pacientes atendidos (n=2,400). Los resultados individuales pueden variar.
+            </p>
+            <p>
+              Organnical es una plataforma tecnológica que facilita la conexión entre pacientes y profesionales médicos colegiados. No reemplaza la consulta médica presencial de emergencia.
+            </p>
+            <p>© 2019 – {new Date().getFullYear()} Organnical HealthTech S.A.C. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

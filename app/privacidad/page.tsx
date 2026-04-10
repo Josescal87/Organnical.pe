@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Política de Privacidad — organnical",
-  description: "Cómo Organnical HealthTech recopila, usa y protege tus datos personales y de salud.",
+  description: "Cómo Organical Ventures recopila, usa y protege tus datos personales y de salud.",
 };
 
 export default function PrivacidadPage() {
@@ -24,8 +24,8 @@ export default function PrivacidadPage() {
           <section>
             <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">1. Responsable del tratamiento</h2>
             <p>
-              <strong>Organnical HealthTech S.A.C.</strong>, con RUC 20612345678, con domicilio en
-              Av. Javier Prado Este 4200, Lima 15023, Perú, es responsable del tratamiento de los
+              <strong>Organical Ventures S.A.C.</strong>, con RUC 20607170615, con domicilio en
+              Av. La Mar 750, Of. 510, Miraflores, Lima, Perú, es responsable del tratamiento de los
               datos personales recopilados a través de la plataforma <strong>organnical.pe</strong>.
             </p>
             <p>Contacto de privacidad: <a href="mailto:privacidad@organnical.com" className="text-[#7c6fed] hover:underline">privacidad@organnical.com</a></p>

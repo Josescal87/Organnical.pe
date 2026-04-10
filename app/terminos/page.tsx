@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Términos y Condiciones — organnical",
-  description: "Condiciones de uso de la plataforma de telemedicina Organnical HealthTech.",
+  description: "Condiciones de uso de la plataforma de telemedicina Organical Ventures.",
 };
 
 export default function TerminosPage() {
@@ -24,8 +24,8 @@ export default function TerminosPage() {
           <section>
             <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">1. Identificación del prestador</h2>
             <p>
-              <strong>Organnical HealthTech S.A.C.</strong> (en adelante, "Organnical"), con
-              RUC 20612345678 y domicilio en Av. Javier Prado Este 4200, Lima 15023, Perú, opera
+              <strong>Organical Ventures S.A.C.</strong> (en adelante, "Organnical"), con
+              RUC 20607170615 y domicilio en Av. La Mar 750, Of. 510, Miraflores, Lima, Perú, opera
               la plataforma de telemedicina accesible en <strong>organnical.pe</strong>.
             </p>
           </section>
@@ -110,7 +110,7 @@ export default function TerminosPage() {
             <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">8. Propiedad intelectual</h2>
             <p>
               Todos los contenidos de la plataforma (diseño, textos, logotipo, código) son propiedad
-              de Organnical HealthTech S.A.C. o de sus licenciantes. Queda prohibida su reproducción
+              de Organical Ventures S.A.C. o de sus licenciantes. Queda prohibida su reproducción
               total o parcial sin autorización expresa.
             </p>
           </section>

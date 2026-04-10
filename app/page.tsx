@@ -726,9 +726,9 @@ export default function LandingPage() {
 
           <div className="border-t border-white/5 pt-8 space-y-3 text-center text-xs text-zinc-600">
             <p>
-              <span className="text-zinc-500">Organnical HealthTech S.A.C.</span>
-              {" · "}RUC 20612345678
-              {" · "}Av. Javier Prado Este 4200, Lima 15023, Perú
+              <span className="text-zinc-500">Organical Ventures S.A.C.</span>
+              {" · "}RUC 20607170615
+              {" · "}Av. La Mar 750, Of. 510, Miraflores, Lima, Perú
             </p>
             <p>
               *Índice de satisfacción basado en encuesta interna a pacientes atendidos (n=2,400). Los resultados individuales pueden variar.
@@ -736,7 +736,7 @@ export default function LandingPage() {
             <p>
               Organnical es una plataforma tecnológica que facilita la conexión entre pacientes y profesionales médicos colegiados. No reemplaza la consulta médica presencial de emergencia.
             </p>
-            <p>© 2019 – {new Date().getFullYear()} Organnical HealthTech S.A.C. Todos los derechos reservados.</p>
+            <p>© 2019 – {new Date().getFullYear()} Organical Ventures S.A.C. Todos los derechos reservados.</p>
           </div>
         </div>
       </footer>

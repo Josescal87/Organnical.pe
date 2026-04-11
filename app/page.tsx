@@ -7,7 +7,6 @@ import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
   Heart, Phone, Lock, FileText, Zap,
 } from "lucide-react";
-import Logo from "@/components/Logo";
 
 /* Brand tokens */
 const BRAND = {
@@ -181,7 +180,13 @@ export default function LandingPage() {
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 h-[72px]">
           <Link href="/" className="flex items-center">
-            <Logo variant={scrolled ? "color" : "white"} height={34} />
+            <Image
+              src={scrolled ? "/logo-color.png" : "/logo-white.png"}
+              alt="organnical.pe"
+              width={180}
+              height={43}
+              priority
+            />
           </Link>
 
           <nav
@@ -659,7 +664,12 @@ export default function LandingPage() {
           <div className="grid gap-10 md:grid-cols-4 mb-14">
             {/* Brand */}
             <div className="md:col-span-1">
-              <Logo variant="white" height={30} />
+              <Image
+                src="/logo-white.png"
+                alt="organnical.pe"
+                width={150}
+                height={36}
+              />
               <p className="mt-3 text-sm leading-relaxed text-zinc-500">
                 Clínica virtual de medicina integrativa en el Perú.
               </p>

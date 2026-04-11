@@ -197,7 +197,7 @@ export default function BlogPage() {
               className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
             >
-              Agendar consulta gratis <ArrowRight className="w-4 h-4" />
+              Agendar consulta <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

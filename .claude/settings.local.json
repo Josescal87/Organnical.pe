@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npx vercel:*)",
+      "Bash(curl -s https://organnical-pe.vercel.app/)",
+      "WebFetch(domain:organnical.pe)"
+    ]
+  }
+}

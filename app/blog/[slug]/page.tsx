@@ -210,9 +210,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   className="block w-full text-center rounded-full py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ background: G }}
                 >
-                  Agendar consulta gratis
+                  Agendar consulta
                 </Link>
-                <p className="text-center text-xs text-white/30 mt-3">Sin tarjeta de crédito</p>
+                <p className="text-center text-xs text-white/30 mt-3">Primera consulta sin compromiso</p>
               </div>
 
               {/* Author card */}

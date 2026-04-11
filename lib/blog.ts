@@ -36,7 +36,7 @@ export const posts: BlogPost[] = [
     authorRole: "Medicina Integrativa",
     category: "Dolor Crónico",
     tags: ["cannabis medicinal", "fibromialgia", "dolor crónico", "formulación personalizada"],
-    image: u("1584515933324-f6d564c7d992"),
+    image: u("1571019613454-1cb2f99b2d8b"),
     readTime: 7,
     content: [
       {
@@ -114,7 +114,7 @@ export const posts: BlogPost[] = [
     authorRole: "Medicina Integrativa",
     category: "Sueño",
     tags: ["insomnio", "benzodiacepinas", "cannabis medicinal", "adultos mayores", "sueño"],
-    image: u("1541781774459-9f7e36f64aaf"),
+    image: u("1586281380349-83f59d5c7e37"),
     readTime: 9,
     content: [
       {
@@ -190,7 +190,7 @@ export const posts: BlogPost[] = [
     authorRole: "Medicina Integrativa",
     category: "Medicina",
     tags: ["adultos mayores", "geriatría", "cannabis medicinal", "farmacia magistral", "bienestar"],
-    image: u("1516534775068-ba3e7458af70"),
+    image: u("1576091160399-112ba8d25d1d"),
     readTime: 10,
     content: [
       {

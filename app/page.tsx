@@ -6,8 +6,9 @@ import Image from "next/image";
 import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
   Heart, Phone, Lock, FileText, Zap, Menu, X, ChevronRight,
-  Calendar, Award, Users, TrendingUp, MessageSquare,
+  Calendar, Award, Users, MessageSquare,
 } from "lucide-react";
+import { posts } from "@/lib/blog";
 
 /* ─── Brand tokens ─────────────────────────────────────────── */
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -76,12 +77,6 @@ const testimonials = [
   },
 ];
 
-const stats = [
-  { value: "2,400+", label: "Pacientes atendidos", icon: Users },
-  { value: "98%", label: "Índice de satisfacción", icon: TrendingUp },
-  { value: "<48h", label: "Tiempo para primera cita", icon: Clock },
-  { value: "4.9★", label: "Calificación promedio", icon: Star },
-];
 
 const trustItems = [
   { icon: Shield, text: "Médicos certificados MINSA" },
@@ -160,6 +155,7 @@ export default function LandingPage() {
     { href: "#especialidades", label: "Especialidades" },
     { href: "#medicos", label: "Médicos" },
     { href: "#como-funciona", label: "Cómo funciona" },
+    { href: "/blog", label: "Blog" },
   ];
 
   return (
@@ -285,7 +281,7 @@ export default function LandingPage() {
                       className="group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-all shadow-2xl hover:opacity-90"
                       style={{ background: G, boxShadow: "0 16px 36px rgba(167,139,250,0.35)" }}
                     >
-                      Agendar consulta gratis
+                      Agendar consulta
                       <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </Link>
                     <a
@@ -423,35 +419,62 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ══════════ STATS (Doximity dark) ══════════ */}
+        {/* ══════════ BLOG PREVIEW ══════════ */}
         <section className="relative py-24 overflow-hidden" style={{ background: NAVY }}>
           <div className="absolute inset-0 dot-grid opacity-20" />
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 80% at 50% 50%, #1e3d72 0%, transparent 70%)" }} />
 
-          <div className="reveal relative z-10 mx-auto max-w-5xl px-6">
-            <div className="text-center mb-16">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Nuestros números</p>
-              <h2 className="font-display text-4xl font-black text-white md:text-5xl">
-                Resultados que{" "}
-                <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>hablan solos</span>
-              </h2>
+          <div className="reveal relative z-10 mx-auto max-w-6xl px-6">
+            <div className="flex items-end justify-between mb-12">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Nuestro blog</p>
+                <h2 className="font-display text-4xl font-black text-white md:text-5xl">
+                  Medicina con{" "}
+                  <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>evidencia</span>
+                </h2>
+              </div>
+              <Link href="/blog" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all flex-shrink-0">
+                Ver todos los artículos <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-              {stats.map((s) => (
-                <div key={s.label} className="text-center group">
-                  <div className="w-12 h-12 rounded-2xl mx-auto mb-4 flex items-center justify-center" style={{ background: "rgba(167,139,250,0.15)" }}>
-                    <s.icon className="w-5 h-5 text-[#A78BFA]" />
+            <div className="grid gap-5 md:grid-cols-3">
+              {posts.slice(0, 3).map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group bg-white/[0.05] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.09] hover:border-white/20 transition-all duration-300"
+                >
+                  <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                    <Image
+                      src={post.image}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                    <div className="absolute bottom-3 left-3">
+                      <span className="rounded-full bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 text-[10px] font-semibold text-white">
+                        {post.category}
+                      </span>
+                    </div>
                   </div>
-                  <p
-                    className="font-display text-4xl font-black mb-2 md:text-5xl"
-                    style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}
-                  >
-                    {s.value}
-                  </p>
-                  <p className="text-zinc-400 text-sm">{s.label}</p>
-                </div>
+                  <div className="p-5">
+                    <p className="text-[10px] text-white/35 mb-2 flex items-center gap-1.5">
+                      <Clock className="w-3 h-3" /> {post.readTime} min · {post.dateFormatted}
+                    </p>
+                    <h3 className="font-display font-bold text-white text-sm leading-snug line-clamp-3 group-hover:text-[#A78BFA] transition-colors">
+                      {post.title}
+                    </h3>
+                  </div>
+                </Link>
               ))}
+            </div>
+
+            <div className="mt-8 text-center md:hidden">
+              <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-[#A78BFA]">
+                Ver todos los artículos <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
           </div>
         </section>
@@ -677,7 +700,7 @@ export default function LandingPage() {
                 className="group inline-flex items-center gap-2 justify-center rounded-full px-10 py-4 text-base font-semibold text-white shadow-2xl transition-all hover:opacity-90"
                 style={{ background: G, boxShadow: "0 20px 40px rgba(167,139,250,0.4)" }}
               >
-                Crear cuenta gratis
+                Crear cuenta
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </Link>
               <a

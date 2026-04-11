@@ -65,14 +65,14 @@ const doctors = [
     name: "Dra. Estefanía Poma",
     specialty: "Médico General",
     cmp: "CMP 059636",
-    photo: "1594824476967-48c8b964273f",
+    photo: "/dra-poma-300x300.png",
     nextAvail: "Consulta disponible",
   },
   {
     name: "Dr. Robert Goodman",
     specialty: "Médico General",
     cmp: "CMP 095719",
-    photo: "1612349317150-e413f6a5b16d",
+    photo: "/drgodman-300x300.png",
     nextAvail: "Consulta disponible",
   },
 ];
@@ -407,7 +407,7 @@ export default function LandingPage() {
                   {/* Photo */}
                   <div className="relative h-72 overflow-hidden">
                     <Image
-                      src={u(d.photo, 400, 500)}
+                      src={d.photo}
                       alt={d.name}
                       fill
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"

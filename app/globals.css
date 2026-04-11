@@ -38,7 +38,7 @@ body {
 
 /* ── Typography ────────────────────────────── */
 .font-display {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-fraunces), Georgia, serif;
 }
 
 /* ── Keyframe animations ────────────────────── */

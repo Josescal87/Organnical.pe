@@ -241,7 +241,7 @@ export default function LandingPage() {
 
               {/* Left — text */}
               <div className="max-w-xl">
-                <div className="hero-badge mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/8 px-4 py-2">
+                <div className="hero-badge mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2">
                   <span className="h-2 w-2 rounded-full animate-pulse bg-[#F472B6]" />
                   <span className="text-sm font-medium text-white/80">Telemedicina Integrativa · Perú</span>
                 </div>
@@ -290,7 +290,7 @@ export default function LandingPage() {
                     </Link>
                     <a
                       href="#como-funciona"
-                      className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white/80 hover:bg-white/8 transition-all"
+                      className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white/80 hover:bg-white/[0.08] transition-all"
                     >
                       <Video className="w-4 h-4" />
                       Ver cómo funciona
@@ -312,13 +312,16 @@ export default function LandingPage() {
               <div className="hero-card relative hidden lg:flex items-center justify-center">
                 <div className="relative w-full max-w-md">
                   {/* Main doctor image */}
-                  <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ aspectRatio: "4/5" }}>
+                  <div
+                    className="relative rounded-3xl overflow-hidden shadow-2xl"
+                    style={{ aspectRatio: "4/5", background: "linear-gradient(135deg, #1a3a6e 0%, #0B1D35 100%)" }}
+                  >
                     <Image
-                      src={u("1559825822-68577e8d9bfe", 700, 875)}
+                      src={u("1594824476967-48c8b964273f", 700, 875)}
                       alt="Médica integrativa"
                       fill
                       priority
-                      className="object-cover object-top"
+                      className="object-cover object-center"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[#0B1D35]/60 via-transparent to-transparent" />
                   </div>
@@ -613,7 +616,7 @@ export default function LandingPage() {
               {testimonials.map((t, i) => (
                 <div
                   key={t.name}
-                  className="reveal rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/8 transition-colors"
+                  className="reveal rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/[0.08] transition-colors"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
                   <div className="flex gap-1 mb-5">
@@ -656,7 +659,7 @@ export default function LandingPage() {
           </div>
 
           <div className="reveal relative z-10 mx-auto max-w-2xl px-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-2 mb-8">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 mb-8">
               <Heart className="w-3.5 h-3.5 text-[#F472B6]" />
               <span className="text-sm text-white/70">Sin filas · Sin esperas · 100% online</span>
             </div>
@@ -679,7 +682,7 @@ export default function LandingPage() {
               </Link>
               <a
                 href="https://wa.me/51952476574"
-                className="inline-flex items-center gap-2 justify-center rounded-full border border-white/20 bg-white/8 px-10 py-4 text-base font-semibold text-white hover:bg-white/15 transition-all"
+                className="inline-flex items-center gap-2 justify-center rounded-full border border-white/20 bg-white/[0.08] px-10 py-4 text-base font-semibold text-white hover:bg-white/15 transition-all"
               >
                 <Phone className="w-4 h-4" />
                 Hablar con un asesor

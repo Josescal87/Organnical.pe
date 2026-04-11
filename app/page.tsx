@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
-  Heart, Phone, Lock, FileText, Zap,
+  Heart, Phone, Lock, FileText, Zap, Menu, X,
 } from "lucide-react";
 
 /* Brand tokens */
@@ -16,7 +16,7 @@ const BRAND = {
   violet: "#A78BFA",
   cyan: "#38BDF8",
   dark: "#0F0F0F",
-  cta: "#7C3AED",        // violet-600 — CTA solid
+  cta: "#7C3AED",
   ctaHover: "#6D28D9",
 };
 
@@ -85,6 +85,7 @@ const testimonials = [
     rating: 5,
     text: "Llevaba mucho tiempo buscando atención especializada para mi insomnio. La Dra. Mendoza me dio un seguimiento personalizado que ninguna otra consulta me había dado.",
     specialty: "Paciente · Sueño",
+    featured: true,
   },
   {
     name: "Carlos R.",
@@ -93,6 +94,7 @@ const testimonials = [
     rating: 5,
     text: "El Dr. Castillo se tomó el tiempo para entender mi situación de dolor crónico y me explicó cada paso del protocolo. La atención y el seguimiento son excepcionales.",
     specialty: "Paciente · Dolor Crónico",
+    featured: false,
   },
   {
     name: "Ana P.",
@@ -101,6 +103,7 @@ const testimonials = [
     rating: 5,
     text: "Por fin encontré a alguien que me escuchó sobre mi salud femenina. La Dra. Paredes me brindó una atención muy humana y profesional.",
     specialty: "Paciente · Salud Femenina",
+    featured: false,
   },
 ];
 
@@ -135,15 +138,100 @@ const steps = [
   },
 ];
 
+/* ─────────────────────────── HOOK: Scroll Reveal ─────────────────────────── */
+
+function useReveal() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("visible");
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.12 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+  return ref;
+}
+
 /* ─────────────────────────── COMPONENT ─────────────────────────── */
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Close mobile menu on scroll
+  useEffect(() => {
+    if (menuOpen) {
+      const close = () => setMenuOpen(false);
+      window.addEventListener("scroll", close, { once: true, passive: true });
+      return () => window.removeEventListener("scroll", close);
+    }
+  }, [menuOpen]);
+
+  const closeMenu = useCallback(() => setMenuOpen(false), []);
+
+  const navLinks = [
+    { href: "#especialidades", label: "Especialidades" },
+    { href: "#medicos", label: "Médicos" },
+    { href: "#como-funciona", label: "Cómo funciona" },
+  ];
+
+  // Reveal refs
+  const trustRef = useRef<HTMLDivElement>(null);
+  const specialtiesHeaderRef = useRef<HTMLDivElement>(null);
+  const doctorsHeaderRef = useRef<HTMLDivElement>(null);
+  const howHeaderRef = useRef<HTMLDivElement>(null);
+  const testimonialsHeaderRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+
+  const specialtyRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const doctorRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const testimonialRefs = useRef<(HTMLDivElement | null)[]>([]);
+
+  useEffect(() => {
+    const allEls: { el: Element; delay?: number }[] = [];
+
+    const single = [trustRef, specialtiesHeaderRef, doctorsHeaderRef, howHeaderRef, testimonialsHeaderRef, statsRef, ctaRef];
+    single.forEach(r => { if (r.current) allEls.push({ el: r.current }); });
+
+    specialtyRefs.current.forEach((el, i) => { if (el) allEls.push({ el, delay: i * 80 }); });
+    stepRefs.current.forEach((el, i) => { if (el) allEls.push({ el, delay: i * 100 }); });
+    doctorRefs.current.forEach((el, i) => { if (el) allEls.push({ el, delay: i * 100 }); });
+    testimonialRefs.current.forEach((el, i) => { if (el) allEls.push({ el, delay: i * 100 }); });
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const item = allEls.find(a => a.el === entry.target);
+            const delay = item?.delay ?? 0;
+            setTimeout(() => {
+              entry.target.classList.add("visible");
+            }, delay);
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    allEls.forEach(({ el }) => observer.observe(el));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -152,7 +240,7 @@ export default function LandingPage() {
       <header
         className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
           scrolled
-            ? "bg-white/90 backdrop-blur-xl shadow-sm border-b border-zinc-100"
+            ? "bg-white/92 backdrop-blur-xl shadow-sm border-b border-zinc-100"
             : "bg-transparent"
         }`}
       >
@@ -167,14 +255,17 @@ export default function LandingPage() {
             />
           </Link>
 
+          {/* Desktop nav */}
           <nav
             className={`hidden gap-8 text-sm font-medium md:flex transition-colors duration-300 ${
               scrolled ? "text-zinc-500" : "text-white/80"
             }`}
           >
-            <a href="#especialidades" className="hover:text-[#A78BFA] transition-colors">Especialidades</a>
-            <a href="#medicos" className="hover:text-[#A78BFA] transition-colors">Médicos</a>
-            <a href="#como-funciona" className="hover:text-[#A78BFA] transition-colors">Cómo funciona</a>
+            {navLinks.map(l => (
+              <a key={l.href} href={l.href} className="hover:text-[#A78BFA] transition-colors">
+                {l.label}
+              </a>
+            ))}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -193,13 +284,50 @@ export default function LandingPage() {
             >
               Comenzar
             </Link>
+            {/* Hamburger */}
+            <button
+              onClick={() => setMenuOpen(o => !o)}
+              className={`md:hidden p-2 rounded-lg transition-colors ${
+                scrolled ? "text-zinc-600 hover:bg-zinc-100" : "text-white hover:bg-white/10"
+              }`}
+              aria-label="Menú"
+            >
+              {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile menu */}
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ${
+            menuOpen ? "max-h-64 opacity-100" : "max-h-0 opacity-0"
+          } bg-white/95 backdrop-blur-xl border-b border-zinc-100`}
+        >
+          <div className="px-6 py-4 flex flex-col gap-1">
+            {navLinks.map(l => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={closeMenu}
+                className="py-3 text-sm font-medium text-zinc-700 hover:text-[#A78BFA] border-b border-zinc-50 last:border-0 transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
+            <Link
+              href="/login"
+              onClick={closeMenu}
+              className="py-3 text-sm font-medium text-zinc-700 hover:text-[#A78BFA] transition-colors"
+            >
+              Iniciar sesión
+            </Link>
           </div>
         </div>
       </header>
 
       <main>
         {/* ══════════════════════════════ HERO ══════════════════════════════ */}
-        <section className="relative min-h-screen flex items-center overflow-hidden">
+        <section className="relative min-h-screen flex items-center overflow-hidden grain">
           {/* Background image */}
           <div className="absolute inset-0">
             <Image
@@ -209,7 +337,6 @@ export default function LandingPage() {
               priority
               className="object-cover object-center"
             />
-            {/* Cinematic gradient: very dark left → fades right */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#030712]/95 via-[#030712]/75 to-[#030712]/25" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#030712]/40 to-transparent" />
           </div>
@@ -218,15 +345,16 @@ export default function LandingPage() {
           <div className="relative z-10 mx-auto max-w-7xl px-6 w-full">
             <div className="max-w-2xl pt-32 pb-24">
               {/* Pill badge */}
-              <div className="mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-2">
+              <div className="hero-badge mb-8 inline-flex items-center gap-2.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-md px-4 py-2">
                 <span className="h-2 w-2 rounded-full animate-pulse" style={{ background: BRAND.pink }} />
                 <span className="text-sm font-medium text-white/90">Telemedicina Integrativa · Perú</span>
               </div>
 
               {/* Headline */}
-              <h1 className="text-5xl font-extrabold text-white leading-[1.08] tracking-tight md:text-[5.5rem]">
+              <h1 className="hero-title font-display text-5xl font-black text-white leading-[1.05] tracking-tight md:text-[5.5rem]">
                 Medicina que{" "}
-                <span
+                <em
+                  className="not-italic"
                   style={{
                     WebkitBackgroundClip: "text",
                     backgroundClip: "text",
@@ -235,17 +363,17 @@ export default function LandingPage() {
                   }}
                 >
                   te escucha
-                </span>{" "}
+                </em>{" "}
                 de verdad.
               </h1>
 
-              <p className="mt-7 text-xl text-white/65 leading-relaxed max-w-xl">
+              <p className="hero-subtitle mt-7 text-xl text-white/65 leading-relaxed max-w-xl">
                 Conectamos pacientes con médicos especializados en medicina integrativa.
                 Tratamientos personalizados, documentación médica oficial y seguimiento continuo.
               </p>
 
               {/* CTAs */}
-              <div className="mt-10 flex flex-wrap gap-4">
+              <div className="hero-ctas mt-10 flex flex-wrap gap-4">
                 <Link
                   href="/registro"
                   className="group inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-semibold text-white transition-all shadow-2xl"
@@ -264,7 +392,7 @@ export default function LandingPage() {
               </div>
 
               {/* Trust badges */}
-              <div className="mt-14 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/55">
+              <div className="hero-trust mt-14 flex flex-wrap gap-x-8 gap-y-3 text-sm text-white/55">
                 {["Médicos con CMP activo", "Documentación médica oficial", "Consulta 100% online"].map((t) => (
                   <span key={t} className="flex items-center gap-2">
                     <CheckCircle className="w-4 h-4 text-[#A78BFA]" />
@@ -275,8 +403,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Floating availability card — desktop only */}
-          <div className="absolute bottom-12 right-10 hidden xl:block">
+          {/* Floating availability card */}
+          <div className="hero-card absolute bottom-12 right-10 hidden xl:block">
             <div className="rounded-2xl border border-white/15 bg-white/10 backdrop-blur-xl p-5 text-white shadow-2xl min-w-[220px]">
               <div className="flex items-center gap-3 mb-4">
                 <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: BRAND.gradient }}>
@@ -290,7 +418,7 @@ export default function LandingPage() {
               <div className="flex items-center justify-between text-xs">
                 <span className="flex items-center gap-1.5 text-white/60">
                   <span className="h-1.5 w-1.5 rounded-full animate-pulse" style={{ background: BRAND.cyan }} />
-                  3 médicos online ahora
+                  2 médicos disponibles
                 </span>
                 <span className="font-semibold" style={{ color: BRAND.cyan }}>Ver →</span>
               </div>
@@ -300,7 +428,10 @@ export default function LandingPage() {
 
         {/* ══════════════════════════════ TRUST BAR ══════════════════════════════ */}
         <section className="bg-zinc-50 border-b border-zinc-100 px-6 py-5">
-          <div className="mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-8 md:gap-14">
+          <div
+            ref={trustRef}
+            className="reveal mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-6 md:gap-12"
+          >
             {[
               { icon: Shield, text: "Médicos certificados MINSA" },
               { icon: FileText, text: "Documentación médica oficial" },
@@ -308,8 +439,13 @@ export default function LandingPage() {
               { icon: Heart, text: "+2,400 pacientes" },
               { icon: Lock, text: "100% confidencial" },
             ].map(({ icon: Icon, text }) => (
-              <div key={text} className="flex items-center gap-2 text-sm text-zinc-500">
-                <Icon className="w-4 h-4 text-[#A78BFA]" />
+              <div
+                key={text}
+                className="group flex items-center gap-2.5 text-sm text-zinc-500 hover:text-zinc-800 transition-colors cursor-default"
+              >
+                <div className="w-7 h-7 rounded-full flex items-center justify-center bg-violet-50 group-hover:bg-violet-100 transition-colors">
+                  <Icon className="w-3.5 h-3.5 text-[#A78BFA]" />
+                </div>
                 {text}
               </div>
             ))}
@@ -319,12 +455,14 @@ export default function LandingPage() {
         {/* ══════════════════════════════ ESPECIALIDADES ══════════════════════════════ */}
         <section id="especialidades" className="px-6 py-28 bg-white">
           <div className="mx-auto max-w-6xl">
-            {/* Section header — left aligned */}
-            <div className="mb-16 max-w-xl">
+            <div
+              ref={specialtiesHeaderRef}
+              className="reveal mb-16 max-w-xl"
+            >
               <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Especialidades
               </p>
-              <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
+              <h2 className="font-display text-4xl font-black text-[#1a1a1a] leading-tight md:text-5xl">
                 Tratamos lo que más{" "}
                 <span
                   style={{
@@ -339,12 +477,12 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            {/* Image cards grid */}
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {specialties.map((s) => (
+              {specialties.map((s, i) => (
                 <div
                   key={s.title}
-                  className="group relative overflow-hidden rounded-3xl cursor-pointer"
+                  ref={el => { specialtyRefs.current[i] = el; }}
+                  className="reveal group relative overflow-hidden rounded-3xl cursor-pointer"
                   style={{ aspectRatio: "3/4" }}
                 >
                   <Image
@@ -353,7 +491,6 @@ export default function LandingPage() {
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                  {/* Gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-black/0 transition-opacity duration-300" />
 
                   {s.tag && (
@@ -362,12 +499,10 @@ export default function LandingPage() {
                     </div>
                   )}
 
-                  {/* Bottom content */}
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <span className="text-3xl block mb-2">{s.icon}</span>
-                    <h3 className="text-xl font-bold mb-0.5">{s.title}</h3>
+                    <h3 className="font-display text-xl font-bold mb-0.5">{s.title}</h3>
                     <p className="text-[10px] text-white/50 uppercase tracking-wider mb-3">{s.subtitle}</p>
-                    {/* Description slides up on hover */}
                     <p className="text-sm text-white/75 leading-relaxed translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
                       {s.description}
                     </p>
@@ -381,12 +516,15 @@ export default function LandingPage() {
         {/* ══════════════════════════════ MÉDICOS ══════════════════════════════ */}
         <section id="medicos" className="py-28 bg-[#f8fafc]">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="mb-16 flex items-end justify-between gap-6">
+            <div
+              ref={doctorsHeaderRef}
+              className="reveal mb-16 flex items-end justify-between gap-6"
+            >
               <div>
                 <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                   Nuestro equipo
                 </p>
-                <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
+                <h2 className="font-display text-4xl font-black text-[#1a1a1a] leading-tight md:text-5xl">
                   Tu médico te espera
                 </h2>
               </div>
@@ -399,11 +537,15 @@ export default function LandingPage() {
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2 max-w-2xl mx-auto w-full">
-              {doctors.map((d) => (
+              {doctors.map((d, i) => (
                 <div
                   key={d.name}
-                  className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  ref={el => { doctorRefs.current[i] = el; }}
+                  className="reveal group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
+                  {/* Gradient accent bar */}
+                  <div className="h-1 w-full" style={{ background: BRAND.gradient }} />
+
                   {/* Photo */}
                   <div className="relative h-72 overflow-hidden">
                     <Image
@@ -412,15 +554,17 @@ export default function LandingPage() {
                       fill
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                     />
-                    <div className="absolute top-4 right-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold border"
-                      style={{ color: BRAND.violet, borderColor: `${BRAND.violet}33` }}>
+                    <div
+                      className="absolute top-4 right-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold border"
+                      style={{ color: BRAND.violet, borderColor: `${BRAND.violet}33` }}
+                    >
                       Disponible
                     </div>
                   </div>
 
                   {/* Info */}
                   <div className="p-6">
-                    <h3 className="font-bold text-[#1a1a1a] text-lg mb-0.5">{d.name}</h3>
+                    <h3 className="font-display font-bold text-[#1a1a1a] text-lg mb-0.5">{d.name}</h3>
                     <p className="text-sm font-medium mb-1 text-[#A78BFA]">{d.specialty}</p>
                     <p className="text-xs text-zinc-400 mb-4">{d.cmp}</p>
 
@@ -446,11 +590,14 @@ export default function LandingPage() {
         {/* ══════════════════════════════ CÓMO FUNCIONA ══════════════════════════════ */}
         <section id="como-funciona" className="py-28 bg-white">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="mb-20 text-center">
+            <div
+              ref={howHeaderRef}
+              className="reveal mb-20 text-center"
+            >
               <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Proceso
               </p>
-              <h2 className="text-4xl font-extrabold text-[#1a1a1a] leading-tight md:text-5xl">
+              <h2 className="font-display text-4xl font-black text-[#1a1a1a] leading-tight md:text-5xl">
                 Tres pasos hacia{" "}
                 <span
                   style={{
@@ -465,16 +612,15 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            {/* Alternating image + text layout */}
             <div className="space-y-24">
               {steps.map((step, i) => (
                 <div
                   key={step.number}
-                  className={`flex flex-col gap-12 items-center lg:flex-row ${
+                  ref={el => { stepRefs.current[i] = el; }}
+                  className={`reveal flex flex-col gap-12 items-center lg:flex-row ${
                     i % 2 === 1 ? "lg:flex-row-reverse" : ""
                   }`}
                 >
-                  {/* Image */}
                   <div className="relative w-full lg:w-1/2 overflow-hidden rounded-3xl" style={{ aspectRatio: "16/9" }}>
                     <Image
                       src={u(step.photo, 800, 500)}
@@ -485,14 +631,19 @@ export default function LandingPage() {
                     <div className="absolute inset-0 bg-gradient-to-br from-[#7c6fed]/20 to-transparent" />
                   </div>
 
-                  {/* Text */}
                   <div className="lg:w-1/2">
-                    <div className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-[#F3F0FF] mb-6">
-                      <span className="text-2xl font-extrabold text-[#A78BFA]">{step.number}</span>
+                    <div
+                      className="inline-flex h-16 w-16 items-center justify-center rounded-2xl mb-6"
+                      style={{ background: "linear-gradient(135deg, #F3F0FF, #EDE9FE)" }}
+                    >
+                      <span className="font-display text-2xl font-black text-[#A78BFA]">{step.number}</span>
                     </div>
-                    <h3 className="text-3xl font-extrabold text-[#1a1a1a] mb-4">{step.title}</h3>
+                    <h3 className="font-display text-3xl font-black text-[#1a1a1a] mb-4">{step.title}</h3>
                     <p className="text-lg text-zinc-500 leading-relaxed mb-6">{step.description}</p>
-                    <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white" style={{ background: BRAND.gradient }}>
+                    <div
+                      className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white"
+                      style={{ background: BRAND.gradient }}
+                    >
                       <Zap className="w-4 h-4" />
                       {step.detail}
                     </div>
@@ -506,11 +657,14 @@ export default function LandingPage() {
         {/* ══════════════════════════════ TESTIMONIALS ══════════════════════════════ */}
         <section className="py-28 bg-[#0f172a]">
           <div className="mx-auto max-w-6xl px-6">
-            <div className="mb-16 text-center">
+            <div
+              ref={testimonialsHeaderRef}
+              className="reveal mb-12 text-center"
+            >
               <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-3">
                 Testimonios
               </p>
-              <h2 className="text-4xl font-extrabold text-white leading-tight md:text-5xl">
+              <h2 className="font-display text-4xl font-black text-white leading-tight md:text-5xl">
                 Lo que dicen nuestros{" "}
                 <span
                   style={{
@@ -525,20 +679,25 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <p className="text-center text-xs text-white/30 mb-8">
-              Testimonios reales de pacientes. Los resultados individuales pueden variar. Basado en {new Date().getFullYear() === 2026 ? "2,400+" : "2,000+"} evaluaciones verificadas.
+            <p className="text-center text-xs text-white/30 mb-10">
+              Testimonios reales de pacientes. Los resultados individuales pueden variar. Basado en 2,400+ evaluaciones verificadas.
             </p>
 
             <div className="grid gap-6 md:grid-cols-3">
-              {testimonials.map((t) => (
+              {testimonials.map((t, i) => (
                 <div
                   key={t.name}
-                  className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-3xl p-8 hover:bg-white/8 transition-colors"
+                  ref={el => { testimonialRefs.current[i] = el; }}
+                  className={`reveal backdrop-blur-sm border rounded-3xl p-8 transition-colors ${
+                    t.featured
+                      ? "bg-white/8 border-white/20 md:row-span-1"
+                      : "bg-white/5 border-white/10 hover:bg-white/8"
+                  }`}
                 >
                   {/* Stars */}
                   <div className="flex gap-1 mb-5">
-                    {Array.from({ length: t.rating }).map((_, i) => (
-                      <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    {Array.from({ length: t.rating }).map((_, idx) => (
+                      <Star key={idx} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
 
@@ -546,9 +705,8 @@ export default function LandingPage() {
                     &ldquo;{t.text}&rdquo;
                   </p>
 
-                  {/* Patient */}
                   <div className="flex items-center gap-3">
-                    <div className="relative h-11 w-11 rounded-full overflow-hidden flex-shrink-0">
+                    <div className="relative h-11 w-11 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/10">
                       <Image
                         src={u(t.photo, 80, 80)}
                         alt={t.name}
@@ -558,7 +716,11 @@ export default function LandingPage() {
                     </div>
                     <div>
                       <p className="text-white font-semibold text-sm">{t.name}</p>
-                      <p className="text-white/40 text-xs">{t.specialty}</p>
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <p className="text-white/40 text-xs">{t.specialty}</p>
+                        <span className="text-white/20 text-xs">·</span>
+                        <span className="text-xs text-white/30">{t.location}</span>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -568,13 +730,31 @@ export default function LandingPage() {
         </section>
 
         {/* ══════════════════════════════ STATS ══════════════════════════════ */}
-        <section className="py-24" style={{ background: BRAND.gradient }}>
-          <div className="mx-auto max-w-5xl px-6">
+        <section className="relative py-24 bg-[#030712] overflow-hidden dot-grid">
+          {/* Gradient glow */}
+          <div
+            className="absolute inset-0 opacity-20"
+            style={{ background: "radial-gradient(ellipse 80% 60% at 50% 50%, #A78BFA 0%, transparent 70%)" }}
+          />
+          <div
+            ref={statsRef}
+            className="reveal relative z-10 mx-auto max-w-5xl px-6"
+          >
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
               {stats.map((s) => (
                 <div key={s.label} className="text-center">
-                  <p className="text-5xl font-extrabold text-white mb-2 md:text-6xl">{s.value}</p>
-                  <p className="text-green-100 text-sm font-medium">{s.label}</p>
+                  <p
+                    className="font-display text-5xl font-black mb-2 md:text-6xl"
+                    style={{
+                      WebkitBackgroundClip: "text",
+                      backgroundClip: "text",
+                      color: "transparent",
+                      backgroundImage: BRAND.gradient,
+                    }}
+                  >
+                    {s.value}
+                  </p>
+                  <p className="text-zinc-400 text-sm font-medium">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -592,11 +772,14 @@ export default function LandingPage() {
             />
             <div className="absolute inset-0 bg-[#0f172a]/82" />
           </div>
-          <div className="relative z-10 mx-auto max-w-3xl px-6 text-center">
+          <div
+            ref={ctaRef}
+            className="reveal relative z-10 mx-auto max-w-3xl px-6 text-center"
+          >
             <p className="text-sm font-semibold uppercase tracking-widest text-[#F472B6] mb-5">
               ¿Listo para empezar?
             </p>
-            <h2 className="text-4xl font-extrabold text-white leading-tight md:text-6xl mb-6">
+            <h2 className="font-display text-4xl font-black text-white leading-tight md:text-6xl mb-6">
               Tu primera consulta a un click de distancia
             </h2>
             <p className="text-white/60 text-lg mb-10 max-w-xl mx-auto">
@@ -624,7 +807,10 @@ export default function LandingPage() {
       </main>
 
       {/* ══════════════════════════════ FOOTER ══════════════════════════════ */}
-      <footer className="bg-[#030712] px-6 py-16 text-zinc-500">
+      <footer className="relative bg-[#030712] px-6 pt-2 pb-16 text-zinc-500">
+        {/* Gradient separator */}
+        <div className="h-px w-full mb-16" style={{ background: BRAND.gradient, opacity: 0.3 }} />
+
         <div className="mx-auto max-w-6xl">
           <div className="grid gap-10 md:grid-cols-4 mb-14">
             {/* Brand */}

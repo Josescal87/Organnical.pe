@@ -62,40 +62,18 @@ const specialties = [
 
 const doctors = [
   {
-    name: "Dra. Valeria Mendoza",
-    specialty: "Medicina del Sueño",
-    cmp: "CMP 89742",
-    photo: "1559839734-2b71ea197ec2",
-    rating: 4.9,
-    reviews: 312,
-    nextAvail: "Hoy, 4:00 PM",
-  },
-  {
-    name: "Dr. Andrés Castillo",
-    specialty: "Dolor Crónico",
-    cmp: "CMP 71234",
-    photo: "1612349317150-e413f6a5b16d",
-    rating: 4.8,
-    reviews: 198,
-    nextAvail: "Mañana, 10:00 AM",
-  },
-  {
-    name: "Dra. Sofía Paredes",
-    specialty: "Salud Femenina",
-    cmp: "CMP 94561",
+    name: "Dra. Estefanía Poma",
+    specialty: "Médico General",
+    cmp: "CMP 059636",
     photo: "1594824476967-48c8b964273f",
-    rating: 4.9,
-    reviews: 441,
-    nextAvail: "Hoy, 6:30 PM",
+    nextAvail: "Consulta disponible",
   },
   {
-    name: "Dr. Luis Ramírez",
-    specialty: "Ansiedad & Estrés",
-    cmp: "CMP 62198",
-    photo: "1582750433449-648ed127bb54",
-    rating: 4.7,
-    reviews: 267,
-    nextAvail: "Vie, 11:00 AM",
+    name: "Dr. Robert Goodman",
+    specialty: "Médico General",
+    cmp: "CMP 095719",
+    photo: "1612349317150-e413f6a5b16d",
+    nextAvail: "Consulta disponible",
   },
 ];
 
@@ -130,7 +108,7 @@ const stats = [
   { value: "2,400+", label: "Pacientes atendidos" },
   { value: "98%", label: "Satisfacción*" },
   { value: "<48h", label: "Primera cita" },
-  { value: "4", label: "Especialidades" },
+  { value: "2", label: "Médicos activos" },
 ];
 
 const steps = [
@@ -420,46 +398,33 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-5 sm:grid-cols-2 max-w-2xl mx-auto w-full">
               {doctors.map((d) => (
                 <div
                   key={d.name}
                   className="group bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                 >
                   {/* Photo */}
-                  <div className="relative h-64 overflow-hidden">
+                  <div className="relative h-72 overflow-hidden">
                     <Image
                       src={u(d.photo, 400, 500)}
                       alt={d.name}
                       fill
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
                     />
-                    {/* Available badge */}
-                    <div className="absolute top-4 right-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-[#16a34a] border border-[#16a34a]/20">
+                    <div className="absolute top-4 right-4 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold border"
+                      style={{ color: BRAND.violet, borderColor: `${BRAND.violet}33` }}>
                       Disponible
                     </div>
                   </div>
 
                   {/* Info */}
-                  <div className="p-5">
-                    <h3 className="font-bold text-[#1a1a1a] mb-0.5">{d.name}</h3>
-                    <p className="text-sm text-[#A78BFA] font-medium mb-1">{d.specialty}</p>
-                    <p className="text-xs text-zinc-400 mb-3">{d.cmp}</p>
+                  <div className="p-6">
+                    <h3 className="font-bold text-[#1a1a1a] text-lg mb-0.5">{d.name}</h3>
+                    <p className="text-sm font-medium mb-1 text-[#A78BFA]">{d.specialty}</p>
+                    <p className="text-xs text-zinc-400 mb-4">{d.cmp}</p>
 
-                    {/* Rating */}
-                    <div className="flex items-center gap-1.5 mb-3">
-                      <div className="flex gap-0.5">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        ))}
-                      </div>
-                      <span className="text-xs text-zinc-500">
-                        {d.rating} ({d.reviews})
-                      </span>
-                    </div>
-
-                    {/* Next available */}
-                    <div className="flex items-center gap-2 text-xs text-zinc-400 mb-4">
+                    <div className="flex items-center gap-2 text-xs text-zinc-400 mb-5">
                       <Clock className="w-3.5 h-3.5" />
                       {d.nextAvail}
                     </div>

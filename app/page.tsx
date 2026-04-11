@@ -237,11 +237,11 @@ export default function LandingPage() {
           <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 80% at 70% 50%, #1a3a6e 0%, transparent 70%)" }} />
 
           <div className="relative z-10 mx-auto max-w-7xl px-6 w-full">
-            <div className="grid lg:grid-cols-2 gap-12 items-center pt-24 pb-16 lg:pt-0 lg:pb-0 min-h-screen">
+            <div className="grid lg:grid-cols-2 gap-12 items-center pt-28 pb-16 lg:pt-32 lg:pb-20 min-h-screen">
 
               {/* Left — text */}
               <div className="max-w-xl">
-                <div className="hero-badge mb-7 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2">
+                <div className="hero-badge mb-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2">
                   <span className="h-2 w-2 rounded-full animate-pulse bg-[#F472B6]" />
                   <span className="text-sm font-medium text-white/80">Telemedicina Integrativa · Perú</span>
                 </div>

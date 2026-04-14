@@ -37,11 +37,10 @@ export default function LoginPage() {
     const { data: { user: signedInUser } } = await supabase.auth.getUser();
     const role = signedInUser?.user_metadata?.role as UserRole | undefined;
     if (role === "doctor" || role === "admin") {
-      router.push("/dashboard/medico");
+      window.location.href = "/dashboard/medico";
     } else {
-      router.push("/dashboard/paciente");
+      window.location.href = "/dashboard/paciente";
     }
-    router.refresh();
   }
 
   async function handleGoogle() {

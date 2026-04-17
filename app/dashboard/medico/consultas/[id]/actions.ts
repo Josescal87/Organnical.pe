@@ -2,7 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { sendPrescriptionNotification } from "@/lib/emails";
+
+function createAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!
+  );
+}
 
 export async function updateClinicalNotes(aptId: string, notes: string) {
   const supabase = await createClient();
@@ -107,7 +115,7 @@ export async function createPrescription(
       supabase.schema("medical").from("profiles").select("full_name").eq("id", user.id).single(),
       supabase.from("productos").select("sku, descripcion").in("sku", items.map((i) => i.producto_sku)),
     ]);
-    const { data: patientAuth } = await supabase.auth.admin.getUserById(patientId);
+    const { data: patientAuth } = await createAdminClient().auth.admin.getUserById(patientId);
     const patientEmail = patientAuth?.user?.email;
     if (patientEmail) {
       const enrichedItems = items.map((it) => ({

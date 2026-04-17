@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createCalendarEvent } from "@/lib/google-calendar";
 import { sendAppointmentConfirmation, sendNewAppointmentToDoctor } from "@/lib/emails";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
+
+function createAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!
+  );
+}
 
 const SPECIALTY_LABELS: Record<string, string> = {
   sleep:         "Sueño",
@@ -110,7 +118,7 @@ export async function POST(req: NextRequest) {
     }).catch((e) => console.error("Resend patient email error:", e));
 
     // Notificar al médico
-    const { data: doctorAuth } = await supabase.auth.admin.getUserById(doctorId);
+    const { data: doctorAuth } = await createAdminClient().auth.admin.getUserById(doctorId);
     if (doctorAuth?.user?.email) {
       sendNewAppointmentToDoctor({
         toEmail:       doctorAuth.user.email,

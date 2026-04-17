@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createCalendarEvent } from "@/lib/google-calendar";
+import { sendAppointmentConfirmation } from "@/lib/emails";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
 
 const SPECIALTY_LABELS: Record<string, string> = {
@@ -102,6 +103,16 @@ export async function POST(req: NextRequest) {
       console.error("Supabase insert error:", insertError);
       return NextResponse.json({ error: "Error al crear la cita" }, { status: 500 });
     }
+
+    // Enviar email de confirmación (no-fatal)
+    sendAppointmentConfirmation({
+      toEmail:     user.email!,
+      patientName,
+      doctorName,
+      specialty,
+      slotStart,
+      meetLink,
+    }).catch((e) => console.error("Resend error (non-fatal):", e));
 
     return NextResponse.json({
       success:       true,

@@ -102,8 +102,7 @@ export async function POST(req: NextRequest) {
       calendarLink:  calendarEvent.htmlLink,
     });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     console.error("Booking error:", err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

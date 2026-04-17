@@ -181,3 +181,63 @@ export async function sendPrescriptionNotification({
     html,
   });
 }
+
+export async function sendNewAppointmentToDoctor({
+  toEmail,
+  doctorName,
+  patientName,
+  specialty,
+  slotStart,
+  appointmentId,
+}: {
+  toEmail: string;
+  doctorName: string;
+  patientName: string;
+  specialty: string;
+  slotStart: string;
+  appointmentId: string;
+}) {
+  const date = new Date(slotStart);
+  const dateStr = date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const timeStr = date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
+
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">Nueva consulta agendada 🗓</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${doctorName}, tienes una nueva cita programada.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Paciente</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${patientName}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Especialidad</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${specialtyLabel}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Fecha</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${dateStr}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Hora</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${timeStr} (Lima)</p>
+      </td></tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
+      <tr><td align="center">
+        <a href="https://organnical-pe.vercel.app/dashboard/medico/consultas/${appointmentId}" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+          Ver consulta
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return getResend().emails.send({
+    from: FROM,
+    to: toEmail,
+    subject: `🗓 Nueva consulta — ${patientName} · ${dateStr}`,
+    html,
+  });
+}

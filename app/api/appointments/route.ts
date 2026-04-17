@@ -56,21 +56,29 @@ export async function POST(req: NextRequest) {
 
     const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
 
-    // Crear evento en Google Calendar con link de Google Meet
-    const calendarEvent = await createCalendarEvent({
-      title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
-      description: [
-        `Teleconsulta de ${specialtyLabel}`,
-        `Paciente: ${patientName}`,
-        `Médico: ${doctorName}`,
-        ``,
-        `Plataforma: Organnical — Medicina Integrativa`,
-        `Soporte: reservas@organnical.com | +51 952 476 574`,
-      ].join("\n"),
-      startTime: startDate.toISOString(),
-      endTime:   endDate.toISOString(),
-      attendeeEmails: [user.email!],
-    });
+    // Crear evento en Google Calendar (opcional — si falla la cita se crea igual)
+    let meetLink: string | null = null;
+    let calendarLink: string | null = null;
+    try {
+      const calendarEvent = await createCalendarEvent({
+        title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
+        description: [
+          `Teleconsulta de ${specialtyLabel}`,
+          `Paciente: ${patientName}`,
+          `Médico: ${doctorName}`,
+          ``,
+          `Plataforma: Organnical — Medicina Integrativa`,
+          `Soporte: reservas@organnical.com | +51 952 476 574`,
+        ].join("\n"),
+        startTime: startDate.toISOString(),
+        endTime:   endDate.toISOString(),
+        attendeeEmails: [user.email!],
+      });
+      meetLink     = calendarEvent.meetLink;
+      calendarLink = calendarEvent.htmlLink;
+    } catch (calErr) {
+      console.error("Google Calendar error (non-fatal):", calErr);
+    }
 
     // Insertar cita en medical.appointments
     const appointmentData: MedicalAppointmentInsert = {
@@ -80,7 +88,7 @@ export async function POST(req: NextRequest) {
       slot_end:     endDate.toISOString(),
       status:       "confirmed",
       specialty:    specialty as AppointmentSpecialty,
-      meeting_link: calendarEvent.meetLink,
+      meeting_link: meetLink,
     };
 
     const { data: appointment, error: insertError } = await supabase
@@ -98,12 +106,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success:       true,
       appointmentId: appointment.id,
-      meetLink:      calendarEvent.meetLink,
-      calendarLink:  calendarEvent.htmlLink,
+      meetLink,
+      calendarLink,
     });
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
     console.error("Booking error:", err);
-    return NextResponse.json({ error: msg }, { status: 500 });
+    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

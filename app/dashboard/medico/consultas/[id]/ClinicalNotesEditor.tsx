@@ -25,7 +25,6 @@ export default function ClinicalNotesEditor({
         setError(result.error);
       } else {
         setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
       }
     });
   }
@@ -45,7 +44,7 @@ export default function ClinicalNotesEditor({
       <div className="flex items-center justify-between mt-3">
         <span className="text-xs">
           {error && <span className="text-red-500">{error}</span>}
-          {saved && <span className="text-emerald-600 font-medium">Notas guardadas</span>}
+          {saved && <span className="text-emerald-600 font-medium">✓ Notas guardadas</span>}
         </span>
         <button
           onClick={handleSave}

@@ -1,6 +1,6 @@
 import { Resend } from "resend";
 
-const FROM = "Organnical <onboarding@resend.dev>";
+const FROM = "Organnical <reservas@organnical.com>";
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);

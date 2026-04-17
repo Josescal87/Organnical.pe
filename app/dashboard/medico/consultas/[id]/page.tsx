@@ -1,8 +1,11 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, Video, User, Calendar, Stethoscope } from "lucide-react";
-import type { AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
+import { ArrowLeft, Video, User, Calendar } from "lucide-react";
+import type { AppointmentStatus, AppointmentSpecialty, Producto } from "@/lib/supabase/database.types";
+import ClinicalNotesEditor from "./ClinicalNotesEditor";
+import StatusButtons from "./StatusButtons";
+import PrescriptionForm from "./PrescriptionForm";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -20,22 +23,6 @@ const SPECIALTY: Record<AppointmentSpecialty, { label: string; icon: string }> =
   womens_health: { label: "Salud Femenina", icon: "🌸" },
 };
 
-type AptRow = {
-  id: string;
-  slot_start: string;
-  status: AppointmentStatus;
-  specialty: AppointmentSpecialty;
-  meeting_link: string | null;
-  clinical_notes: string | null;
-  patient_id: string;
-};
-
-type ProfileRow = {
-  full_name: string | null;
-  phone: string | null;
-  document_id: string | null;
-};
-
 export default async function ConsultaDetallePage({
   params,
 }: {
@@ -46,16 +33,59 @@ export default async function ConsultaDetallePage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data: aptData } = await supabase
-    .schema("medical")
-    .from("appointments")
-    .select("id, slot_start, status, specialty, meeting_link, clinical_notes, patient_id")
-    .eq("id", id)
-    .eq("doctor_id", user.id)
-    .single();
+  const [aptResult, productosResult, prescriptionResult] = await Promise.all([
+    supabase
+      .schema("medical")
+      .from("appointments")
+      .select("id, slot_start, status, specialty, meeting_link, clinical_notes, patient_id")
+      .eq("id", id)
+      .eq("doctor_id", user.id)
+      .single(),
 
-  const apt = aptData as AptRow | null;
+    supabase
+      .from("productos")
+      .select("sku, descripcion, precio, categoria")
+      .order("descripcion"),
+
+    supabase
+      .schema("medical")
+      .from("prescriptions")
+      .select("id, issued_at, valid_until, prescription_items(producto_sku, quantity, dosage_instructions)")
+      .eq("appointment_id", id)
+      .maybeSingle(),
+  ]);
+
+  const apt = aptResult.data as {
+    id: string;
+    slot_start: string;
+    status: AppointmentStatus;
+    specialty: AppointmentSpecialty;
+    meeting_link: string | null;
+    clinical_notes: string | null;
+    patient_id: string;
+  } | null;
+
   if (!apt) notFound();
+
+  const productos = (productosResult.data ?? []) as Producto[];
+
+  // Enriquecer los items de la receta con el nombre del producto
+  const rxRaw = prescriptionResult.data as {
+    id: string;
+    issued_at: string;
+    valid_until: string;
+    prescription_items: { producto_sku: string; quantity: number; dosage_instructions: string | null }[];
+  } | null;
+
+  const existingPrescription = rxRaw
+    ? {
+        ...rxRaw,
+        items: rxRaw.prescription_items.map((it) => ({
+          ...it,
+          nombre: productos.find((p) => p.sku === it.producto_sku)?.descripcion ?? it.producto_sku,
+        })),
+      }
+    : null;
 
   const { data: patientData } = await supabase
     .schema("medical")
@@ -64,7 +94,7 @@ export default async function ConsultaDetallePage({
     .eq("id", apt.patient_id)
     .single();
 
-  const patient = patientData as ProfileRow | null;
+  const patient = patientData as { full_name: string | null; phone: string | null; document_id: string | null } | null;
 
   const st = STATUS[apt.status];
   const vt = SPECIALTY[apt.specialty];
@@ -74,7 +104,10 @@ export default async function ConsultaDetallePage({
   return (
     <div className="p-6 md:p-10 max-w-3xl">
       <div className="mb-8">
-        <Link href="/dashboard/medico/consultas" className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-4 transition-colors">
+        <Link
+          href="/dashboard/medico/consultas"
+          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-4 transition-colors"
+        >
           <ArrowLeft className="w-3.5 h-3.5" /> Volver a consultas
         </Link>
         <div className="flex items-center gap-3 flex-wrap">
@@ -83,7 +116,7 @@ export default async function ConsultaDetallePage({
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 mb-6">
+      <div className="grid gap-4 md:grid-cols-2 mb-4">
         {/* Cita info */}
         <div className="bg-white rounded-2xl p-5 border border-zinc-100">
           <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
@@ -151,17 +184,27 @@ export default async function ConsultaDetallePage({
         </div>
       </div>
 
-      {/* Clinical notes */}
-      <div className="bg-white rounded-2xl p-5 border border-zinc-100">
-        <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
-          <Stethoscope className="w-3.5 h-3.5" /> Notas clínicas
-        </p>
-        {apt.clinical_notes ? (
-          <p className="text-sm text-zinc-700 leading-relaxed whitespace-pre-wrap">{apt.clinical_notes}</p>
-        ) : (
-          <p className="text-sm text-zinc-400 italic">Sin notas clínicas registradas.</p>
-        )}
+      {/* Estado — solo si no está completada/cancelada */}
+      {!["completed", "cancelled"].includes(apt.status) && (
+        <div className="mb-4">
+          <StatusButtons aptId={apt.id} currentStatus={apt.status} />
+        </div>
+      )}
+
+      {/* Notas clínicas */}
+      <div className="mb-4">
+        <ClinicalNotesEditor aptId={apt.id} initialNotes={apt.clinical_notes} />
       </div>
+
+      {/* Receta — solo si no está cancelada */}
+      {apt.status !== "cancelled" && (
+        <PrescriptionForm
+          aptId={apt.id}
+          patientId={apt.patient_id}
+          productos={productos}
+          existing={existingPrescription}
+        />
+      )}
     </div>
   );
 }

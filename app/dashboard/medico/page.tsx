@@ -46,15 +46,14 @@ export default async function MedicoDashboard() {
   const role = (profileData?.role ?? user.user_metadata?.role) as UserRole | undefined;
   if (role === "patient") redirect("/dashboard/paciente");
 
-  const { data: aptsData, error: aptsError } = await supabase
+  const { data: aptsData } = await supabase
     .schema("medical")
     .from("appointments")
     .select("id, slot_start, status, specialty, patient_id")
     .eq("doctor_id", user.id)
+    .in("status", ["pending", "confirmed"])
     .order("slot_start", { ascending: true })
     .limit(10);
-
-  console.log("[medico/dashboard] user.id:", user.id, "aptsData:", JSON.stringify(aptsData), "error:", aptsError?.message);
 
   const appointments = (aptsData ?? []) as AppointmentRow[];
 

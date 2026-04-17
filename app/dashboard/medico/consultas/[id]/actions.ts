@@ -111,7 +111,7 @@ export async function createPrescription(
     const patientEmail = patientAuth?.user?.email;
     if (patientEmail) {
       const enrichedItems = items.map((it) => ({
-        nombre: productos.data?.find((p) => p.sku === it.producto_sku)?.descripcion ?? it.producto_sku,
+        nombre: (productos.data as {sku:string;descripcion:string}[]|null)?.find((p) => p.sku === it.producto_sku)?.descripcion ?? it.producto_sku,
         quantity: it.quantity,
         dosage_instructions: it.dosage_instructions || null,
       }));

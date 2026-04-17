@@ -1,8 +1,10 @@
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const FROM = "Organnical <reservas@organnical.com>";
+
+function getResend() {
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 const SPECIALTY_LABELS: Record<string, string> = {
   sleep:         "🌙 Sueño",
@@ -118,7 +120,7 @@ export async function sendAppointmentConfirmation({
     </p>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: toEmail,
     subject: `✅ Cita confirmada — ${specialtyLabel} · ${dateStr}`,
@@ -172,7 +174,7 @@ export async function sendPrescriptionNotification({
     </table>
   `);
 
-  return resend.emails.send({
+  return getResend().emails.send({
     from: FROM,
     to: toEmail,
     subject: `📋 Tu receta médica de ${doctorName} — Organnical`,

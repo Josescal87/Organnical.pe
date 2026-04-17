@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
-const NAVY = "#0B1D35";
 
 /* ─── Constants ─────────────────────────────────────────────── */
 
@@ -23,42 +22,17 @@ const VERTICALS = [
   { id: "womens_health", label: "Salud Femenina",  icon: "🌸", desc: "SPM, menopausia y equilibrio hormonal" },
 ];
 
-const DOCTORS = [
-  {
-    id: "placeholder-dra-poma",
-    name: "Dra. Estefanía Poma",
-    cmp: "CMP 059636",
-    specialty: "Medicina Integrativa",
-    photo: "/dra-poma-300x300.png",
-    verticals: ["sleep", "womens_health"],
-    rating: 4.9,
-    reviews: 142,
-  },
-  {
-    id: "placeholder-dr-goodman",
-    name: "Dr. Robert Goodman",
-    cmp: "CMP 095719",
-    specialty: "Medicina Integrativa",
-    photo: "/drgodman-300x300.png",
-    verticals: ["pain", "anxiety"],
-    rating: 4.8,
-    reviews: 118,
-  },
-];
+const DEFAULT_HOURS = [9, 10, 11, 14, 15, 16, 17];
 
-// Available hours Mon-Fri (Lima time)
-const AVAILABLE_HOURS = [9, 10, 11, 14, 15, 16, 17];
-
-function generateSlots(date: Date, bookedISO: string[]): string[] {
+function generateSlots(date: Date, availableHours: number[], bookedISO: string[]): string[] {
   const day = date.getDay();
-  if (day === 0 || day === 6) return []; // no weekends
+  if (day === 0 || day === 6) return [];
 
-  return AVAILABLE_HOURS.map((h) => {
+  return availableHours.map((h) => {
     const slot = new Date(date);
     slot.setHours(h, 0, 0, 0);
     return slot.toISOString();
   }).filter((iso) => {
-    // exclude already booked
     return !bookedISO.some((b) => {
       const booked = new Date(b);
       return booked.getHours() === new Date(iso).getHours() &&
@@ -77,11 +51,23 @@ function isSameDay(a: Date, b: Date) {
   return a.toDateString() === b.toDateString();
 }
 
-/* ─── Component ─────────────────────────────────────────────── */
+/* ─── Types ──────────────────────────────────────────────────── */
 
 type Step = "vertical" | "doctor" | "datetime" | "confirm" | "done";
 
-interface DoctorRow { id: string; full_name: string | null }
+interface DoctorRow {
+  id: string;
+  full_name: string | null;
+  cmp: string | null;
+  photo_url: string | null;
+  specialty_label: string | null;
+  verticals: string[];
+  rating: number;
+  reviews_count: number;
+  available_hours: number[];
+}
+
+/* ─── Component ─────────────────────────────────────────────── */
 
 export default function AgendarPage() {
   return (
@@ -101,33 +87,34 @@ function AgendarWizard() {
   const [selectedDate, setSelectedDate] = useState<Date>(addDays(new Date(), 1));
   const [selectedSlot, setSelectedSlot] = useState<string>("");
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
+  const [loadingDoctors, setLoadingDoctors] = useState(true);
   const [loading, setLoading] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<{ meetLink: string | null; calendarLink: string } | null>(null);
   const [user, setUser] = useState<{ email: string } | null>(null);
-  const [dbDoctors, setDbDoctors] = useState<DoctorRow[]>([]);
+  const [doctors, setDoctors] = useState<DoctorRow[]>([]);
 
-  // Inline auth state (shown at confirm step when not logged in)
+  // Inline auth state
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [showLogin, setShowLogin] = useState(false);
 
-  // Load user session
+  // Load user session + doctors from DB
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setUser({ email: data.user.email! });
     });
-    // Cargar IDs reales de doctores desde medical.profiles para resolver placeholders
     supabase
       .schema("medical")
       .from("profiles")
-      .select("id, full_name")
+      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, available_hours")
       .eq("role", "doctor")
       .then(({ data }) => {
-        if (data) setDbDoctors(data as DoctorRow[]);
+        if (data) setDoctors(data as DoctorRow[]);
+        setLoadingDoctors(false);
       });
   }, []);
 
@@ -156,29 +143,26 @@ function AgendarWizard() {
     if (vertical && step === "vertical") setStep("doctor");
   }, []);
 
-  const filteredDoctors = DOCTORS.filter((d) =>
+  const filteredDoctors = doctors.filter((d) =>
     !vertical || d.verticals.includes(vertical)
   );
 
-  function resolveRealDoctorId(placeholderId: string): string {
-    const doctor = DOCTORS.find((d) => d.id === placeholderId);
-    if (!doctor) return placeholderId;
-    const match = dbDoctors.find((db) =>
-      db.full_name?.toLowerCase().includes(doctor.name.split(" ")[1]?.toLowerCase() ?? "")
-    );
-    return match?.id ?? placeholderId;
-  }
+  const selectedDoctor = doctors.find((d) => d.id === doctorId);
+  const selectedVertical = VERTICALS.find((v) => v.id === vertical);
+  const slots = generateSlots(
+    selectedDate,
+    selectedDoctor?.available_hours ?? DEFAULT_HOURS,
+    bookedSlots
+  );
 
   async function handleConfirm() {
     setSubmitting(true);
     setError(null);
 
-    // If guest, sign up or log in first
     if (!user) {
       const supabase = createClient();
 
       if (!showLogin) {
-        // Sign up
         if (!guestName.trim() || !guestEmail.trim() || !guestPassword) {
           setError("Completa todos los campos para continuar.");
           setSubmitting(false);
@@ -199,7 +183,6 @@ function AgendarWizard() {
           return;
         }
       } else {
-        // Sign in
         if (!guestEmail.trim() || !guestPassword) {
           setError("Completa los campos para continuar.");
           setSubmitting(false);
@@ -219,15 +202,13 @@ function AgendarWizard() {
       setUser({ email: guestEmail.trim() });
     }
 
-    const realDoctorId = resolveRealDoctorId(doctorId);
-
     const res = await fetch("/api/appointments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        doctorId:  realDoctorId,
-        specialty: vertical,     // API espera specialty (era vertical)
-        slotStart: selectedSlot, // API espera slotStart (era scheduledAt)
+        doctorId:  doctorId,
+        specialty: vertical,
+        slotStart: selectedSlot,
       }),
     });
 
@@ -243,13 +224,9 @@ function AgendarWizard() {
     setStep("done");
   }
 
-  const selectedDoctor = DOCTORS.find((d) => d.id === doctorId);
-  const selectedVertical = VERTICALS.find((v) => v.id === vertical);
-  const slots = generateSlots(selectedDate, bookedSlots);
-
   /* ── WEEK navigation ── */
   const weekStart = new Date(selectedDate);
-  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1); // Monday
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay() + 1);
   const weekDays = Array.from({ length: 5 }, (_, i) => addDays(weekStart, i));
 
   /* ─── Render ─────────────────────────────────────────── */
@@ -313,33 +290,57 @@ function AgendarWizard() {
             <p className="text-sm text-zinc-400 mb-1">Paso 2 de 4</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Elige tu médico</h1>
             <p className="text-zinc-500 text-sm mb-8">Especialistas en {selectedVertical?.label}.</p>
-            <div className="space-y-3">
-              {filteredDoctors.map((doc) => (
-                <button
-                  key={doc.id}
-                  onClick={() => { setDoctorId(doc.id); setStep("datetime"); }}
-                  className="w-full text-left bg-white rounded-2xl border border-zinc-100 hover:border-violet-300 hover:shadow-md transition-all p-5 flex items-center gap-4 group"
-                >
-                  <Image
-                    src={doc.photo}
-                    alt={doc.name}
-                    width={60}
-                    height={60}
-                    className="rounded-2xl object-cover flex-shrink-0"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-[#0B1D35] group-hover:text-[#A78BFA] transition-colors">{doc.name}</p>
-                    <p className="text-xs text-zinc-500 mt-0.5">{doc.specialty} · {doc.cmp}</p>
-                    <div className="flex items-center gap-3 mt-2">
-                      <span className="text-xs font-semibold text-amber-500">★ {doc.rating}</span>
-                      <span className="text-xs text-zinc-400">{doc.reviews} reseñas</span>
-                      <span className="text-xs text-emerald-500 font-medium">● Disponible</span>
+
+            {loadingDoctors ? (
+              <div className="flex items-center justify-center py-16">
+                <Loader2 className="w-6 h-6 animate-spin text-zinc-400" />
+              </div>
+            ) : filteredDoctors.length === 0 ? (
+              <p className="text-sm text-zinc-400 text-center py-12">
+                No hay médicos disponibles para esta especialidad en este momento.
+              </p>
+            ) : (
+              <div className="space-y-3">
+                {filteredDoctors.map((doc) => (
+                  <button
+                    key={doc.id}
+                    onClick={() => { setDoctorId(doc.id); setStep("datetime"); }}
+                    className="w-full text-left bg-white rounded-2xl border border-zinc-100 hover:border-violet-300 hover:shadow-md transition-all p-5 flex items-center gap-4 group"
+                  >
+                    {doc.photo_url ? (
+                      <Image
+                        src={doc.photo_url}
+                        alt={doc.full_name ?? ""}
+                        width={60}
+                        height={60}
+                        className="rounded-2xl object-cover flex-shrink-0"
+                      />
+                    ) : (
+                      <div className="w-[60px] h-[60px] rounded-2xl bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                        <User className="w-6 h-6 text-zinc-400" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-[#0B1D35] group-hover:text-[#A78BFA] transition-colors">{doc.full_name}</p>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        {doc.specialty_label ?? "Medicina Integrativa"}
+                        {doc.cmp ? ` · ${doc.cmp}` : ""}
+                      </p>
+                      <div className="flex items-center gap-3 mt-2">
+                        {doc.rating > 0 && (
+                          <span className="text-xs font-semibold text-amber-500">★ {doc.rating.toFixed(1)}</span>
+                        )}
+                        {doc.reviews_count > 0 && (
+                          <span className="text-xs text-zinc-400">{doc.reviews_count} reseñas</span>
+                        )}
+                        <span className="text-xs text-emerald-500 font-medium">● Disponible</span>
+                      </div>
                     </div>
-                  </div>
-                  <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-[#A78BFA] transition-colors flex-shrink-0" />
-                </button>
-              ))}
-            </div>
+                    <ArrowRight className="w-4 h-4 text-zinc-300 group-hover:text-[#A78BFA] transition-colors flex-shrink-0" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
@@ -351,7 +352,7 @@ function AgendarWizard() {
             </button>
             <p className="text-sm text-zinc-400 mb-1">Paso 3 de 4</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Elige fecha y hora</h1>
-            <p className="text-zinc-500 text-sm mb-6">Horario de atención: lunes a viernes, 9am – 6pm (Lima).</p>
+            <p className="text-zinc-500 text-sm mb-6">Horario de atención: lunes a viernes (Lima).</p>
 
             {/* Week selector */}
             <div className="bg-white rounded-2xl border border-zinc-100 p-4 mb-4">
@@ -462,15 +463,21 @@ function AgendarWizard() {
 
             <div className="bg-white rounded-2xl border border-zinc-100 p-6 mb-6 space-y-4">
               <div className="flex items-center gap-4">
-                <Image
-                  src={selectedDoctor?.photo ?? ""}
-                  alt={selectedDoctor?.name ?? ""}
-                  width={56}
-                  height={56}
-                  className="rounded-2xl object-cover"
-                />
+                {selectedDoctor?.photo_url ? (
+                  <Image
+                    src={selectedDoctor.photo_url}
+                    alt={selectedDoctor.full_name ?? ""}
+                    width={56}
+                    height={56}
+                    className="rounded-2xl object-cover"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-2xl bg-zinc-100 flex items-center justify-center flex-shrink-0">
+                    <User className="w-6 h-6 text-zinc-400" />
+                  </div>
+                )}
                 <div>
-                  <p className="font-bold text-[#0B1D35]">{selectedDoctor?.name}</p>
+                  <p className="font-bold text-[#0B1D35]">{selectedDoctor?.full_name}</p>
                   <p className="text-xs text-zinc-500">{selectedDoctor?.cmp}</p>
                 </div>
               </div>
@@ -622,7 +629,7 @@ function AgendarWizard() {
                   <span className="text-xl">{selectedVertical?.icon}</span>
                   <span className="font-semibold text-[#0B1D35]">{selectedVertical?.label}</span>
                 </div>
-                <p className="text-zinc-600">{selectedDoctor?.name}</p>
+                <p className="text-zinc-600">{selectedDoctor?.full_name}</p>
                 <p className="text-zinc-600">
                   {new Date(selectedSlot).toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" })}
                   {" · "}
@@ -656,4 +663,3 @@ function AgendarWizard() {
     </div>
   );
 }
-

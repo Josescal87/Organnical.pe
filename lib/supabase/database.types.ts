@@ -179,32 +179,50 @@ export interface Database {
       // ── medical.profiles ──────────────────────────────────────────────────
       profiles: {
         Row: {
-          id:          string        // UUID, FK → auth.users
-          role:        UserRole
-          full_name:   string | null
-          document_id: string | null
-          phone:       string | null
-          cmp:         string | null  // Código Médico Peruano (obligatorio para doctors)
-          created_at:  string
-          updated_at:  string
+          id:              string        // UUID, FK → auth.users
+          role:            UserRole
+          full_name:       string | null
+          document_id:     string | null
+          phone:           string | null
+          cmp:             string | null  // Código Médico Peruano (obligatorio para doctors)
+          photo_url:       string | null
+          specialty_label: string | null
+          verticals:       string[]
+          rating:          number
+          reviews_count:   number
+          available_hours: number[]      // ej. [9,10,11,14,15,16,17] Mon-Fri Lima
+          created_at:      string
+          updated_at:      string
         }
         Insert: {
-          id:           string
-          role?:        UserRole
-          full_name?:   string | null
-          document_id?: string | null
-          phone?:       string | null
-          cmp?:         string | null
-          created_at?:  string
-          updated_at?:  string
+          id:               string
+          role?:            UserRole
+          full_name?:       string | null
+          document_id?:     string | null
+          phone?:           string | null
+          cmp?:             string | null
+          photo_url?:       string | null
+          specialty_label?: string | null
+          verticals?:       string[]
+          rating?:          number
+          reviews_count?:   number
+          available_hours?: number[]
+          created_at?:      string
+          updated_at?:      string
         }
         Update: {
-          role?:        UserRole
-          full_name?:   string | null
-          document_id?: string | null
-          phone?:       string | null
-          cmp?:         string | null
-          updated_at?:  string
+          role?:            UserRole
+          full_name?:       string | null
+          document_id?:     string | null
+          phone?:           string | null
+          cmp?:             string | null
+          photo_url?:       string | null
+          specialty_label?: string | null
+          verticals?:       string[]
+          rating?:          number
+          reviews_count?:   number
+          available_hours?: number[]
+          updated_at?:      string
         }
       }
 

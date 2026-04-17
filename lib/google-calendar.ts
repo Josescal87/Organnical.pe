@@ -1,15 +1,18 @@
 import { google } from "googleapis";
 
 const TIMEZONE = "America/Lima";
+const IMPERSONATE_EMAIL = "reservas@organnical.com";
 
 function getAuth() {
-  return new google.auth.GoogleAuth({
+  const auth = new google.auth.GoogleAuth({
     credentials: {
       client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
       private_key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, "\n"),
     },
+    clientOptions: { subject: IMPERSONATE_EMAIL },
     scopes: ["https://www.googleapis.com/auth/calendar"],
   });
+  return auth;
 }
 
 export interface CreateEventParams {
@@ -35,7 +38,7 @@ export async function createCalendarEvent(
   const { data } = await calendar.events.insert({
     calendarId: process.env.GOOGLE_CALENDAR_ID!,
     conferenceDataVersion: 1, // generates Google Meet link
-    sendUpdates: "none",
+    sendUpdates: "all",
     requestBody: {
       summary: params.title,
       description: params.description,
@@ -47,6 +50,7 @@ export async function createCalendarEvent(
         dateTime: params.endTime,
         timeZone: TIMEZONE,
       },
+      attendees: params.attendeeEmails.map((email) => ({ email })),
       conferenceData: {
         createRequest: {
           requestId: `organnical-${Date.now()}`,

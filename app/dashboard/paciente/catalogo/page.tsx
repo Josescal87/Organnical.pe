@@ -82,13 +82,6 @@ export default async function CatalogoPacientePage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {productosLibres.length > 0 && (
-            <section>
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Disponibles sin receta</p>
-              <CatalogCart products={productosLibres} />
-            </section>
-          )}
-
           {hasActivePrescription && productosReceta.length > 0 && (
             <section>
               <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
@@ -96,6 +89,13 @@ export default async function CatalogoPacientePage() {
                 Tus productos recetados
               </p>
               <CatalogCart products={productosReceta} />
+            </section>
+          )}
+
+          {productosLibres.length > 0 && (
+            <section>
+              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Disponibles sin receta</p>
+              <CatalogCart products={productosLibres} />
             </section>
           )}
 

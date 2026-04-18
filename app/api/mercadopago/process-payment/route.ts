@@ -35,6 +35,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Registrar venta y notificar admins si aprobado
+    console.log("Payment result status:", result.status, "cart length:", cart?.length ?? 0);
     if (result.status === "approved" && cart?.length) {
       const adminClient = createAdminClient();
 

@@ -182,6 +182,64 @@ export async function sendPrescriptionNotification({
   });
 }
 
+export async function sendProductPurchaseConfirmation({
+  toEmail,
+  patientName,
+  items,
+  total,
+}: {
+  toEmail: string;
+  patientName: string;
+  items: { descripcion: string; qty: number; precio: number }[];
+  total: number;
+}) {
+  const itemsHtml = items.map((i) => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5">
+        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5;text-align:right">
+        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
+      </td>
+    </tr>
+  `).join("");
+
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">¡Pedido confirmado! 🛍</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${patientName}, recibimos tu pago correctamente. En breve nos pondremos en contacto contigo para coordinar el envío.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+      <tr><td>
+        <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Tu pedido</p>
+        <table width="100%" cellpadding="0" cellspacing="0">${itemsHtml}</table>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px">
+          <tr>
+            <td style="color:#71717A;font-size:13px;font-weight:700;text-transform:uppercase">Total pagado</td>
+            <td style="text-align:right;color:#0B1D35;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <p style="margin:0 0 24px;color:#71717A;font-size:13px">¿Tienes alguna pregunta? Escríbenos por WhatsApp al <a href="https://wa.me/51952476574" style="color:#A78BFA;font-weight:600">+51 952 476 574</a> o responde este correo.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="https://organnical.pe/dashboard/paciente" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+          Ver mi dashboard
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return getResend().emails.send({
+    from: FROM,
+    to: toEmail,
+    subject: `🛍 Pedido confirmado — S/ ${total.toFixed(2)} · Organnical`,
+    html,
+  });
+}
+
 export async function sendAdminSaleNotification({
   adminEmails,
   saleType,

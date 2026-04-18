@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { MercadoPagoConfig, Payment } from "mercadopago";
-import { sendAdminSaleNotification } from "@/lib/emails";
+import { sendAdminSaleNotification, sendProductPurchaseConfirmation } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
 
 function createAdminClient() {
@@ -87,6 +87,19 @@ export async function POST(req: NextRequest) {
       }
 
       const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
+
+      // Email al cliente
+      try {
+        await sendProductPurchaseConfirmation({
+          toEmail: user.email!,
+          patientName,
+          items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
+          total,
+        });
+        console.log("Customer purchase email sent to:", user.email);
+      } catch (e) {
+        console.error("Customer purchase email error:", e);
+      }
 
       // Email a admins — awaited so Vercel doesn't kill before sending
       try {

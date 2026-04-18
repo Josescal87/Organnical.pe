@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import CancelAppointmentButton from "@/components/CancelAppointmentButton";
 import CalendarButtons from "@/components/CalendarButtons";
+import { RescheduleModal } from "@/components/RescheduleModal";
 import Link from "next/link";
 import { Calendar, Clock, Video } from "lucide-react";
 import { BackLink } from "@/components/BackLink";
@@ -12,6 +13,7 @@ const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 type AppointmentRow = {
   id: string;
   slot_start: string;
+  doctor_id: string;
   status: AppointmentStatus;
   specialty: AppointmentSpecialty;
   meeting_link: string | null;
@@ -39,7 +41,7 @@ export default async function CitasPacientePage() {
   const { data: aptsData } = await supabase
     .schema("medical")
     .from("appointments")
-    .select("id, slot_start, status, specialty, meeting_link")
+    .select("id, slot_start, doctor_id, status, specialty, meeting_link")
     .eq("patient_id", user.id)
     .order("slot_start", { ascending: false });
 
@@ -141,7 +143,7 @@ function AppointmentCard({ apt, canCancel }: { apt: AppointmentRow; canCancel: b
       </div>
 
       <div className="flex flex-col gap-2 flex-shrink-0 items-end">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-end">
           {apt.meeting_link && apt.status === "confirmed" && !isPast && (
             <a
               href={apt.meeting_link}
@@ -153,8 +155,15 @@ function AppointmentCard({ apt, canCancel }: { apt: AppointmentRow; canCancel: b
               <Video className="w-3.5 h-3.5" /> Unirse
             </a>
           )}
-          {canCancel && apt.status === "pending" && (
-            <CancelAppointmentButton appointmentId={apt.id} />
+          {canCancel && !isPast && ["pending", "confirmed"].includes(apt.status) && (
+            <>
+              <RescheduleModal
+                appointmentId={apt.id}
+                doctorId={apt.doctor_id}
+                currentSlotStart={apt.slot_start}
+              />
+              <CancelAppointmentButton appointmentId={apt.id} />
+            </>
           )}
         </div>
         {["pending", "confirmed"].includes(apt.status) && (

@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
+import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import {
   ArrowLeft, ArrowRight, CheckCircle, Calendar,
   Clock, Video, Loader2, ChevronLeft, ChevronRight,
-  User, Mail, Lock,
+  User, Mail, Lock, CreditCard,
 } from "lucide-react";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -53,7 +54,7 @@ function isSameDay(a: Date, b: Date) {
 
 /* ─── Types ──────────────────────────────────────────────────── */
 
-type Step = "vertical" | "doctor" | "datetime" | "confirm" | "done";
+type Step = "vertical" | "doctor" | "datetime" | "confirm" | "payment" | "done";
 
 interface DoctorRow {
   id: string;
@@ -102,6 +103,13 @@ function AgendarWizard() {
   const [showLogin, setShowLogin] = useState(false);
   const [pricing, setPricing] = useState<{ precioBase: number; precioFinal: number; descuento: number; promoLabel: string }>({ precioBase: 60, precioFinal: 60, descuento: 0, promoLabel: "" });
 
+  // Sessions + payment state
+  const [sessions, setSessions] = useState(1);
+  const [preferenceId, setPreferenceId] = useState<string | null>(null);
+  const [loadingPreference, setLoadingPreference] = useState(false);
+  const mpInitialized = useRef(false);
+  const [paymentResult, setPaymentResult] = useState<{ appointmentIds: string[]; meetLinks: (string | null)[] } | null>(null);
+
   // Load user session + doctors + pricing from DB
   useEffect(() => {
     const supabase = createClient();
@@ -122,6 +130,34 @@ function AgendarWizard() {
       .then((d) => setPricing(d))
       .catch(() => {});
   }, []);
+
+  // Initialize MP once + create preference when entering payment step
+  useEffect(() => {
+    if (step !== "payment") return;
+    if (!mpInitialized.current) {
+      initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY!, { locale: "es-PE" });
+      mpInitialized.current = true;
+    }
+    if (preferenceId) return;
+    setLoadingPreference(true);
+    const totalAmount = pricing.precioFinal * sessions;
+    fetch("/api/mercadopago/create-preference", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        items: [{
+          sku: `consulta-${vertical}`,
+          descripcion: `Teleconsulta ${sessions > 1 ? `× ${sessions} sesiones` : ""}`,
+          precio: totalAmount,
+          qty: 1,
+        }],
+      }),
+    })
+      .then((r) => r.json())
+      .then((d) => { if (d.preference_id) setPreferenceId(d.preference_id); })
+      .catch((e) => console.error("Preference error:", e))
+      .finally(() => setLoadingPreference(false));
+  }, [step]);
 
   // Load booked slots when doctor + date changes
   useEffect(() => {
@@ -166,7 +202,6 @@ function AgendarWizard() {
 
     if (!user) {
       const supabase = createClient();
-
       if (!showLogin) {
         if (!guestName.trim() || !guestEmail.trim() || !guestPassword) {
           setError("Completa todos los campos para continuar.");
@@ -203,30 +238,11 @@ function AgendarWizard() {
           return;
         }
       }
-
-      setUser({ email: guestEmail.trim() });
+      setUser({ email: showLogin ? guestEmail.trim() : guestEmail.trim() });
     }
 
-    const res = await fetch("/api/appointments", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        doctorId:  doctorId,
-        specialty: vertical,
-        slotStart: selectedSlot,
-      }),
-    });
-
-    const data = await res.json();
     setSubmitting(false);
-
-    if (!res.ok) {
-      setError(data.error ?? "Error al crear la cita");
-      return;
-    }
-
-    setResult({ meetLink: data.meetLink, calendarLink: data.calendarLink });
-    setStep("done");
+    setStep("payment");
   }
 
   /* ── WEEK navigation ── */
@@ -246,15 +262,15 @@ function AgendarWizard() {
           </Link>
           {step !== "done" && (
             <div className="flex items-center gap-1.5">
-              {(["vertical", "doctor", "datetime", "confirm"] as Step[]).map((s, i) => (
+              {(["vertical", "doctor", "datetime", "confirm", "payment"] as Step[]).map((s, i) => (
                 <div
                   key={s}
                   className={`h-1.5 rounded-full transition-all ${
-                    ["vertical", "doctor", "datetime", "confirm"].indexOf(step) >= i
+                    ["vertical", "doctor", "datetime", "confirm", "payment"].indexOf(step) >= i
                       ? "w-8"
                       : "w-4 bg-zinc-200"
                   }`}
-                  style={["vertical", "doctor", "datetime", "confirm"].indexOf(step) >= i ? { background: G } : {}}
+                  style={["vertical", "doctor", "datetime", "confirm", "payment"].indexOf(step) >= i ? { background: G } : {}}
                 />
               ))}
             </div>
@@ -523,15 +539,41 @@ function AgendarWizard() {
 
               <div className="h-px bg-zinc-50" />
 
+              <div>
+                <p className="text-xs text-zinc-400 mb-2">Número de sesiones</p>
+                <div className="flex gap-2">
+                  {[1, 3, 5].map((n) => (
+                    <button
+                      key={n}
+                      onClick={() => setSessions(n)}
+                      className={`flex-1 rounded-xl py-2.5 text-sm font-bold border transition-all ${
+                        sessions === n
+                          ? "text-white border-transparent"
+                          : "border-zinc-200 text-zinc-600 hover:border-violet-300"
+                      }`}
+                      style={sessions === n ? { background: G } : {}}
+                    >
+                      {n === 1 ? "1 sesión" : `${n} sesiones`}
+                    </button>
+                  ))}
+                </div>
+                {sessions > 1 && (
+                  <p className="text-xs text-zinc-400 mt-2">Las sesiones se agendan cada 7 días a partir de la fecha seleccionada.</p>
+                )}
+              </div>
+
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-xs text-zinc-400 mb-0.5">Total a pagar</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-xl font-black text-[#0B1D35]">S/ {pricing.precioFinal.toFixed(2)}</p>
+                    <p className="text-xl font-black text-[#0B1D35]">S/ {(pricing.precioFinal * sessions).toFixed(2)}</p>
                     {pricing.descuento > 0 && (
-                      <p className="text-xs text-zinc-400 line-through">S/ {pricing.precioBase.toFixed(2)}</p>
+                      <p className="text-xs text-zinc-400 line-through">S/ {(pricing.precioBase * sessions).toFixed(2)}</p>
                     )}
                   </div>
+                  {sessions > 1 && (
+                    <p className="text-xs text-zinc-500 mt-0.5">S/ {pricing.precioFinal.toFixed(2)} × {sessions} sesiones</p>
+                  )}
                   {pricing.promoLabel && (
                     <p className="text-xs text-emerald-600 font-semibold mt-0.5">{pricing.promoLabel}</p>
                   )}
@@ -620,19 +662,79 @@ function AgendarWizard() {
               style={{ background: G }}
             >
               {submitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> {user ? "Creando cita..." : "Creando cuenta y cita..."}</>
+                <><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</>
               ) : (
-                <>{user ? "Confirmar cita" : showLogin ? "Iniciar sesión y confirmar" : "Crear cuenta y confirmar"} <CheckCircle className="w-4 h-4" /></>
+                <><CreditCard className="w-4 h-4" /> {user ? "Proceder al pago" : showLogin ? "Iniciar sesión y pagar" : "Crear cuenta y pagar"}</>
               )}
             </button>
             <p className="text-center text-xs text-zinc-400 mt-3">
-              Recibirás confirmación e invitación de Google Calendar por email.
+              Pagarás S/ {(pricing.precioFinal * sessions).toFixed(2)} con Mercado Pago de forma segura.
             </p>
           </div>
         )}
 
+        {/* ── STEP: payment ── */}
+        {step === "payment" && (
+          <div>
+            <button onClick={() => setStep("confirm")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
+              <ArrowLeft className="w-3.5 h-3.5" /> Atrás
+            </button>
+            <p className="text-sm text-zinc-400 mb-1">Paso 5 de 5</p>
+            <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Pago seguro</h1>
+            <p className="text-zinc-500 text-sm mb-6">
+              {sessions > 1
+                ? `${sessions} sesiones · S/ ${(pricing.precioFinal * sessions).toFixed(2)} total`
+                : `1 sesión · S/ ${pricing.precioFinal.toFixed(2)}`}
+            </p>
+
+            {loadingPreference && (
+              <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
+                <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+              </div>
+            )}
+
+            {preferenceId && !loadingPreference && (
+              <Payment
+                initialization={{ amount: pricing.precioFinal * sessions, preferenceId }}
+                customization={{
+                  paymentMethods: { creditCard: "all", debitCard: "all" },
+                  visual: {
+                    style: {
+                      customVariables: {
+                        baseColor: "#A78BFA",
+                        baseColorFirstVariant: "#F472B6",
+                        baseColorSecondVariant: "#38BDF8",
+                      },
+                    },
+                  },
+                }}
+                onSubmit={async ({ formData }) => {
+                  const res = await fetch("/api/mercadopago/process-appointment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      ...formData,
+                      doctorId,
+                      specialty:   vertical,
+                      slotStart:   selectedSlot,
+                      sessions,
+                      precioFinal: pricing.precioFinal,
+                    }),
+                  });
+                  const data = await res.json();
+                  if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
+                  if (data.status !== "approved") throw new Error("Pago no aprobado");
+                  setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                  setStep("done");
+                }}
+                onError={(err) => console.error("MP Brick error:", err)}
+              />
+            )}
+          </div>
+        )}
+
         {/* ── STEP: done ── */}
-        {step === "done" && result && (
+        {step === "done" && paymentResult && (
           <div className="text-center py-10">
             <div
               className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6"
@@ -662,9 +764,9 @@ function AgendarWizard() {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              {result.meetLink && (
+              {paymentResult.meetLinks[0] && (
                 <a
-                  href={result.meetLink}
+                  href={paymentResult.meetLinks[0]}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold text-white"

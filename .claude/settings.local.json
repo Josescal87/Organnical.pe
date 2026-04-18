@@ -3,7 +3,19 @@
     "allow": [
       "Bash(npx vercel:*)",
       "Bash(curl -s https://organnical-pe.vercel.app/)",
-      "WebFetch(domain:organnical.pe)"
+      "WebFetch(domain:organnical.pe)",
+      "Bash(find \"c:\\\\Users\\\\ruben\\\\Organnical.pe\" \\\\\\( -name \"*.tsx\" -o -name \"*.ts\" -o -name \"*.jsx\" -o -name \"*.js\" \\\\\\) -type f -exec grep -l \"TODO\\\\|FIXME\\\\|XXX\\\\|STUB\\\\|placeholder\\\\|WIP\" {} \\\\;)",
+      "Bash(xargs ls *)",
+      "Bash(npx tsc *)",
+      "Read(//c/Users/ruben/OrgannicalRuby/**)",
+      "Bash(python3 -c ' *)",
+      "Bash(node -e ' *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Bash(npm ls *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\ruben\\OrgannicalRuby"
     ]
   }
 }

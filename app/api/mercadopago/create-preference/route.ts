@@ -50,12 +50,13 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (!response.init_point) {
-      console.error("MP response missing init_point:", response);
+    if (!response.id) {
+      console.error("MP response missing id:", response);
       return NextResponse.json({ error: "Respuesta inesperada de Mercado Pago" }, { status: 500 });
     }
 
-    return NextResponse.json({ init_point: response.init_point });
+    const amount = items.reduce((s, i) => s + i.precio * i.qty, 0);
+    return NextResponse.json({ preference_id: response.id, amount });
   } catch (err) {
     console.error("MercadoPago preference error:", JSON.stringify(err, null, 2));
     const message =

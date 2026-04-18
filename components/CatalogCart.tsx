@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Package, ShoppingCart, Plus, Minus, Trash2, MessageCircle, CreditCard, AlertTriangle, X } from "lucide-react";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -22,6 +23,7 @@ export default function CatalogCart({
   productosLibres: Producto[];
   productosReceta: Producto[];
 }) {
+  const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
   const [loadingPay, setLoadingPay] = useState(false);
@@ -61,22 +63,12 @@ export default function CatalogCart({
     } else if (isOnlyLibre) {
       setLoadingPay(true);
       try {
-        const res = await fetch("/api/mercadopago/create-preference", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            items: cart.map((i) => ({ sku: i.sku, descripcion: i.descripcion, precio: i.precio, qty: i.qty })),
-          }),
-        });
-        const data = await res.json();
-        if (data.init_point) {
-          window.location.href = data.init_point;
-        } else {
-          alert(`Error: ${data.error ?? "No se pudo iniciar el pago."}`);
-        }
+        sessionStorage.setItem("mp_cart", JSON.stringify(
+          cart.map((i) => ({ sku: i.sku, descripcion: i.descripcion, precio: i.precio, qty: i.qty }))
+        ));
+        router.push("/dashboard/paciente/catalogo/checkout");
       } catch {
-        alert("Error al conectar con el servidor de pagos.");
-      } finally {
+        alert("Error al iniciar el pago.");
         setLoadingPay(false);
       }
     } else {

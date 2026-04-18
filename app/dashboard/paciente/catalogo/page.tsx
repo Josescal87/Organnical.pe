@@ -60,7 +60,7 @@ export default async function CatalogoPacientePage() {
     }
   }
 
-  const allProducts = [...productosLibres, ...productosReceta];
+  const hasProducts = productosLibres.length > 0 || productosReceta.length > 0;
 
   return (
     <div className="p-6 md:p-10 max-w-5xl">
@@ -74,7 +74,7 @@ export default async function CatalogoPacientePage() {
         </p>
       </div>
 
-      {allProducts.length === 0 ? (
+      {!hasProducts ? (
         <div className="bg-white rounded-2xl p-12 border border-zinc-100 text-center">
           <ShoppingBag className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
           <p className="font-semibold text-zinc-600">Catálogo en preparación</p>
@@ -82,22 +82,7 @@ export default async function CatalogoPacientePage() {
         </div>
       ) : (
         <div className="space-y-8">
-          {hasActivePrescription && productosReceta.length > 0 && (
-            <section>
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse inline-block" />
-                Tus productos recetados
-              </p>
-              <CatalogCart products={productosReceta} />
-            </section>
-          )}
-
-          {productosLibres.length > 0 && (
-            <section>
-              <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Disponibles sin receta</p>
-              <CatalogCart products={productosLibres} />
-            </section>
-          )}
+          <CatalogCart productosLibres={productosLibres} productosReceta={productosReceta} />
 
           {!hasActivePrescription && (
             <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-100 flex items-center justify-between gap-4">

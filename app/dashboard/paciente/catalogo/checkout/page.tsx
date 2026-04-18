@@ -132,7 +132,7 @@ export default function CheckoutPage() {
                 const res = await fetch("/api/mercadopago/process-payment", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(formData),
+                  body: JSON.stringify({ ...formData, cart }),
                 });
                 const data = await res.json();
 

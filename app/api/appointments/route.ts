@@ -128,14 +128,15 @@ export async function POST(req: NextRequest) {
         .select("num_orden")
         .order("num_orden", { ascending: false })
         .limit(1)
-        .single();
+        .single() as { data: { num_orden: number } | null };
       const nextNum = (maxOrden?.num_orden ?? 0) + 1;
 
       const parts    = patientName.trim().split(" ");
       const nombre   = parts[0] ?? patientName;
       const apellido = parts.slice(1).join(" ") || "-";
 
-      await supabase.from("ventas").insert({
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      await (supabase as any).from("ventas").insert({
         num_orden:        nextNum,
         item:             `Teleconsulta — ${specialtyLabel}`,
         unidades:         1,

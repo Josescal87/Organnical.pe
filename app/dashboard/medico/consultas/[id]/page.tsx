@@ -6,6 +6,7 @@ import type { AppointmentStatus, AppointmentSpecialty, Producto } from "@/lib/su
 import ClinicalNotesEditor from "./ClinicalNotesEditor";
 import StatusButtons from "./StatusButtons";
 import PrescriptionForm from "./PrescriptionForm";
+import CalendarButtons from "@/components/CalendarButtons";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -146,6 +147,20 @@ export default async function ConsultaDetallePage({
             >
               <Video className="w-4 h-4" /> Unirse a la videollamada
             </a>
+          )}
+          {["pending", "confirmed"].includes(apt.status) && (
+            <div className="mt-3 pt-3 border-t border-zinc-100">
+              <CalendarButtons
+                compact
+                event={{
+                  title:       `Consulta Organnical — ${vt.label}`,
+                  description: `Teleconsulta de ${vt.label}\nPaciente: ${patient?.full_name ?? "Paciente"}${apt.meeting_link ? `\nLink: ${apt.meeting_link}` : ""}\n\nSoporte: reservas@organnical.com`,
+                  startISO:    apt.slot_start,
+                  endISO:      new Date(date.getTime() + 25 * 60 * 1000).toISOString(),
+                  location:    apt.meeting_link ?? undefined,
+                }}
+              />
+            </div>
           )}
         </div>
 

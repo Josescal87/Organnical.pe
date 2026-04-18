@@ -63,10 +63,11 @@ export async function POST(req: NextRequest) {
         .single() as { data: { num_orden: number } | null };
       const baseOrden = (maxOrden?.num_orden ?? 0) + 1;
 
+      console.log("Inserting ventas for cart:", JSON.stringify(cart));
       for (let idx = 0; idx < cart.length; idx++) {
         const item = cart[idx];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (adminClient as any).from("ventas").insert({
+        const { error: ventaError } = await (adminClient as any).from("ventas").insert({
           num_orden:       baseOrden + idx,
           item:            item.descripcion,
           unidades:        item.qty,
@@ -80,23 +81,28 @@ export async function POST(req: NextRequest) {
           fecha_compra:    fecha,
           comentarios:     `MP:${paymentId}`,
         });
+        if (ventaError) console.error("Venta insert error:", ventaError);
+        else console.log("Venta inserted for item:", item.descripcion);
       }
 
       const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
 
-      // Email a admins
-      getAdminEmails()
-        .then((adminEmails) =>
-          sendAdminSaleNotification({
-            adminEmails,
-            saleType: "product",
-            patientName,
-            items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
-            total,
-            paymentMethod: "Mercado Pago",
-          })
-        )
-        .catch((e) => console.error("Admin sale email error:", e));
+      // Email a admins — awaited so Vercel doesn't kill before sending
+      try {
+        const adminEmails = await getAdminEmails();
+        console.log("Admin emails found:", adminEmails);
+        await sendAdminSaleNotification({
+          adminEmails,
+          saleType: "product",
+          patientName,
+          items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
+          total,
+          paymentMethod: "Mercado Pago",
+        });
+        console.log("Admin sale email sent");
+      } catch (e) {
+        console.error("Admin sale email error:", e);
+      }
     }
 
     return NextResponse.json({ status: result.status, payment_id: result.id });

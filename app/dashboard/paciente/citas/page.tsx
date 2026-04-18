@@ -64,15 +64,13 @@ export default async function CitasPacientePage() {
           <p className="font-semibold text-white text-sm">¿Necesitas una nueva consulta?</p>
           <p className="text-white/50 text-xs mt-0.5">Médicos disponibles hoy · Primera cita en 48h</p>
         </div>
-        <a
-          href="https://wa.me/51952476574?text=Hola%2C+quiero+agendar+una+consulta"
-          target="_blank"
-          rel="noopener noreferrer"
+        <Link
+          href="/agendar"
           className="flex-shrink-0 rounded-xl px-5 py-2.5 text-xs font-semibold text-white transition-all hover:opacity-90"
           style={{ background: G }}
         >
-          Agendar vía WhatsApp
-        </a>
+          Agendar consulta
+        </Link>
       </div>
 
       {/* Próximas */}
@@ -99,7 +97,7 @@ export default async function CitasPacientePage() {
         <div className="bg-white rounded-2xl p-12 border border-zinc-100 text-center">
           <Calendar className="w-10 h-10 text-zinc-300 mx-auto mb-3" />
           <p className="font-semibold text-zinc-600">Aún no tienes citas</p>
-          <p className="text-sm text-zinc-400 mt-1">Agenda tu primera consulta por WhatsApp.</p>
+          <p className="text-sm text-zinc-400 mt-1">Agenda tu primera consulta en línea.</p>
         </div>
       )}
     </div>

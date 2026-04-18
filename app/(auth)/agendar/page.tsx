@@ -109,6 +109,11 @@ function AgendarWizard() {
   const [loadingPreference, setLoadingPreference] = useState(false);
   const mpInitialized = useRef(false);
   const [paymentResult, setPaymentResult] = useState<{ appointmentIds: string[]; meetLinks: (string | null)[] } | null>(null);
+  const [combos, setCombos] = useState<{ sesiones: number; precio: number; label: string | null }[]>([
+    { sesiones: 1, precio: 60,  label: null },
+    { sesiones: 3, precio: 170, label: "Ahorra S/ 10" },
+    { sesiones: 5, precio: 270, label: "Ahorra S/ 30" },
+  ]);
 
   // Load user session + doctors + pricing from DB
   useEffect(() => {
@@ -129,7 +134,15 @@ function AgendarWizard() {
       .then((r) => r.json())
       .then((d) => setPricing(d))
       .catch(() => {});
+    fetch("/api/consulta-combos")
+      .then((r) => r.json())
+      .then((d) => { if (Array.isArray(d) && d.length) setCombos(d); })
+      .catch(() => {});
   }, []);
+
+  const selectedCombo = combos.find((c) => c.sesiones === sessions) ?? combos[0];
+  const comboPrice    = selectedCombo?.precio ?? pricing.precioFinal * sessions;
+  const pricePerSession = sessions > 0 ? comboPrice / sessions : pricing.precioFinal;
 
   // Initialize MP once + create preference when entering payment step
   useEffect(() => {
@@ -140,13 +153,14 @@ function AgendarWizard() {
     }
     if (preferenceId) return;
     setLoadingPreference(true);
-    const totalAmount = pricing.precioFinal * sessions;
+    const combo = combos.find((c) => c.sesiones === sessions) ?? combos[0];
+    const totalAmount = combo?.precio ?? pricing.precioFinal * sessions;
     fetch("/api/mercadopago/create-preference", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         items: [{
-          sku: `consulta-${vertical}`,
+          sku: `consulta-${vertical}-x${sessions}`,
           descripcion: `Teleconsulta ${sessions > 1 ? `× ${sessions} sesiones` : ""}`,
           precio: totalAmount,
           qty: 1,
@@ -542,18 +556,18 @@ function AgendarWizard() {
               <div>
                 <p className="text-xs text-zinc-400 mb-2">Número de sesiones</p>
                 <div className="flex gap-2">
-                  {[1, 3, 5].map((n) => (
+                  {combos.map((c) => (
                     <button
-                      key={n}
-                      onClick={() => setSessions(n)}
+                      key={c.sesiones}
+                      onClick={() => setSessions(c.sesiones)}
                       className={`flex-1 rounded-xl py-2.5 text-sm font-bold border transition-all ${
-                        sessions === n
+                        sessions === c.sesiones
                           ? "text-white border-transparent"
                           : "border-zinc-200 text-zinc-600 hover:border-violet-300"
                       }`}
-                      style={sessions === n ? { background: G } : {}}
+                      style={sessions === c.sesiones ? { background: G } : {}}
                     >
-                      {n === 1 ? "1 sesión" : `${n} sesiones`}
+                      {c.sesiones === 1 ? "1 sesión" : `${c.sesiones} sesiones`}
                     </button>
                   ))}
                 </div>
@@ -566,19 +580,19 @@ function AgendarWizard() {
                 <div>
                   <p className="text-xs text-zinc-400 mb-0.5">Total a pagar</p>
                   <div className="flex items-baseline gap-2">
-                    <p className="text-xl font-black text-[#0B1D35]">S/ {(pricing.precioFinal * sessions).toFixed(2)}</p>
-                    {pricing.descuento > 0 && (
-                      <p className="text-xs text-zinc-400 line-through">S/ {(pricing.precioBase * sessions).toFixed(2)}</p>
+                    <p className="text-xl font-black text-[#0B1D35]">S/ {comboPrice.toFixed(2)}</p>
+                    {sessions > 1 && (
+                      <p className="text-xs text-zinc-400 line-through">S/ {(pricing.precioFinal * sessions).toFixed(2)}</p>
                     )}
                   </div>
-                  {sessions > 1 && (
-                    <p className="text-xs text-zinc-500 mt-0.5">S/ {pricing.precioFinal.toFixed(2)} × {sessions} sesiones</p>
+                  {selectedCombo?.label && (
+                    <p className="text-xs text-emerald-600 font-semibold mt-0.5">{selectedCombo.label}</p>
                   )}
-                  {pricing.promoLabel && (
-                    <p className="text-xs text-emerald-600 font-semibold mt-0.5">{pricing.promoLabel}</p>
+                  {sessions > 1 && (
+                    <p className="text-xs text-zinc-400 mt-0.5">S/ {pricePerSession.toFixed(2)} por sesión</p>
                   )}
                 </div>
-                <span className="rounded-full px-3 py-1 text-xs font-bold bg-emerald-50 text-emerald-600">Teleconsulta 60 min</span>
+                <span className="rounded-full px-3 py-1 text-xs font-bold bg-emerald-50 text-emerald-600">Teleconsulta 25 min</span>
               </div>
             </div>
 
@@ -668,7 +682,7 @@ function AgendarWizard() {
               )}
             </button>
             <p className="text-center text-xs text-zinc-400 mt-3">
-              Pagarás S/ {(pricing.precioFinal * sessions).toFixed(2)} con Mercado Pago de forma segura.
+              Pagarás S/ {comboPrice.toFixed(2)} con Mercado Pago de forma segura.
             </p>
           </div>
         )}
@@ -708,14 +722,19 @@ function AgendarWizard() {
                               {" · 25 min"}
                             </p>
                           </div>
-                          <p className="text-sm font-bold text-[#0B1D35] flex-shrink-0">S/ {pricing.precioFinal.toFixed(2)}</p>
+                          <p className="text-sm font-bold text-[#0B1D35] flex-shrink-0">S/ {pricePerSession.toFixed(2)}</p>
                         </div>
                       );
                     })}
                   </div>
                   <div className="border-t border-zinc-100 mt-5 pt-4 flex justify-between items-center">
-                    <span className="text-sm text-zinc-500">Total</span>
-                    <span className="font-black text-lg text-[#0B1D35]">S/ {(pricing.precioFinal * sessions).toFixed(2)}</span>
+                    <div>
+                      <span className="text-sm text-zinc-500">Total</span>
+                      {selectedCombo?.label && (
+                        <p className="text-xs text-emerald-600 font-semibold">{selectedCombo.label}</p>
+                      )}
+                    </div>
+                    <span className="font-black text-lg text-[#0B1D35]">S/ {comboPrice.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -729,7 +748,7 @@ function AgendarWizard() {
                 )}
                 {preferenceId && !loadingPreference && (
                   <Payment
-                    initialization={{ amount: pricing.precioFinal * sessions, preferenceId }}
+                    initialization={{ amount: comboPrice, preferenceId }}
                     customization={{
                       paymentMethods: { creditCard: "all", debitCard: "all" },
                       visual: {
@@ -752,7 +771,7 @@ function AgendarWizard() {
                           specialty:   vertical,
                           slotStart:   selectedSlot,
                           sessions,
-                          precioFinal: pricing.precioFinal,
+                          precioFinal: pricePerSession,
                         }),
                       });
                       const data = await res.json();

@@ -100,8 +100,9 @@ function AgendarWizard() {
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPassword, setGuestPassword] = useState("");
   const [showLogin, setShowLogin] = useState(false);
+  const [pricing, setPricing] = useState<{ precioBase: number; precioFinal: number; descuento: number; promoLabel: string }>({ precioBase: 60, precioFinal: 60, descuento: 0, promoLabel: "" });
 
-  // Load user session + doctors from DB
+  // Load user session + doctors + pricing from DB
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
@@ -116,6 +117,10 @@ function AgendarWizard() {
         if (data) setDoctors(data as DoctorRow[]);
         setLoadingDoctors(false);
       });
+    fetch("/api/consulta-config")
+      .then((r) => r.json())
+      .then((d) => setPricing(d))
+      .catch(() => {});
   }, []);
 
   // Load booked slots when doctor + date changes
@@ -514,6 +519,24 @@ function AgendarWizard() {
               <div className="flex items-center gap-2 text-sm text-zinc-500">
                 <Video className="w-4 h-4 text-[#A78BFA]" />
                 Recibirás el link de Google Meet por email al confirmar.
+              </div>
+
+              <div className="h-px bg-zinc-50" />
+
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-zinc-400 mb-0.5">Total a pagar</p>
+                  <div className="flex items-baseline gap-2">
+                    <p className="text-xl font-black text-[#0B1D35]">S/ {pricing.precioFinal.toFixed(2)}</p>
+                    {pricing.descuento > 0 && (
+                      <p className="text-xs text-zinc-400 line-through">S/ {pricing.precioBase.toFixed(2)}</p>
+                    )}
+                  </div>
+                  {pricing.promoLabel && (
+                    <p className="text-xs text-emerald-600 font-semibold mt-0.5">{pricing.promoLabel}</p>
+                  )}
+                </div>
+                <span className="rounded-full px-3 py-1 text-xs font-bold bg-emerald-50 text-emerald-600">Teleconsulta 60 min</span>
               </div>
             </div>
 

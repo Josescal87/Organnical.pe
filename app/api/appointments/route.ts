@@ -112,6 +112,47 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Error al crear la cita" }, { status: 500 });
     }
 
+    // Registrar venta en Ruby (non-fatal)
+    try {
+      const { data: cfg } = await supabase
+        .from("consulta_config")
+        .select("precio, descuento_porcentaje")
+        .eq("id", 1)
+        .single();
+      const precioBase = cfg?.precio ?? 60;
+      const descuento  = cfg?.descuento_porcentaje ?? 0;
+      const precioFinal = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;
+
+      const { data: maxOrden } = await supabase
+        .from("ventas")
+        .select("num_orden")
+        .order("num_orden", { ascending: false })
+        .limit(1)
+        .single();
+      const nextNum = (maxOrden?.num_orden ?? 0) + 1;
+
+      const parts    = patientName.trim().split(" ");
+      const nombre   = parts[0] ?? patientName;
+      const apellido = parts.slice(1).join(" ") || "-";
+
+      await supabase.from("ventas").insert({
+        num_orden:        nextNum,
+        item:             `Teleconsulta — ${specialtyLabel}`,
+        unidades:         1,
+        precio_item:      precioFinal,
+        precio_delivery:  0,
+        total:            precioFinal,
+        metodo_pago:      "Online",
+        vendedor:         "Organnical.pe",
+        nombre,
+        apellido,
+        fecha_compra:     new Date().toISOString().split("T")[0],
+        comentarios:      `Cita ID: ${appointment.id} | Médico: ${doctorName}`,
+      });
+    } catch (ventaErr) {
+      console.error("Venta insert error (non-fatal):", ventaErr);
+    }
+
     // Emails de confirmación (no-fatal)
     sendAppointmentConfirmation({
       toEmail: user.email!, patientName, doctorName, specialty, slotStart, meetLink,

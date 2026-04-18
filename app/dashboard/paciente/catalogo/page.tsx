@@ -1,16 +1,10 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Package, ArrowLeft, Lock, ShoppingBag } from "lucide-react";
+import { ArrowLeft, Lock, ShoppingBag } from "lucide-react";
+import CatalogCart from "@/components/CatalogCart";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
-
-const CATEGORY_COLORS: Record<string, string> = {
-  CBD:       "bg-emerald-50 text-emerald-600",
-  THC:       "bg-violet-50 text-violet-600",
-  Balanced:  "bg-sky-50 text-sky-600",
-  Accessory: "bg-zinc-100 text-zinc-500",
-};
 
 type ProductoRow = {
   sku:         string;
@@ -105,44 +99,7 @@ export default async function CatalogoPacientePage() {
         </div>
       ) : (
         <>
-          <div className="mb-4 flex items-center gap-2">
-            <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-            <p className="text-xs text-zinc-500">
-              {products.length} producto{products.length !== 1 ? "s" : ""} disponible{products.length !== 1 ? "s" : ""} en tu receta
-            </p>
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {products.map((p) => (
-              <div key={p.sku} className="bg-white rounded-2xl border border-zinc-100 p-5 hover:border-violet-200 hover:shadow-md transition-all">
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: "rgba(167,139,250,0.12)" }}>
-                    <Package className="w-5 h-5 text-[#A78BFA]" />
-                  </div>
-                  <span className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${CATEGORY_COLORS[p.categoria] ?? "bg-zinc-100 text-zinc-500"}`}>
-                    {p.categoria}
-                  </span>
-                </div>
-                <h3 className="font-semibold text-sm text-[#0B1D35] mb-1">{p.descripcion}</h3>
-                <div className="flex items-center justify-between pt-3 border-t border-zinc-50">
-                  <p className="font-black text-[#0B1D35]">
-                    S/ {p.precio.toFixed(2)}
-                  </p>
-                  <a
-                    href="https://wa.me/51952476574?text=Hola%2C+quiero+pedir+mi+producto+recetado"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="rounded-xl px-3 py-1.5 text-xs font-semibold text-white transition-all hover:opacity-90"
-                    style={{ background: G }}
-                  >
-                    Solicitar
-                  </a>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 text-xs text-zinc-400 text-center">
-            Para solicitar productos, contáctanos por WhatsApp con tu número de receta.
-          </p>
+          <CatalogCart products={products} />
         </>
       )}
     </div>

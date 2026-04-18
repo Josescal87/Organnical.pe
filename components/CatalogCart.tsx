@@ -24,6 +24,7 @@ export default function CatalogCart({
 }) {
   const [cart, setCart] = useState<CartItem[]>([]);
   const [showWarning, setShowWarning] = useState(false);
+  const [loadingPay, setLoadingPay] = useState(false);
 
   function addToCart(p: Producto) {
     setCart((prev) => {
@@ -54,12 +55,30 @@ export default function CatalogCart({
     return `https://wa.me/51952476574?text=${encodeURIComponent(msg)}`;
   }
 
-  function handleCheckout() {
+  async function handleCheckout() {
     if (isMixed) {
       setShowWarning(true);
     } else if (isOnlyLibre) {
-      // TODO: redirect to online payment gateway
-      window.open(buildWhatsAppMsg(), "_blank");
+      setLoadingPay(true);
+      try {
+        const res = await fetch("/api/mercadopago/create-preference", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: cart.map((i) => ({ sku: i.sku, descripcion: i.descripcion, precio: i.precio, qty: i.qty })),
+          }),
+        });
+        const data = await res.json();
+        if (data.init_point) {
+          window.location.href = data.init_point;
+        } else {
+          alert("No se pudo iniciar el pago. Intenta nuevamente.");
+        }
+      } catch {
+        alert("Error al conectar con el servidor de pagos.");
+      } finally {
+        setLoadingPay(false);
+      }
     } else {
       window.open(buildWhatsAppMsg(), "_blank");
     }
@@ -140,11 +159,12 @@ export default function CatalogCart({
             </div>
             <button
               onClick={handleCheckout}
-              className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+              disabled={loadingPay}
+              className="w-full flex items-center justify-center gap-2 rounded-xl py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 disabled:opacity-60"
               style={{ background: isOnlyLibre ? G : "#25D366" }}
             >
               {isOnlyLibre
-                ? <><CreditCard className="w-4 h-4" /> Pagar en línea</>
+                ? <><CreditCard className="w-4 h-4" /> {loadingPay ? "Redirigiendo…" : "Pagar en línea"}</>
                 : <><MessageCircle className="w-4 h-4" /> Solicitar por WhatsApp</>
               }
             </button>

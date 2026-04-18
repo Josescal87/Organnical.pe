@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Calendar, FileText, ArrowRight, Clock, CheckCircle } from "lucide-react";
+import { Calendar, FileText, ArrowRight, Clock, CheckCircle, CalendarClock } from "lucide-react";
 import type { UserRole, AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
 
 type AppointmentRow = {
@@ -91,11 +91,12 @@ export default async function MedicoDashboard() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {[
-          { label: "Consultas hoy",     value: todayApts.length,          icon: Clock,        href: "/dashboard/medico/consultas" },
-          { label: "Próximas citas",    value: upcoming.length,           icon: Calendar,     href: "/dashboard/medico/consultas" },
-          { label: "Recetas emitidas",  value: prescriptions.length,      icon: FileText,     href: "/dashboard/medico/recetas" },
+          { label: "Consultas hoy",     value: todayApts.length,          icon: Clock,         href: "/dashboard/medico/consultas" },
+          { label: "Próximas citas",    value: upcoming.length,           icon: Calendar,      href: "/dashboard/medico/consultas" },
+          { label: "Recetas emitidas",  value: prescriptions.length,      icon: FileText,      href: "/dashboard/medico/recetas" },
+          { label: "Mi horario",        value: "→",                       icon: CalendarClock, href: "/dashboard/medico/horario" },
         ].map(({ label, value, icon: Icon, href }) => (
           <Link
             key={label}

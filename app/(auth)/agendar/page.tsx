@@ -23,7 +23,7 @@ const VERTICALS = [
   { id: "womens_health", label: "Salud Femenina",  icon: "🌸", desc: "SPM, menopausia y equilibrio hormonal" },
 ];
 
-const DEFAULT_HOURS = [9, 10, 11, 14, 15, 16, 17];
+const DEFAULT_HOURS = [9, 9.5, 10, 10.5, 11, 14, 14.5, 15, 15.5, 16, 16.5, 17];
 
 function generateSlots(date: Date, availableHours: number[], bookedISO: string[]): string[] {
   const day = date.getDay();
@@ -31,13 +31,17 @@ function generateSlots(date: Date, availableHours: number[], bookedISO: string[]
 
   return availableHours.map((h) => {
     const slot = new Date(date);
-    slot.setHours(h, 0, 0, 0);
+    const hour = Math.floor(h);
+    const min  = h % 1 === 0.5 ? 30 : 0;
+    slot.setHours(hour, min, 0, 0);
     return slot.toISOString();
   }).filter((iso) => {
+    const slotDate = new Date(iso);
     return !bookedISO.some((b) => {
       const booked = new Date(b);
-      return booked.getHours() === new Date(iso).getHours() &&
-        booked.toDateString() === new Date(iso).toDateString();
+      return booked.getHours()   === slotDate.getHours() &&
+             booked.getMinutes() === slotDate.getMinutes() &&
+             booked.toDateString() === slotDate.toDateString();
     });
   });
 }

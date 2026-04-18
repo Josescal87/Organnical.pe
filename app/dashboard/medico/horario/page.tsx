@@ -12,13 +12,14 @@ export default async function HorarioPage() {
   const { data } = await supabase
     .schema("medical")
     .from("profiles")
-    .select("available_hours, role")
+    .select("available_hours, available_days, role")
     .eq("id", user.id)
     .single();
 
   if (data?.role === "patient") redirect("/dashboard/paciente");
 
   const availableHours = (data?.available_hours ?? []) as number[];
+  const availableDays  = (data?.available_days  ?? [1,2,3,4,5]) as number[];
 
   return (
     <div className="p-6 md:p-10 max-w-3xl">
@@ -31,12 +32,12 @@ export default async function HorarioPage() {
         </Link>
         <h1 className="font-display text-2xl font-black text-[#0B1D35]">Mi horario de atención</h1>
         <p className="text-zinc-500 text-sm mt-1">
-          Selecciona los horarios en los que puedes atender pacientes (lunes a viernes).
+          Elige los días y horarios en los que puedes atender pacientes.
           Cada bloque es de 30 minutos — 25 min de consulta + 5 min de buffer.
         </p>
       </div>
 
-      <ScheduleEditor initialHours={availableHours} />
+      <ScheduleEditor initialHours={availableHours} initialDays={availableDays} />
     </div>
   );
 }

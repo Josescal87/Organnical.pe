@@ -25,9 +25,11 @@ const VERTICALS = [
 
 const DEFAULT_HOURS = [9, 9.5, 10, 10.5, 11, 14, 14.5, 15, 15.5, 16, 16.5, 17];
 
-function generateSlots(date: Date, availableHours: number[], bookedISO: string[]): string[] {
-  const day = date.getDay();
-  if (day === 0 || day === 6) return [];
+const DEFAULT_DAYS = [1, 2, 3, 4, 5];
+
+function generateSlots(date: Date, availableHours: number[], bookedISO: string[], availableDays: number[] = DEFAULT_DAYS): string[] {
+  const day = date.getDay(); // 0=Dom, 1=Lun … 6=Sáb
+  if (!availableDays.includes(day)) return [];
 
   return availableHours.map((h) => {
     const slot = new Date(date);
@@ -70,6 +72,7 @@ interface DoctorRow {
   rating: number;
   reviews_count: number;
   available_hours: number[];
+  available_days:  number[];
 }
 
 /* ─── Component ─────────────────────────────────────────────── */
@@ -128,7 +131,7 @@ function AgendarWizard() {
     supabase
       .schema("medical")
       .from("profiles")
-      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, available_hours")
+      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, available_hours, available_days")
       .eq("role", "doctor")
       .then(({ data }) => {
         if (data) setDoctors(data as DoctorRow[]);
@@ -211,7 +214,8 @@ function AgendarWizard() {
   const slots = generateSlots(
     selectedDate,
     selectedDoctor?.available_hours ?? DEFAULT_HOURS,
-    bookedSlots
+    bookedSlots,
+    selectedDoctor?.available_days ?? DEFAULT_DAYS
   );
 
   async function handleConfirm() {
@@ -417,13 +421,16 @@ function AgendarWizard() {
                 {weekDays.map((day) => {
                   const isSelected = isSameDay(day, selectedDate);
                   const isPast = day < addDays(new Date(), 0);
+                  const doctorDays = selectedDoctor?.available_days ?? DEFAULT_DAYS;
+                  const isUnavailableDay = !doctorDays.includes(day.getDay());
+                  const isDisabled = isPast || isUnavailableDay;
                   return (
                     <button
                       key={day.toISOString()}
-                      onClick={() => { if (!isPast) { setSelectedDate(day); setSelectedSlot(""); } }}
-                      disabled={isPast}
+                      onClick={() => { if (!isDisabled) { setSelectedDate(day); setSelectedSlot(""); } }}
+                      disabled={isDisabled}
                       className={`flex flex-col items-center py-2.5 rounded-xl text-sm transition-all ${
-                        isPast
+                        isDisabled
                           ? "opacity-30 cursor-not-allowed"
                           : isSelected
                           ? "text-white font-bold"
@@ -453,9 +460,7 @@ function AgendarWizard() {
                 </div>
               ) : slots.length === 0 ? (
                 <p className="text-sm text-zinc-400 text-center py-6">
-                  {selectedDate.getDay() === 0 || selectedDate.getDay() === 6
-                    ? "No atendemos fines de semana."
-                    : "No hay horarios disponibles para este día."}
+                  No hay horarios disponibles para este día.
                 </p>
               ) : (
                 <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">

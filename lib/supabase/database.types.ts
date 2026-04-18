@@ -190,7 +190,8 @@ export interface Database {
           verticals:       string[]
           rating:          number
           reviews_count:   number
-          available_hours: number[]      // ej. [9,10,11,14,15,16,17] Mon-Fri Lima
+          available_hours: number[]      // ej. [9,9.5,10,14,14.5] slots de 30 min
+          available_days:  number[]      // ej. [1,2,3,4,5] (1=Lun … 6=Sáb)
           created_at:      string
           updated_at:      string
         }
@@ -207,6 +208,7 @@ export interface Database {
           rating?:          number
           reviews_count?:   number
           available_hours?: number[]
+          available_days?:  number[]
           created_at?:      string
           updated_at?:      string
         }
@@ -222,6 +224,7 @@ export interface Database {
           rating?:          number
           reviews_count?:   number
           available_hours?: number[]
+          available_days?:  number[]
           updated_at?:      string
         }
       }

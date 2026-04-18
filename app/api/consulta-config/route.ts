@@ -7,7 +7,7 @@ export async function GET() {
     .from("consulta_config")
     .select("precio, descuento_porcentaje, promo_label")
     .eq("id", 1)
-    .single();
+    .single() as { data: { precio: number; descuento_porcentaje: number; promo_label: string } | null };
 
   const precioBase = data?.precio ?? 60;
   const descuento = data?.descuento_porcentaje ?? 0;

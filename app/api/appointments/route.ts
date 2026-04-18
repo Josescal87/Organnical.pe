@@ -118,7 +118,7 @@ export async function POST(req: NextRequest) {
         .from("consulta_config")
         .select("precio, descuento_porcentaje")
         .eq("id", 1)
-        .single();
+        .single() as { data: { precio: number; descuento_porcentaje: number } | null };
       const precioBase = cfg?.precio ?? 60;
       const descuento  = cfg?.descuento_porcentaje ?? 0;
       const precioFinal = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;

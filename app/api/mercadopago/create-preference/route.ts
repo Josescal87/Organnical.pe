@@ -57,8 +57,13 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ init_point: response.init_point });
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("MercadoPago preference error:", message);
+    console.error("MercadoPago preference error:", JSON.stringify(err, null, 2));
+    const message =
+      err instanceof Error
+        ? err.message
+        : typeof err === "object"
+        ? JSON.stringify(err)
+        : String(err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

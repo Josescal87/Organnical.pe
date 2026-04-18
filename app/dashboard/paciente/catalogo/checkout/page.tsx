@@ -128,8 +128,25 @@ export default function CheckoutPage() {
                   },
                 },
               }}
-              onSubmit={async () => {
+              onSubmit={async ({ formData }) => {
+                const res = await fetch("/api/mercadopago/process-payment", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify(formData),
+                });
+                const data = await res.json();
+
+                if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
+
                 sessionStorage.removeItem("mp_cart");
+
+                if (data.status === "approved") {
+                  window.location.href = "/dashboard/paciente/catalogo/pago/exito";
+                } else if (data.status === "in_process" || data.status === "pending") {
+                  window.location.href = "/dashboard/paciente/catalogo/pago/pendiente";
+                } else {
+                  window.location.href = "/dashboard/paciente/catalogo/pago/error";
+                }
               }}
               onError={(err) => {
                 console.error("MP Brick error:", err);

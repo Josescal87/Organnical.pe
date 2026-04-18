@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard, Calendar, FileText, Package,
-  User, LogOut, Menu, X, Stethoscope,
+  User, LogOut, Menu, X, Stethoscope, CalendarClock,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
@@ -26,6 +26,7 @@ const DOCTOR_LINKS = [
   { href: "/dashboard/medico",             label: "Inicio",        icon: LayoutDashboard },
   { href: "/dashboard/medico/consultas",   label: "Consultas",     icon: Stethoscope },
   { href: "/dashboard/medico/recetas",     label: "Recetas",       icon: FileText },
+  { href: "/dashboard/medico/horario",     label: "Mi horario",    icon: CalendarClock },
   { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
 ];
 

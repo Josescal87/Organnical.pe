@@ -182,6 +182,79 @@ export async function sendPrescriptionNotification({
   });
 }
 
+export async function sendAdminSaleNotification({
+  adminEmails,
+  saleType,
+  patientName,
+  items,
+  total,
+  paymentMethod,
+}: {
+  adminEmails: string[];
+  saleType: "appointment" | "product";
+  patientName: string;
+  items: { descripcion: string; qty: number; precio: number }[];
+  total: number;
+  paymentMethod: string;
+}) {
+  if (!adminEmails.length) return;
+
+  const itemsHtml = items.map((i) => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5">
+        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5;text-align:right">
+        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
+      </td>
+    </tr>
+  `).join("");
+
+  const icon = saleType === "appointment" ? "🗓" : "🛍";
+  const label = saleType === "appointment" ? "Cita médica" : "Productos";
+
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">${icon} Nueva venta — ${label}</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Se registró una nueva venta en Organnical.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Paciente</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${patientName}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Método de pago</p>
+        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${paymentMethod}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0">
+        <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Detalle</p>
+        <table width="100%" cellpadding="0" cellspacing="0">${itemsHtml}</table>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px">
+          <tr>
+            <td style="color:#71717A;font-size:13px;font-weight:700;text-transform:uppercase">Total</td>
+            <td style="text-align:right;color:#0B1D35;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="https://organnical.pe/dashboard" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+          Ver en Ruby
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return getResend().emails.send({
+    from: FROM,
+    to: adminEmails,
+    subject: `${icon} Nueva venta — ${patientName} · S/ ${total.toFixed(2)}`,
+    html,
+  });
+}
+
 export async function sendNewAppointmentToDoctor({
   toEmail,
   doctorName,

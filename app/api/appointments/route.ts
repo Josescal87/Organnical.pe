@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createCalendarEvent } from "@/lib/google-calendar";
-import { sendAppointmentConfirmation, sendNewAppointmentToDoctor } from "@/lib/emails";
+import { sendAppointmentConfirmation, sendNewAppointmentToDoctor, sendAdminSaleNotification } from "@/lib/emails";
+import { getAdminEmails } from "@/lib/get-admin-emails";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
 
 function createAdminClient() {
@@ -113,6 +114,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Registrar venta en Ruby (non-fatal)
+    let precioFinalVenta = 60;
     try {
       const { data: cfg } = await supabase
         .from("consulta_config")
@@ -122,6 +124,7 @@ export async function POST(req: NextRequest) {
       const precioBase = cfg?.precio ?? 60;
       const descuento  = cfg?.descuento_porcentaje ?? 0;
       const precioFinal = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;
+      precioFinalVenta = precioFinal;
 
       const { data: maxOrden } = await supabase
         .from("ventas")
@@ -158,6 +161,18 @@ export async function POST(req: NextRequest) {
     sendAppointmentConfirmation({
       toEmail: user.email!, patientName, doctorName, specialty, slotStart, meetLink,
     }).catch((e) => console.error("Resend patient email error:", e));
+
+    // Email a admins (non-fatal)
+    getAdminEmails().then((adminEmails) =>
+      sendAdminSaleNotification({
+        adminEmails,
+        saleType: "appointment",
+        patientName,
+        items: [{ descripcion: `Teleconsulta — ${specialtyLabel}`, qty: 1, precio: precioFinalVenta }],
+        total: precioFinalVenta,
+        paymentMethod: "Online",
+      }).catch((e) => console.error("Admin appointment email error:", e))
+    ).catch((e) => console.error("getAdminEmails error:", e));
 
     // Notificar al médico
     const { data: doctorAuth } = await createAdminClient().auth.admin.getUserById(doctorId);

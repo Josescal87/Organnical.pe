@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe";
 
-    const mp = new MercadoPagoConfig({ accessToken: token });
+    const mp = new MercadoPagoConfig({ accessToken: token.trim() });
     const preference = new Preference(mp);
 
     const response = await preference.create({

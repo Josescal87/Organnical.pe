@@ -72,7 +72,7 @@ export default function CatalogCart({
         if (data.init_point) {
           window.location.href = data.init_point;
         } else {
-          alert("No se pudo iniciar el pago. Intenta nuevamente.");
+          alert(`Error: ${data.error ?? "No se pudo iniciar el pago."}`);
         }
       } catch {
         alert("Error al conectar con el servidor de pagos.");

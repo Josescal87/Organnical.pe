@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, ShoppingBag } from "lucide-react";
+import { ShoppingBag } from "lucide-react";
+import { BackLink } from "@/components/BackLink";
 import CatalogCart from "@/components/CatalogCart";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -65,9 +66,7 @@ export default async function CatalogoPacientePage() {
   return (
     <div className="p-6 md:p-10 max-w-5xl">
       <div className="mb-8">
-        <Link href="/dashboard/paciente" className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-4 transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Volver al inicio
-        </Link>
+        <BackLink href="/dashboard/paciente" />
         <h1 className="font-display text-2xl font-black text-[#0B1D35]">Catálogo</h1>
         <p className="text-zinc-500 text-sm mt-1">
           {hasActivePrescription ? "Productos disponibles para ti." : "Productos disponibles · Agenda una cita para acceder al catálogo completo."}

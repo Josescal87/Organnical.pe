@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
-import { ArrowLeft, ShoppingCart, Package } from "lucide-react";
+import { ShoppingCart, Package } from "lucide-react";
 import Link from "next/link";
+import { BackLink } from "@/components/BackLink";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -49,12 +50,7 @@ export default function CheckoutPage() {
 
   return (
     <div className="p-6 md:p-10 max-w-5xl">
-      <Link
-        href="/dashboard/paciente/catalogo"
-        className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors"
-      >
-        <ArrowLeft className="w-3.5 h-3.5" /> Volver al catálogo
-      </Link>
+      <BackLink href="/dashboard/paciente/catalogo" label="Volver al catálogo" className="mb-6" />
 
       <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-8">Finalizar compra</h1>
 

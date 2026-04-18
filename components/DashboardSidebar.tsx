@@ -42,6 +42,10 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
   const [open, setOpen] = useState(false);
 
   const links = role === "doctor" || role === "admin" ? DOCTOR_LINKS : PATIENT_LINKS;
+  const activeLabel = links.find(({ href }) =>
+    href === pathname ||
+    (href !== "/dashboard/paciente" && href !== "/dashboard/medico" && pathname.startsWith(href))
+  )?.label ?? null;
   const initials = fullName
     ? fullName.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
     : email[0]?.toUpperCase() ?? "U";
@@ -56,7 +60,7 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
     <>
       {/* Logo */}
       <div className="p-6 border-b border-white/5">
-        <Link href="/" onClick={() => setOpen(false)}>
+        <Link href="/dashboard" onClick={() => setOpen(false)}>
           <Image src="/logo-white.png" alt="Organnical" width={130} height={32} />
         </Link>
       </div>
@@ -124,9 +128,14 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
         className="md:hidden fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-white/5"
         style={{ background: NAVY }}
       >
-        <Link href="/">
+        <Link href="/dashboard">
           <Image src="/logo-white.png" alt="Organnical" width={110} height={28} />
         </Link>
+        {activeLabel && (
+          <span className="absolute left-1/2 -translate-x-1/2 text-xs font-semibold text-white/60 tracking-wide uppercase pointer-events-none">
+            {activeLabel}
+          </span>
+        )}
         <button
           onClick={() => setOpen((v) => !v)}
           className="p-2 text-white/70 hover:text-white"

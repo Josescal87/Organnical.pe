@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, ArrowRight } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -20,6 +21,14 @@ export default function Navbar() {
   const isLanding = pathname === "/";
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
+  }, []);
 
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 50);
@@ -77,21 +86,33 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/login"
-            className={`text-sm font-medium hidden sm:block transition-colors ${
-              solid ? "text-zinc-500 hover:text-zinc-900" : "text-white/75 hover:text-white"
-            }`}
-          >
-            Iniciar sesión
-          </Link>
-          <Link
-            href="/registro"
-            className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90"
-            style={{ background: G }}
-          >
-            Agendar consulta
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 hidden sm:inline-flex items-center gap-2"
+              style={{ background: G }}
+            >
+              Ir a mi panel <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                className={`text-sm font-medium hidden sm:block transition-colors ${
+                  solid ? "text-zinc-500 hover:text-zinc-900" : "text-white/75 hover:text-white"
+                }`}
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/registro"
+                className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90"
+                style={{ background: G }}
+              >
+                Agendar consulta
+              </Link>
+            </>
+          )}
           <button
             onClick={() => setMenuOpen((o) => !o)}
             className={`md:hidden p-2 rounded-lg ${solid ? "text-zinc-600" : "text-white"}`}
@@ -119,21 +140,34 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
-          <Link
-            href="/login"
-            onClick={() => setMenuOpen(false)}
-            className="py-3 text-sm font-medium text-zinc-700 hover:text-[#A78BFA] transition-colors"
-          >
-            Iniciar sesión
-          </Link>
-          <Link
-            href="/registro"
-            onClick={() => setMenuOpen(false)}
-            className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
-            style={{ background: G }}
-          >
-            Agendar consulta <ArrowRight className="w-4 h-4" />
-          </Link>
+          {isLoggedIn ? (
+            <Link
+              href="/dashboard"
+              onClick={() => setMenuOpen(false)}
+              className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
+              style={{ background: G }}
+            >
+              Ir a mi panel <ArrowRight className="w-4 h-4" />
+            </Link>
+          ) : (
+            <>
+              <Link
+                href="/login"
+                onClick={() => setMenuOpen(false)}
+                className="py-3 text-sm font-medium text-zinc-700 hover:text-[#A78BFA] transition-colors"
+              >
+                Iniciar sesión
+              </Link>
+              <Link
+                href="/registro"
+                onClick={() => setMenuOpen(false)}
+                className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
+                style={{ background: G }}
+              >
+                Agendar consulta <ArrowRight className="w-4 h-4" />
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>

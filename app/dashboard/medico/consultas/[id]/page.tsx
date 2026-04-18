@@ -1,7 +1,8 @@
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { ArrowLeft, Video, User, Calendar } from "lucide-react";
+import { Video, User, Calendar } from "lucide-react";
+import { BackLink } from "@/components/BackLink";
 import type { AppointmentStatus, AppointmentSpecialty, Producto } from "@/lib/supabase/database.types";
 import ClinicalNotesEditor from "./ClinicalNotesEditor";
 import StatusButtons from "./StatusButtons";
@@ -105,12 +106,7 @@ export default async function ConsultaDetallePage({
   return (
     <div className="p-6 md:p-10 max-w-3xl">
       <div className="mb-8">
-        <Link
-          href="/dashboard/medico/consultas"
-          className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-4 transition-colors"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Volver a consultas
-        </Link>
+        <BackLink href="/dashboard/medico/consultas" label="Volver a consultas" />
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-display text-2xl font-black text-[#0B1D35]">Detalle de consulta</h1>
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${st.color}`}>{st.label}</span>

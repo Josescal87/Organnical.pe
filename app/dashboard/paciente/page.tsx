@@ -106,25 +106,25 @@ export default async function PacienteDashboard() {
         ))}
       </div>
 
-      {/* CTA — agendar si no tiene citas */}
-      {activeAppointments.length === 0 && (
-        <div
-          className="rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
-          style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3a6e 100%)` }}
-        >
-          <div>
-            <p className="font-display font-black text-white text-lg">¿Listo para tu primera consulta?</p>
-            <p className="text-white/50 text-sm mt-1">Médicos disponibles hoy. Primera cita en menos de 48h.</p>
-          </div>
-          <Link
-            href="/agendar"
-            className="flex-shrink-0 rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
-            style={{ background: G }}
-          >
-            Agendar consulta
-          </Link>
+      {/* CTA — siempre visible */}
+      <div
+        className="rounded-2xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4"
+        style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3a6e 100%)` }}
+      >
+        <div>
+          <p className="font-display font-black text-white text-lg">
+            {activeAppointments.length === 0 ? "¿Listo para tu primera consulta?" : "Agenda otra consulta"}
+          </p>
+          <p className="text-white/50 text-sm mt-1">Médicos disponibles hoy. Cita en menos de 48h.</p>
         </div>
-      )}
+        <Link
+          href="/agendar"
+          className="flex-shrink-0 rounded-xl px-6 py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
+          style={{ background: G }}
+        >
+          Agendar consulta
+        </Link>
+      </div>
 
       {/* Próximas citas */}
       <section className="mb-8">

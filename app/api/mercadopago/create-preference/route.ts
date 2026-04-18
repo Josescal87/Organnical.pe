@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const { items } = await req.json() as { items: CartItem[] };
     if (!items?.length) return NextResponse.json({ error: "Carrito vacío" }, { status: 400 });
 
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe";
+    const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe").trim();
 
     const mp = new MercadoPagoConfig({ accessToken: token.trim() });
     const preference = new Preference(mp);

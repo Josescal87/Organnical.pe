@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
     // Crear N citas (una por sesión, cada +7 días)
     for (let i = 0; i < sessions; i++) {
       const startDate = addDays(new Date(slotStart), i * 7);
-      const endDate   = new Date(startDate.getTime() + 60 * 60 * 1000);
+      const endDate   = new Date(startDate.getTime() + 25 * 60 * 1000);
 
       // Google Calendar (non-fatal)
       let meetLink: string | null = null;

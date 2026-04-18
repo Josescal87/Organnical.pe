@@ -514,7 +514,7 @@ function AgendarWizard() {
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 mb-1">Duración</p>
-                  <p className="font-semibold text-[#0B1D35]">60 minutos</p>
+                  <p className="font-semibold text-[#0B1D35]">25 minutos</p>
                 </div>
                 <div>
                   <p className="text-xs text-zinc-400 mb-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> Fecha</p>
@@ -679,57 +679,93 @@ function AgendarWizard() {
             <button onClick={() => setStep("confirm")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" /> Atrás
             </button>
-            <p className="text-sm text-zinc-400 mb-1">Paso 5 de 5</p>
-            <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Pago seguro</h1>
-            <p className="text-zinc-500 text-sm mb-6">
-              {sessions > 1
-                ? `${sessions} sesiones · S/ ${(pricing.precioFinal * sessions).toFixed(2)} total`
-                : `1 sesión · S/ ${pricing.precioFinal.toFixed(2)}`}
-            </p>
+            <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-8">Finalizar compra</h1>
 
-            {loadingPreference && (
-              <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
-                <Loader2 className="w-6 h-6 animate-spin text-violet-400" />
+            <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
+              {/* Resumen de la cita */}
+              <div className="order-2 lg:order-1">
+                <div className="bg-white rounded-2xl border border-zinc-100 p-6">
+                  <div className="flex items-center gap-2 mb-5">
+                    <Calendar className="w-4 h-4 text-[#A78BFA]" />
+                    <h2 className="font-bold text-sm text-[#0B1D35]">Resumen del pedido</h2>
+                  </div>
+                  <div className="space-y-3">
+                    {Array.from({ length: sessions }).map((_, i) => {
+                      const sessionDate = new Date(new Date(selectedSlot).getTime() + i * 7 * 24 * 60 * 60 * 1000);
+                      return (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "rgba(167,139,250,0.10)" }}>
+                            <Video className="w-4 h-4 text-[#A78BFA]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-[#0B1D35] truncate">
+                              {selectedVertical?.icon} {selectedVertical?.label}{sessions > 1 ? ` — Sesión ${i + 1}` : ""}
+                            </p>
+                            <p className="text-xs text-zinc-400">
+                              {sessionDate.toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short" })}
+                              {" · "}
+                              {sessionDate.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
+                              {" · 25 min"}
+                            </p>
+                          </div>
+                          <p className="text-sm font-bold text-[#0B1D35] flex-shrink-0">S/ {pricing.precioFinal.toFixed(2)}</p>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  <div className="border-t border-zinc-100 mt-5 pt-4 flex justify-between items-center">
+                    <span className="text-sm text-zinc-500">Total</span>
+                    <span className="font-black text-lg text-[#0B1D35]">S/ {(pricing.precioFinal * sessions).toFixed(2)}</span>
+                  </div>
+                </div>
               </div>
-            )}
 
-            {preferenceId && !loadingPreference && (
-              <Payment
-                initialization={{ amount: pricing.precioFinal * sessions, preferenceId }}
-                customization={{
-                  paymentMethods: { creditCard: "all", debitCard: "all" },
-                  visual: {
-                    style: {
-                      customVariables: {
-                        baseColor: "#A78BFA",
-                        baseColorFirstVariant: "#F472B6",
-                        baseColorSecondVariant: "#38BDF8",
+              {/* Brick de pago */}
+              <div className="order-1 lg:order-2">
+                {loadingPreference && (
+                  <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full border-2 border-violet-300 border-t-violet-600 animate-spin" />
+                  </div>
+                )}
+                {preferenceId && !loadingPreference && (
+                  <Payment
+                    initialization={{ amount: pricing.precioFinal * sessions, preferenceId }}
+                    customization={{
+                      paymentMethods: { creditCard: "all", debitCard: "all" },
+                      visual: {
+                        style: {
+                          customVariables: {
+                            baseColor: "#A78BFA",
+                            baseColorFirstVariant: "#F472B6",
+                            baseColorSecondVariant: "#38BDF8",
+                          },
+                        },
                       },
-                    },
-                  },
-                }}
-                onSubmit={async ({ formData }) => {
-                  const res = await fetch("/api/mercadopago/process-appointment", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                      ...formData,
-                      doctorId,
-                      specialty:   vertical,
-                      slotStart:   selectedSlot,
-                      sessions,
-                      precioFinal: pricing.precioFinal,
-                    }),
-                  });
-                  const data = await res.json();
-                  if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
-                  if (data.status !== "approved") throw new Error("Pago no aprobado");
-                  setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
-                  setStep("done");
-                }}
-                onError={(err) => console.error("MP Brick error:", err)}
-              />
-            )}
+                    }}
+                    onSubmit={async ({ formData }) => {
+                      const res = await fetch("/api/mercadopago/process-appointment", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                          ...formData,
+                          doctorId,
+                          specialty:   vertical,
+                          slotStart:   selectedSlot,
+                          sessions,
+                          precioFinal: pricing.precioFinal,
+                        }),
+                      });
+                      const data = await res.json();
+                      if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
+                      if (data.status !== "approved") throw new Error("Pago no aprobado");
+                      setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                      setStep("done");
+                    }}
+                    onError={(err) => console.error("MP Brick error:", err)}
+                  />
+                )}
+              </div>
+            </div>
           </div>
         )}
 

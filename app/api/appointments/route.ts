@@ -62,7 +62,7 @@ export async function POST(req: NextRequest) {
     const doctorName = doctorData?.full_name ?? "Médico";
 
     const startDate = new Date(slotStart);
-    const endDate   = new Date(startDate.getTime() + 60 * 60 * 1000); // +1 hora
+    const endDate   = new Date(startDate.getTime() + 25 * 60 * 1000); // +25 min
 
     const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
 

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Loader2, CheckCircle, User, Phone, CreditCard, Mail } from "lucide-react";
+import { Loader2, User, Phone, CreditCard, Mail } from "lucide-react";
+import { toast } from "sonner";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -21,14 +22,10 @@ export default function ProfileForm({ userId, email, initialData }: Props) {
   const [documentId, setDocumentId] = useState(initialData.document_id);
   const [phone, setPhone] = useState(initialData.phone);
   const [loading, setLoading] = useState(false);
-  const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-    setSaved(false);
 
     const supabase = createClient();
     const { error: updateError } = await supabase
@@ -43,10 +40,9 @@ export default function ProfileForm({ userId, email, initialData }: Props) {
 
     setLoading(false);
     if (updateError) {
-      setError("No se pudo guardar. Intenta de nuevo.");
+      toast.error("No se pudo guardar. Intenta de nuevo.");
     } else {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      toast.success("Cambios guardados correctamente.");
     }
   }
 
@@ -122,18 +118,6 @@ export default function ProfileForm({ userId, email, initialData }: Props) {
           />
         </div>
       </div>
-
-      {error && (
-        <div className="rounded-xl bg-rose-50 border border-rose-100 px-4 py-3 text-sm text-rose-600">
-          {error}
-        </div>
-      )}
-
-      {saved && (
-        <div className="rounded-xl bg-emerald-50 border border-emerald-100 px-4 py-3 text-sm text-emerald-600 flex items-center gap-2">
-          <CheckCircle className="w-4 h-4" /> Cambios guardados correctamente.
-        </div>
-      )}
 
       <div className="pt-2">
         <button

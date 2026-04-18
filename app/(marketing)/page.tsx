@@ -3,12 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
   Heart, Phone, Lock, FileText, Zap, ChevronRight,
   Calendar, Award, Users, MessageSquare,
 } from "lucide-react";
 import { posts } from "@/lib/blog";
+import { createClient } from "@/lib/supabase/client";
 
 /* ─── Brand tokens ─────────────────────────────────────────── */
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -117,6 +119,15 @@ const steps = [
 
 export default function LandingPage() {
   const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
+  const router = useRouter();
+
+  // Redirect logged-in users to their dashboard
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) router.replace("/dashboard");
+    });
+  }, [router]);
 
   // Scroll reveal
   useEffect(() => {

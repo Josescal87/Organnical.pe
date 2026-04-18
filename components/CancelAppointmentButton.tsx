@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Loader2, X } from "lucide-react";
+import { toast } from "sonner";
 
 export default function CancelAppointmentButton({ appointmentId }: { appointmentId: string }) {
   const [loading, setLoading] = useState(false);
@@ -13,14 +14,19 @@ export default function CancelAppointmentButton({ appointmentId }: { appointment
   async function cancel() {
     setLoading(true);
     const supabase = createClient();
-    await supabase
+    const { error } = await supabase
       .schema("medical")
       .from("appointments")
       .update({ status: "cancelled" })
       .eq("id", appointmentId);
     setLoading(false);
     setConfirming(false);
-    router.refresh();
+    if (error) {
+      toast.error("No se pudo cancelar la cita. Intenta de nuevo.");
+    } else {
+      toast.success("Cita cancelada.");
+      router.refresh();
+    }
   }
 
   if (confirming) {

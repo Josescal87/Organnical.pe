@@ -12,7 +12,12 @@
       "Bash(node -e ' *)",
       "Bash(npm install *)",
       "Bash(npm run *)",
-      "Bash(npm ls *)"
+      "Bash(npm ls *)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)",
+      "Bash(xargs grep *)",
+      "Bash(find \"/c/Users/ruben/Organnical.pe/app\" -name \"*.tsx\" -exec grep -l \"back\\\\|Back\\\\|home\\\\|Home\\\\|navigate\" {} \\\\;)"
     ],
     "additionalDirectories": [
       "c:\\Users\\ruben\\OrgannicalRuby"

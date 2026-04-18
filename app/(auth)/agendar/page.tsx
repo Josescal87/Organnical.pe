@@ -11,6 +11,7 @@ import {
   Clock, Video, Loader2, ChevronLeft, ChevronRight,
   User, Mail, Lock, CreditCard,
 } from "lucide-react";
+import CalendarButtons from "@/components/CalendarButtons";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -25,11 +26,12 @@ const VERTICALS = [
 
 const DEFAULT_HOURS = [9, 9.5, 10, 10.5, 11, 14, 14.5, 15, 15.5, 16, 16.5, 17];
 
-const DEFAULT_DAYS = [1, 2, 3, 4, 5];
+type WeeklySchedule = Record<string, number[]>;
 
-function generateSlots(date: Date, availableHours: number[], bookedISO: string[], availableDays: number[] = DEFAULT_DAYS): string[] {
-  const day = date.getDay(); // 0=Dom, 1=Lun … 6=Sáb
-  if (!availableDays.includes(day)) return [];
+function generateSlots(date: Date, weeklySchedule: WeeklySchedule, bookedISO: string[]): string[] {
+  const dayKey = String(date.getDay()); // "0"=Dom … "6"=Sáb
+  const availableHours = weeklySchedule[dayKey];
+  if (!availableHours || availableHours.length === 0) return [];
 
   return availableHours.map((h) => {
     const slot = new Date(date);
@@ -71,8 +73,7 @@ interface DoctorRow {
   verticals: string[];
   rating: number;
   reviews_count: number;
-  available_hours: number[];
-  available_days:  number[];
+  weekly_schedule: WeeklySchedule | null;
 }
 
 /* ─── Component ─────────────────────────────────────────────── */
@@ -131,7 +132,7 @@ function AgendarWizard() {
     supabase
       .schema("medical")
       .from("profiles")
-      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, available_hours, available_days")
+      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, weekly_schedule")
       .eq("role", "doctor")
       .then(({ data }) => {
         if (data) setDoctors(data as DoctorRow[]);
@@ -211,12 +212,9 @@ function AgendarWizard() {
 
   const selectedDoctor = doctors.find((d) => d.id === doctorId);
   const selectedVertical = VERTICALS.find((v) => v.id === vertical);
-  const slots = generateSlots(
-    selectedDate,
-    selectedDoctor?.available_hours ?? DEFAULT_HOURS,
-    bookedSlots,
-    selectedDoctor?.available_days ?? DEFAULT_DAYS
-  );
+  const doctorSchedule: WeeklySchedule = selectedDoctor?.weekly_schedule
+    ?? { "1": DEFAULT_HOURS, "2": DEFAULT_HOURS, "3": DEFAULT_HOURS, "4": DEFAULT_HOURS, "5": DEFAULT_HOURS };
+  const slots = generateSlots(selectedDate, doctorSchedule, bookedSlots);
 
   async function handleConfirm() {
     setSubmitting(true);
@@ -421,8 +419,8 @@ function AgendarWizard() {
                 {weekDays.map((day) => {
                   const isSelected = isSameDay(day, selectedDate);
                   const isPast = day < addDays(new Date(), 0);
-                  const doctorDays = selectedDoctor?.available_days ?? DEFAULT_DAYS;
-                  const isUnavailableDay = !doctorDays.includes(day.getDay());
+                  const dayKey = String(day.getDay());
+                  const isUnavailableDay = !(doctorSchedule[dayKey]?.length > 0);
                   const isDisabled = isPast || isUnavailableDay;
                   return (
                     <button
@@ -811,7 +809,7 @@ function AgendarWizard() {
               Te enviamos una invitación de Google Calendar con los detalles y el link de la videollamada.
             </p>
 
-            <div className="bg-white rounded-2xl border border-zinc-100 p-6 max-w-sm mx-auto mb-8 text-left space-y-3">
+            <div className="bg-white rounded-2xl border border-zinc-100 p-6 max-w-sm mx-auto mb-6 text-left space-y-3">
               <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">Resumen</p>
               <div className="text-sm space-y-2">
                 <div className="flex items-center gap-2">
@@ -824,6 +822,24 @@ function AgendarWizard() {
                   {" · "}
                   {new Date(selectedSlot).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
                 </p>
+              </div>
+
+              {/* Calendar buttons */}
+              <div className="pt-2 border-t border-zinc-100">
+                <CalendarButtons
+                  event={{
+                    title: `Teleconsulta Organnical — ${selectedVertical?.label ?? ""}`,
+                    description: [
+                      `Consulta de ${selectedVertical?.label ?? ""}`,
+                      `Médico: ${selectedDoctor?.full_name ?? ""}`,
+                      paymentResult.meetLinks[0] ? `\nLink: ${paymentResult.meetLinks[0]}` : "",
+                      `\nSoporte: reservas@organnical.com`,
+                    ].join("\n"),
+                    startISO: selectedSlot,
+                    endISO:   new Date(new Date(selectedSlot).getTime() + 25 * 60 * 1000).toISOString(),
+                    location: paymentResult.meetLinks[0] ?? undefined,
+                  }}
+                />
               </div>
             </div>
 

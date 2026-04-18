@@ -9,17 +9,22 @@ export default async function HorarioPage() {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const { data } = await supabase
-    .schema("medical")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { data } = await (supabase.schema("medical") as any)
     .from("profiles")
-    .select("available_hours, available_days, role")
+    .select("weekly_schedule, role")
     .eq("id", user.id)
     .single();
 
   if (data?.role === "patient") redirect("/dashboard/paciente");
 
-  const availableHours = (data?.available_hours ?? []) as number[];
-  const availableDays  = (data?.available_days  ?? [1,2,3,4,5]) as number[];
+  const weeklySchedule = (data?.weekly_schedule ?? {}) as Record<string, number[]>;
+
+  // Convert string keys → number keys
+  const schedule: Record<number, number[]> = {};
+  Object.entries(weeklySchedule).forEach(([k, v]) => {
+    schedule[Number(k)] = v as number[];
+  });
 
   return (
     <div className="p-6 md:p-10 max-w-3xl">
@@ -32,12 +37,12 @@ export default async function HorarioPage() {
         </Link>
         <h1 className="font-display text-2xl font-black text-[#0B1D35]">Mi horario de atención</h1>
         <p className="text-zinc-500 text-sm mt-1">
-          Elige los días y horarios en los que puedes atender pacientes.
-          Cada bloque es de 30 minutos — 25 min de consulta + 5 min de buffer.
+          Configura los horarios disponibles para cada día de la semana.
+          Cada bloque es de 30 min — 25 min de consulta + 5 min de buffer.
         </p>
       </div>
 
-      <ScheduleEditor initialHours={availableHours} initialDays={availableDays} />
+      <ScheduleEditor initialSchedule={schedule} />
     </div>
   );
 }

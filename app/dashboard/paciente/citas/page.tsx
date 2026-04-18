@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import CancelAppointmentButton from "@/components/CancelAppointmentButton";
+import CalendarButtons from "@/components/CalendarButtons";
 import Link from "next/link";
 import { Calendar, Clock, Video, ArrowLeft } from "lucide-react";
 import type { AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
@@ -140,20 +141,34 @@ function AppointmentCard({ apt, canCancel }: { apt: AppointmentRow; canCancel: b
         </p>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
-        {apt.meeting_link && apt.status === "confirmed" && !isPast && (
-          <a
-            href={apt.meeting_link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white"
-            style={{ background: G }}
-          >
-            <Video className="w-3.5 h-3.5" /> Unirse
-          </a>
-        )}
-        {canCancel && apt.status === "pending" && (
-          <CancelAppointmentButton appointmentId={apt.id} />
+      <div className="flex flex-col gap-2 flex-shrink-0 items-end">
+        <div className="flex items-center gap-2">
+          {apt.meeting_link && apt.status === "confirmed" && !isPast && (
+            <a
+              href={apt.meeting_link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white"
+              style={{ background: G }}
+            >
+              <Video className="w-3.5 h-3.5" /> Unirse
+            </a>
+          )}
+          {canCancel && apt.status === "pending" && (
+            <CancelAppointmentButton appointmentId={apt.id} />
+          )}
+        </div>
+        {["pending", "confirmed"].includes(apt.status) && (
+          <CalendarButtons
+            compact
+            event={{
+              title:       `Teleconsulta Organnical — ${vt.label}`,
+              description: `Consulta de ${vt.label}\n${apt.meeting_link ? `\nLink: ${apt.meeting_link}` : ""}\n\nSoporte: reservas@organnical.com`,
+              startISO:    apt.slot_start,
+              endISO:      new Date(date.getTime() + 25 * 60 * 1000).toISOString(),
+              location:    apt.meeting_link ?? undefined,
+            }}
+          />
         )}
       </div>
     </div>

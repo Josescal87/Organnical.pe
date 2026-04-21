@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
+  ClipboardList, Users, ShieldCheck,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
@@ -15,16 +16,19 @@ const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
 
 const PATIENT_LINKS = [
-  { href: "/dashboard/paciente",           label: "Inicio",      icon: LayoutDashboard },
-  { href: "/dashboard/paciente/citas",     label: "Mis citas",   icon: Calendar },
-  { href: "/dashboard/paciente/recetas",   label: "Mis recetas", icon: FileText },
-  { href: "/dashboard/paciente/catalogo",  label: "Catálogo",    icon: Package },
-  { href: "/dashboard/paciente/perfil",    label: "Mi perfil",   icon: User },
+  { href: "/dashboard/paciente",              label: "Inicio",      icon: LayoutDashboard },
+  { href: "/dashboard/paciente/citas",        label: "Mis citas",   icon: Calendar },
+  { href: "/dashboard/paciente/historial",    label: "Historial",   icon: ClipboardList },
+  { href: "/dashboard/paciente/recetas",      label: "Mis recetas", icon: FileText },
+  { href: "/dashboard/paciente/consentimiento", label: "Consentimientos", icon: ShieldCheck },
+  { href: "/dashboard/paciente/catalogo",     label: "Catálogo",    icon: Package },
+  { href: "/dashboard/paciente/perfil",       label: "Mi perfil",   icon: User },
 ];
 
 const DOCTOR_LINKS = [
   { href: "/dashboard/medico",             label: "Inicio",        icon: LayoutDashboard },
   { href: "/dashboard/medico/consultas",   label: "Consultas",     icon: Stethoscope },
+  { href: "/dashboard/medico/pacientes",   label: "Pacientes",     icon: Users },
   { href: "/dashboard/medico/recetas",     label: "Recetas",       icon: FileText },
   { href: "/dashboard/medico/horario",     label: "Mi horario",    icon: CalendarClock },
   { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },

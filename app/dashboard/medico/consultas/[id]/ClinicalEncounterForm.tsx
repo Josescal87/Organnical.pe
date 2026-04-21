@@ -221,10 +221,30 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
   async function handleDownload() {
     setGeneratingPdf(true);
     try {
-      const resp = await fetch(`/api/ehr/document/${encounterId ?? aptId}?type=encounter`);
-      const data = await resp.json() as { url?: string; error?: string };
+      // Intentar obtener signed URL
+      let resp = await fetch(`/api/ehr/document/${encounterId ?? aptId}?type=encounter`);
+      let data = await resp.json() as { url?: string; error?: string };
+
+      // Si falla (archivo no existe aún), regenerar PDF primero
+      if (!data.url) {
+        const genResp = await fetch("/api/ehr/generate-pdf", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ type: "encounter", id: encounterId ?? aptId }),
+        });
+        const genData = await genResp.json() as { pdf_url?: string; error?: string };
+        if (genData.error) { alert(`Error generando PDF: ${genData.error}`); setGeneratingPdf(false); return; }
+
+        // Intentar signed URL de nuevo
+        resp = await fetch(`/api/ehr/document/${encounterId ?? aptId}?type=encounter`);
+        data = await resp.json() as { url?: string; error?: string };
+      }
+
       if (data.url) window.open(data.url, "_blank");
-    } catch {}
+      else alert(`Error: ${data.error ?? "No se pudo obtener el PDF"}`);
+    } catch (e) {
+      alert(`Error inesperado: ${String(e)}`);
+    }
     setGeneratingPdf(false);
   }
 

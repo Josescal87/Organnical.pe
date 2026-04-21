@@ -200,6 +200,7 @@ async function generatePrescriptionPDF(
     diagnosis_cie10:  rx.diagnosis_cie10 ?? undefined,
     diagnosis_label:  rx.diagnosis_label ?? undefined,
     items,
+    signed_hash:      rx.signed_hash ?? undefined,
   };
 
   const buffer = await renderToBuffer(React.createElement(PrescriptionPDF, { data: pdfData }) as React.ReactElement<DocumentProps>);

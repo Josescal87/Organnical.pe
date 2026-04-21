@@ -25,6 +25,14 @@ export async function updateClinicalNotes(aptId: string, notes: string) {
     .eq("doctor_id", user.id);
 
   if (error) return { error: error.message };
+
+  try {
+    await supabase.schema("medical").rpc("log_event", {
+      p_action: "update", p_resource_type: "clinical_notes",
+      p_resource_id: aptId, p_patient_id: null,
+    });
+  } catch {}
+
   revalidatePath(`/dashboard/medico/consultas/${aptId}`);
   return { success: true };
 }
@@ -45,6 +53,15 @@ export async function updateAppointmentStatus(
     .eq("doctor_id", user.id);
 
   if (error) return { error: error.message };
+
+  try {
+    await supabase.schema("medical").rpc("log_event", {
+      p_action: "update", p_resource_type: "appointment_status",
+      p_resource_id: aptId, p_patient_id: null,
+      p_metadata: { status },
+    });
+  } catch {}
+
   revalidatePath(`/dashboard/medico/consultas/${aptId}`);
   revalidatePath("/dashboard/medico/consultas");
   revalidatePath("/dashboard/medico");
@@ -134,6 +151,13 @@ export async function createPrescription(
   } catch (e) {
     console.error("Resend prescription email error (non-fatal):", e);
   }
+
+  try {
+    await supabase.schema("medical").rpc("log_event", {
+      p_action: "create", p_resource_type: "prescription",
+      p_resource_id: rx.id, p_patient_id: patientId,
+    });
+  } catch {}
 
   revalidatePath(`/dashboard/medico/consultas/${aptId}`);
   revalidatePath("/dashboard/medico/recetas");

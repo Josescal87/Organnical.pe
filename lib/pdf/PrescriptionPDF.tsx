@@ -89,6 +89,7 @@ export type PrescriptionPDFData = {
   diagnosis_cie10?:    string;
   diagnosis_label?:    string;
   items:               PrescriptionItem[];
+  signed_hash?:        string;
 };
 
 function Field({ label, value }: { label: string; value?: string | null }) {
@@ -222,6 +223,16 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
               Firma y sello del médico
             </Text>
           </View>
+          {data.signed_hash && (
+            <View style={{ marginTop: 8, borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 5 }}>
+              <Text style={[s.sigHash, { color: GRAY }]}>
+                Integridad del documento — SHA-256: {data.signed_hash}
+              </Text>
+              <Text style={[s.sigHash, { marginTop: 2 }]}>
+                Documento generado electrónicamente conforme RM 164-2025/MINSA — Ley 29733.
+              </Text>
+            </View>
+          )}
         </View>
 
         {/* ── Footer ── */}

@@ -97,14 +97,30 @@ export async function createPrescription(
 
   if (!apt) return { error: "Cita no encontrada" };
 
+  // Heredar diagnóstico CIE-10 principal de la HC firmada
+  const { data: enc } = await supabase
+    .schema("medical")
+    .from("clinical_encounters")
+    .select("diagnoses, doctor_signature_hash, hc_number:id")
+    .eq("appointment_id", aptId)
+    .eq("status", "signed")
+    .single();
+
+  type DiagnosisItem = { cie10_code: string; cie10_description: string; type: string };
+  const diagnoses = (enc?.diagnoses ?? []) as DiagnosisItem[];
+  const principal = diagnoses.find((d) => d.type === "principal") ?? diagnoses[0];
+
   const { data: rx, error: rxError } = await supabase
     .schema("medical")
     .from("prescriptions")
     .insert({
-      appointment_id: aptId,
-      doctor_id: user.id,
-      patient_id: patientId,
-      valid_until: validUntil,
+      appointment_id:  aptId,
+      doctor_id:       user.id,
+      patient_id:      patientId,
+      valid_until:     validUntil,
+      diagnosis_cie10: principal?.cie10_code    ?? null,
+      diagnosis_label: principal?.cie10_description ?? null,
+      signed_hash:     enc?.doctor_signature_hash ?? null,
     })
     .select("id")
     .single();

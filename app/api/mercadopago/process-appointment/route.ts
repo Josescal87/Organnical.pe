@@ -95,6 +95,10 @@ export async function POST(req: NextRequest) {
     const apellido = parts.slice(1).join(" ") || "-";
     const fecha    = new Date().toISOString().split("T")[0];
 
+    // Obtener email del médico para invitarlo al evento de Calendar
+    const { data: doctorAuthData } = await createAdminClient().auth.admin.getUserById(doctorId);
+    const doctorEmail = doctorAuthData?.user?.email;
+
     const appointmentIds: string[] = [];
     const meetLinks: (string | null)[] = [];
 
@@ -106,6 +110,8 @@ export async function POST(req: NextRequest) {
       // Google Calendar (non-fatal)
       let meetLink: string | null = null;
       try {
+        const attendees = [user.email!];
+        if (doctorEmail) attendees.push(doctorEmail);
         const calEvent = await createCalendarEvent({
           title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
           description: [
@@ -119,7 +125,7 @@ export async function POST(req: NextRequest) {
           ].filter(Boolean).join("\n"),
           startTime: startDate.toISOString(),
           endTime:   endDate.toISOString(),
-          attendeeEmails: [user.email!],
+          attendeeEmails: attendees,
         });
         meetLink = calEvent.meetLink;
       } catch (e) {
@@ -172,10 +178,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Email al médico (solo primera sesión)
-    const { data: doctorAuth } = await createAdminClient().auth.admin.getUserById(doctorId);
-    if (doctorAuth?.user?.email && appointmentIds[0]) {
+    if (doctorEmail && appointmentIds[0]) {
       sendNewAppointmentToDoctor({
-        toEmail:       doctorAuth.user.email,
+        toEmail:       doctorEmail,
         doctorName,
         patientName,
         specialty,

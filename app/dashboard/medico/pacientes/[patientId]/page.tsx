@@ -37,7 +37,7 @@ export default async function PatientOverviewPage({
       .select("*").eq("patient_id", patientId).maybeSingle(),
 
     supabase.schema("medical").from("clinical_encounters")
-      .select("id, signed_at, chief_complaint, diagnoses, status, appointments(slot_start, specialty)")
+      .select("id, appointment_id, signed_at, chief_complaint, diagnoses, status, appointments(slot_start, specialty)")
       .eq("patient_id", patientId)
       .order("signed_at", { ascending: false })
       .limit(10),
@@ -55,7 +55,7 @@ export default async function PatientOverviewPage({
   const record     = recordResult.data;
   const bg         = backgroundResult.data;
   const encounters = (encountersResult.data ?? []) as unknown as {
-    id: string; signed_at: string | null; chief_complaint: string;
+    id: string; appointment_id: string; signed_at: string | null; chief_complaint: string;
     diagnoses: { cie10_code: string; cie10_description: string; type: string }[];
     status: string;
     appointments: { slot_start: string; specialty: string } | null;
@@ -181,7 +181,7 @@ export default async function PatientOverviewPage({
               return (
                 <Link
                   key={enc.id}
-                  href={`/dashboard/medico/consultas/${enc.appointments ? "" : ""}${enc.id}`}
+                  href={`/dashboard/medico/consultas/${enc.appointment_id}`}
                   className="flex items-center gap-3 p-3 rounded-xl border border-zinc-50 hover:border-violet-100 hover:bg-violet-50/30 transition-all group"
                 >
                   <CheckCircle2 className={`w-4 h-4 flex-shrink-0 ${enc.status === "signed" ? "text-emerald-500" : "text-zinc-300"}`} />

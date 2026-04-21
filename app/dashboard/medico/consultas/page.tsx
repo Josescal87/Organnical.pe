@@ -31,8 +31,9 @@ const SPECIALTY: Record<AppointmentSpecialty, { label: string; icon: string }> =
 };
 
 function toLinaDate(iso: string) {
-  // Convierte ISO UTC a fecha YYYY-MM-DD en zona Lima (UTC-5)
-  return new Date(new Date(iso).toLocaleString("en-CA", { timeZone: "America/Lima" })).toISOString().split("T")[0];
+  // Lima es UTC-5 fijo (sin DST) — restamos 5 horas
+  const lima = new Date(new Date(iso).getTime() - 5 * 60 * 60 * 1000);
+  return lima.toISOString().split("T")[0];
 }
 
 function groupByDate(apts: AppointmentWithPatient[]) {

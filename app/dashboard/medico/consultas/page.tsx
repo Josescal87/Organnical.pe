@@ -30,10 +30,15 @@ const SPECIALTY: Record<AppointmentSpecialty, { label: string; icon: string }> =
   womens_health: { label: "Salud Femenina", icon: "🌸" },
 };
 
+function toLinaDate(iso: string) {
+  // Convierte ISO UTC a fecha YYYY-MM-DD en zona Lima (UTC-5)
+  return new Date(new Date(iso).toLocaleString("en-CA", { timeZone: "America/Lima" })).toISOString().split("T")[0];
+}
+
 function groupByDate(apts: AppointmentWithPatient[]) {
   const groups: Record<string, AppointmentWithPatient[]> = {};
   for (const apt of apts) {
-    const key = new Date(apt.slot_start).toLocaleDateString("es-PE", { timeZone: "America/Lima" });
+    const key = toLinaDate(apt.slot_start);
     if (!groups[key]) groups[key] = [];
     groups[key].push(apt);
   }
@@ -57,7 +62,7 @@ export default async function ConsultasMedicoPage() {
   const past = appointments.filter((a) => ["completed", "cancelled"].includes(a.status));
 
   const upcomingGroups = groupByDate(upcoming);
-  const today = new Date().toDateString();
+  const today = toLinaDate(new Date().toISOString());
 
   return (
     <div className="p-6 md:p-10 max-w-4xl">
@@ -73,7 +78,7 @@ export default async function ConsultasMedicoPage() {
           <h2 className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-5">Programadas</h2>
           <div className="space-y-6">
             {Object.entries(upcomingGroups).map(([dateStr, apts]) => {
-              const date = new Date(dateStr);
+              const date = new Date(dateStr + "T12:00:00");
               const isToday = dateStr === today;
               return (
                 <div key={dateStr}>

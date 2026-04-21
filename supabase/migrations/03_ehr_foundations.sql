@@ -38,7 +38,7 @@ GRANT USAGE ON SEQUENCE medical.hc_seq TO service_role;
 --                      ipress_category (I-1 | I-2), pdf_header_logo_url
 -- =============================================================================
 
-CREATE TABLE medical.system_config (
+CREATE TABLE IF NOT EXISTS medical.system_config (
   key        text        NOT NULL,
   value      text        NOT NULL,
   updated_at timestamptz NOT NULL DEFAULT now(),
@@ -66,7 +66,7 @@ ON CONFLICT (key) DO NOTHING;
 -- Se asigna automáticamente al crear el perfil de paciente.
 -- =============================================================================
 
-CREATE TABLE medical.patient_records (
+CREATE TABLE IF NOT EXISTS medical.patient_records (
   id           uuid        NOT NULL DEFAULT gen_random_uuid(),
   patient_id   uuid        NOT NULL REFERENCES medical.profiles(id) ON DELETE CASCADE,
   hc_number    text        NOT NULL,
@@ -90,7 +90,7 @@ COMMENT ON COLUMN medical.patient_records.hc_number IS
 -- Cumplimiento: RM 164-2025/MINSA (requisito de seguridad y trazabilidad).
 -- =============================================================================
 
-CREATE TABLE medical.audit_log (
+CREATE TABLE IF NOT EXISTS medical.audit_log (
   id            bigserial   NOT NULL,
   event_time    timestamptz NOT NULL DEFAULT now(),
   actor_id      uuid,
@@ -132,25 +132,14 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = medical, public
 AS $$
-DECLARE
-  v_role text;
 BEGIN
-  -- Intentar leer el rol del JWT primero; si falla, consultar la tabla
-  BEGIN
-    v_role := current_setting('request.jwt.claims', true)::jsonb->>'role';
-  EXCEPTION WHEN OTHERS THEN
-    v_role := NULL;
-  END;
-
-  IF v_role IS NULL THEN
-    SELECT role::text INTO v_role FROM medical.profiles WHERE id = auth.uid();
-  END IF;
-
   INSERT INTO medical.audit_log (
     actor_id, actor_role, actor_ip,
     action, resource_type, resource_id, patient_id, metadata
   ) VALUES (
-    auth.uid(), v_role, inet_client_addr(),
+    auth.uid(),
+    (SELECT "role"::text FROM medical.profiles WHERE id = auth.uid()),
+    inet_client_addr(),
     p_action, p_resource_type, p_resource_id, p_patient_id, p_metadata
   );
 END;
@@ -174,19 +163,16 @@ LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = medical, public
 AS $$
-DECLARE
-  v_ipress_code text;
 BEGIN
-  IF NEW.role = 'patient' THEN
-    SELECT value INTO v_ipress_code
-    FROM medical.system_config
-    WHERE key = 'ipress_code';
-
+  IF NEW."role"::text = 'patient' THEN
     INSERT INTO medical.patient_records (patient_id, hc_number, ipress_code)
     VALUES (
       NEW.id,
       'HC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('medical.hc_seq')::text, 6, '0'),
-      COALESCE(v_ipress_code, 'PENDIENTE')
+      COALESCE(
+        (SELECT value FROM medical.system_config WHERE key = 'ipress_code'),
+        'PENDIENTE'
+      )
     )
     ON CONFLICT (patient_id) DO NOTHING;
   END IF;
@@ -198,6 +184,7 @@ COMMENT ON FUNCTION medical.assign_hc_number() IS
   'Asigna automáticamente un número de HC al crear un perfil de paciente.';
 
 -- Trigger en medical.profiles (AFTER INSERT, para tener el id disponible)
+DROP TRIGGER IF EXISTS trg_medical_assign_hc ON medical.profiles;
 CREATE TRIGGER trg_medical_assign_hc
   AFTER INSERT ON medical.profiles
   FOR EACH ROW EXECUTE FUNCTION medical.assign_hc_number();
@@ -339,25 +326,14 @@ GRANT SELECT                 ON medical.system_config TO authenticated;
 -- Ejecutar solo una vez. Seguro re-ejecutar (ON CONFLICT DO NOTHING).
 -- =============================================================================
 
-DO $$
-DECLARE
-  v_ipress_code text;
-  v_patient     record;
-BEGIN
-  SELECT value INTO v_ipress_code
-  FROM medical.system_config
-  WHERE key = 'ipress_code';
-
-  FOR v_patient IN
-    SELECT id FROM medical.profiles WHERE role = 'patient'
-  LOOP
-    INSERT INTO medical.patient_records (patient_id, hc_number, ipress_code)
-    VALUES (
-      v_patient.id,
-      'HC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('medical.hc_seq')::text, 6, '0'),
-      COALESCE(v_ipress_code, 'PENDIENTE')
-    )
-    ON CONFLICT (patient_id) DO NOTHING;
-  END LOOP;
-END;
-$$;
+INSERT INTO medical.patient_records (patient_id, hc_number, ipress_code)
+SELECT
+  p.id,
+  'HC-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('medical.hc_seq')::text, 6, '0'),
+  COALESCE(
+    (SELECT value FROM medical.system_config WHERE key = 'ipress_code'),
+    'PENDIENTE'
+  )
+FROM medical.profiles p
+WHERE p."role"::text = 'patient'
+ON CONFLICT (patient_id) DO NOTHING;

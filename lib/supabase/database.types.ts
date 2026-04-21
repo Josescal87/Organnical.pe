@@ -190,8 +190,15 @@ export interface Database {
           verticals:       string[]
           rating:          number
           reviews_count:   number
-          available_hours: number[]      // ej. [9,9.5,10,14,14.5] slots de 30 min
-          available_days:  number[]      // ej. [1,2,3,4,5] (1=Lun … 6=Sáb)
+          available_hours: number[]      // DEPRECATED — usar weekly_schedule
+          available_days:  number[]      // DEPRECATED — usar weekly_schedule
+          weekly_schedule: Record<string, number[]> | null
+          // Campos demográficos EHR (migración 03)
+          birth_date:      string | null // ISO date YYYY-MM-DD
+          gender:          string | null // M | F | otro
+          document_type:   string | null // DNI | CE | pasaporte
+          blood_type:      string | null // A+ A- B+ B- AB+ AB- O+ O-
+          rne:             string | null // Registro Nacional de Especialistas (doctores)
           created_at:      string
           updated_at:      string
         }
@@ -209,6 +216,12 @@ export interface Database {
           reviews_count?:   number
           available_hours?: number[]
           available_days?:  number[]
+          weekly_schedule?: Record<string, number[]> | null
+          birth_date?:      string | null
+          gender?:          string | null
+          document_type?:   string | null
+          blood_type?:      string | null
+          rne?:             string | null
           created_at?:      string
           updated_at?:      string
         }
@@ -225,7 +238,80 @@ export interface Database {
           reviews_count?:   number
           available_hours?: number[]
           available_days?:  number[]
+          weekly_schedule?: Record<string, number[]> | null
+          birth_date?:      string | null
+          gender?:          string | null
+          document_type?:   string | null
+          blood_type?:      string | null
+          rne?:             string | null
           updated_at?:      string
+        }
+      }
+
+      // ── medical.patient_records (migración 03) ────────────────────────────
+      patient_records: {
+        Row: {
+          id:          string
+          patient_id:  string
+          hc_number:   string  // Formato: HC-{AÑO}-{seq_6_dígitos}
+          ipress_code: string
+          created_at:  string
+        }
+        Insert: {
+          id?:         string
+          patient_id:  string
+          hc_number:   string
+          ipress_code: string
+          created_at?: string
+        }
+        Update: never  // inmutable
+      }
+
+      // ── medical.audit_log (migración 03) ──────────────────────────────────
+      audit_log: {
+        Row: {
+          id:            number    // bigserial
+          event_time:    string
+          actor_id:      string | null
+          actor_role:    string | null
+          actor_ip:      string | null
+          action:        string    // view|create|update|sign|download|delete
+          resource_type: string    // encounter|prescription|patient_record|background|consent
+          resource_id:   string
+          patient_id:    string | null
+          metadata:      Record<string, unknown> | null
+          session_id:    string | null
+        }
+        Insert: {
+          event_time?:    string
+          actor_id?:      string | null
+          actor_role?:    string | null
+          actor_ip?:      string | null
+          action:         string
+          resource_type:  string
+          resource_id:    string
+          patient_id?:    string | null
+          metadata?:      Record<string, unknown> | null
+          session_id?:    string | null
+        }
+        Update: never  // inmutable
+      }
+
+      // ── medical.system_config (migración 03) ──────────────────────────────
+      system_config: {
+        Row: {
+          key:        string
+          value:      string
+          updated_at: string
+        }
+        Insert: {
+          key:         string
+          value:       string
+          updated_at?: string
+        }
+        Update: {
+          value?:      string
+          updated_at?: string
         }
       }
 
@@ -335,6 +421,16 @@ export interface Database {
         Args:    Record<string, never>
         Returns: UserRole
       }
+      log_event: {
+        Args: {
+          p_action:        string
+          p_resource_type: string
+          p_resource_id:   string
+          p_patient_id?:   string
+          p_metadata?:     Record<string, unknown>
+        }
+        Returns: void
+      }
     }
 
     Enums: {
@@ -356,3 +452,8 @@ export type MedicalAppointmentInsert    = Database["medical"]["Tables"]["appoint
 export type MedicalPrescriptionInsert   = Database["medical"]["Tables"]["prescriptions"]["Insert"]
 export type MedicalPrescriptionItemInsert = Database["medical"]["Tables"]["prescription_items"]["Insert"]
 export type Producto                    = Database["public"]["Tables"]["productos"]["Row"]
+
+// Tipos EHR (migración 03)
+export type PatientRecord               = Database["medical"]["Tables"]["patient_records"]["Row"]
+export type AuditLog                    = Database["medical"]["Tables"]["audit_log"]["Row"]
+export type SystemConfig                = Database["medical"]["Tables"]["system_config"]["Row"]

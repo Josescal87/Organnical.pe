@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { FileText, Plus, Trash2, CheckCircle } from "lucide-react";
+import { FileText, Plus, Trash2, CheckCircle, Download, Loader2 } from "lucide-react";
 import { createPrescription, type PrescriptionItem } from "./actions";
 import type { Producto } from "@/lib/supabase/database.types";
 
@@ -11,6 +11,61 @@ type ExistingPrescription = {
   valid_until: string;
   items: { producto_sku: string; quantity: number; dosage_instructions: string | null; nombre: string }[];
 };
+
+function ExistingPrescriptionView({ existing }: { existing: ExistingPrescription }) {
+  const [loading, setLoading] = useState(false);
+
+  async function handleDownload() {
+    setLoading(true);
+    try {
+      // Generar PDF primero
+      await fetch("/api/ehr/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "prescription", id: existing.id }),
+      });
+      // Obtener signed URL
+      const resp = await fetch(`/api/ehr/document/${existing.id}?type=prescription`);
+      const data = await resp.json() as { url?: string; error?: string };
+      if (data.url) window.open(data.url, "_blank");
+      else alert(`Error: ${data.error ?? "No se pudo obtener el PDF"}`);
+    } catch (e) {
+      alert(`Error: ${String(e)}`);
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div className="bg-white rounded-2xl p-5 border border-zinc-100">
+      <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
+        <FileText className="w-3.5 h-3.5" /> Receta emitida
+      </p>
+      <div className="flex items-center justify-between gap-2 mb-4">
+        <div className="flex items-center gap-2 text-emerald-600">
+          <CheckCircle className="w-4 h-4" />
+          <span className="text-sm font-semibold">
+            Emitida el {new Date(existing.issued_at).toLocaleDateString("es-PE")} · válida hasta {new Date(existing.valid_until).toLocaleDateString("es-PE")}
+          </span>
+        </div>
+        <button onClick={handleDownload} disabled={loading}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border border-violet-200 text-violet-700 bg-violet-50 hover:bg-violet-100 disabled:opacity-50 transition-colors shrink-0">
+          {loading ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generando…</> : <><Download className="w-3.5 h-3.5" /> PDF Receta</>}
+        </button>
+      </div>
+      <ul className="space-y-2">
+        {existing.items.map((it, i) => (
+          <li key={i} className="text-sm bg-zinc-50 rounded-xl px-4 py-2.5 flex items-start justify-between gap-4">
+            <div>
+              <p className="font-semibold text-[#0B1D35]">{it.nombre}</p>
+              {it.dosage_instructions && <p className="text-xs text-zinc-500 mt-0.5">{it.dosage_instructions}</p>}
+            </div>
+            <span className="text-xs font-bold text-zinc-400 shrink-0">×{it.quantity}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
 
 export default function PrescriptionForm({
   aptId,
@@ -38,32 +93,7 @@ export default function PrescriptionForm({
   const [pending, startTransition] = useTransition();
 
   if (existing) {
-    return (
-      <div className="bg-white rounded-2xl p-5 border border-zinc-100">
-        <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
-          <FileText className="w-3.5 h-3.5" /> Receta emitida
-        </p>
-        <div className="flex items-center gap-2 mb-4 text-emerald-600">
-          <CheckCircle className="w-4 h-4" />
-          <span className="text-sm font-semibold">
-            Receta emitida el {new Date(existing.issued_at).toLocaleDateString("es-PE")} · válida hasta {new Date(existing.valid_until).toLocaleDateString("es-PE")}
-          </span>
-        </div>
-        <ul className="space-y-2">
-          {existing.items.map((it, i) => (
-            <li key={i} className="text-sm bg-zinc-50 rounded-xl px-4 py-2.5 flex items-start justify-between gap-4">
-              <div>
-                <p className="font-semibold text-[#0B1D35]">{it.nombre}</p>
-                {it.dosage_instructions && (
-                  <p className="text-xs text-zinc-500 mt-0.5">{it.dosage_instructions}</p>
-                )}
-              </div>
-              <span className="text-xs font-bold text-zinc-400 shrink-0">×{it.quantity}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    );
+    return <ExistingPrescriptionView existing={existing} />;
   }
 
   if (done) {

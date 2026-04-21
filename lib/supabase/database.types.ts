@@ -366,25 +366,157 @@ export interface Database {
           patient_id:     string
           issued_at:      string
           valid_until:    string
-          pdf_url:        string | null
-          created_at:     string
-          updated_at:     string
+          pdf_url:             string | null
+          prescription_number: string | null
+          hc_number:           string | null
+          diagnosis_cie10:     string | null
+          diagnosis_label:     string | null
+          signed_at:           string | null
+          signed_hash:         string | null
+          created_at:          string
+          updated_at:          string
         }
         Insert: {
-          id?:            string
-          appointment_id: string
-          doctor_id:      string
-          patient_id:     string
-          issued_at?:     string
-          valid_until:    string
-          pdf_url?:       string | null
-          created_at?:    string
-          updated_at?:    string
+          id?:                  string
+          appointment_id:       string
+          doctor_id:            string
+          patient_id:           string
+          issued_at?:           string
+          valid_until:          string
+          pdf_url?:             string | null
+          prescription_number?: string | null
+          hc_number?:           string | null
+          diagnosis_cie10?:     string | null
+          diagnosis_label?:     string | null
+          signed_at?:           string | null
+          signed_hash?:         string | null
+          created_at?:          string
+          updated_at?:          string
         }
         Update: {
-          valid_until?: string
-          pdf_url?:     string | null
-          updated_at?:  string
+          valid_until?:         string
+          pdf_url?:             string | null
+          prescription_number?: string | null
+          hc_number?:           string | null
+          diagnosis_cie10?:     string | null
+          diagnosis_label?:     string | null
+          signed_at?:           string | null
+          signed_hash?:         string | null
+          updated_at?:          string
+        }
+      }
+
+      // ── medical.clinical_encounters (migración 06) ───────────────────────
+      clinical_encounters: {
+        Row: {
+          id:                     string
+          appointment_id:         string
+          patient_id:             string
+          doctor_id:              string
+          // S — Subjetivo
+          chief_complaint:        string
+          illness_history:        string
+          relevant_history:       string | null
+          // O — Objetivo
+          vital_weight_kg:        number | null
+          vital_height_cm:        number | null
+          vital_bmi:              number | null
+          vital_bp_systolic:      number | null
+          vital_bp_diastolic:     number | null
+          vital_heart_rate:       number | null
+          vital_respiratory_rate: number | null
+          vital_temperature_c:    number | null
+          vital_spo2_pct:         number | null
+          physical_exam_notes:    string | null
+          // A — Análisis
+          diagnoses: {
+            cie10_code:        string
+            cie10_description: string
+            type:              "principal" | "secondary"
+            certainty:         "definitivo" | "presuntivo"
+          }[]
+          // P — Plan
+          treatment_plan:         string
+          indications:            string | null
+          follow_up_days:         number | null
+          lab_orders:             string | null
+          // Ley 30681
+          cannabis_indication:    string | null
+          expected_outcomes:      string | null
+          // Firma
+          status:                 string   // draft | signed | amended
+          signed_at:              string | null
+          signed_by:              string | null
+          doctor_signature_hash:  string | null
+          doctor_ip:              string | null
+          // Versionado
+          version:                number
+          parent_encounter_id:    string | null
+          created_at:             string
+          updated_at:             string
+        }
+        Insert: {
+          id?:                     string
+          appointment_id:          string
+          patient_id:              string
+          doctor_id:               string
+          chief_complaint?:        string
+          illness_history?:        string
+          relevant_history?:       string | null
+          vital_weight_kg?:        number | null
+          vital_height_cm?:        number | null
+          vital_bmi?:              number | null
+          vital_bp_systolic?:      number | null
+          vital_bp_diastolic?:     number | null
+          vital_heart_rate?:       number | null
+          vital_respiratory_rate?: number | null
+          vital_temperature_c?:    number | null
+          vital_spo2_pct?:         number | null
+          physical_exam_notes?:    string | null
+          diagnoses?:              Record<string, unknown>[]
+          treatment_plan?:         string
+          indications?:            string | null
+          follow_up_days?:         number | null
+          lab_orders?:             string | null
+          cannabis_indication?:    string | null
+          expected_outcomes?:      string | null
+          status?:                 string
+          signed_at?:              string | null
+          signed_by?:              string | null
+          doctor_signature_hash?:  string | null
+          doctor_ip?:              string | null
+          version?:                number
+          parent_encounter_id?:    string | null
+          created_at?:             string
+          updated_at?:             string
+        }
+        Update: {
+          chief_complaint?:        string
+          illness_history?:        string
+          relevant_history?:       string | null
+          vital_weight_kg?:        number | null
+          vital_height_cm?:        number | null
+          vital_bmi?:              number | null
+          vital_bp_systolic?:      number | null
+          vital_bp_diastolic?:     number | null
+          vital_heart_rate?:       number | null
+          vital_respiratory_rate?: number | null
+          vital_temperature_c?:    number | null
+          vital_spo2_pct?:         number | null
+          physical_exam_notes?:    string | null
+          diagnoses?:              Record<string, unknown>[]
+          treatment_plan?:         string
+          indications?:            string | null
+          follow_up_days?:         number | null
+          lab_orders?:             string | null
+          cannabis_indication?:    string | null
+          expected_outcomes?:      string | null
+          status?:                 string
+          signed_at?:              string | null
+          signed_by?:              string | null
+          doctor_signature_hash?:  string | null
+          doctor_ip?:              string | null
+          updated_at?:             string
         }
       }
 
@@ -569,3 +701,6 @@ export type SystemConfig                = Database["medical"]["Tables"]["system_
 export type PatientBackground           = Database["medical"]["Tables"]["patient_background"]["Row"]
 export type CIE10Item                   = Database["medical"]["Tables"]["cie10_cache"]["Row"]
 export type ConsentRecord               = Database["medical"]["Tables"]["consent_records"]["Row"]
+
+// Tipos EHR (migración 06)
+export type ClinicalEncounter           = Database["medical"]["Tables"]["clinical_encounters"]["Row"]

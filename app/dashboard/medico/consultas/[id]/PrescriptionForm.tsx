@@ -17,11 +17,13 @@ export default function PrescriptionForm({
   patientId,
   productos,
   existing,
+  disabled = false,
 }: {
   aptId: string;
   patientId: string;
   productos: Producto[];
   existing: ExistingPrescription | null;
+  disabled?: boolean;
 }) {
   const [items, setItems] = useState<PrescriptionItem[]>([
     { producto_sku: "", quantity: 1, dosage_instructions: "" },
@@ -94,6 +96,17 @@ export default function PrescriptionForm({
       if (result.error) { setError(result.error); }
       else { setDone(true); }
     });
+  }
+
+  if (disabled) {
+    return (
+      <div className="bg-white rounded-2xl p-5 border border-zinc-100 opacity-50 pointer-events-none">
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2 flex items-center gap-2">
+          <FileText className="w-3.5 h-3.5" /> Emitir receta
+        </p>
+        <p className="text-xs text-zinc-400">Disponible después de firmar la historia clínica.</p>
+      </div>
+    );
   }
 
   return (

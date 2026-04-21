@@ -1,13 +1,17 @@
+export const dynamic = "force-dynamic";
+
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
-import { Video, User, Calendar } from "lucide-react";
+import { Video, User, Calendar, ClipboardList } from "lucide-react";
 import { BackLink } from "@/components/BackLink";
 import type { AppointmentStatus, AppointmentSpecialty, Producto } from "@/lib/supabase/database.types";
 import ClinicalNotesEditor from "./ClinicalNotesEditor";
+import ClinicalEncounterForm from "./ClinicalEncounterForm";
 import StatusButtons from "./StatusButtons";
 import PrescriptionForm from "./PrescriptionForm";
 import CalendarButtons from "@/components/CalendarButtons";
+import { getEncounter } from "./ehr-actions";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -35,7 +39,7 @@ export default async function ConsultaDetallePage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [aptResult, productosResult, prescriptionResult] = await Promise.all([
+  const [aptResult, productosResult, prescriptionResult, encounter] = await Promise.all([
     supabase
       .schema("medical")
       .from("appointments")
@@ -52,9 +56,11 @@ export default async function ConsultaDetallePage({
     supabase
       .schema("medical")
       .from("prescriptions")
-      .select("id, issued_at, valid_until, prescription_items(producto_sku, quantity, dosage_instructions)")
+      .select("id, issued_at, valid_until, diagnosis_cie10, diagnosis_label, prescription_items(producto_sku, quantity, dosage_instructions)")
       .eq("appointment_id", id)
       .maybeSingle(),
+
+    getEncounter(id),
   ]);
 
   const apt = aptResult.data as {
@@ -71,11 +77,12 @@ export default async function ConsultaDetallePage({
 
   const productos = (productosResult.data ?? []) as Producto[];
 
-  // Enriquecer los items de la receta con el nombre del producto
   const rxRaw = prescriptionResult.data as {
     id: string;
     issued_at: string;
     valid_until: string;
+    diagnosis_cie10: string | null;
+    diagnosis_label: string | null;
     prescription_items: { producto_sku: string; quantity: number; dosage_instructions: string | null }[];
   } | null;
 
@@ -98,10 +105,20 @@ export default async function ConsultaDetallePage({
 
   const patient = patientData as { full_name: string | null; phone: string | null; document_id: string | null } | null;
 
+  const { data: patientRecord } = await supabase
+    .schema("medical")
+    .from("patient_records")
+    .select("hc_number")
+    .eq("patient_id", apt.patient_id)
+    .maybeSingle();
+
   const st = STATUS[apt.status];
   const vt = SPECIALTY[apt.specialty];
   const date = new Date(apt.slot_start);
   const canJoin = apt.meeting_link && ["pending", "confirmed"].includes(apt.status);
+
+  // La receta solo se puede emitir si la HC está firmada
+  const encounterSigned = encounter?.status === "signed";
 
   return (
     <div className="p-6 md:p-10 max-w-3xl">
@@ -160,7 +177,7 @@ export default async function ConsultaDetallePage({
           )}
         </div>
 
-        {/* Patient info */}
+        {/* Paciente info */}
         <div className="bg-white rounded-2xl p-5 border border-zinc-100">
           <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4 flex items-center gap-2">
             <User className="w-3.5 h-3.5" /> Paciente
@@ -170,6 +187,12 @@ export default async function ConsultaDetallePage({
               <dt className="text-xs text-zinc-400">Nombre</dt>
               <dd className="font-semibold text-[#0B1D35]">{patient?.full_name ?? "Sin nombre"}</dd>
             </div>
+            {patientRecord?.hc_number && (
+              <div>
+                <dt className="text-xs text-zinc-400">N° HC</dt>
+                <dd className="font-mono text-xs font-bold text-violet-600">{patientRecord.hc_number}</dd>
+              </div>
+            )}
             {patient?.document_id && (
               <div>
                 <dt className="text-xs text-zinc-400">DNI</dt>
@@ -192,6 +215,13 @@ export default async function ConsultaDetallePage({
               </div>
             )}
           </dl>
+          {/* Link a antecedentes */}
+          <Link
+            href={`/dashboard/medico/pacientes/${apt.patient_id}/antecedentes`}
+            className="mt-4 flex items-center gap-2 text-xs font-semibold text-violet-600 hover:text-violet-800"
+          >
+            <ClipboardList className="w-3.5 h-3.5" /> Ver antecedentes del paciente
+          </Link>
         </div>
       </div>
 
@@ -202,19 +232,44 @@ export default async function ConsultaDetallePage({
         </div>
       )}
 
-      {/* Notas clínicas */}
+      {/* Historia Clínica Estructurada (Sprint 3) */}
       <div className="mb-4">
-        <ClinicalNotesEditor aptId={apt.id} initialNotes={apt.clinical_notes} />
+        <div className="flex items-center gap-2 mb-3">
+          <h2 className="font-display font-bold text-[#0B1D35] text-lg">Historia Clínica</h2>
+          {encounter?.status === "signed" && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700">Firmada</span>
+          )}
+          {encounter?.status === "draft" && (
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700">Borrador</span>
+          )}
+        </div>
+        <ClinicalEncounterForm aptId={apt.id} existing={encounter as Parameters<typeof ClinicalEncounterForm>[0]["existing"]} />
       </div>
 
-      {/* Receta — solo si no está cancelada */}
+      {/* Notas clínicas legacy — solo si la cita no tiene HC estructurada */}
+      {!encounter && apt.clinical_notes && (
+        <div className="mb-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-2">Notas anteriores (legado)</p>
+          <ClinicalNotesEditor aptId={apt.id} initialNotes={apt.clinical_notes} />
+        </div>
+      )}
+
+      {/* Receta — requiere HC firmada */}
       {apt.status !== "cancelled" && (
-        <PrescriptionForm
-          aptId={apt.id}
-          patientId={apt.patient_id}
-          productos={productos}
-          existing={existingPrescription}
-        />
+        <div>
+          {!encounterSigned && (
+            <div className="mb-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs text-amber-700 font-medium">
+              Debes firmar la historia clínica antes de emitir una receta.
+            </div>
+          )}
+          <PrescriptionForm
+            aptId={apt.id}
+            patientId={apt.patient_id}
+            productos={productos}
+            existing={existingPrescription}
+            disabled={!encounterSigned}
+          />
+        </div>
       )}
     </div>
   );

@@ -6,8 +6,6 @@ import { createClient } from "@/lib/supabase/server";
 import { headers } from "next/headers";
 import { CONSENT_TEXTS, CONSENT_VERSIONS, type ConsentType } from "./constants";
 
-export type { ConsentType };
-
 export async function recordConsent(consentType: ConsentType, accepted: boolean) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

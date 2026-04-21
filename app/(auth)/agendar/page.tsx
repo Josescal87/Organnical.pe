@@ -748,47 +748,78 @@ function AgendarWizard() {
 
               {/* Brick de pago */}
               <div className="order-1 lg:order-2">
-                {loadingPreference && (
-                  <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
-                    <div className="w-6 h-6 rounded-full border-2 border-violet-300 border-t-violet-600 animate-spin" />
+                {process.env.NEXT_PUBLIC_PAYMENT_BYPASS === "true" ? (
+                  <div className="bg-white rounded-2xl border border-amber-200 p-8 flex flex-col items-center gap-4">
+                    <p className="text-sm text-amber-700 font-semibold text-center">Modo testing — pago omitido</p>
+                    <button
+                      onClick={async () => {
+                        const res = await fetch("/api/mercadopago/process-appointment", {
+                          method: "POST",
+                          headers: { "Content-Type": "application/json" },
+                          body: JSON.stringify({
+                            doctorId,
+                            specialty:   vertical,
+                            slotStart:   selectedSlot,
+                            sessions,
+                            precioFinal: pricePerSession,
+                          }),
+                        });
+                        const data = await res.json();
+                        if (!res.ok) { alert(data.error ?? "Error"); return; }
+                        setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                        setStep("done");
+                      }}
+                      className="w-full rounded-xl px-6 py-3 text-sm font-semibold text-white"
+                      style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)" }}
+                    >
+                      Confirmar cita (sin pago)
+                    </button>
                   </div>
-                )}
-                {preferenceId && !loadingPreference && (
-                  <Payment
-                    initialization={{ amount: comboPrice, preferenceId }}
-                    customization={{
-                      paymentMethods: { creditCard: "all", debitCard: "all" },
-                      visual: {
-                        style: {
-                          customVariables: {
-                            baseColor: "#A78BFA",
-                            baseColorFirstVariant: "#F472B6",
-                            baseColorSecondVariant: "#38BDF8",
+                ) : (
+                  <>
+                    {loadingPreference && (
+                      <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
+                        <div className="w-6 h-6 rounded-full border-2 border-violet-300 border-t-violet-600 animate-spin" />
+                      </div>
+                    )}
+                    {preferenceId && !loadingPreference && (
+                      <Payment
+                        initialization={{ amount: comboPrice, preferenceId }}
+                        customization={{
+                          paymentMethods: { creditCard: "all", debitCard: "all" },
+                          visual: {
+                            style: {
+                              customVariables: {
+                                baseColor: "#A78BFA",
+                                baseColorFirstVariant: "#F472B6",
+                                baseColorSecondVariant: "#38BDF8",
+                              },
+                            },
                           },
-                        },
-                      },
-                    }}
-                    onSubmit={async ({ formData }) => {
-                      const res = await fetch("/api/mercadopago/process-appointment", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          ...formData,
-                          doctorId,
-                          specialty:   vertical,
-                          slotStart:   selectedSlot,
-                          sessions,
-                          precioFinal: pricePerSession,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
-                      if (data.status !== "approved") throw new Error("Pago no aprobado");
-                      setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
-                      setStep("done");
-                    }}
-                    onError={(err) => console.error("MP Brick error:", err)}
-                  />
+                        }}
+                        onSubmit={async ({ formData }) => {
+                          const res = await fetch("/api/mercadopago/process-appointment", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              ...formData,
+                              doctorId,
+                              specialty:   vertical,
+                              slotStart:   selectedSlot,
+                              sessions,
+                              precioFinal: pricePerSession,
+                            }),
+                          });
+                          const data = await res.json();
+                          if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
+                          if (data.status !== "approved") throw new Error("Pago no aprobado");
+                          setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                          setStep("done");
+                        }}
+                        onError={(err) => console.error("MP Brick error:", err)}
+                      />
+                    )}
+                  </>
                 )}
               </div>
             </div>

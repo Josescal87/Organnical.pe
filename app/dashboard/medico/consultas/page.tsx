@@ -33,7 +33,7 @@ const SPECIALTY: Record<AppointmentSpecialty, { label: string; icon: string }> =
 function groupByDate(apts: AppointmentWithPatient[]) {
   const groups: Record<string, AppointmentWithPatient[]> = {};
   for (const apt of apts) {
-    const key = new Date(apt.slot_start).toDateString();
+    const key = new Date(apt.slot_start).toLocaleDateString("es-PE", { timeZone: "America/Lima" });
     if (!groups[key]) groups[key] = [];
     groups[key].push(apt);
   }
@@ -80,7 +80,7 @@ export default async function ConsultasMedicoPage() {
                   <div className="flex items-center gap-3 mb-3">
                     <p className="text-sm font-bold text-[#0B1D35]">
                       {isToday ? "🔴 Hoy — " : ""}
-                      {date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long" })}
+                      {date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", timeZone: "America/Lima" })}
                     </p>
                     <div className="flex-1 h-px bg-zinc-100" />
                     <span className="text-xs text-zinc-400">{apts.length} cita{apts.length !== 1 ? "s" : ""}</span>
@@ -146,9 +146,9 @@ function ConsultaCard({ apt }: { apt: AppointmentWithPatient }) {
           <span className="text-sm">{vt.icon} {vt.label}</span>
         </div>
         <p className="text-sm font-semibold text-[#0B1D35]">
-          {date.toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short" })}
+          {date.toLocaleDateString("es-PE", { weekday: "short", day: "numeric", month: "short", timeZone: "America/Lima" })}
           {" · "}
-          {date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" })}
+          {date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", timeZone: "America/Lima" })}
         </p>
       </div>
 

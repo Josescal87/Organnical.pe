@@ -50,20 +50,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
     }
 
-    // Procesar pago con MP
-    const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
-    const paymentClient = new Payment(mp);
+    // Bypass de pago: si PAYMENT_BYPASS=true en .env.local se omite MP (solo para testing)
+    const bypassPayment = process.env.PAYMENT_BYPASS === "true";
 
-    const paymentResult = await paymentClient.create({
-      body: {
-        ...formData,
-        external_reference: user.id,
-        statement_descriptor: "Organnical",
-      },
-    });
+    if (!bypassPayment) {
+      const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
+      const paymentClient = new Payment(mp);
 
-    if (paymentResult.status !== "approved") {
-      return NextResponse.json({ status: paymentResult.status });
+      const paymentResult = await paymentClient.create({
+        body: {
+          ...formData,
+          external_reference: user.id,
+          statement_descriptor: "Organnical",
+        },
+      });
+
+      if (paymentResult.status !== "approved") {
+        return NextResponse.json({ status: paymentResult.status });
+      }
     }
 
     const adminClient = createAdminClient();

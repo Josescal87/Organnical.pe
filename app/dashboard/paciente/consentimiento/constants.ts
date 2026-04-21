@@ -8,7 +8,7 @@ export const CONSENT_VERSIONS = {
 export type ConsentType = keyof typeof CONSENT_VERSIONS;
 
 export const CONSENT_TEXTS: Record<ConsentType, string> = {
-  general_treatment: `Autorizo a los médicos de Organnical Salud S.A.C. a realizar las evaluaciones,
+  general_treatment: `Autorizo a los médicos de Organical Ventures S.A.C. a realizar las evaluaciones,
 diagnósticos y tratamientos necesarios para mi atención médica, de acuerdo con las normas éticas
 y legales vigentes en el Perú. Entiendo que tengo derecho a recibir información sobre mi estado de
 salud y a tomar decisiones informadas sobre mi tratamiento.`,
@@ -24,8 +24,8 @@ requiere prescripción médica, que los productos son de uso exclusivamente tera
 bajo supervisión médica durante el tratamiento. Me comprometo a no ceder, vender ni transferir los
 productos recetados.`,
 
-  data_processing: `Autorizo el tratamiento de mis datos personales de salud por parte de Organnical
-Salud S.A.C., conforme a la Ley N° 29733 (Ley de Protección de Datos Personales). Mis datos serán
+  data_processing: `Autorizo el tratamiento de mis datos personales de salud por parte de Organical
+Ventures S.A.C., conforme a la Ley N° 29733 (Ley de Protección de Datos Personales). Mis datos serán
 utilizados exclusivamente para mi atención médica y no serán compartidos con terceros sin mi
 consentimiento, salvo obligación legal. Puedo solicitar su rectificación, cancelación u oposición
 en cualquier momento.`,

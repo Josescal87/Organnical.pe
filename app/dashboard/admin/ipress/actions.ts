@@ -18,6 +18,8 @@ export type IpressConfig = {
   ipress_address: string;
   ipress_category: string;
   pdf_header_logo_url: string;
+  retention_years_clinical: string;
+  retention_years_payments: string;
 };
 
 export async function updateIpressConfig(config: IpressConfig) {

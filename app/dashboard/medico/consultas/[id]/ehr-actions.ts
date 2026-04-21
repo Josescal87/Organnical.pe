@@ -1,9 +1,9 @@
 "use server";
 
-import { createHash } from "crypto";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { signDocument } from "@/lib/digital-signature/provider";
 
 export type DiagnosisItem = {
   cie10_code:        string;
@@ -135,6 +135,17 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
 
   if (!apt) return { error: "Cita no encontrada" };
 
+  // F2 — Verificar que IPRESS code esté configurado antes de permitir firma
+  const { data: ipressConfig } = await supabase
+    .schema("medical")
+    .from("system_config")
+    .select("value")
+    .eq("key", "ipress_code")
+    .maybeSingle();
+  if (!ipressConfig?.value || ipressConfig.value === "PENDIENTE") {
+    return { error: "Configure el código IPRESS antes de firmar historias clínicas. Vaya a Administración → IPRESS." };
+  }
+
   if (!data.chief_complaint.trim()) return { error: "El motivo de consulta es obligatorio" };
   if (!data.illness_history.trim())  return { error: "La historia de enfermedad es obligatoria" };
   if (!data.treatment_plan.trim())   return { error: "El plan de tratamiento es obligatorio" };
@@ -146,16 +157,20 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
   const headersList = await headers();
   const ip = headersList.get("x-forwarded-for") ?? headersList.get("x-real-ip") ?? "unknown";
 
-  // SHA-256 del contenido clínico + identidad del firmante + timestamp
-  const contentForHash = JSON.stringify({
+  const contentForSigning = JSON.stringify({
     aptId,
-    doctorId:       user.id,
+    doctorId:        user.id,
     signedAt,
     chief_complaint: data.chief_complaint,
     diagnoses:       data.diagnoses,
     treatment_plan:  data.treatment_plan,
   });
-  const hash = createHash("sha256").update(contentForHash).digest("hex");
+
+  const signature = await signDocument({
+    content:   contentForSigning,
+    doctor_id: user.id,
+    timestamp: signedAt,
+  });
 
   const payload = {
     appointment_id:        aptId,
@@ -181,12 +196,15 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
     lab_orders:            data.lab_orders || null,
     cannabis_indication:   data.cannabis_indication || null,
     expected_outcomes:     data.expected_outcomes || null,
-    status:                "signed",
-    signed_at:             signedAt,
-    signed_by:             user.id,
-    doctor_signature_hash: hash,
-    doctor_ip:             ip,
-    updated_at:            signedAt,
+    status:                        "signed",
+    signed_at:                     signedAt,
+    signed_by:                     user.id,
+    doctor_signature_hash:         signature.hash,
+    doctor_ip:                     ip,
+    updated_at:                    signedAt,
+    signature_provider:            signature.provider,
+    signature_certificate_serial:  signature.certificate_serial,
+    signature_timestamp_rfc3161:   signature.timestamp_rfc3161,
   };
 
   const { data: upserted, error } = await supabase
@@ -208,7 +226,7 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
   } catch {}
 
   revalidatePath(`/dashboard/medico/consultas/${aptId}`);
-  return { success: true, signedAt, hash, encounterId: upserted?.id };
+  return { success: true, signedAt, hash: signature.hash, encounterId: upserted?.id };
 }
 
 export async function getEncounter(aptId: string) {

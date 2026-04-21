@@ -14,15 +14,19 @@ const CONFIG_KEYS: (keyof IpressConfig)[] = [
   "ipress_address",
   "ipress_category",
   "pdf_header_logo_url",
+  "retention_years_clinical",
+  "retention_years_payments",
 ];
 
 const DEFAULT_CONFIG: IpressConfig = {
-  ipress_code:         "",
-  ipress_name:         "",
-  ipress_ruc:          "",
-  ipress_address:      "",
-  ipress_category:     "I-2",
-  pdf_header_logo_url: "/logo-organnical.png",
+  ipress_code:               "",
+  ipress_name:               "",
+  ipress_ruc:                "",
+  ipress_address:            "",
+  ipress_category:           "I-2",
+  pdf_header_logo_url:       "/logo-organnical.png",
+  retention_years_clinical:  "15",
+  retention_years_payments:  "5",
 };
 
 export default async function AdminIpressPage() {

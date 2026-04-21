@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default function PrivacidadPage() {
-  const updated = "10 de abril de 2026";
+  const updated = "21 de abril de 2026";
 
   return (
     <main className="min-h-screen bg-white px-6 py-20">
@@ -67,38 +67,55 @@ export default function PrivacidadPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">5. Transferencia de datos</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">5. Transferencias internacionales de datos</h2>
             <p>
               Organnical no vende ni cede tus datos personales a terceros con fines comerciales.
-              Tus datos pueden ser compartidos con:
+              Para prestar el servicio, tus datos son procesados por los siguientes proveedores,
+              algunos de ellos ubicados fuera del Perú, bajo acuerdos de tratamiento de datos
+              conformes a la Ley N.° 29733:
             </p>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Los médicos colegiados de la plataforma, exclusivamente para la prestación del servicio.</li>
-              <li>Proveedores tecnológicos (Supabase para infraestructura, Vercel para alojamiento) bajo acuerdos de tratamiento de datos.</li>
-              <li>Autoridades sanitarias o judiciales, cuando la ley lo exija.</li>
+            <ul className="list-disc pl-5 space-y-1 mt-2">
+              <li><strong>Supabase / AWS (EE.UU.):</strong> almacenamiento de base de datos, archivos e historias clínicas. Cifrado AES-256 en reposo y TLS 1.3 en tránsito.</li>
+              <li><strong>Vercel (EE.UU.):</strong> hospedaje de la plataforma web.</li>
+              <li><strong>Resend (EE.UU.):</strong> envío de correos electrónicos transaccionales (confirmaciones, notificaciones).</li>
+              <li><strong>MercadoPago (Argentina):</strong> procesamiento de pagos. No almacenamos datos de tarjetas.</li>
+              <li><strong>Google (EE.UU.):</strong> servicio de videoconsulta (Google Meet). La sesión de video no es grabada por Organnical.</li>
+              <li><strong>Los médicos colegiados</strong> de la plataforma, exclusivamente para la prestación del servicio médico.</li>
+              <li><strong>Autoridades sanitarias o judiciales</strong> peruanas, cuando la ley lo exija.</li>
             </ul>
           </section>
 
           <section>
             <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">6. Conservación de datos</h2>
-            <p>
-              Los datos de salud se conservan durante el tiempo mínimo exigido por la normativa
-              sanitaria peruana (mínimo 5 años desde la última consulta). Los datos de cuenta se
-              eliminan a solicitud del usuario, salvo obligación legal de conservación.
-            </p>
+            <ul className="list-disc pl-5 space-y-1">
+              <li><strong>Historias clínicas y recetas:</strong> 15 años desde la última atención, conforme a NTS 139-MINSA/2018.</li>
+              <li><strong>Registros de auditoría:</strong> 5 años conforme a RM 164-2025/MINSA.</li>
+              <li><strong>Datos de pago:</strong> 5 años conforme a normativa tributaria peruana.</li>
+              <li><strong>Consentimientos:</strong> conservados de forma permanente como evidencia legal.</li>
+              <li><strong>Datos de cuenta:</strong> eliminados a solicitud del usuario, salvo obligación legal de conservación.</li>
+            </ul>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Tus derechos (ARCO)</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Tus derechos (ARCO+)</h2>
             <p>
-              De acuerdo con la Ley N.° 29733, tienes derecho a <strong>Acceder</strong>,{" "}
-              <strong>Rectificar</strong>, <strong>Cancelar</strong> y <strong>Oponerte</strong> al
-              tratamiento de tus datos. Para ejercerlos, escríbenos a{" "}
+              De acuerdo con la Ley N.° 29733, tienes derecho a:
+            </p>
+            <ul className="list-disc pl-5 space-y-1 mt-2">
+              <li><strong>Acceso:</strong> solicitar qué datos tenemos sobre ti.</li>
+              <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos.</li>
+              <li><strong>Cancelación:</strong> solicitar la eliminación de tus datos cuando ya no sean necesarios.</li>
+              <li><strong>Oposición:</strong> oponerte al tratamiento en determinadas circunstancias.</li>
+            </ul>
+            <p className="mt-3">
+              Para ejercer cualquiera de estos derechos, escríbenos a{" "}
               <a href="mailto:privacidad@organnical.com" className="text-[#7c6fed] hover:underline">
                 privacidad@organnical.com
               </a>{" "}
-              con asunto "Derechos ARCO" adjuntando copia de tu DNI. Responderemos en un plazo
-              máximo de 20 días hábiles.
+              con asunto <strong>"Derechos ARCO"</strong>, adjuntando copia de tu DNI.
+              Responderemos en un plazo máximo de 20 días hábiles conforme al DS 003-2013-JUS.
+              Si consideras que tus derechos no han sido atendidos, puedes presentar una reclamación
+              ante la <strong>Autoridad Nacional de Protección de Datos Personales (ANPDP)</strong> del Ministerio de Justicia.
             </p>
           </section>
 

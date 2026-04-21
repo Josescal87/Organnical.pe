@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 export default function TerminosPage() {
-  const updated = "10 de abril de 2026";
+  const updated = "21 de abril de 2026";
 
   return (
     <main className="min-h-screen bg-white px-6 py-20">
@@ -93,21 +93,56 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Responsabilidades y limitaciones</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Cannabis medicinal — Ley N.° 30681</h2>
+            <p>
+              Los productos de cannabis medicinal disponibles en Organnical son de <strong>uso exclusivamente terapéutico</strong>,
+              conforme a la Ley N.° 30681 y su Reglamento DS 005-2019-SA. El acceso a estos productos
+              requiere receta médica vigente emitida por un médico colegiado a través de esta plataforma.
+            </p>
+            <ul className="list-disc pl-5 space-y-1 mt-2">
+              <li>Está <strong>prohibida</strong> la cesión, venta, reventa o transferencia a terceros de los productos recetados.</li>
+              <li>El paciente declara usar los productos únicamente para el tratamiento indicado por su médico.</li>
+              <li>Organnical podrá suspender el acceso si detecta uso indebido o incumplimiento de estas condiciones.</li>
+              <li>La plataforma opera como IPRESS registrada ante SUSALUD para la prestación de servicios de telemedicina en cannabis medicinal.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">8. Verificación de credenciales médicas</h2>
+            <p>
+              Organnical verifica que los médicos incorporados a la plataforma cuenten con{" "}
+              <strong>CMP activo</strong> (Colegio Médico del Perú) al momento de su registro.
+              El número CMP de cada médico es visible en su perfil y en los documentos clínicos emitidos.
+              Los pacientes pueden verificar la vigencia del CMP en el portal público del Colegio Médico del Perú.
+            </p>
+            <p className="mt-2">
+              Organnical no es responsable por la actuación clínica de los profesionales médicos
+              independientes que prestan sus servicios a través de la plataforma.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">9. Comunicaciones y notificaciones</h2>
+            <p>
+              Al registrarte, aceptas recibir comunicaciones relacionadas con el servicio (confirmaciones
+              de cita, recordatorios, documentos clínicos) por correo electrónico. De manera opcional,
+              puedes autorizar el envío de recordatorios por <strong>WhatsApp</strong>; esta autorización
+              puede revocarse en cualquier momento desde tu perfil. Organnical no envía datos clínicos
+              (diagnósticos, medicamentos) por WhatsApp.
+            </p>
+          </section>
+
+          <section>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">10. Responsabilidades y limitaciones</h2>
             <p>
               Organnical no garantiza resultados médicos específicos. La efectividad de cualquier
               tratamiento depende de múltiples factores individuales y es determinada por el
               profesional médico.
             </p>
-            <p>
-              Organnical verifica que los médicos de la plataforma cuenten con CMP activo al momento
-              de su incorporación, pero no es responsable por la actuación clínica de los profesionales
-              médicos independientes.
-            </p>
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">8. Propiedad intelectual</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">11. Propiedad intelectual</h2>
             <p>
               Todos los contenidos de la plataforma (diseño, textos, logotipo, código) son propiedad
               de Organical Ventures S.A.C. o de sus licenciantes. Queda prohibida su reproducción
@@ -116,7 +151,7 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">9. Ley aplicable y jurisdicción</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">12. Ley aplicable y jurisdicción</h2>
             <p>
               Estos términos se rigen por la legislación peruana. Cualquier controversia será sometida
               a los juzgados y tribunales competentes de Lima, Perú, salvo que la normativa de
@@ -125,7 +160,7 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">10. Libro de reclamaciones</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">13. Libro de reclamaciones</h2>
             <p>
               Conforme al Código de Protección y Defensa del Consumidor (Ley N.° 29571), ponemos
               a tu disposición el Libro de Reclamaciones virtual. Puedes acceder a él en{" "}
@@ -145,7 +180,7 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">11. Modificaciones</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">14. Modificaciones</h2>
             <p>
               Organnical puede modificar estos términos con previo aviso de 15 días a través del
               correo electrónico registrado. El uso continuado de la plataforma tras la entrada en

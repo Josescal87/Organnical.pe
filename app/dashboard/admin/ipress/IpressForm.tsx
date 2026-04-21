@@ -82,6 +82,26 @@ export default function IpressForm({ initial }: { initial: IpressConfig }) {
         placeholder="/logo-organnical.png"
       />
 
+      <div className="pt-2 border-t border-zinc-100">
+        <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Retención de datos (Ley 29733 + NTS 139-MINSA)</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <Field
+            label="Retención HC (años)"
+            hint="NTS 139-MINSA: mínimo 15 años"
+            value={form.retention_years_clinical}
+            onChange={(v) => onChange("retention_years_clinical", v)}
+            placeholder="15"
+          />
+          <Field
+            label="Retención pagos (años)"
+            hint="Ley 29733 + SUNAT: mínimo 5 años"
+            value={form.retention_years_payments}
+            onChange={(v) => onChange("retention_years_payments", v)}
+            placeholder="5"
+          />
+        </div>
+      </div>
+
       {msg && (
         <p className={`text-sm rounded-xl px-4 py-3 ${msg.type === "ok" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
           {msg.text}

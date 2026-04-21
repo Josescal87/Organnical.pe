@@ -39,11 +39,11 @@ export default async function ConsultaDetallePage({
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) redirect("/login");
 
-  const [aptResult, productosResult, prescriptionResult, encounter] = await Promise.all([
+  const [aptResult, productosResult, prescriptionResult, encounter, doctorResult] = await Promise.all([
     supabase
       .schema("medical")
       .from("appointments")
-      .select("id, slot_start, status, specialty, meeting_link, clinical_notes, patient_id")
+      .select("id, slot_start, status, specialty, meeting_link, meeting_provider, meeting_host_link, clinical_notes, patient_id")
       .eq("id", id)
       .eq("doctor_id", user.id)
       .single(),
@@ -61,6 +61,13 @@ export default async function ConsultaDetallePage({
       .maybeSingle(),
 
     getEncounter(id),
+
+    supabase
+      .schema("medical")
+      .from("profiles")
+      .select("full_name, cmp, rne")
+      .eq("id", user.id)
+      .single(),
   ]);
 
   const apt = aptResult.data as {
@@ -69,6 +76,8 @@ export default async function ConsultaDetallePage({
     status: AppointmentStatus;
     specialty: AppointmentSpecialty;
     meeting_link: string | null;
+    meeting_provider: string | null;
+    meeting_host_link: string | null;
     clinical_notes: string | null;
     patient_id: string;
   } | null;
@@ -112,10 +121,14 @@ export default async function ConsultaDetallePage({
     .eq("patient_id", apt.patient_id)
     .maybeSingle();
 
+  const doctor = doctorResult.data as { full_name: string | null; cmp: string | null; rne: string | null } | null;
+
   const st = STATUS[apt.status];
   const vt = SPECIALTY[apt.specialty];
   const date = new Date(apt.slot_start);
-  const canJoin = apt.meeting_link && ["pending", "confirmed"].includes(apt.status);
+  // Prefer host link (Whereby) for doctor; fall back to patient link
+  const doctorMeetLink = apt.meeting_host_link ?? apt.meeting_link;
+  const canJoin = doctorMeetLink && ["pending", "confirmed"].includes(apt.status);
 
   // La receta solo se puede emitir si la HC está firmada
   const encounterSigned = encounter?.status === "signed";
@@ -127,6 +140,11 @@ export default async function ConsultaDetallePage({
         <div className="flex items-center gap-3 flex-wrap">
           <h1 className="font-display text-2xl font-black text-[#0B1D35]">Detalle de consulta</h1>
           <span className={`rounded-full px-3 py-1 text-xs font-semibold ${st.color}`}>{st.label}</span>
+          {doctor?.cmp && doctor.cmp !== "PENDIENTE" && (
+            <span className="rounded-full px-3 py-1 text-xs font-semibold bg-violet-50 text-violet-700">
+              {doctor.full_name ? `Dr/a. ${doctor.full_name.split(" ")[0]}` : "Médico"} · CMP {doctor.cmp}{doctor.rne ? ` · RNE ${doctor.rne}` : ""}
+            </span>
+          )}
         </div>
       </div>
 
@@ -152,13 +170,14 @@ export default async function ConsultaDetallePage({
           </dl>
           {canJoin && (
             <a
-              href={apt.meeting_link!}
+              href={doctorMeetLink!}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-5 flex items-center justify-center gap-2 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
             >
-              <Video className="w-4 h-4" /> Unirse a la videollamada
+              <Video className="w-4 h-4" />
+              {apt.meeting_provider === "whereby" ? "Unirse (Whereby)" : "Unirse a la videollamada"}
             </a>
           )}
           {["pending", "confirmed"].includes(apt.status) && (

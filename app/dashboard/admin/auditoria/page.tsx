@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BackLink } from "@/components/BackLink";
 import { ShieldCheck } from "lucide-react";
+import AuditExportButton from "./AuditExportButton";
 
 const ACTION_COLORS: Record<string, string> = {
   view:       "bg-zinc-100 text-zinc-600",
@@ -53,10 +54,11 @@ export default async function AuditoriaPage({
           <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-violet-50 flex-shrink-0">
             <ShieldCheck className="w-5 h-5 text-[#A78BFA]" />
           </div>
-          <div>
+          <div className="flex-1">
             <h1 className="font-display text-2xl font-black text-[#0B1D35]">Auditoría — Audit Trail</h1>
             <p className="text-xs text-zinc-400 mt-0.5">{count ?? 0} eventos totales · RM 164-2025/MINSA</p>
           </div>
+          <AuditExportButton />
         </div>
       </div>
 

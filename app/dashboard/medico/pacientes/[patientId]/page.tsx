@@ -52,6 +52,14 @@ export default async function PatientOverviewPage({
   const patient = patientResult.data;
   if (!patient) notFound();
 
+  // Audit: log doctor viewing patient record
+  await supabase.schema("medical").rpc("log_event", {
+    p_action: "view",
+    p_resource_type: "patient_record",
+    p_resource_id: patientId,
+    p_patient_id: patientId,
+  }).maybeSingle();
+
   const record     = recordResult.data;
   const bg         = backgroundResult.data;
   const encounters = (encountersResult.data ?? []) as unknown as {

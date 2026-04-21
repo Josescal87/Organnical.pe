@@ -3,6 +3,7 @@ import { Fraunces, DM_Sans } from "next/font/google";
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "sonner";
+import CookieBanner from "@/components/CookieBanner";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -61,6 +62,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col bg-white text-[#1a1a1a]">
         <ErrorBoundary>{children}</ErrorBoundary>
         <Toaster position="top-right" richColors closeButton />
+        <CookieBanner />
       </body>
     </html>
   );

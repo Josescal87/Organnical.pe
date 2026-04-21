@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BackLink } from "@/components/BackLink";
 import ProfileForm from "@/components/ProfileForm";
 import EHRProfileForm from "./EHRProfileForm";
+import WhatsAppOptIn from "./WhatsAppOptIn";
 
 export default async function PerfilPacientePage() {
   const supabase = await createClient();
@@ -14,7 +15,7 @@ export default async function PerfilPacientePage() {
   const { data } = await supabase
     .schema("medical")
     .from("profiles")
-    .select("full_name, document_id, phone, birth_date, gender, blood_type, document_type")
+    .select("full_name, document_id, phone, birth_date, gender, blood_type, document_type, whatsapp_opt_in")
     .eq("id", user.id)
     .single();
 
@@ -45,6 +46,8 @@ export default async function PerfilPacientePage() {
           document_type: data?.document_type ?? "DNI",
         }}
       />
+
+      <WhatsAppOptIn userId={user.id} initial={data?.whatsapp_opt_in ?? false} />
     </div>
   );
 }

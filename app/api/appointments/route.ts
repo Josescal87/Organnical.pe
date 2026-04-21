@@ -4,6 +4,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createCalendarEvent } from "@/lib/google-calendar";
 import { sendAppointmentConfirmation, sendNewAppointmentToDoctor, sendAdminSaleNotification } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
+import { createWherebyMeeting } from "@/lib/whereby/client";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
 
 function createAdminClient() {
@@ -41,15 +42,29 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
     }
 
-    // Obtener perfil del paciente desde medical schema
-    const { data: patientData } = await supabase
-      .schema("medical")
-      .from("profiles")
-      .select("full_name")
-      .eq("id", user.id)
-      .single();
+    // Verificar perfil completo y consentimientos (SUSALUD gate)
+    const [profileCheck, consentsCheck] = await Promise.all([
+      supabase.schema("medical").from("profiles")
+        .select("full_name, document_id, birth_date")
+        .eq("id", user.id).single(),
+      supabase.schema("medical").from("consent_records")
+        .select("consent_type")
+        .eq("patient_id", user.id).eq("accepted", true),
+    ]);
 
-    const patientName = patientData?.full_name ?? "Paciente";
+    const profile = profileCheck.data;
+    if (!profile?.document_id || !profile?.birth_date) {
+      return NextResponse.json({ error: "Completa tu perfil (DNI y fecha de nacimiento) antes de agendar." }, { status: 403 });
+    }
+
+    const REQUIRED_CONSENTS = ["general_treatment", "telemedicine", "cannabis_use", "data_processing"];
+    const accepted = new Set((consentsCheck.data ?? []).map((c) => c.consent_type));
+    const missing = REQUIRED_CONSENTS.filter((t) => !accepted.has(t));
+    if (missing.length > 0) {
+      return NextResponse.json({ error: "Debes aceptar todos los consentimientos médicos antes de agendar." }, { status: 403 });
+    }
+
+    const patientName = profile?.full_name ?? "Paciente";
 
     // Obtener perfil del doctor desde medical schema
     const { data: doctorData } = await supabase
@@ -66,39 +81,57 @@ export async function POST(req: NextRequest) {
 
     const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
 
-    // Crear evento en Google Calendar (opcional — si falla la cita se crea igual)
+    // Intentar crear sala Whereby (HIPAA-compliant) — fallback a Google Meet
     let meetLink: string | null = null;
+    let meetHostLink: string | null = null;
+    let meetingProvider: string = "google_meet";
     let calendarLink: string | null = null;
-    try {
-      const calendarEvent = await createCalendarEvent({
-        title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
-        description: [
-          `Teleconsulta de ${specialtyLabel}`,
-          `Paciente: ${patientName}`,
-          `Médico: ${doctorName}`,
-          ``,
-          `Plataforma: Organnical — Medicina Integrativa`,
-          `Soporte: reservas@organnical.com | +51 952 476 574`,
-        ].join("\n"),
-        startTime: startDate.toISOString(),
-        endTime:   endDate.toISOString(),
-        attendeeEmails: [user.email!],
-      });
-      meetLink     = calendarEvent.meetLink;
-      calendarLink = calendarEvent.htmlLink;
-    } catch (calErr) {
-      console.error("Google Calendar error (non-fatal):", calErr);
+
+    const whereby = await createWherebyMeeting(
+      startDate.toISOString(),
+      endDate.toISOString(),
+      `consulta-${Date.now()}`
+    );
+
+    if (whereby) {
+      meetLink      = whereby.roomUrl;
+      meetHostLink  = whereby.hostRoomUrl;
+      meetingProvider = "whereby";
+    } else {
+      // Fallback: Google Calendar con Meet
+      try {
+        const calendarEvent = await createCalendarEvent({
+          title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
+          description: [
+            `Teleconsulta de ${specialtyLabel}`,
+            `Paciente: ${patientName}`,
+            `Médico: ${doctorName}`,
+            ``,
+            `Plataforma: Organnical — Medicina Integrativa`,
+            `Soporte: reservas@organnical.com | +51 952 476 574`,
+          ].join("\n"),
+          startTime: startDate.toISOString(),
+          endTime:   endDate.toISOString(),
+          attendeeEmails: [user.email!],
+        });
+        meetLink     = calendarEvent.meetLink;
+        calendarLink = calendarEvent.htmlLink;
+      } catch (calErr) {
+        console.error("Google Calendar error (non-fatal):", calErr);
+      }
     }
 
     // Insertar cita en medical.appointments
     const appointmentData: MedicalAppointmentInsert = {
-      patient_id:   user.id,
-      doctor_id:    doctorId,
-      slot_start:   startDate.toISOString(),
-      slot_end:     endDate.toISOString(),
-      status:       "confirmed",
-      specialty:    specialty as AppointmentSpecialty,
-      meeting_link: meetLink,
+      patient_id:        user.id,
+      doctor_id:         doctorId,
+      slot_start:        startDate.toISOString(),
+      slot_end:          endDate.toISOString(),
+      status:            "confirmed",
+      specialty:         specialty as AppointmentSpecialty,
+      meeting_link:      meetLink,
+      meeting_provider:  meetingProvider as "google_meet" | "whereby",
+      meeting_host_link: meetHostLink,
     };
 
     const { data: appointment, error: insertError } = await supabase

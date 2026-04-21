@@ -144,6 +144,7 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
             <View style={[s.row2, { borderTopWidth: 1, borderTopColor: BORDER, paddingTop: 4, marginTop: 2 }]}>
               <Field label="Médico"            value={`Dr(a). ${data.doctor_name}`} />
               <Field label="CMP"               value={data.doctor_cmp} />
+              {data.doctor_rne && <Field label="RNE" value={data.doctor_rne} />}
               <Field label="Especialidad"      value={data.doctor_specialty} />
             </View>
           </View>
@@ -193,12 +194,14 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
           </View>
         </View>
 
-        {/* ── Aviso legal Ley 30681 ── */}
-        <View style={s.legalBox}>
-          <Text style={s.legalText}>
-            Conforme a la Ley N° 30681 y su Reglamento (DS 005-2019-SA), los productos recetados son de uso terapéutico exclusivo bajo supervisión médica.
-            El paciente se compromete a no ceder, vender ni transferir los productos prescritos.
-            Receta válida únicamente para el paciente indicado.
+        {/* ── Sello Ley 30681 ── */}
+        <View style={{ backgroundColor: "#FEF3C7", borderWidth: 1.5, borderColor: "#F59E0B", borderRadius: 4, padding: "6pt 10pt", marginBottom: 6, flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <View style={{ backgroundColor: "#F59E0B", borderRadius: 2, paddingHorizontal: 6, paddingVertical: 2 }}>
+            <Text style={{ fontSize: 7.5, fontFamily: "Helvetica-Bold", color: "white" }}>USO TERAPÉUTICO EXCLUSIVO</Text>
+          </View>
+          <Text style={{ fontSize: 7.5, color: "#92400E", flex: 1 }}>
+            Ley N° 30681 — Cannabis Medicinal · DS 005-2019-SA · Supervisión médica obligatoria.
+            Prohibida la cesión, venta o transferencia. Válida únicamente para el paciente indicado.
           </Text>
         </View>
 
@@ -208,7 +211,7 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
           <View style={[s.row2, { marginBottom: 3 }]}>
             <View style={s.field}>
               <Text style={s.fieldLabel}>Médico prescriptor</Text>
-              <Text style={s.fieldValue}>Dr(a). {data.doctor_name}  ·  CMP {data.doctor_cmp}</Text>
+              <Text style={s.fieldValue}>Dr(a). {data.doctor_name}  ·  CMP {data.doctor_cmp}{data.doctor_rne ? `  ·  RNE ${data.doctor_rne}` : ""}</Text>
             </View>
             <View style={s.field}>
               <Text style={s.fieldLabel}>Fecha de emisión (hora Lima)</Text>

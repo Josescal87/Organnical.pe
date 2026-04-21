@@ -123,6 +123,33 @@ function AgendarWizard() {
     { sesiones: 5, precio: 270, label: "Ahorra S/ 30" },
   ]);
 
+  // Gate: verificar consentimientos y perfil antes de continuar
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data }) => {
+      if (!data.user) return;
+      const userId = data.user.id;
+
+      const [profileRes, consentsRes] = await Promise.all([
+        supabase.schema("medical").from("profiles").select("document_id, birth_date").eq("id", userId).single(),
+        supabase.schema("medical").from("consent_records").select("consent_type").eq("patient_id", userId).eq("accepted", true),
+      ]);
+
+      const profile = profileRes.data;
+      if (!profile?.document_id || !profile?.birth_date) {
+        router.replace("/dashboard/paciente/perfil?redirect=/agendar&required=true");
+        return;
+      }
+
+      const REQUIRED = ["general_treatment", "telemedicine", "cannabis_use", "data_processing"];
+      const accepted = new Set((consentsRes.data ?? []).map((c) => c.consent_type));
+      if (REQUIRED.some((t) => !accepted.has(t))) {
+        router.replace("/dashboard/paciente/consentimiento?redirect=/agendar");
+        return;
+      }
+    });
+  }, [router]);
+
   // Load user session + doctors + pricing from DB
   useEffect(() => {
     const supabase = createClient();

@@ -8,7 +8,8 @@ import { createClient } from "@/lib/supabase/client";
 import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
-  ClipboardList, Users, ShieldCheck,
+  ClipboardList, Users, ShieldCheck, Building2, BookOpen,
+  ScrollText, Award,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
@@ -34,6 +35,17 @@ const DOCTOR_LINKS = [
   { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
 ];
 
+const ADMIN_LINKS = [
+  { href: "/dashboard/medico",             label: "Inicio",        icon: LayoutDashboard },
+  { href: "/dashboard/medico/consultas",   label: "Consultas",     icon: Stethoscope },
+  { href: "/dashboard/admin/ipress",       label: "IPRESS",        icon: Building2 },
+  { href: "/dashboard/admin/personal",     label: "Personal",      icon: Users },
+  { href: "/dashboard/admin/protocolos",   label: "Protocolos",    icon: BookOpen },
+  { href: "/dashboard/admin/auditoria",    label: "Auditoría",     icon: ScrollText },
+  { href: "/dashboard/admin/legitscript",  label: "LegitScript",   icon: Award },
+  { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
+];
+
 interface Props {
   role: UserRole;
   fullName: string;
@@ -45,7 +57,7 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const links = role === "doctor" || role === "admin" ? DOCTOR_LINKS : PATIENT_LINKS;
+  const links = role === "admin" ? ADMIN_LINKS : role === "doctor" ? DOCTOR_LINKS : PATIENT_LINKS;
   const activeLabel = links.find(({ href }) =>
     href === pathname ||
     (href !== "/dashboard/paciente" && href !== "/dashboard/medico" && pathname.startsWith(href))

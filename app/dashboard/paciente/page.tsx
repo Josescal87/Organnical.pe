@@ -40,7 +40,7 @@ export default async function PacienteDashboard() {
   const { data: profileData } = await supabase
     .schema("medical")
     .from("profiles")
-    .select("role, full_name")
+    .select("role, full_name, document_id, birth_date")
     .eq("id", user.id)
     .single();
 
@@ -67,6 +67,20 @@ export default async function PacienteDashboard() {
 
   const prescriptions = (rxData ?? []) as PrescriptionRow[];
 
+  // Verificar consentimientos y perfil completo
+  const { data: consentsData } = await supabase
+    .schema("medical")
+    .from("consent_records")
+    .select("consent_type")
+    .eq("patient_id", user.id)
+    .eq("accepted", true);
+
+  const REQUIRED_CONSENTS = ["general_treatment", "telemedicine", "cannabis_use", "data_processing"];
+  const acceptedTypes = new Set((consentsData ?? []).map((c) => c.consent_type));
+  const missingConsents = REQUIRED_CONSENTS.filter((t) => !acceptedTypes.has(t));
+  const profileIncomplete = !profileData?.document_id || !profileData?.birth_date;
+  const isReady = missingConsents.length === 0 && !profileIncomplete;
+
   const firstName = profileData?.full_name?.split(" ")[0] ?? "Paciente";
   const activeAppointments = appointments.filter((a) => ["pending", "confirmed"].includes(a.status));
   const activePrescriptions = prescriptions.filter((p) => new Date(p.valid_until) > new Date());
@@ -81,6 +95,35 @@ export default async function PacienteDashboard() {
         </h1>
         <p className="text-zinc-500 mt-1 text-sm">Aquí tienes un resumen de tu salud.</p>
       </div>
+
+      {/* Banner: perfil incompleto */}
+      {!isReady && (
+        <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+          <AlertCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-semibold text-amber-800 text-sm">Completa tu perfil para acceder a consultas médicas</p>
+            <p className="text-amber-600 text-xs mt-0.5">
+              {profileIncomplete && missingConsents.length > 0
+                ? "Falta tu DNI/fecha de nacimiento y aceptar los consentimientos médicos."
+                : profileIncomplete
+                ? "Falta tu DNI y/o fecha de nacimiento."
+                : `Falta aceptar ${missingConsents.length} consentimiento(s) médico(s).`}
+            </p>
+          </div>
+          <div className="flex gap-2 flex-shrink-0">
+            {profileIncomplete && (
+              <Link href="/dashboard/paciente/perfil" className="rounded-xl px-3 py-1.5 text-xs font-semibold text-amber-700 border border-amber-300 hover:bg-amber-100 transition-colors">
+                Completar perfil
+              </Link>
+            )}
+            {missingConsents.length > 0 && (
+              <Link href="/dashboard/paciente/consentimiento" className="rounded-xl px-3 py-1.5 text-xs font-semibold text-white transition-all hover:opacity-90" style={{ background: G }}>
+                Ver consentimientos
+              </Link>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Stats row */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-8">

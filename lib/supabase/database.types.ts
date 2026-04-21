@@ -199,22 +199,24 @@ export interface Database {
           document_type:   string | null // DNI | CE | pasaporte
           blood_type:      string | null // A+ A- B+ B- AB+ AB- O+ O-
           rne:             string | null // Registro Nacional de Especialistas (doctores)
+          whatsapp_opt_in: boolean | null // Consentimiento para mensajes WhatsApp (opcional)
           created_at:      string
           updated_at:      string
         }
         Insert: {
-          id:               string
-          role?:            UserRole
-          full_name?:       string | null
-          document_id?:     string | null
-          phone?:           string | null
-          cmp?:             string | null
-          photo_url?:       string | null
-          specialty_label?: string | null
-          verticals?:       string[]
-          rating?:          number
-          reviews_count?:   number
-          available_hours?: number[]
+          id:                string
+          role?:             UserRole
+          full_name?:        string | null
+          document_id?:      string | null
+          phone?:            string | null
+          cmp?:              string | null
+          photo_url?:        string | null
+          specialty_label?:  string | null
+          verticals?:        string[]
+          rating?:           number
+          reviews_count?:    number
+          available_hours?:  number[]
+          whatsapp_opt_in?:  boolean | null
           available_days?:  number[]
           weekly_schedule?: Record<string, number[]> | null
           birth_date?:      string | null
@@ -334,26 +336,30 @@ export interface Database {
           updated_at:     string
         }
         Insert: {
-          id?:             string
-          patient_id:      string
-          doctor_id:       string
-          slot_start:      string
-          slot_end:        string
-          status?:         AppointmentStatus
-          specialty:       AppointmentSpecialty
-          meeting_link?:   string | null
-          clinical_notes?: string | null
-          created_at?:     string
-          updated_at?:     string
+          id?:               string
+          patient_id:        string
+          doctor_id:         string
+          slot_start:        string
+          slot_end:          string
+          status?:           AppointmentStatus
+          specialty:         AppointmentSpecialty
+          meeting_link?:     string | null
+          meeting_provider?: "google_meet" | "whereby"
+          meeting_host_link?: string | null
+          clinical_notes?:   string | null
+          created_at?:       string
+          updated_at?:       string
         }
         Update: {
-          slot_start?:     string
-          slot_end?:       string
-          status?:         AppointmentStatus
-          specialty?:      AppointmentSpecialty
-          meeting_link?:   string | null
-          clinical_notes?: string | null
-          updated_at?:     string
+          slot_start?:        string
+          slot_end?:          string
+          status?:            AppointmentStatus
+          specialty?:         AppointmentSpecialty
+          meeting_link?:      string | null
+          meeting_provider?:  "google_meet" | "whereby"
+          meeting_host_link?: string | null
+          clinical_notes?:    string | null
+          updated_at?:        string
         }
       }
 

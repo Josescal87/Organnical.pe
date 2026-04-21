@@ -61,10 +61,14 @@ async function generateEncounterPDF(
     .from("clinical_encounters")
     .select("*, appointments(slot_start)")
     .eq("id", encounterId)
-    .eq("doctor_id", actorId)
     .single();
 
   if (!enc) return NextResponse.json({ error: "Encuentro no encontrado" }, { status: 404 });
+  // Verificar que el solicitante es el doctor o admin
+  if (enc.doctor_id !== actorId) {
+    const { data: profile } = await admin.schema("medical").from("profiles").select("role").eq("id", actorId).single();
+    if (profile?.role !== "admin") return NextResponse.json({ error: "Sin acceso" }, { status: 403 });
+  }
   if (enc.status !== "signed") return NextResponse.json({ error: "La HC debe estar firmada" }, { status: 400 });
 
   // Fetch related data in parallel

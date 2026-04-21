@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { CheckCircle2, ChevronDown, ChevronUp, Clock } from "lucide-react";
-import { recordConsent, type ConsentType } from "./actions";
+import { recordConsent } from "./actions";
+import type { ConsentType } from "./constants";
 
 type Meta = {
   title: string;

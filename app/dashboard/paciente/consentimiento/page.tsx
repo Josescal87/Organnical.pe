@@ -5,12 +5,8 @@ import { createClient } from "@/lib/supabase/server";
 import { BackLink } from "@/components/BackLink";
 import { ShieldCheck, FileText, Video, Leaf, Lock } from "lucide-react";
 import ConsentCard from "./ConsentCard";
-import {
-  CONSENT_TEXTS,
-  CONSENT_VERSIONS,
-  getMyConsents,
-  type ConsentType,
-} from "./actions";
+import { CONSENT_TEXTS, CONSENT_VERSIONS, type ConsentType } from "./constants";
+import { getMyConsents } from "./actions";
 
 const CONSENT_META: Record<
   ConsentType,

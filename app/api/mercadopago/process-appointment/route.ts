@@ -52,6 +52,7 @@ export async function POST(req: NextRequest) {
 
     // Bypass de pago: si PAYMENT_BYPASS=true en .env.local se omite MP (solo para testing)
     const bypassPayment = process.env.PAYMENT_BYPASS === "true";
+    let paymentId = "BYPASS";
 
     if (!bypassPayment) {
       const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
       if (paymentResult.status !== "approved") {
         return NextResponse.json({ status: paymentResult.status });
       }
+      paymentId = String(paymentResult.id);
     }
 
     const adminClient = createAdminClient();
@@ -92,7 +94,6 @@ export async function POST(req: NextRequest) {
     const nombre   = parts[0];
     const apellido = parts.slice(1).join(" ") || "-";
     const fecha    = new Date().toISOString().split("T")[0];
-    const paymentId = String(paymentResult.id);
 
     const appointmentIds: string[] = [];
     const meetLinks: (string | null)[] = [];

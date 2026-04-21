@@ -388,6 +388,113 @@ export interface Database {
         }
       }
 
+      // ── medical.patient_background (migración 04) ────────────────────────
+      patient_background: {
+        Row: {
+          id:                         string
+          patient_id:                 string
+          chronic_conditions:         string[] | null
+          previous_surgeries:         string[] | null
+          previous_hospitalizations:  string[] | null
+          current_medications:        { name: string; dose: string; frequency: string }[] | null
+          allergies:                  { substance: string; reaction: string; severity: "leve" | "moderada" | "grave" }[] | null
+          family_history:             string[] | null
+          smoking_status:             string | null  // never|former|current
+          alcohol_use:                string | null  // none|occasional|regular
+          obstetric_history:          Record<string, unknown> | null
+          last_updated_by:            string | null
+          created_at:                 string
+          updated_at:                 string
+        }
+        Insert: {
+          id?:                         string
+          patient_id:                  string
+          chronic_conditions?:         string[] | null
+          previous_surgeries?:         string[] | null
+          previous_hospitalizations?:  string[] | null
+          current_medications?:        { name: string; dose: string; frequency: string }[] | null
+          allergies?:                  { substance: string; reaction: string; severity: "leve" | "moderada" | "grave" }[] | null
+          family_history?:             string[] | null
+          smoking_status?:             string | null
+          alcohol_use?:                string | null
+          obstetric_history?:          Record<string, unknown> | null
+          last_updated_by?:            string | null
+          created_at?:                 string
+          updated_at?:                 string
+        }
+        Update: {
+          chronic_conditions?:         string[] | null
+          previous_surgeries?:         string[] | null
+          previous_hospitalizations?:  string[] | null
+          current_medications?:        { name: string; dose: string; frequency: string }[] | null
+          allergies?:                  { substance: string; reaction: string; severity: "leve" | "moderada" | "grave" }[] | null
+          family_history?:             string[] | null
+          smoking_status?:             string | null
+          alcohol_use?:                string | null
+          obstetric_history?:          Record<string, unknown> | null
+          last_updated_by?:            string | null
+          updated_at?:                 string
+        }
+      }
+
+      // ── medical.cie10_cache (migración 05) ────────────────────────────────
+      cie10_cache: {
+        Row: {
+          code:        string
+          description: string
+          category:    string | null
+          specialty:   string | null
+          keywords:    string[] | null
+          is_active:   boolean
+        }
+        Insert: {
+          code:         string
+          description:  string
+          category?:    string | null
+          specialty?:   string | null
+          keywords?:    string[] | null
+          is_active?:   boolean
+        }
+        Update: {
+          description?: string
+          category?:    string | null
+          specialty?:   string | null
+          keywords?:    string[] | null
+          is_active?:   boolean
+        }
+      }
+
+      // ── medical.consent_records (migración 05) ────────────────────────────
+      consent_records: {
+        Row: {
+          id:                 string
+          patient_id:         string
+          appointment_id:     string | null
+          consent_type:       string  // general_treatment|telemedicine|cannabis_use|data_processing
+          consent_text_hash:  string  // SHA-256 del texto firmado
+          consent_version:    string
+          accepted:           boolean
+          accepted_at:        string | null
+          patient_ip:         string | null
+          patient_device:     string | null
+          created_at:         string
+        }
+        Insert: {
+          id?:                string
+          patient_id:         string
+          appointment_id?:    string | null
+          consent_type:       string
+          consent_text_hash:  string
+          consent_version:    string
+          accepted:           boolean
+          accepted_at?:       string | null
+          patient_ip?:        string | null
+          patient_device?:    string | null
+          created_at?:        string
+        }
+        Update: never  // INSERT-only (inmutable por auditoría)
+      }
+
       // ── medical.prescription_items ────────────────────────────────────────
       // CAMBIO CLAVE: product_id (UUID→public.products) → producto_sku (TEXT→public.productos.sku)
       prescription_items: {
@@ -457,3 +564,8 @@ export type Producto                    = Database["public"]["Tables"]["producto
 export type PatientRecord               = Database["medical"]["Tables"]["patient_records"]["Row"]
 export type AuditLog                    = Database["medical"]["Tables"]["audit_log"]["Row"]
 export type SystemConfig                = Database["medical"]["Tables"]["system_config"]["Row"]
+
+// Tipos EHR (migración 04-05)
+export type PatientBackground           = Database["medical"]["Tables"]["patient_background"]["Row"]
+export type CIE10Item                   = Database["medical"]["Tables"]["cie10_cache"]["Row"]
+export type ConsentRecord               = Database["medical"]["Tables"]["consent_records"]["Row"]

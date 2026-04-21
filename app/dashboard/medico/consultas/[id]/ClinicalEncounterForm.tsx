@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useRef } from "react";
-import { Search, Plus, Trash2, CheckCircle2, Lock, AlertTriangle } from "lucide-react";
+import { Search, Plus, Trash2, CheckCircle2, Lock, AlertTriangle, Download, Loader2 } from "lucide-react";
 import {
   saveEncounterDraft,
   signEncounter,
@@ -168,6 +168,9 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
       ? { at: existing.signed_at, hash: existing.doctor_signature_hash ?? "" }
       : null
   );
+  const [encounterId, setEncounterId] = useState<string | null>(null);
+  const [generatingPdf, setGeneratingPdf] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 
   function set(field: keyof EncounterFormData, value: string) {
     setForm(f => ({ ...f, [field]: value }));
@@ -194,7 +197,36 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
     } else {
       setSignedResult({ at: res.signedAt!, hash: res.hash! });
       setSignConfirm(false);
+      // Trigger PDF generation in background
+      triggerPdfGeneration(res.encounterId);
     }
+  }
+
+  async function triggerPdfGeneration(eid?: string) {
+    const id = eid ?? encounterId;
+    if (!id) return;
+    setGeneratingPdf(true);
+    try {
+      const resp = await fetch("/api/ehr/generate-pdf", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ type: "encounter", id }),
+      });
+      const data = await resp.json() as { pdf_url?: string };
+      if (data.pdf_url) setPdfUrl(data.pdf_url);
+    } catch {}
+    setGeneratingPdf(false);
+  }
+
+  async function handleDownload() {
+    if (pdfUrl) { window.open(pdfUrl, "_blank"); return; }
+    setGeneratingPdf(true);
+    try {
+      const resp = await fetch(`/api/ehr/document/${encounterId ?? aptId}?type=encounter`);
+      const data = await resp.json() as { url?: string; error?: string };
+      if (data.url) window.open(data.url, "_blank");
+    } catch {}
+    setGeneratingPdf(false);
   }
 
   // Si está firmada, mostrar vista solo-lectura
@@ -205,13 +237,23 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
       <div className="space-y-4">
         <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex gap-3">
           <CheckCircle2 className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
-          <div>
+          <div className="flex-1">
             <p className="text-sm font-semibold text-emerald-800">Historia clínica firmada</p>
             <p className="text-xs text-emerald-600 mt-0.5">
               {new Date(at).toLocaleString("es-PE", { dateStyle: "long", timeStyle: "short" })}
             </p>
             <p className="text-[10px] font-mono text-emerald-500 mt-1 break-all">SHA-256: {hash}</p>
           </div>
+          <button
+            onClick={handleDownload}
+            disabled={generatingPdf}
+            className="flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-xl bg-white border border-emerald-200 text-emerald-700 hover:bg-emerald-50 disabled:opacity-50 flex-shrink-0 self-start"
+          >
+            {generatingPdf
+              ? <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Generando…</>
+              : <><Download className="w-3.5 h-3.5" /> Descargar HC</>
+            }
+          </button>
         </div>
         <SignedReadOnly data={form} />
       </div>

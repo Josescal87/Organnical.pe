@@ -189,10 +189,12 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
     updated_at:            signedAt,
   };
 
-  const { error } = await supabase
+  const { data: upserted, error } = await supabase
     .schema("medical")
     .from("clinical_encounters")
-    .upsert(payload, { onConflict: "appointment_id" });
+    .upsert(payload, { onConflict: "appointment_id" })
+    .select("id")
+    .single();
 
   if (error) return { error: error.message };
 
@@ -206,7 +208,7 @@ export async function signEncounter(aptId: string, data: EncounterFormData) {
   } catch {}
 
   revalidatePath(`/dashboard/medico/consultas/${aptId}`);
-  return { success: true, signedAt, hash };
+  return { success: true, signedAt, hash, encounterId: upserted?.id };
 }
 
 export async function getEncounter(aptId: string) {

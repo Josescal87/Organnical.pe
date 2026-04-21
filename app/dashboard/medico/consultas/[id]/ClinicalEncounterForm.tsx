@@ -13,6 +13,7 @@ import {
 // ── Tipos ──────────────────────────────────────────────────────────────────────
 
 type Encounter = {
+  id: string;
   status: string;
   signed_at: string | null;
   signed_by: string | null;
@@ -168,7 +169,7 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
       ? { at: existing.signed_at, hash: existing.doctor_signature_hash ?? "" }
       : null
   );
-  const [encounterId, setEncounterId] = useState<string | null>(null);
+  const [encounterId, setEncounterId] = useState<string | null>(existing?.id ?? null);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
 

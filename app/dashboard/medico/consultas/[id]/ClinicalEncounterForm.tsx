@@ -219,7 +219,6 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
   }
 
   async function handleDownload() {
-    if (pdfUrl) { window.open(pdfUrl, "_blank"); return; }
     setGeneratingPdf(true);
     try {
       const resp = await fetch(`/api/ehr/document/${encounterId ?? aptId}?type=encounter`);

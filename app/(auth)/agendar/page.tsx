@@ -775,7 +775,7 @@ function AgendarWizard() {
 
               {/* Brick de pago */}
               <div className="order-1 lg:order-2">
-                {process.env.NEXT_PUBLIC_PAYMENT_BYPASS === "true" ? (
+                {process.env.NODE_ENV === "development" ? (
                   <div className="bg-white rounded-2xl border border-amber-200 p-8 flex flex-col items-center gap-4">
                     <p className="text-sm text-amber-700 font-semibold text-center">Modo testing — pago omitido</p>
                     <button

@@ -1,6 +1,7 @@
 import { Resend } from "resend";
 
 const FROM = "Organnical <reservas@organnical.com>";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "${BASE_URL}";
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
@@ -116,7 +117,7 @@ export async function sendAppointmentConfirmation({
     ${meetSection}
 
     <p style="margin:0;color:#71717A;font-size:13px">También puedes ver los detalles de tu cita en tu
-      <a href="https://organnical-pe.vercel.app/dashboard/paciente/citas" style="color:#A78BFA;font-weight:600">dashboard de paciente</a>.
+      <a href="${BASE_URL}/dashboard/paciente/citas" style="color:#A78BFA;font-weight:600">dashboard de paciente</a>.
     </p>
   `);
 
@@ -167,7 +168,7 @@ export async function sendPrescriptionNotification({
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
       <tr><td align="center">
-        <a href="https://organnical-pe.vercel.app/dashboard/paciente/recetas" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/paciente/recetas" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
           Ver mi receta
         </a>
       </td></tr>
@@ -225,7 +226,7 @@ export async function sendProductPurchaseConfirmation({
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
-        <a href="https://organnical.pe/dashboard/paciente" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/paciente" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
           Ver mi dashboard
         </a>
       </td></tr>
@@ -298,7 +299,7 @@ export async function sendAdminSaleNotification({
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
-        <a href="https://organnical.pe/dashboard" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
           Ver en Ruby
         </a>
       </td></tr>
@@ -358,7 +359,7 @@ export async function sendNewAppointmentToDoctor({
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
       <tr><td align="center">
-        <a href="https://organnical-pe.vercel.app/dashboard/medico/consultas/${appointmentId}" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/medico/consultas/${appointmentId}" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
           Ver consulta
         </a>
       </td></tr>

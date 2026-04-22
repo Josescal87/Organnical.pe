@@ -1,9 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
 
 const FROM = "Organnical <reservas@organnical.com>";
 function getResend() { return new Resend(process.env.RESEND_API_KEY); }
+function getAdminClient() {
+  return createSupabaseClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!
+  );
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -14,7 +20,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
     }
 
-    const supabase = createAdminClient();
+    const supabase = getAdminClient();
 
     const { data, error } = await supabase
       .schema("medical")

@@ -29,9 +29,9 @@ export default function Footer() {
           <div>
             <h4 className="mb-5 text-sm font-semibold text-white">Especialidades</h4>
             <ul className="space-y-2.5 text-sm">
-              {["Sueño", "Dolor Crónico", "Ansiedad", "Salud Femenina"].map((e) => (
-                <li key={e}>
-                  <a href="/#especialidades" className="hover:text-white transition-colors">{e}</a>
+              {[["Sueño", "/especialidades/sueno"], ["Dolor Crónico", "/especialidades/dolor-cronico"], ["Ansiedad", "/especialidades/ansiedad"], ["Salud Femenina", "/especialidades/salud-femenina"]].map(([label, href]) => (
+                <li key={label}>
+                  <Link href={href} className="hover:text-white transition-colors">{label}</Link>
                 </li>
               ))}
             </ul>
@@ -53,11 +53,9 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm mb-8">
               <li><Link href="/privacidad" className="hover:text-white transition-colors">Política de privacidad</Link></li>
               <li><Link href="/terminos" className="hover:text-white transition-colors">Términos y condiciones</Link></li>
-              <li>
-                <a href="https://www.indecopi.gob.pe/libro-de-reclamaciones" target="_blank" rel="noopener noreferrer" className="hover:text-white transition-colors">
-                  Libro de reclamaciones
-                </a>
-              </li>
+              <li><Link href="/devoluciones" className="hover:text-white transition-colors">Devoluciones</Link></li>
+              <li><Link href="/preguntas-frecuentes" className="hover:text-white transition-colors">Preguntas frecuentes</Link></li>
+              <li><Link href="/libro-reclamaciones" className="hover:text-white transition-colors">Libro de reclamaciones</Link></li>
             </ul>
             <h4 className="mb-3 text-sm font-semibold text-white">Medios de pago</h4>
             <div className="flex flex-wrap gap-2">

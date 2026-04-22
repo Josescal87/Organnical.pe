@@ -45,7 +45,7 @@ export default function DevolucionesPage() {
                 { sit: "Cancelación con menos de 2h o no presentación", rem: "No aplica reembolso", ok: false, plazo: "—" },
                 { sit: "Error técnico (fallo de la plataforma)", rem: "Sí, reembolso completo o reprogramación", ok: true, plazo: "5-7 días hábiles" },
                 { sit: "El médico cancela la cita", rem: "Sí, reembolso completo o reprogramación", ok: true, plazo: "5-7 días hábiles" },
-                { sit: "Primera consulta (siempre gratuita)", rem: "N/A — sin costo", ok: true, plazo: "N/A" },
+                { sit: "Error técnico (fallo de la plataforma)", rem: "Sí, reembolso completo o reprogramación", ok: true, plazo: "5-7 días hábiles" },
               ].map((row) => (
                 <tr key={row.sit} style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                   <td style={{ padding: "12px", fontSize: 14, lineHeight: 1.4 }}>{row.sit}</td>
@@ -93,14 +93,7 @@ export default function DevolucionesPage() {
           </div>
 
           <div>
-            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>3. Primera consulta gratuita</h2>
-            <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 15, lineHeight: 1.7 }}>
-              La primera consulta médica es siempre gratuita. No se requiere tarjeta de crédito. Si no te presentas a la primera consulta gratuita sin aviso, futuras consultas gratuitas podrán no aplicar.
-            </p>
-          </div>
-
-          <div>
-            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>4. Cómo solicitar un reembolso</h2>
+            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>3. Cómo solicitar un reembolso</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {[
                 { n: "01", t: "Escribe a reservas@organnical.com", d: "Incluye: nombre completo, DNI, número de cita, fecha y motivo de la solicitud." },
@@ -119,14 +112,14 @@ export default function DevolucionesPage() {
           </div>
 
           <div>
-            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>5. Excepciones</h2>
+            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>4. Excepciones</h2>
             <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 15, lineHeight: 1.7 }}>
               No aplican reembolsos por discrepancia con el diagnóstico o tratamiento recomendado por el médico, salvo negligencia médica debidamente documentada. Los casos de presunta negligencia se derivan al proceso de reclamaciones formal.
             </p>
           </div>
 
           <div>
-            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>6. Derechos del consumidor</h2>
+            <h2 style={{ fontWeight: 700, fontSize: "1.15rem", marginBottom: 16 }}>5. Derechos del consumidor</h2>
             <p style={{ color: "rgba(255,255,255,0.75)", fontSize: 15, lineHeight: 1.7, marginBottom: 12 }}>
               Esta política se rige por la Ley 29571 — Código de Protección y Defensa del Consumidor (INDECOPI). Si no estás satisfecho con la resolución, puedes:
             </p>

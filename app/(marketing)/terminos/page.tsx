@@ -93,17 +93,14 @@ export default function TerminosPage() {
           </section>
 
           <section>
-            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Cannabis medicinal — Ley N.° 30681</h2>
+            <h2 className="text-xl font-bold text-[#1a1a1a] mb-3">7. Uso de medicamentos recetados</h2>
             <p>
-              Los productos de cannabis medicinal disponibles en Organnical son de <strong>uso exclusivamente terapéutico</strong>,
-              conforme a la Ley N.° 30681 y su Reglamento DS 005-2019-SA. El acceso a estos productos
-              requiere receta médica vigente emitida por un médico colegiado a través de esta plataforma.
+              Los productos recetados a través de Organnical son de <strong>uso personal e intransferible</strong>.
+              El paciente declara usarlos únicamente para el tratamiento indicado por su médico.
             </p>
             <ul className="list-disc pl-5 space-y-1 mt-2">
               <li>Está <strong>prohibida</strong> la cesión, venta, reventa o transferencia a terceros de los productos recetados.</li>
-              <li>El paciente declara usar los productos únicamente para el tratamiento indicado por su médico.</li>
               <li>Organnical podrá suspender el acceso si detecta uso indebido o incumplimiento de estas condiciones.</li>
-              <li>La plataforma opera como IPRESS registrada ante SUSALUD para la prestación de servicios de telemedicina en cannabis medicinal.</li>
             </ul>
           </section>
 

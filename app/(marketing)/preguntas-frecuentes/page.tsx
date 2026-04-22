@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Preguntas Frecuentes | Organnical",
-  description: "Resolvemos tus dudas sobre telemedicina, consultas médicas online, recetas, pagos y cannabis medicinal. Organnical — atención médica integrativa en Perú.",
+  description: "Resolvemos tus dudas sobre telemedicina, consultas médicas online, recetas, pagos y privacidad. Organnical — atención médica integrativa en Perú.",
 };
 
 const NAVY = "#0B1D35";
@@ -58,32 +58,11 @@ const sections = [
     ],
   },
   {
-    title: "Cannabis Medicinal (Ley 30681)",
-    faqs: [
-      {
-        q: "¿Organnical puede prescribir cannabis medicinal?",
-        a: "Sí, bajo estricto cumplimiento de la Ley N° 30681. El médico evalúa si tienes una condición autorizada (dolor crónico, epilepsia refractaria, ansiedad generalizada, insomnio crónico, entre otras) y si cumples los criterios de inclusión.",
-      },
-      {
-        q: "¿Para qué condiciones se puede prescribir?",
-        a: "Las condiciones autorizadas incluyen: epilepsia refractaria, dolor crónico, esclerosis múltiple, náuseas por quimioterapia, trastorno de ansiedad generalizada, insomnio crónico asociado a condición médica, síndrome de Tourette y cuidados paliativos.",
-      },
-      {
-        q: "¿Dónde compro el cannabis medicinal recetado?",
-        a: "En farmacias autorizadas por DIGEMID. El médico te indicará qué productos están disponibles legalmente en Perú.",
-      },
-      {
-        q: "¿Puedo usar cannabis medicinal si estoy embarazada?",
-        a: "No. El embarazo y la lactancia son contraindicaciones absolutas para el cannabis medicinal.",
-      },
-    ],
-  },
-  {
     title: "Pagos y Cancelaciones",
     faqs: [
       {
-        q: "¿La primera consulta es realmente gratis?",
-        a: "Sí. Tu primera consulta médica en Organnical es 100% gratuita, sin tarjeta de crédito ni compromiso. Queremos que compruebes la calidad de la atención antes de cualquier pago.",
+        q: "¿Cuánto cuesta una consulta?",
+        a: "El precio de cada consulta se muestra al momento de agendar. Aceptamos tarjetas Visa/Mastercard y billeteras digitales a través de MercadoPago.",
       },
       {
         q: "¿Cuánto cuestan las consultas de seguimiento?",
@@ -128,7 +107,7 @@ export default function FaqPage() {
             Preguntas frecuentes
           </h1>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1.1rem", lineHeight: 1.6 }}>
-            Resolvemos tus dudas sobre telemedicina, recetas, cannabis medicinal, pagos y privacidad.
+            Resolvemos tus dudas sobre telemedicina, recetas, pagos y privacidad.
           </p>
         </div>
       </section>

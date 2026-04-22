@@ -23,10 +23,10 @@ const u = (id: string, w = 1200, h = 800) =>
 /* ─── Data ──────────────────────────────────────────────────── */
 
 const specialties = [
-  { icon: "🌙", title: "Sueño", desc: "Insomnio, apnea y ritmo circadiano", photo: "1541480601022-2308c0f02487", count: "180+ atendidos" },
-  { icon: "🦴", title: "Dolor Crónico", desc: "Fibromialgia, neuropático y musculoesquelético", photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos" },
-  { icon: "🧠", title: "Ansiedad", desc: "Estrés crónico y bienestar emocional", photo: "1506126613408-eca07ce68773", count: "390+ atendidos" },
-  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1552058544-f2b08422138a", count: "320+ atendidos" },
+  { icon: "🌙", title: "Sueño", desc: "Insomnio, apnea y ritmo circadiano", photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
+  { icon: "🦴", title: "Dolor Crónico", desc: "Fibromialgia, neuropático y musculoesquelético", photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
+  { icon: "🧠", title: "Ansiedad", desc: "Estrés crónico y bienestar emocional", photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
+  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1552058544-f2b08422138a", count: "320+ atendidos", slug: "salud-femenina" },
 ];
 
 const doctors = [
@@ -309,10 +309,11 @@ export default function LandingPage() {
 
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {specialties.map((s, i) => (
-                <div
+                <Link
                   key={s.title}
+                  href={`/especialidades/${s.slug}`}
                   className="reveal group bg-white rounded-2xl overflow-hidden border border-zinc-100 hover:border-violet-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                  style={{ transitionDelay: `${i * 60}ms` }}
+                  style={{ transitionDelay: `${i * 60}ms`, textDecoration: "none", color: "inherit" }}
                 >
                   {/* Image */}
                   <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
@@ -337,7 +338,7 @@ export default function LandingPage() {
                       </div>
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>

@@ -50,13 +50,13 @@ const SPECIALTIES: Record<string, {
       { q: "¿Cuántas consultas necesito?", a: "La mayoría de pacientes nota mejora significativa en 3-4 semanas. El protocolo típico incluye 1 consulta inicial + 2 seguimientos." },
       { q: "¿Me van a recetar somníferos?", a: "No necesariamente. Evaluamos primero higiene del sueño y TCC-I. Los medicamentos son último recurso y siempre documentados." },
       { q: "¿Funciona la telemedicina para el sueño?", a: "Sí. El 90% del protocolo es educación, ajuste de hábitos y seguimiento — perfectamente manejable en videoconsulta." },
-      { q: "¿Puedo recetar cannabis medicinal para el insomnio?", a: "Si tienes insomnio crónico asociado a condición médica, el cannabis medicinal (CBD) puede ser parte del protocolo bajo Ley 30681. Tu médico lo evaluará." },
+      { q: "¿Cuánto dura la primera consulta?", a: "Entre 30 y 45 minutos. Tu médico revisará tu historial, hábitos de sueño y síntomas para armar un protocolo personalizado." },
     ],
     doctors: [
       { name: "Dra. Estefanía Poma", cmp: "CMP 059636", photo: "/dra-poma-300x300.png", rating: 4.9, reviews: 142, tags: ["Sueño", "Salud Femenina"] },
     ],
     metaTitle: "Consulta Médica Online para Insomnio y Trastornos del Sueño | Organnical",
-    metaDescription: "Recupera tu descanso con médicos certificados. Primera consulta gratis. Trastornos del sueño, insomnio crónico, apnea. Atención por videoconsulta desde Lima, Perú.",
+    metaDescription: "Recupera tu descanso con médicos certificados MINSA. Trastornos del sueño, insomnio crónico, apnea. Atención por videoconsulta desde Lima, Perú.",
   },
   "dolor-cronico": {
     title: "Dolor Crónico",
@@ -75,21 +75,21 @@ const SPECIALTIES: Record<string, {
     ],
     benefits: [
       { icon: "🔬", title: "Diagnóstico claro", desc: "Identificamos el origen del dolor — central, periférico o mixto — y lo documentamos con CIE-10." },
-      { icon: "🌿", title: "Medicina integrativa", desc: "Combinamos farmacoterapia, fitoterápicos, cannabis medicinal (si aplica) y estrategias no farmacológicas." },
+      { icon: "🌿", title: "Medicina integrativa", desc: "Combinamos farmacoterapia, fitoterápicos y estrategias no farmacológicas adaptadas a tu caso." },
       { icon: "📈", title: "Plan por etapas", desc: "Protocolo progresivo documentado: evaluación, alivio agudo, mantenimiento y prevención de recaídas." },
       { icon: "💬", title: "Sin frases vacías", desc: "\"Aprende a convivir con el dolor\" no es una respuesta. Aquí se trabaja para reducirlo." },
     ],
     faqs: [
-      { q: "¿El médico puede recetar cannabis medicinal?", a: "Sí. Si tienes dolor crónico oncológico o no oncológico con criterios clínicos, bajo la Ley 30681 puede prescribirse CBD o THC:CBD. Tu médico evaluará si aplica." },
       { q: "¿Puedo recibir atención si ya tengo un reumatólogo?", a: "Por supuesto. La consulta integrativa complementa tu tratamiento existente. Tu médico coordinará con tu especialista si es necesario." },
       { q: "¿Se puede manejar la fibromialgia por telemedicina?", a: "Sí. El manejo de fibromialgia es principalmente educación, ajuste de medicación y seguimiento — ideal para videoconsulta." },
       { q: "¿Cuánto demora en verse un resultado?", a: "Varía según la condición. En dolor agudo-crónico, muchos pacientes notan alivio en 2-3 semanas. En fibromialgia, el protocolo completo toma 6-8 semanas." },
+      { q: "¿Cuánto dura la consulta?", a: "La primera consulta dura entre 30 y 45 minutos. Las consultas de seguimiento son de 20-30 minutos." },
     ],
     doctors: [
       { name: "Dr. Robert Goodman", cmp: "CMP 095719", photo: "/drgodman-300x300.png", rating: 4.8, reviews: 118, tags: ["Dolor Crónico", "Ansiedad"] },
     ],
     metaTitle: "Consulta Médica Online para Dolor Crónico y Fibromialgia | Organnical",
-    metaDescription: "Manejo especializado del dolor crónico, fibromialgia y dolor neuropático. Primera consulta gratis. Médicos certificados. Cannabis medicinal cuando aplica. Lima, Perú.",
+    metaDescription: "Manejo especializado del dolor crónico, fibromialgia y dolor neuropático. Médicos certificados MINSA. Enfoque integrativo. Videoconsulta desde Lima, Perú.",
   },
   ansiedad: {
     title: "Ansiedad y Bienestar Mental",
@@ -108,21 +108,21 @@ const SPECIALTIES: Record<string, {
     ],
     benefits: [
       { icon: "🤝", title: "Escucha médica real", desc: "Consulta de 30-45 minutos. Tu médico escucha, evalúa y propone — sin apuros ni respuestas genéricas." },
-      { icon: "🌱", title: "Enfoque integrativo", desc: "Técnicas conductuales, suplementación, adaptógenos y cannabis medicinal (CBD) cuando aplica bajo Ley 30681." },
+      { icon: "🌱", title: "Enfoque integrativo", desc: "Técnicas conductuales, suplementación, adaptógenos y fitoterápicos basados en evidencia." },
       { icon: "🔗", title: "Derivación coordinada", desc: "Si necesitas psicólogo o psiquiatra, tu médico coordina la derivación y hace seguimiento." },
-      { icon: "📱", title: "Disponibilidad real", desc: "Sin lista de espera de meses. Primera cita disponible en menos de 48 horas." },
+      { icon: "📱", title: "Disponibilidad real", desc: "Sin lista de espera de meses. Cita disponible en menos de 48 horas." },
     ],
     faqs: [
       { q: "¿Un médico general puede tratar la ansiedad?", a: "Sí. El médico general es el primer nivel para ansiedad leve a moderada. Si requieres psiquiatría o psicología, tu médico coordina la derivación." },
       { q: "¿Me van a recetar ansiolíticos?", a: "No necesariamente. Evaluamos primero estrategias no farmacológicas. Si decides medicación, es con seguimiento cercano y documentado." },
-      { q: "¿El CBD sirve para la ansiedad?", a: "Bajo la Ley 30681, el CBD puede prescribirse para trastorno de ansiedad generalizada. Tu médico evaluará si aplica en tu caso y si tienes criterios para prescripción legal." },
       { q: "¿Qué pasa si mi ansiedad es severa?", a: "Si en la consulta se detecta ansiedad severa o riesgo, tu médico activará el protocolo de derivación urgente a salud mental o emergencias según corresponda." },
+      { q: "¿Cuánto dura la consulta?", a: "La primera consulta dura entre 30 y 45 minutos. Tu médico revisará tu historial, síntomas y objetivos de bienestar." },
     ],
     doctors: [
       { name: "Dr. Robert Goodman", cmp: "CMP 095719", photo: "/drgodman-300x300.png", rating: 4.8, reviews: 118, tags: ["Ansiedad", "Dolor Crónico"] },
     ],
     metaTitle: "Consulta Médica Online para Ansiedad y Estrés Crónico | Organnical",
-    metaDescription: "Manejo médico de la ansiedad sin largas esperas. Primera consulta gratis. Enfoque integrativo, CBD medicinal cuando aplica. Médicos certificados MINSA. Lima, Perú.",
+    metaDescription: "Manejo médico de la ansiedad sin largas esperas. Enfoque integrativo basado en evidencia. Médicos certificados MINSA. Videoconsulta desde Lima, Perú.",
   },
   "salud-femenina": {
     title: "Salud Femenina",
@@ -141,8 +141,8 @@ const SPECIALTIES: Record<string, {
     ],
     benefits: [
       { icon: "🧬", title: "Evaluación hormonal integral", desc: "Anamnesis completa, revisión de síntomas y laboratorios. No asumimos, evaluamos." },
-      { icon: "🌿", title: "Opciones integrativas", desc: "Fitoterapia, suplementación, cannabis medicinal para dolor (si aplica) y terapia hormonal cuando corresponde." },
-      { icon: "📅", title: "Seguimiento en cada etapa", desc: "Protocolo adaptado: SPM, perimenopauisa, menopausia establecida. Tu plan evoluciona contigo." },
+      { icon: "🌿", title: "Opciones integrativas", desc: "Fitoterapia, suplementación, terapia hormonal y estrategias de estilo de vida basadas en evidencia." },
+      { icon: "📅", title: "Seguimiento en cada etapa", desc: "Protocolo adaptado: SPM, perimenopausia, menopausia establecida. Tu plan evoluciona contigo." },
       { icon: "🔒", title: "Confidencialidad total", desc: "Historia clínica cifrada, sin acceso de terceros. Solo tú y tu médico." },
     ],
     faqs: [
@@ -155,7 +155,7 @@ const SPECIALTIES: Record<string, {
       { name: "Dra. Estefanía Poma", cmp: "CMP 059636", photo: "/dra-poma-300x300.png", rating: 4.9, reviews: 142, tags: ["Salud Femenina", "Sueño"] },
     ],
     metaTitle: "Consulta Médica Online para Salud Femenina y Menopausia | Organnical",
-    metaDescription: "Atención médica integrativa para SPM, menopausia y desequilibrio hormonal. Primera consulta gratis. Médicos certificadas MINSA. Sin listas de espera. Lima, Perú.",
+    metaDescription: "Atención médica integrativa para SPM, menopausia y desequilibrio hormonal. Médicos certificados MINSA. Sin listas de espera. Videoconsulta desde Lima, Perú.",
   },
 };
 
@@ -214,7 +214,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
               href="/agendar"
               style={{ display: "inline-flex", alignItems: "center", gap: 10, background: G, color: "#fff", fontWeight: 700, fontSize: "1.05rem", padding: "16px 32px", borderRadius: 12, textDecoration: "none" }}
             >
-              Agenda tu primera consulta gratis <ArrowRight size={18} />
+              Agenda tu consulta <ArrowRight size={18} />
             </Link>
             <a
               href="https://wa.me/51952476574"
@@ -226,7 +226,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
             </a>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 24, marginTop: 40 }}>
-            {[{ icon: "✅", text: "Primera consulta gratis" }, { icon: "🏥", text: "Médicos certificados MINSA" }, { icon: "⚡", text: "Cita disponible hoy" }].map((t) => (
+            {[{ icon: "✅", text: "Médicos certificados MINSA" }, { icon: "🏥", text: "Médicos certificados MINSA" }, { icon: "⚡", text: "Cita disponible hoy" }].map((t) => (
               <div key={t.text} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "rgba(255,255,255,0.8)" }}>
                 <span>{t.icon}</span><span>{t.text}</span>
               </div>
@@ -338,7 +338,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
                   Disponible hoy
                 </div>
                 <Link href="/agendar" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: G, color: "#fff", fontWeight: 700, padding: "14px 24px", borderRadius: 10, textDecoration: "none", fontSize: 15 }}>
-                  <Video size={16} /> Agendar consulta gratis
+                  <Video size={16} /> Agendar consulta
                 </Link>
               </div>
             ))}
@@ -397,13 +397,13 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
             {sp.subtitle}
           </h2>
           <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1.05rem", marginBottom: 36, lineHeight: 1.6 }}>
-            Primera consulta 100% gratis. Sin tarjeta de crédito. Sin compromiso.
+            Médicos certificados MINSA. Atención en menos de 48 horas. Historia clínica oficial.
           </p>
           <Link
             href="/agendar"
             style={{ display: "inline-flex", alignItems: "center", gap: 12, background: G, color: "#fff", fontWeight: 700, fontSize: "1.1rem", padding: "18px 40px", borderRadius: 12, textDecoration: "none" }}
           >
-            Agenda tu consulta gratis <ArrowRight size={20} />
+            Agenda tu consulta <ArrowRight size={20} />
           </Link>
           <p style={{ color: "rgba(255,255,255,0.4)", fontSize: 13, marginTop: 20 }}>
             ¿Tienes dudas? Escríbenos a{" "}

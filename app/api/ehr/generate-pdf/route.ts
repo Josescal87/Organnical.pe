@@ -3,6 +3,7 @@ export const runtime = "nodejs";
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+import type { IpressMode } from "@/lib/ipress-config";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import React from "react";
 import { EncounterPDF, type EncounterPDFData } from "@/lib/pdf/EncounterPDF";
@@ -17,7 +18,14 @@ function adminClient() {
   );
 }
 
-async function getIpress(admin: ReturnType<typeof adminClient>) {
+async function getIpress(admin: ReturnType<typeof adminClient>): Promise<{
+  ipress_mode: IpressMode;
+  ipress_name: string;
+  ipress_code: string;
+  ipress_ruc: string;
+  ipress_address: string;
+  ipress_category: string;
+}> {
   const { data } = await admin
     .schema("medical")
     .from("system_config")
@@ -25,7 +33,7 @@ async function getIpress(admin: ReturnType<typeof adminClient>) {
 
   const cfg = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
   return {
-    ipress_mode:     (cfg.ipress_mode ?? "disabled") as "disabled" | "enabled",
+    ipress_mode:     cfg.ipress_mode === "enabled" ? "enabled" : "disabled",
     ipress_name:     cfg.ipress_name     ?? "Organnical Salud S.A.C.",
     ipress_code:     cfg.ipress_code     ?? "PENDIENTE",
     ipress_ruc:      cfg.ipress_ruc      ?? "—",

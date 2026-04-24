@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import type { IpressMode } from "@/lib/ipress-config";
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -68,7 +69,7 @@ export type PrescriptionItem = {
 
 export type PrescriptionPDFData = {
   // Modo
-  ipress_mode:     "disabled" | "enabled";
+  ipress_mode:     IpressMode;
   // IPRESS
   ipress_name:     string;
   ipress_code:     string;
@@ -113,7 +114,7 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
   });
 
   return (
-    <Document title={`Receta ${data.prescription_number} — ${data.patient_name}`} author="Organnical Salud S.A.C.">
+    <Document title={`Receta ${data.prescription_number} — ${data.patient_name}`} author={data.ipress_mode === "enabled" ? data.ipress_name : "Organnical Salud S.A.C."}>
       <Page size="A4" style={s.page}>
 
         {/* ── Encabezado ── */}

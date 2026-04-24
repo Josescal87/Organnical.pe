@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import type { IpressMode } from "@/lib/ipress-config";
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -70,7 +71,7 @@ export type DiagnosisItem = {
 
 export type EncounterPDFData = {
   // Modo
-  ipress_mode:     "disabled" | "enabled";
+  ipress_mode:     IpressMode;
   // IPRESS
   ipress_name:     string;
   ipress_code:     string;
@@ -169,7 +170,7 @@ export function EncounterPDF({ data }: { data: EncounterPDFData }) {
     data.vital_weight_kg || data.vital_height_cm;
 
   return (
-    <Document title={`HC ${data.hc_number} — ${data.patient_name}`} author="Organnical Salud S.A.C.">
+    <Document title={`HC ${data.hc_number} — ${data.patient_name}`} author={data.ipress_mode === "enabled" ? data.ipress_name : "Organnical Salud S.A.C."}>
       <Page size="A4" style={s.page}>
 
         {/* ── Encabezado ── */}

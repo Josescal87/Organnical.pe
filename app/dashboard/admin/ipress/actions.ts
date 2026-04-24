@@ -52,6 +52,19 @@ export async function updateIpressConfig(config: IpressConfig) {
 }
 
 export async function activateIpressMode(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "No autorizado" };
+
+  const { data: profile } = await supabase
+    .schema("medical")
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") return { error: "Solo administradores pueden modificar la configuración IPRESS" };
+
   const admin = adminClient();
   // Verify ipress_code is set and not PENDIENTE before allowing activation
   const { data: codeRow } = await admin
@@ -75,6 +88,19 @@ export async function activateIpressMode(): Promise<{ error?: string }> {
 }
 
 export async function deactivateIpressMode(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "No autorizado" };
+
+  const { data: profile } = await supabase
+    .schema("medical")
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") return { error: "Solo administradores pueden modificar la configuración IPRESS" };
+
   const admin = adminClient();
   const { error } = await admin
     .schema("medical")

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { activateIpressMode, deactivateIpressMode } from "./actions";
 
 export function IpressModeToggle({
@@ -10,6 +11,7 @@ export function IpressModeToggle({
   currentMode: "disabled" | "enabled";
   ipressCode: string;
 }) {
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -25,8 +27,7 @@ export function IpressModeToggle({
     if (result.error) {
       setError(result.error);
     } else {
-      // Reload to reflect new state
-      window.location.reload();
+      router.refresh();
     }
     setLoading(false);
   }
@@ -36,8 +37,9 @@ export function IpressModeToggle({
       <button
         onClick={handleToggle}
         disabled={loading || isDisabled}
-        className="rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50"
-        style={{ backgroundColor: currentMode === "disabled" ? "#16a34a" : "#dc2626" }}
+        className={`rounded-md px-4 py-2 text-sm font-medium text-white disabled:opacity-50 ${
+          currentMode === "disabled" ? "bg-green-600 hover:bg-green-700" : "bg-red-600 hover:bg-red-700"
+        }`}
       >
         {loading
           ? "Procesando..."

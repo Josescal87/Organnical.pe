@@ -19,8 +19,9 @@ DECLARE
   v_ipress text;
 BEGIN
   SELECT
-    MAX(value) FILTER (WHERE key = 'ipress_mode') INTO v_mode,
-    MAX(value) FILTER (WHERE key = 'ipress_code') INTO v_ipress
+    MAX(value) FILTER (WHERE key = 'ipress_mode'),
+    MAX(value) FILTER (WHERE key = 'ipress_code')
+  INTO v_mode, v_ipress
   FROM medical.system_config
   WHERE key IN ('ipress_mode', 'ipress_code');
 

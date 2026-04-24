@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/server";
 import { checkRateLimit } from "@/lib/rate-limit";
+import { isIpressEnabled } from "@/lib/ipress-config";
 
 function adminClient() {
   return createSupabaseClient(
@@ -49,7 +50,7 @@ export async function GET(req: NextRequest) {
   }
 
   // Con auth: datos completos del médico + IPRESS
-  const [doctorRes, ipressRes] = await Promise.all([
+  const [doctorRes, ipressRes, ipressEnabled] = await Promise.all([
     admin.schema("medical").from("profiles")
       .select("full_name, cmp, specialty_label")
       .eq("id", rx.doctor_id)
@@ -58,6 +59,7 @@ export async function GET(req: NextRequest) {
       .select("value")
       .eq("key", "ipress_code")
       .single(),
+    isIpressEnabled(),
   ]);
 
   return NextResponse.json({
@@ -69,7 +71,7 @@ export async function GET(req: NextRequest) {
     doctor_name: doctorRes.data?.full_name ?? "—",
     doctor_cmp: doctorRes.data?.cmp ?? "—",
     doctor_specialty: doctorRes.data?.specialty_label ?? "—",
-    ipress_code: ipressRes.data?.value ?? "—",
+    ...(ipressEnabled ? { ipress_code: ipressRes.data?.value ?? "—" } : {}),
     diagnosis_cie10: rx.diagnosis_cie10 ?? null,
   });
 }

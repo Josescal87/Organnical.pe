@@ -7,9 +7,8 @@ import { useRouter } from "next/navigation";
 import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
   Heart, Phone, Zap, ChevronRight,
-  Calendar, Award, Users, MessageSquare,
+  Calendar, Users, MessageSquare,
 } from "lucide-react";
-import { posts } from "@/lib/blog";
 import { createClient } from "@/lib/supabase/client";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
@@ -27,7 +26,7 @@ const specialties = [
   { icon: "🌙", title: "Sueño", desc: "Insomnio, apnea y ritmo circadiano", photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
   { icon: "🦴", title: "Dolor Crónico", desc: "Fibromialgia, neuropático y musculoesquelético", photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
   { icon: "🧠", title: "Ansiedad", desc: "Estrés crónico y bienestar emocional", photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
-  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1552058544-f2b08422138a", count: "320+ atendidos", slug: "salud-femenina" },
+  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1573496359142-b8d87734a5a2", count: "320+ atendidos", slug: "salud-femenina" },
 ];
 
 type DoctorCard = {
@@ -375,66 +374,6 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* ══════════ BLOG PREVIEW ══════════ */}
-        <section className="relative py-24 overflow-hidden" style={{ background: NAVY }}>
-          <div className="absolute inset-0 dot-grid opacity-20" />
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 60% 80% at 50% 50%, #1e3d72 0%, transparent 70%)" }} />
-
-          <div className="reveal relative z-10 mx-auto max-w-6xl px-6">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Nuestro blog</p>
-                <h2 className="font-display text-4xl font-black text-white md:text-5xl">
-                  Medicina con{" "}
-                  <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>evidencia</span>
-                </h2>
-              </div>
-              <Link href="/blog" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all flex-shrink-0">
-                Ver todos los artículos <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-
-            <div className="grid gap-5 md:grid-cols-3">
-              {posts.slice(0, 3).map((post) => (
-                <Link
-                  key={post.slug}
-                  href={`/blog/${post.slug}`}
-                  className="group bg-white/[0.05] border border-white/10 rounded-2xl overflow-hidden hover:bg-white/[0.09] hover:border-white/20 transition-all duration-300"
-                >
-                  <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
-                    <Image
-                      src={post.image}
-                      alt={post.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-3 left-3">
-                      <span className="rounded-full bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 text-[10px] font-semibold text-white">
-                        {post.category}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="p-5">
-                    <p className="text-[10px] text-white/35 mb-2 flex items-center gap-1.5">
-                      <Clock className="w-3 h-3" /> {post.readTime} min · {post.dateFormatted}
-                    </p>
-                    <h3 className="font-display font-bold text-white text-sm leading-snug line-clamp-3 group-hover:text-[#A78BFA] transition-colors">
-                      {post.title}
-                    </h3>
-                  </div>
-                </Link>
-              ))}
-            </div>
-
-            <div className="mt-8 text-center md:hidden">
-              <Link href="/blog" className="inline-flex items-center gap-2 text-sm font-semibold text-[#A78BFA]">
-                Ver todos los artículos <ArrowRight className="w-4 h-4" />
-              </Link>
-            </div>
-          </div>
-        </section>
-
         {/* ══════════ MÉDICOS ══════════ */}
         <section id="medicos" className="py-28 bg-white">
           <div className="mx-auto max-w-6xl px-6">
@@ -514,26 +453,6 @@ export default function LandingPage() {
               ))}
             </div>
 
-            {/* Credencial bar */}
-            <div className="reveal mt-14 rounded-2xl border border-zinc-100 bg-[#F8FAFC] p-6 max-w-2xl mx-auto">
-              <div className="flex flex-wrap gap-6 justify-center text-center">
-                {[
-                  { icon: Award, label: "CMP Activo", sub: "Verificado MINSA" },
-                  { icon: Shield, label: "RENEC Registrado", sub: "Especialista certificado" },
-                  { icon: CheckCircle, label: "Telemedicina", sub: "Habilitado MINSA" },
-                ].map(({ icon: Icon, label, sub }) => (
-                  <div key={label} className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-violet-50 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-4 h-4 text-[#A78BFA]" />
-                    </div>
-                    <div className="text-left">
-                      <p className="text-sm font-semibold text-zinc-800">{label}</p>
-                      <p className="text-xs text-zinc-400">{sub}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
         </section>
 

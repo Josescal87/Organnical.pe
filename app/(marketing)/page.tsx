@@ -88,6 +88,14 @@ const testimonials = [
 ];
 
 
+const quizOptions = [
+  { glyph: "◑", label: "Cuesta dormir o descansar", slug: "sueno" },
+  { glyph: "◍", label: "Dolor que no se va", slug: "dolor-cronico" },
+  { glyph: "○", label: "Ansiedad o bajón emocional", slug: "ansiedad" },
+  { glyph: "◉", label: "Ciclo, hormonas o menopausia", slug: "salud-femenina" },
+  { glyph: "◌", label: "Otra cosa / todavía no lo tengo claro", slug: null },
+];
+
 const trustItems = [
   { icon: Shield, text: "Médicos con CMP activo" },
   { icon: Clock, text: "Primera cita en < 48h" },
@@ -126,6 +134,7 @@ const steps = [
 export default function LandingPage() {
   const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
   const [doctors, setDoctors] = useState<DoctorCard[]>(FALLBACK_DOCTORS);
+  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
   const router = useRouter();
 
   // Cargar médicos desde DB (fallback a datos estáticos si falla)
@@ -258,49 +267,63 @@ export default function LandingPage() {
                 </div>
               </div>
 
-              {/* Right — image */}
+              {/* Right — mini quiz */}
               <div className="hero-card relative hidden lg:flex items-center justify-center">
-                <div className="relative w-full max-w-md">
-                  {/* Main doctor image */}
-                  <div
-                    className="relative rounded-3xl overflow-hidden shadow-2xl"
-                    style={{ aspectRatio: "4/5", background: "linear-gradient(135deg, #1a3a6e 0%, #0B1D35 100%)" }}
-                  >
-                    <Image
-                      src={u("1594824476967-48c8b964273f", 700, 875)}
-                      alt="Médica integrativa"
-                      fill
-                      priority
-                      className="object-cover object-center"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0B1D35]/60 via-transparent to-transparent" />
-                  </div>
-
-                  {/* Floating card — disponibilidad */}
-                  <div className="absolute -bottom-6 -left-10 rounded-2xl bg-white p-4 shadow-2xl min-w-[200px]">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: G }}>
-                        <Video className="w-4 h-4 text-white" />
+                <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden" style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.22)" }}>
+                  {!quizAnswer ? (
+                    <div className="p-8">
+                      {/* Header */}
+                      <div className="flex items-center justify-between mb-7">
+                        <span className="font-mono text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">Mini-Quiz · 45 seg</span>
+                        <div className="flex gap-1.5">
+                          <span className="h-1 w-8 rounded-full bg-zinc-800" />
+                          <span className="h-1 w-4 rounded-full bg-zinc-200" />
+                          <span className="h-1 w-4 rounded-full bg-zinc-200" />
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-zinc-400 uppercase tracking-wider">Próxima consulta</p>
-                        <p className="text-sm font-bold text-zinc-900">Disponible hoy</p>
+
+                      {/* Question */}
+                      <h3 className="font-display text-2xl font-black text-zinc-900 mb-1.5">¿Qué te trae hoy?</h3>
+                      <p className="text-sm text-zinc-400 mb-6">Elige la que más resuene. Puedes cambiarla después.</p>
+
+                      {/* Options */}
+                      <div className="flex flex-col gap-2.5">
+                        {quizOptions.map((opt) => (
+                          <button
+                            key={opt.label}
+                            onClick={() => setQuizAnswer(opt.label)}
+                            className="group flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3.5 text-left text-sm font-medium text-zinc-700 transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700"
+                          >
+                            <span className="text-lg leading-none text-zinc-400 group-hover:text-violet-400 transition-colors select-none">{opt.glyph}</span>
+                            {opt.label}
+                          </button>
+                        ))}
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-xs text-zinc-400">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      2 médicos disponibles
+                  ) : (
+                    <div className="p-8 flex flex-col items-center text-center">
+                      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5" style={{ background: G }}>
+                        <CheckCircle className="w-7 h-7 text-white" />
+                      </div>
+                      <h3 className="font-display text-xl font-black text-zinc-900 mb-2">Tenemos médicos para ti</h3>
+                      <p className="text-sm text-zinc-500 mb-7 leading-relaxed">
+                        Basado en tu respuesta, hay especialistas disponibles para atenderte hoy.
+                      </p>
+                      <Link
+                        href="/registro"
+                        className="w-full inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+                        style={{ background: G, boxShadow: "0 12px 28px rgba(167,139,250,0.35)" }}
+                      >
+                        Agendar mi consulta <ArrowRight className="w-4 h-4" />
+                      </Link>
+                      <button
+                        onClick={() => setQuizAnswer(null)}
+                        className="mt-3 text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+                      >
+                        ← Volver
+                      </button>
                     </div>
-                  </div>
-
-                  {/* Floating card — rating */}
-                  <div className="absolute -top-4 -right-8 rounded-2xl bg-white p-4 shadow-2xl">
-                    <div className="flex gap-0.5 mb-1">
-                      {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />)}
-                    </div>
-                    <p className="text-xs font-bold text-zinc-900">4.9 / 5.0</p>
-                    <p className="text-[10px] text-zinc-400">+260 reseñas verificadas</p>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -351,7 +374,7 @@ export default function LandingPage() {
                       src={u(s.photo, 500, 280)}
                       alt={s.title}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      className={`object-cover transition-transform duration-500 group-hover:scale-110 ${s.slug === "salud-femenina" ? "object-top" : ""}`}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <span className="absolute bottom-3 left-3 text-2xl">{s.icon}</span>

@@ -25,6 +25,7 @@ async function getIpress(admin: ReturnType<typeof adminClient>) {
 
   const cfg = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
   return {
+    ipress_mode:     (cfg.ipress_mode ?? "disabled") as "disabled" | "enabled",
     ipress_name:     cfg.ipress_name     ?? "Organnical Salud S.A.C.",
     ipress_code:     cfg.ipress_code     ?? "PENDIENTE",
     ipress_ruc:      cfg.ipress_ruc      ?? "—",

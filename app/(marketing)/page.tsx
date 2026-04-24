@@ -62,27 +62,27 @@ const FALLBACK_DOCTORS: DoctorCard[] = [
 
 const testimonials = [
   {
-    name: "María C.",
-    location: "Lima, San Borja",
+    name: "María Castro",
+    location: "San Borja, Lima",
     photo: "1531746020-1b38a7c9a1fd",
     rating: 5,
-    text: "Llevaba años sin poder dormir bien. La Dra. Poma me entendió desde la primera consulta y diseñó un protocolo que por fin funcionó. El seguimiento es excepcional.",
+    text: "Llevaba tres años sin poder dormir más de cuatro horas seguidas. La Dra. Poma identificó la causa en la primera consulta y diseñó un protocolo que al mes ya funcionaba. Nunca me habían explicado mi propio cuerpo con tanta claridad.",
     specialty: "Paciente · Sueño",
   },
   {
-    name: "Carlos R.",
+    name: "Carlos Ríos",
     location: "Miraflores, Lima",
     photo: "1507003211169-0a1dd7228f2d",
-    rating: 5,
-    text: "Tengo fibromialgia hace 6 años. Nunca había encontrado un médico que me explicara el protocolo completo con tanta claridad. El seguimiento es de otro nivel.",
+    rating: 4,
+    text: "Tengo fibromialgia hace 6 años. He visto neurólogos, reumatólogos, traumatólogos — todos me mandaban de vuelta a cero. Aquí por fin alguien miró el cuadro completo. No es magia, es proceso, pero por fin hay proceso.",
     specialty: "Paciente · Dolor Crónico",
   },
   {
-    name: "Ana P.",
+    name: "Ana Paredes",
     location: "San Isidro, Lima",
     photo: "1438761681033-6461ffad8d80",
     rating: 5,
-    text: "Por fin encontré atención que combina ciencia y escucha real. Me trató el desequilibrio hormonal que otros médicos ignoraban. Completamente recomendada.",
+    text: "A los 44 empecé a dormir mal, a tener ansiedad sin razón y a sentirme completamente distinta. Todos me decían que era el estrés. Aquí me dijeron que era perimenopausia y me dieron un plan real. La diferencia en dos meses fue enorme.",
     specialty: "Paciente · Salud Femenina",
   },
 ];
@@ -286,9 +286,14 @@ export default function LandingPage() {
                   </div>
                 </div>
 
+                {/* Price anchor */}
+                <p className="mt-5 text-xs text-white/35">
+                  Consultas desde <span className="text-white/60 font-semibold">S/ 60</span> · Primera cita disponible en menos de 48 h
+                </p>
+
                 {/* Trust row */}
-                <div className="hero-trust mt-10 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/40">
-                  {["Médicos con CMP activo", "Documentación oficial", "Sin tarjeta de crédito"].map((t) => (
+                <div className="hero-trust mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/40">
+                  {["Médicos con CMP activo", "Documentación oficial", "Sin suscripción"].map((t) => (
                     <span key={t} className="flex items-center gap-1.5">
                       <CheckCircle className="w-3.5 h-3.5 text-[#A78BFA]" /> {t}
                     </span>
@@ -512,7 +517,7 @@ export default function LandingPage() {
 
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-5">
                       <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                      Hoy disponible
+                      Disponible esta semana
                     </div>
 
                     <Link

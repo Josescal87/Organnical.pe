@@ -17,7 +17,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 export const metadata = {
   title: "Blog — Organnical | Medicina Integrativa",
   description:
-    "Artículos sobre medicina integrativa, cannabis medicinal, sueño, dolor crónico, ansiedad y salud femenina. Escritos por especialistas certificados.",
+    "Artículos sobre medicina integrativa, sueño, dolor crónico, ansiedad y salud femenina. Escritos por especialistas certificados en medicina funcional.",
 }
 
 export default function BlogPage() {

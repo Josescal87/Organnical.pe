@@ -34,12 +34,12 @@ export default function CookieBanner() {
         </div>
         <div className="flex-1 text-sm text-zinc-600">
           <p>
-            Usamos cookies técnicas necesarias para el funcionamiento de la plataforma y cumplimiento
-            de la{" "}
-            <Link href="/privacidad" className="text-violet-600 hover:underline">
-              Ley N.° 29733
+            Usamos cookies técnicas necesarias para el funcionamiento de la plataforma. Con tu
+            permiso, también usamos cookies analíticas y publicitarias para mejorar el servicio.{" "}
+            <Link href="/politica-cookies" className="text-violet-600 hover:underline">
+              Ver política de cookies
             </Link>
-            . No usamos cookies publicitarias sin tu consentimiento.
+            .
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">

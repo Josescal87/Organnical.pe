@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import { Fraunces, DM_Sans } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "sonner";
 import CookieBanner from "@/components/CookieBanner";
+import AnalyticsScripts from "@/components/AnalyticsScripts";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -52,8 +52,6 @@ export const metadata: Metadata = {
     follow: true,
   },
 };
-
-const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
 
 const schemaOrg = {
   "@context": "https://schema.org",
@@ -116,17 +114,7 @@ export default function RootLayout({
         <ErrorBoundary>{children}</ErrorBoundary>
         <Toaster position="top-right" richColors closeButton />
         <CookieBanner />
-        {GA_ID && (
-          <>
-            <Script
-              src={`https://www.googletagmanager.com/gtag/js?id=${GA_ID}`}
-              strategy="afterInteractive"
-            />
-            <Script id="ga-init" strategy="afterInteractive">
-              {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');`}
-            </Script>
-          </>
-        )}
+        <AnalyticsScripts />
       </body>
     </html>
   );

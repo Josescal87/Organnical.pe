@@ -56,6 +56,7 @@ export default function Footer() {
               <li><Link href="/devoluciones" className="hover:text-white transition-colors">Devoluciones</Link></li>
               <li><Link href="/preguntas-frecuentes" className="hover:text-white transition-colors">Preguntas frecuentes</Link></li>
               <li><Link href="/libro-reclamaciones" className="hover:text-white transition-colors">Libro de reclamaciones</Link></li>
+              <li><Link href="/politica-cookies" className="hover:text-white transition-colors">Política de cookies</Link></li>
             </ul>
             <h4 className="mb-3 text-sm font-semibold text-white">Medios de pago</h4>
             <div className="flex flex-wrap gap-2">

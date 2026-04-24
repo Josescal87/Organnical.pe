@@ -14,14 +14,18 @@ function adminClient() {
 }
 
 export async function getIpressMode(): Promise<IpressMode> {
-  const { data } = await adminClient()
-    .schema("medical")
-    .from("system_config")
-    .select("value")
-    .eq("key", "ipress_mode")
-    .single();
-  const raw = data?.value;
-  return raw === "enabled" ? "enabled" : "disabled";
+  try {
+    const { data } = await adminClient()
+      .schema("medical")
+      .from("system_config")
+      .select("value")
+      .eq("key", "ipress_mode")
+      .single();
+    const raw = data?.value;
+    return raw === "enabled" ? "enabled" : "disabled";
+  } catch {
+    return "disabled";
+  }
 }
 
 export async function isIpressEnabled(): Promise<boolean> {

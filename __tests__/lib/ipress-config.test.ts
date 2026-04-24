@@ -42,6 +42,13 @@ describe("getIpressMode", () => {
     const { getIpressMode } = await import("@/lib/ipress-config");
     expect(await getIpressMode()).toBe("disabled");
   });
+
+  it("returns 'disabled' when the DB call throws", async () => {
+    builder.single.mockRejectedValueOnce(new Error("connection refused"));
+    const { getIpressMode } = await import("@/lib/ipress-config");
+    const result = await getIpressMode();
+    expect(result).toBe("disabled");
+  });
 });
 
 describe("isIpressEnabled", () => {

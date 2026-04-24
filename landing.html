@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Organnical.pe — Telemedicina de cannabis medicinal en Perú. Médicos certificados MINSA para dolor crónico, insomnio, ansiedad y salud femenina. S/ 150 la consulta inicial.">
+  <title>Organnical.pe — Telemedicina de Cannabis Medicinal en Perú</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600;1,9..144,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ============================================================
+       TOKENS
+    ============================================================ */
+    :root {
+      --navy:       #0B1D35;
+      --navy-2:     #0E2545;
+      --navy-deep:  #060f1d;
+
+      --pink:       #F472B6;
+      --violet:     #A78BFA;
+      --cyan:       #38BDF8;
+      --lavender:   #9b8ff5;
+      --salmon:     #e8836e;
+
+      --gradient:        linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%);
+      --gradient-45:     linear-gradient(45deg,  #F472B6 0%, #A78BFA 60%, #38BDF8 100%);
+      --gradient-hover:  linear-gradient(135deg, #e05ca8 0%, #9070f0 50%, #22aee8 100%);
+
+      --text-dark:   #0f172a;
+      --text-mid:    #475569;
+      --text-light:  rgba(255,255,255,0.82);
+      --text-dim:    rgba(255,255,255,0.46);
+
+      --surface:     #F8FAFC;
+      --border:      #E4E4E7;
+
+      --ff-display:  'Fraunces', Georgia, serif;
+      --ff-body:     'DM Sans', system-ui, sans-serif;
+
+      --r-sm:   8px;
+      --r-md:   12px;
+      --r-lg:   16px;
+      --r-xl:   20px;
+      --r-2xl:  28px;
+      --r-3xl:  36px;
+      --r-full: 9999px;
+
+      --shadow-sm:   0 1px 4px rgba(0,0,0,0.07);
+      --shadow-md:   0 4px 20px rgba(0,0,0,0.1);
+      --shadow-lg:   0 12px 40px rgba(0,0,0,0.18);
+      --shadow-glow: 0 0 48px rgba(167,139,250,0.28);
+
+      --ease:  cubic-bezier(0.4, 0, 0.2, 1);
+      --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    }
+
+    /* ============================================================
+       RESET
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--ff-body);
+      font-size: 16px;
+      line-height: 1.6;
+      color: var(--text-dark);
+      background: #fff;
+      overflow-x: hidden;
+    }
+    img  { max-width: 100%; height: auto; display: block; }
+    a    { color: inherit; text-decoration: none; }
+    ul   { list-style: none; }
+    button { cursor: pointer; border: none; background: none; font: inherit; }
+
+    /* ============================================================
+       UTILITIES
+    ============================================================ */
+    .g-text {
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+
+    .section { padding: 100px 0; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11.5px; font-weight: 700; letter-spacing: 0.09em;
+      text-transform: uppercase;
+      padding: 6px 14px; border-radius: var(--r-full);
+    }
+    .badge-light {
+      background: rgba(167,139,250,0.1);
+      border: 1px solid rgba(167,139,250,0.25);
+      color: var(--lavender);
+    }
+    .badge-dark {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.13);
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ============================================================
+       SCROLL REVEAL
+    ============================================================ */
+    .rv {
+      opacity: 0;
+      transform: translateY(26px);
+      transition: opacity 0.72s var(--ease), transform 0.72s var(--ease);
+    }
+    .rv.in  { opacity: 1; transform: translateY(0); }
+    .d1 { transition-delay: 0.08s; }
+    .d2 { transition-delay: 0.18s; }
+    .d3 { transition-delay: 0.28s; }
+    .d4 { transition-delay: 0.38s; }
+    .d5 { transition-delay: 0.48s; }
+
+    /* ============================================================
+       KEYFRAMES
+    ============================================================ */
+    @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
+    @keyframes scaleUp  { from { opacity:0; transform:scale(0.92) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+    @keyframes blob1 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(32px,-28px) scale(1.06);} }
+    @keyframes blob2 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(-22px,18px) scale(1.04);} }
+    @keyframes blob3 { 0%,100%{transform:translate(0,0);}  33%{transform:translate(14px,-12px);}  66%{transform:translate(-10px,9px);} }
+
+    @keyframes pulseGreen {
+      0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
+      50%      { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
+    }
+
+    @keyframes wheelScroll {
+      0%   { opacity: 1; top: 6px; }
+      100% { opacity: 0; top: 22px; }
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: -400% 0; }
+      100% { background-position: 400% 0; }
+    }
+
+    /* ============================================================
+       NAVBAR
+    ============================================================ */
+    .nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 22px 0;
+      transition: padding 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    }
+    .nav.stuck {
+      padding: 14px 0;
+      background: rgba(6, 15, 29, 0.94);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      box-shadow: 0 1px 0 rgba(255,255,255,0.05);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--ff-display);
+      font-size: 21px; font-weight: 700;
+      color: #fff; letter-spacing: -0.03em;
+    }
+    .nav-logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-links {
+      display: flex; align-items: center; gap: 30px;
+    }
+    .nav-links a {
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.65);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: #fff; }
+    .nav-cta {
+      background: var(--gradient);
+      color: #fff; font-size: 13.5px; font-weight: 600;
+      padding: 10px 22px; border-radius: var(--r-full);
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 3px 14px rgba(167,139,250,0.35);
+    }
+    .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(167,139,250,0.45); }
+    @media (max-width: 780px) { .nav-links { display: none; } }
+
+    /* ============================================================
+       HERO
+    ============================================================ */
+    .hero {
+      position: relative; min-height: 100vh;
+      display: flex; align-items: center;
+      background: var(--navy-deep);
+      overflow: hidden; padding-top: 88px;
+    }
+
+    /* ---- animated mesh ---- */
+    .hero-mesh { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .blob {
+      position: absolute; border-radius: 50%;
+    }
+    .blob-a {
+      width: 680px; height: 680px;
+      background: radial-gradient(circle, rgba(167,139,250,0.22) 0%, transparent 68%);
+      top: -160px; right: -120px;
+      animation: blob1 9s ease-in-out infinite;
+    }
+    .blob-b {
+      width: 540px; height: 540px;
+      background: radial-gradient(circle, rgba(244,114,182,0.17) 0%, transparent 68%);
+      bottom: -60px; left: -130px;
+      animation: blob2 11s ease-in-out infinite;
+    }
+    .blob-c {
+      width: 420px; height: 420px;
+      background: radial-gradient(circle, rgba(56,189,248,0.13) 0%, transparent 68%);
+      top: 44%; left: 38%;
+      animation: blob3 13s ease-in-out infinite;
+    }
+    .hero-dots {
+      position: absolute; inset: 0;
+      background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+    /* diagonal accent line */
+    .hero-line {
+      position: absolute;
+      width: 2px; height: 260px;
+      background: linear-gradient(to bottom, transparent, rgba(167,139,250,0.35), transparent);
+      top: 15%; right: 18%;
+      transform: rotate(18deg);
+    }
+
+    .hero-inner {
+      position: relative; z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 56px; align-items: center;
+    }
+    @media (max-width: 880px) {
+      .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 44px; }
+    }
+
+    /* hero badge */
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.11);
+      backdrop-filter: blur(12px);
+      color: rgba(255,255,255,0.78);
+      font-size: 11.5px; font-weight: 700;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 8px 16px; border-radius: var(--r-full);
+      margin-bottom: 26px;
+      animation: fadeUp 0.6s var(--ease) 0.1s both;
+    }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
+      animation: pulseGreen 2.2s ease-in-out infinite;
+    }
+
+    .hero-h1 {
+      font-family: var(--ff-display);
+      font-size: clamp(2.7rem, 4.8vw, 4.4rem);
+      font-weight: 700; line-height: 1.07;
+      letter-spacing: -0.03em; color: #fff;
+      margin-bottom: 18px;
+      animation: fadeUp 0.7s var(--ease) 0.24s both;
+    }
+    .hero-h1 em { font-style: italic; font-weight: 400; }
+
+    .hero-p {
+      font-size: 17px; line-height: 1.68;
+      color: rgba(255,255,255,0.62);
+      margin-bottom: 32px; max-width: 460px;
+      animation: fadeUp 0.7s var(--ease) 0.38s both;
+    }
+    @media (max-width: 880px) { .hero-p { margin-left: auto; margin-right: auto; } }
+
+    /* specialty pills */
+    .spec-pills {
+      display: flex; flex-wrap: wrap; gap: 7px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.7s var(--ease) 0.48s both;
+    }
+    @media (max-width: 880px) { .spec-pills { justify-content: center; } }
+    .pill {
+      background: rgba(255,255,255,0.055);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: rgba(255,255,255,0.72);
+      font-size: 12.5px; font-weight: 500;
+      padding: 6px 14px; border-radius: var(--r-full);
+      transition: all 0.2s;
+    }
+    .pill:hover, .pill.on {
+      background: rgba(167,139,250,0.18);
+      border-color: rgba(167,139,250,0.42);
+      color: #fff;
+    }
+
+    /* cta row */
+    .hero-ctas {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 36px; flex-wrap: wrap;
+      animation: fadeUp 0.7s var(--ease) 0.56s both;
+    }
+    @media (max-width: 880px) { .hero-ctas { justify-content: center; } }
+
+    .btn-grad {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gradient);
+      color: #fff; font-size: 14.5px; font-weight: 600;
+      padding: 14px 28px; border-radius: var(--r-full);
+      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 22px rgba(167,139,250,0.38);
+      white-space: nowrap;
+    }
+    .btn-grad:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167,139,250,0.5); }
+
+    .btn-ghost {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      color: rgba(255,255,255,0.76);
+      font-size: 14.5px; font-weight: 500;
+      padding: 14px 22px; border-radius: var(--r-full);
+      border: 1px solid rgba(255,255,255,0.18);
+      transition: all 0.22s;
+      white-space: nowrap;
+    }
+    .btn-ghost:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.34); color: #fff; }
+
+    /* trust mini row */
+    .hero-trust {
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+      animation: fadeIn 0.6s var(--ease) 0.78s both;
+    }
+    @media (max-width: 880px) { .hero-trust { justify-content: center; } }
+    .htrust {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,0.44);
+    }
+    .htrust svg { width: 13px; height: 13px; color: #4ade80; flex-shrink: 0; }
+
+    /* ---- glass stats card (right) ---- */
+    .hero-card {
+      background: rgba(255,255,255,0.055);
+      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--r-2xl);
+      padding: 28px;
+      position: relative; overflow: hidden;
+      animation: scaleUp 0.8s var(--ease) 0.44s both;
+    }
+    .hero-card::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(167,139,250,0.07) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .stat-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      margin-bottom: 14px;
+    }
+    .stat-cell {
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--r-lg);
+      padding: 18px 16px;
+    }
+    .stat-val {
+      font-family: var(--ff-display);
+      font-size: 1.9rem; font-weight: 700;
+      color: #fff; line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.44); font-weight: 500; }
+
+    .doc-row {
+      display: flex; align-items: center; gap: 11px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--r-md);
+      padding: 13px 15px;
+    }
+    .doc-avatars { display: flex; }
+    .doc-av {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.18);
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff;
+      margin-left: -9px; overflow: hidden;
+    }
+    .doc-av:first-child { margin-left: 0; }
+    .doc-info { flex: 1; }
+    .doc-info-name { font-size: 12.5px; font-weight: 600; color: #fff; }
+    .doc-info-sub  { font-size: 10.5px; color: rgba(255,255,255,0.42); }
+    .avail {
+      display: flex; align-items: center; gap: 5px;
+      background: rgba(74,222,128,0.1);
+      border: 1px solid rgba(74,222,128,0.24);
+      color: #4ade80;
+      font-size: 10.5px; font-weight: 700;
+      padding: 4px 10px; border-radius: var(--r-full);
+      white-space: nowrap;
+    }
+    .avail-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; animation: pulseGreen 2s ease-in-out infinite; }
+
+    /* floating mini cards */
+    .fc {
+      position: absolute;
+      background: #fff;
+      border-radius: var(--r-md);
+      padding: 10px 14px;
+      box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 9px;
+    }
+    .fc-1 { right: -18px; top: 16px; animation: blob1 6s ease-in-out infinite; }
+    .fc-2 { left: -26px; bottom: 36px; animation: blob2 7s ease-in-out infinite; }
+    .fc-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+    }
+    .fc-main { font-size: 12px; font-weight: 700; color: var(--text-dark); }
+    .fc-sub  { font-size: 10px; color: var(--text-mid); }
+
+    /* scroll cue */
+    .scroll-cue {
+      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 7px;
+      animation: fadeIn 0.5s var(--ease) 1.3s both;
+    }
+    .scroll-cue span { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
+    .mouse { width: 22px; height: 34px; border: 2px solid rgba(255,255,255,0.18); border-radius: 11px; position: relative; overflow: hidden; }
+    .wheel { width: 4px; height: 7px; background: rgba(255,255,255,0.46); border-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); top: 6px; animation: wheelScroll 2s ease-in-out infinite; }
+
+    /* ============================================================
+       TRUST BAR
+    ============================================================ */
+    .trust-bar {
+      background: #fff;
+      border-bottom: 1px solid var(--border);
+      padding: 18px 0;
+    }
+    .tb-row {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 28px 44px;
+    }
+    .tb-item {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 12.5px; font-weight: 500;
+      color: var(--text-mid); white-space: nowrap;
+    }
+    .tb-item svg { width: 17px; height: 17px; color: var(--lavender); flex-shrink: 0; }
+
+    /* ============================================================
+       SECCIÓN HEADER (shared)
+    ============================================================ */
+    .sec-head { text-align: center; margin-bottom: 56px; }
+    .sec-h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(1.95rem, 3.6vw, 3.1rem);
+      font-weight: 700; letter-spacing: -0.025em; line-height: 1.13;
+      color: var(--text-dark); margin-bottom: 14px;
+    }
+    .sec-h2 em { font-style: italic; font-weight: 400; }
+    .sec-h2.light { color: #fff; }
+    .sec-p { font-size: 16.5px; color: var(--text-mid); max-width: 460px; margin: 0 auto; line-height: 1.65; }
+    .sec-p.light { color: rgba(255,255,255,0.54); }
+
+    /* ============================================================
+       ESPECIALIDADES
+    ============================================================ */
+    .espec { background: var(--surface); }
+
+    .espec-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 18px;
+    }
+    @media (max-width: 860px) { .espec-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 460px) { .espec-grid { grid-template-columns: 1fr; } }
+
+    .espec-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: var(--r-2xl);
+      padding: 26px 22px;
+      cursor: default;
+      transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s;
+      position: relative; overflow: hidden;
+    }
+    .espec-card::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(167,139,250,0.05) 0%, rgba(244,114,182,0.04) 100%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .espec-card:hover { transform: translateY(-5px); border-color: rgba(167,139,250,0.38); box-shadow: var(--shadow-md), 0 0 0 1px rgba(167,139,250,0.12); }
+    .espec-card:hover::after { opacity: 1; }
+
+    .espec-icon {
+      width: 50px; height: 50px; border-radius: var(--r-lg);
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 21px; margin-bottom: 14px;
+      position: relative; z-index: 1;
+    }
+    .espec-name {
+      font-family: var(--ff-display);
+      font-size: 19px; font-weight: 700;
+      color: var(--text-dark); letter-spacing: -0.015em;
+      margin-bottom: 7px; position: relative; z-index: 1;
+    }
+    .espec-desc {
+      font-size: 13px; color: var(--text-mid);
+      line-height: 1.58; margin-bottom: 16px;
+      position: relative; z-index: 1;
+    }
+    .espec-count {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: rgba(167,139,250,0.09);
+      border: 1px solid rgba(167,139,250,0.2);
+      color: var(--lavender);
+      font-size: 11px; font-weight: 700;
+      padding: 4px 10px; border-radius: var(--r-full);
+      position: relative; z-index: 1;
+    }
+
+    /* ============================================================
+       MÉDICOS
+    ============================================================ */
+    .medicos { background: #fff; }
+
+    .doc-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 24px; max-width: 780px; margin: 0 auto;
+    }
+    @media (max-width: 600px) { .doc-grid { grid-template-columns: 1fr; } }
+
+    .doc-card {
+      border: 1px solid var(--border);
+      border-radius: var(--r-2xl);
+      overflow: hidden;
+      transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
+    }
+    .doc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: rgba(167,139,250,0.28); }
+
+    .doc-bar { height: 5px; background: var(--gradient); }
+
+    .doc-body { padding: 26px; }
+
+    .doc-avatar-lg {
+      width: 76px; height: 76px; border-radius: 50%;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--ff-display);
+      font-size: 26px; font-weight: 700; color: #fff;
+      margin: 0 auto 14px;
+      box-shadow: 0 4px 20px rgba(167,139,250,0.35);
+    }
+    .doc-name {
+      font-family: var(--ff-display);
+      font-size: 19px; font-weight: 700;
+      text-align: center; color: var(--text-dark);
+      letter-spacing: -0.01em; margin-bottom: 4px;
+    }
+    .doc-spec {
+      font-size: 12.5px; color: var(--text-mid);
+      text-align: center; margin-bottom: 10px;
+    }
+    .doc-cmp {
+      background: var(--surface);
+      font-size: 10.5px; font-weight: 700;
+      color: var(--text-mid); letter-spacing: 0.03em;
+      padding: 4px 10px; border-radius: var(--r-full);
+      display: table; margin: 0 auto 14px;
+    }
+    .doc-stars {
+      display: flex; align-items: center; justify-content: center;
+      gap: 5px; margin-bottom: 14px;
+    }
+    .stars { color: #FBBF24; font-size: 13px; letter-spacing: 1px; }
+    .star-val { font-size: 13px; font-weight: 700; color: var(--text-dark); }
+    .star-n   { font-size: 11px; color: var(--text-mid); }
+    .doc-tags {
+      display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
+      margin-bottom: 16px;
+    }
+    .dtag {
+      background: rgba(167,139,250,0.08);
+      border: 1px solid rgba(167,139,250,0.17);
+      color: var(--lavender);
+      font-size: 10.5px; font-weight: 700;
+      padding: 3px 9px; border-radius: var(--r-full);
+    }
+    .doc-avail {
+      display: flex; align-items: center; justify-content: center;
+      gap: 5px; font-size: 11.5px; font-weight: 600;
+      color: #16a34a; margin-bottom: 14px;
+    }
+    .green-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #4ade80;
+      animation: pulseGreen 2.2s ease-in-out infinite;
+    }
+    .doc-btn {
+      display: block; width: 100%; text-align: center;
+      background: var(--gradient);
+      color: #fff; font-size: 14px; font-weight: 600;
+      padding: 12px; border-radius: var(--r-lg);
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    .doc-btn:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .cred-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 13px 20px;
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; flex-wrap: wrap;
+    }
+    .cred {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 10.5px; font-weight: 600; color: var(--text-mid);
+    }
+    .cred svg { width: 13px; height: 13px; color: var(--violet); }
+
+    /* ============================================================
+       CÓMO FUNCIONA
+    ============================================================ */
+    .como { background: var(--surface); }
+
+    .steps { display: flex; flex-direction: column; gap: 44px; max-width: 880px; margin: 0 auto; }
+
+    .step-row {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 44px; align-items: center;
+    }
+    .step-row.flip { direction: rtl; }
+    .step-row.flip > * { direction: ltr; }
+    @media (max-width: 620px) {
+      .step-row { grid-template-columns: 1fr; }
+      .step-row.flip { direction: ltr; }
+    }
+
+    .step-num {
+      font-family: var(--ff-display);
+      font-size: 12px; font-weight: 700;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--violet); margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .step-num::after {
+      content: ''; display: block;
+      width: 28px; height: 2px;
+      background: var(--gradient); border-radius: 2px;
+    }
+    .step-title {
+      font-family: var(--ff-display);
+      font-size: 24px; font-weight: 700;
+      color: var(--text-dark); letter-spacing: -0.02em;
+      line-height: 1.2; margin-bottom: 10px;
+    }
+    .step-desc {
+      font-size: 14.5px; color: var(--text-mid);
+      line-height: 1.68; margin-bottom: 14px;
+    }
+    .step-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(167,139,250,0.08);
+      border: 1px solid rgba(167,139,250,0.2);
+      color: var(--lavender);
+      font-size: 11.5px; font-weight: 700;
+      padding: 5px 12px; border-radius: var(--r-full);
+    }
+
+    .step-vis {
+      background: linear-gradient(135deg, rgba(167,139,250,0.09), rgba(244,114,182,0.06));
+      border: 1px solid rgba(167,139,250,0.14);
+      border-radius: var(--r-2xl);
+      aspect-ratio: 4/3;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 60px;
+      transition: transform 0.3s;
+    }
+    .step-vis:hover { transform: scale(1.025); }
+
+    /* ============================================================
+       TESTIMONIOS
+    ============================================================ */
+    .testim { background: var(--navy-2); }
+
+    .testim-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
+    }
+    @media (max-width: 860px) { .testim-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 540px) { .testim-grid { grid-template-columns: 1fr; } }
+
+    .t-card {
+      background: rgba(255,255,255,0.046);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: var(--r-xl);
+      padding: 26px;
+      transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
+    }
+    .t-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(167,139,250,0.22); transform: translateY(-3px); }
+    .t-stars { color: #FBBF24; font-size: 13px; margin-bottom: 12px; letter-spacing: 1px; }
+    .t-quote {
+      font-size: 13.5px; line-height: 1.68;
+      color: rgba(255,255,255,0.72); font-style: italic;
+      margin-bottom: 18px;
+    }
+    .t-author { display: flex; align-items: center; gap: 11px; }
+    .t-av {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: var(--gradient);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .t-name   { font-size: 12.5px; font-weight: 700; color: #fff; }
+    .t-detail { font-size: 10.5px; color: rgba(255,255,255,0.38); margin-top: 2px; }
+
+    /* ============================================================
+       PRICING CALLOUT
+    ============================================================ */
+    .pricing {
+      background: #fff;
+      padding: 80px 0;
+    }
+    .pricing-card {
+      max-width: 680px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(167,139,250,0.07) 0%, rgba(244,114,182,0.05) 100%);
+      border: 1.5px solid rgba(167,139,250,0.24);
+      border-radius: var(--r-3xl);
+      padding: 48px 40px;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: -50%;
+      width: 200%; height: 200%;
+      background: conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(167,139,250,0.04) 25%, transparent 50%);
+      animation: shimmer 8s linear infinite;
+    }
+    .price-amt {
+      font-family: var(--ff-display);
+      font-size: 4.5rem; font-weight: 900;
+      line-height: 1; letter-spacing: -0.04em;
+      margin-bottom: 6px; position: relative; z-index: 1;
+    }
+    .price-label {
+      font-size: 14px; color: var(--text-mid);
+      margin-bottom: 24px; position: relative; z-index: 1;
+    }
+    .price-includes {
+      display: flex; flex-wrap: wrap; justify-content: center;
+      gap: 10px; margin-bottom: 28px; position: relative; z-index: 1;
+    }
+    .p-incl {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12.5px; font-weight: 500; color: var(--text-mid);
+    }
+    .p-incl svg { width: 14px; height: 14px; color: #4ade80; }
+    .price-cta {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gradient);
+      color: #fff; font-size: 15px; font-weight: 700;
+      padding: 15px 36px; border-radius: var(--r-full);
+      box-shadow: 0 5px 24px rgba(167,139,250,0.4);
+      transition: opacity 0.2s, transform 0.2s;
+      position: relative; z-index: 1;
+    }
+    .price-cta:hover { opacity: 0.88; transform: translateY(-2px); }
+    .price-note {
+      margin-top: 14px; font-size: 11px; color: var(--text-mid);
+      position: relative; z-index: 1;
+    }
+
+    /* ============================================================
+       CTA FINAL
+    ============================================================ */
+    .cta-sec {
+      background: var(--navy-deep);
+      padding: 108px 0;
+      text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-blob-bg {
+      position: absolute; inset: 0; pointer-events: none;
+    }
+    .cta-blob-bg::before {
+      content: '';
+      position: absolute;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(167,139,250,0.18) 0%, transparent 62%);
+      top: 50%; left: 50%; transform: translate(-50%,-50%);
+      border-radius: 50%;
+    }
+    .cta-inner { position: relative; z-index: 2; }
+    .cta-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      background: rgba(255,255,255,0.065);
+      border: 1px solid rgba(255,255,255,0.11);
+      color: rgba(255,255,255,0.56);
+      font-size: 11px; font-weight: 700;
+      letter-spacing: 0.09em; text-transform: uppercase;
+      padding: 7px 15px; border-radius: var(--r-full);
+      margin-bottom: 22px;
+    }
+    .cta-h2 {
+      font-family: var(--ff-display);
+      font-size: clamp(1.95rem, 3.8vw, 3.4rem);
+      font-weight: 700; color: #fff;
+      line-height: 1.1; letter-spacing: -0.03em;
+      margin-bottom: 16px;
+    }
+    .cta-sub {
+      font-size: 16.5px; color: rgba(255,255,255,0.5);
+      margin-bottom: 36px; max-width: 430px;
+      margin-left: auto; margin-right: auto;
+    }
+    .cta-btns {
+      display: flex; align-items: center; justify-content: center;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .cta-note { margin-top: 18px; font-size: 11px; color: rgba(255,255,255,0.25); }
+
+    /* ============================================================
+       FOOTER
+    ============================================================ */
+    .footer {
+      background: var(--navy-deep);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 52px 0 32px;
+    }
+    .footer-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 44px;
+      margin-bottom: 44px;
+    }
+    @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; gap: 28px; } }
+    .f-logo { font-family: var(--ff-display); font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -0.025em; }
+    .f-logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .f-desc { font-size: 12.5px; color: rgba(255,255,255,0.4); line-height: 1.68; max-width: 280px; margin-bottom: 14px; }
+    .f-legal { font-size: 10.5px; color: rgba(255,255,255,0.22); line-height: 1.5; }
+    .f-heading { font-size: 11px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 14px; }
+    .f-links { display: flex; flex-direction: column; gap: 9px; }
+    .f-links a { font-size: 12.5px; color: rgba(255,255,255,0.45); transition: color 0.2s; }
+    .f-links a:hover { color: #fff; }
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding-top: 22px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-wrap: wrap;
+    }
+    .f-copy { font-size: 11.5px; color: rgba(255,255,255,0.22); }
+    .f-reg  { font-size: 10.5px; color: rgba(255,255,255,0.18); text-align: right; }
+
+    /* ============================================================
+       WHATSAPP FAB
+    ============================================================ */
+    .wa-fab {
+      position: fixed; bottom: 28px; right: 28px; z-index: 99;
+      width: 52px; height: 52px; border-radius: 50%;
+      background: #25D366;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 18px rgba(37,211,102,0.48);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeIn 0.4s var(--ease) 1.6s both;
+    }
+    .wa-fab:hover { transform: scale(1.1); box-shadow: 0 6px 26px rgba(37,211,102,0.58); }
+    .wa-fab svg { width: 27px; height: 27px; fill: #fff; }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     NAVBAR
+============================================================ -->
+<nav class="nav" id="nav">
+  <div class="wrap">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Organnical<span>.pe</span></a>
+      <div class="nav-links">
+        <a href="#especialidades">Especialidades</a>
+        <a href="#medicos">Médicos</a>
+        <a href="#como-funciona">Proceso</a>
+        <a href="#testimonios">Testimonios</a>
+      </div>
+      <a href="#agendar" class="nav-cta">Agendar consulta</a>
+    </div>
+  </div>
+</nav>
+
+
+<!-- ============================================================
+     HERO
+============================================================ -->
+<section class="hero" id="inicio">
+  <!-- animated mesh background -->
+  <div class="hero-mesh">
+    <div class="blob blob-a"></div>
+    <div class="blob blob-b"></div>
+    <div class="blob blob-c"></div>
+    <div class="hero-dots"></div>
+    <div class="hero-line"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero-inner">
+
+      <!-- LEFT -->
+      <div class="hero-left">
+        <div class="hero-badge">
+          <div class="live-dot"></div>
+          Telemedicina Integrativa · Perú
+        </div>
+
+        <h1 class="hero-h1">
+          La medicina que<br>
+          <em class="g-text">te escucha</em><br>
+          y trata la raíz
+        </h1>
+
+        <p class="hero-p">
+          Consultas médicas online especializadas en cannabis medicinal,
+          dolor crónico, insomnio y salud femenina. Prescripción oficial
+          bajo Ley 30681.
+        </p>
+
+        <div class="spec-pills">
+          <button class="pill on">🌙 Sueño</button>
+          <button class="pill">🩹 Dolor Crónico</button>
+          <button class="pill">🧘 Ansiedad</button>
+          <button class="pill">🌸 Salud Femenina</button>
+        </div>
+
+        <div class="hero-ctas">
+          <a href="#agendar" class="btn-grad">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            Agendar consulta
+          </a>
+          <a href="#como-funciona" class="btn-ghost">
+            Cómo funciona
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </a>
+        </div>
+
+        <div class="hero-trust">
+          <div class="htrust">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Médicos CMP activo
+          </div>
+          <div class="htrust">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Primera cita &lt;48h
+          </div>
+          <div class="htrust">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            100% confidencial
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT — glass stats card -->
+      <div class="hero-right" style="position:relative;">
+        <div class="hero-card">
+          <div class="stat-grid">
+            <div class="stat-cell">
+              <div class="stat-val g-text">2,400+</div>
+              <div class="stat-lbl">Pacientes atendidos</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-val" style="color:#fff">4.9 ★</div>
+              <div class="stat-lbl">Calificación promedio</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-val" style="color:#fff">&lt;48h</div>
+              <div class="stat-lbl">Primera cita disponible</div>
+            </div>
+            <div class="stat-cell">
+              <div class="stat-val g-text">S/ 150</div>
+              <div class="stat-lbl">Consulta inicial</div>
+            </div>
+          </div>
+
+          <div class="doc-row">
+            <div class="doc-avatars">
+              <div class="doc-av">EP</div>
+              <div class="doc-av">RG</div>
+            </div>
+            <div class="doc-info">
+              <div class="doc-info-name">Dra. Poma · Dr. Goodman</div>
+              <div class="doc-info-sub">Médicos certificados MINSA</div>
+            </div>
+            <div class="avail">
+              <div class="avail-dot"></div>
+              En línea
+            </div>
+          </div>
+        </div>
+
+        <!-- floating cards -->
+        <div class="fc fc-1">
+          <div class="fc-icon">🛡️</div>
+          <div>
+            <div class="fc-main">100% Legal</div>
+            <div class="fc-sub">Ley 30681 · Perú</div>
+          </div>
+        </div>
+        <div class="fc fc-2">
+          <div class="fc-icon">📋</div>
+          <div>
+            <div class="fc-main">Prescripción oficial</div>
+            <div class="fc-sub">Documento médico válido</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="mouse"><div class="wheel"></div></div>
+    <span>Desplazar</span>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     TRUST BAR
+============================================================ -->
+<div class="trust-bar">
+  <div class="wrap">
+    <div class="tb-row">
+      <div class="tb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        Médicos certificados MINSA
+      </div>
+      <div class="tb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        Documentación médica oficial
+      </div>
+      <div class="tb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        Primera cita en &lt;48 horas
+      </div>
+      <div class="tb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        +2,400 pacientes
+      </div>
+      <div class="tb-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        100% confidencial
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================
+     ESPECIALIDADES
+============================================================ -->
+<section class="section espec" id="especialidades">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="badge badge-light" style="margin-bottom:16px;">Especialidades</div>
+      <h2 class="sec-h2">Tratamos lo que los <em class="g-text">demás no ven</em></h2>
+      <p class="sec-p">Condiciones crónicas que merecen atención médica especializada, integrativa y basada en evidencia.</p>
+    </div>
+
+    <div class="espec-grid">
+      <div class="espec-card rv d1">
+        <div class="espec-icon">🌙</div>
+        <div class="espec-name">Sueño</div>
+        <div class="espec-desc">Insomnio, apnea, ritmo circadiano alterado. Recupera el descanso que tu cuerpo necesita para sanar.</div>
+        <div class="espec-count">180+ atendidos</div>
+      </div>
+      <div class="espec-card rv d2">
+        <div class="espec-icon">🩹</div>
+        <div class="espec-name">Dolor Crónico</div>
+        <div class="espec-desc">Fibromialgia, dolor neuropático y musculoesquelético. Tratamiento sin dependencia ni efectos secundarios graves.</div>
+        <div class="espec-count">320+ atendidos</div>
+      </div>
+      <div class="espec-card rv d3">
+        <div class="espec-icon">🧘</div>
+        <div class="espec-name">Ansiedad</div>
+        <div class="espec-desc">Ansiedad generalizada, estrés crónico y pánico. Un enfoque integrativo, empático y compasivo.</div>
+        <div class="espec-count">290+ atendidos</div>
+      </div>
+      <div class="espec-card rv d4">
+        <div class="espec-icon">🌸</div>
+        <div class="espec-name">Salud Femenina</div>
+        <div class="espec-desc">SPM, menopausia, vulvodinia y vestibulodinia. Especialistas que te escuchan con respeto y profundidad.</div>
+        <div class="espec-count">210+ atendidos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     MÉDICOS
+============================================================ -->
+<section class="section medicos" id="medicos">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="badge badge-light" style="margin-bottom:16px;">Nuestros médicos</div>
+      <h2 class="sec-h2">Especialistas que <em class="g-text">realmente</em> escuchan</h2>
+      <p class="sec-p">Médicos con CMP activo, formación en medicina integrativa y experiencia real acompañando a pacientes.</p>
+    </div>
+
+    <div class="doc-grid">
+      <!-- Dra. Poma -->
+      <div class="doc-card rv d1">
+        <div class="doc-bar"></div>
+        <div class="doc-body">
+          <div class="doc-avatar-lg">EP</div>
+          <div class="doc-name">Dra. Estefanía Poma</div>
+          <div class="doc-spec">Especialista en dolor crónico y sueño</div>
+          <div class="doc-cmp">CMP 059636</div>
+          <div class="doc-stars">
+            <span class="stars">★★★★★</span>
+            <span class="star-val">4.9</span>
+            <span class="star-n">(127 reseñas)</span>
+          </div>
+          <div class="doc-tags">
+            <span class="dtag">Sueño</span>
+            <span class="dtag">Dolor Crónico</span>
+            <span class="dtag">Fibromialgia</span>
+          </div>
+          <div class="doc-avail">
+            <div class="green-dot"></div>
+            Disponible esta semana
+          </div>
+          <a href="#agendar" class="doc-btn">Agendar consulta</a>
+        </div>
+        <div class="cred-bar">
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            CMP activo
+          </div>
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            RENEC
+          </div>
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Telemedicina
+          </div>
+        </div>
+      </div>
+
+      <!-- Dr. Goodman -->
+      <div class="doc-card rv d2">
+        <div class="doc-bar"></div>
+        <div class="doc-body">
+          <div class="doc-avatar-lg">RG</div>
+          <div class="doc-name">Dr. Robert Goodman</div>
+          <div class="doc-spec">Medicina integrativa y ansiedad</div>
+          <div class="doc-cmp">CMP 095719</div>
+          <div class="doc-stars">
+            <span class="stars">★★★★★</span>
+            <span class="star-val">4.8</span>
+            <span class="star-n">(98 reseñas)</span>
+          </div>
+          <div class="doc-tags">
+            <span class="dtag">Ansiedad</span>
+            <span class="dtag">Salud Femenina</span>
+            <span class="dtag">Integrativa</span>
+          </div>
+          <div class="doc-avail">
+            <div class="green-dot"></div>
+            Disponible esta semana
+          </div>
+          <a href="#agendar" class="doc-btn">Agendar consulta</a>
+        </div>
+        <div class="cred-bar">
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            CMP activo
+          </div>
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            RENEC
+          </div>
+          <div class="cred">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Telemedicina
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     CÓMO FUNCIONA
+============================================================ -->
+<section class="section como" id="como-funciona">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="badge badge-light" style="margin-bottom:16px;">Proceso</div>
+      <h2 class="sec-h2">Sencillo, claro y <em class="g-text">sin burocracia</em></h2>
+      <p class="sec-p">Tres pasos para tu primera consulta médica integrativa, desde cualquier lugar del Perú.</p>
+    </div>
+
+    <div class="steps">
+      <div class="step-row rv">
+        <div class="step-content">
+          <div class="step-num">01</div>
+          <div class="step-title">Agenda tu cita en línea</div>
+          <div class="step-desc">Elige la especialidad, el médico y el horario que más te convenga. Sin filas, sin esperas. Disponibilidad confirmada en minutos.</div>
+          <div class="step-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Primera cita en &lt;48 horas
+          </div>
+        </div>
+        <div class="step-vis rv d2">📅</div>
+      </div>
+
+      <div class="step-row flip rv">
+        <div class="step-content">
+          <div class="step-num">02</div>
+          <div class="step-title">Consulta por videollamada</div>
+          <div class="step-desc">Tu médico te escucha en profundidad. Evalúa tu historial, síntomas y objetivos para diseñar un plan de tratamiento personalizado.</div>
+          <div class="step-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Sesión de 45 a 60 minutos
+          </div>
+        </div>
+        <div class="step-vis rv d2">💬</div>
+      </div>
+
+      <div class="step-row rv">
+        <div class="step-content">
+          <div class="step-num">03</div>
+          <div class="step-title">Recibe tu prescripción oficial</div>
+          <div class="step-desc">Si corresponde, obtienes tu prescripción médica conforme a la Ley 30681, con protocolo de seguimiento incluido sin costo adicional.</div>
+          <div class="step-chip">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Bajo Ley 30681 — 100% legal
+          </div>
+        </div>
+        <div class="step-vis rv d2">📋</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     TESTIMONIOS
+============================================================ -->
+<section class="section testim" id="testimonios">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <div class="badge badge-dark" style="margin-bottom:16px;">Testimonios reales</div>
+      <h2 class="sec-h2 light">Lo que dicen <em class="g-text">nuestros pacientes</em></h2>
+      <p class="sec-p light">Más de 2,400 personas ya encontraron una alternativa médica que funciona bajo supervisión especializada.</p>
+    </div>
+
+    <div class="testim-grid">
+      <div class="t-card rv d1">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-quote">"Después de años con insomnio severo, la Dra. Poma fue la primera médica que tomó mis síntomas en serio. El tratamiento cambió mi calidad de vida completamente."</div>
+        <div class="t-author">
+          <div class="t-av">MV</div>
+          <div>
+            <div class="t-name">María V.</div>
+            <div class="t-detail">Insomnio crónico · Lima</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-card rv d2">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-quote">"Tenía fibromialgia y ningún tratamiento convencional me ayudaba. Con el Dr. Goodman encontré un enfoque integrativo que redujo mi dolor en un 70%."</div>
+        <div class="t-author">
+          <div class="t-av">CR</div>
+          <div>
+            <div class="t-name">Carlos R.</div>
+            <div class="t-detail">Fibromialgia · Arequipa</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="t-card rv d3">
+        <div class="t-stars">★★★★★</div>
+        <div class="t-quote">"Lo que más valoro es la seriedad del proceso. Prescripción oficial, seguimiento real y un médico que responde tus dudas. Profesionalismo total."</div>
+        <div class="t-author">
+          <div class="t-av">LP</div>
+          <div>
+            <div class="t-name">Lucía P.</div>
+            <div class="t-detail">Ansiedad generalizada · Cusco</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     PRICING CALLOUT
+============================================================ -->
+<section class="pricing" id="precios">
+  <div class="wrap">
+    <div class="pricing-card rv">
+      <div class="badge badge-light" style="margin-bottom:18px;">Precio transparente</div>
+      <div class="price-amt"><span class="g-text">S/ 150</span></div>
+      <div class="price-label">Teleconsulta inicial · Sin costos ocultos</div>
+
+      <div class="price-includes">
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Consulta de 45–60 min
+        </div>
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Evaluación personalizada
+        </div>
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Prescripción médica oficial
+        </div>
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Protocolo de seguimiento
+        </div>
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Médicos CMP activo
+        </div>
+        <div class="p-incl">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          100% online, desde Perú
+        </div>
+      </div>
+
+      <a href="https://organnical.pe/registro" class="price-cta">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Reservar mi consulta
+      </a>
+      <div class="price-note">Tratamiento bajo supervisión médica especializada · Ley 30681</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     CTA FINAL
+============================================================ -->
+<section class="cta-sec" id="agendar">
+  <div class="cta-blob-bg"></div>
+  <div class="wrap">
+    <div class="cta-inner rv">
+      <div class="cta-tag">Sin filas · Sin esperas · 100% online</div>
+      <h2 class="cta-h2">Tu primera consulta<br>a un click de distancia</h2>
+      <p class="cta-sub">Médicos certificados. Prescripción oficial. Teleconsulta desde cualquier parte del Perú.</p>
+      <div class="cta-btns">
+        <a href="https://organnical.pe/registro" class="btn-grad">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Agendar ahora — S/ 150
+        </a>
+        <a href="https://wa.me/51952476574" class="btn-ghost" target="_blank" rel="noopener">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+          WhatsApp
+        </a>
+      </div>
+      <div class="cta-note">Resultados pueden variar · Tratamiento bajo supervisión médica</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============================================================
+     FOOTER
+============================================================ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        <div class="f-logo">Organnical<span>.pe</span></div>
+        <div class="f-desc">Telemedicina de cannabis medicinal en Perú. Médicos certificados MINSA. Tratamiento bajo supervisión médica especializada conforme a la Ley 30681.</div>
+        <div class="f-legal">© 2025 Organnical.pe · Todos los derechos reservados</div>
+      </div>
+      <div>
+        <div class="f-heading">Servicios</div>
+        <ul class="f-links">
+          <li><a href="#">Consulta de sueño</a></li>
+          <li><a href="#">Dolor crónico</a></li>
+          <li><a href="#">Ansiedad</a></li>
+          <li><a href="#">Salud femenina</a></li>
+          <li><a href="#">Cómo funciona</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="f-heading">Legal</div>
+        <ul class="f-links">
+          <li><a href="#">Política de privacidad</a></li>
+          <li><a href="#">Términos y condiciones</a></li>
+          <li><a href="#">Devoluciones</a></li>
+          <li><a href="#">Preguntas frecuentes</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="f-copy">organnical.pe · WhatsApp +51 952 476 574</div>
+      <div class="f-reg">Resultados pueden variar · Ley 30681 Perú</div>
+    </div>
+  </div>
+</footer>
+
+
+<!-- WhatsApp FAB -->
+<a href="https://wa.me/51952476574" class="wa-fab" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
+  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
+</a>
+
+
+<!-- ============================================================
+     JS
+============================================================ -->
+<script>
+  // Sticky nav
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('stuck', window.scrollY > 40);
+  }, { passive: true });
+
+  // Scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
+  }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+  document.querySelectorAll('.rv').forEach(el => io.observe(el));
+
+  // Specialty pill toggle
+  const pills = document.querySelectorAll('.pill');
+  pills.forEach(p => p.addEventListener('click', () => {
+    pills.forEach(x => x.classList.remove('on'));
+    p.classList.add('on');
+  }));
+</script>
+
+</body>
+</html>

@@ -6,6 +6,8 @@ import { sendAppointmentConfirmation, sendNewAppointmentToDoctor, sendAdminSaleN
 import { getAdminEmails } from "@/lib/get-admin-emails";
 import { createWherebyMeeting } from "@/lib/whereby/client";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
+import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
+import { sanitizeError } from "@/lib/sanitize-error";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -13,13 +15,6 @@ function createAdminClient() {
     process.env.SUPABASE_SECRET_KEY!
   );
 }
-
-const SPECIALTY_LABELS: Record<string, string> = {
-  sleep:         "Sueño",
-  pain:          "Dolor Crónico",
-  anxiety:       "Ansiedad",
-  womens_health: "Salud Femenina",
-};
 
 export async function POST(req: NextRequest) {
   try {
@@ -80,6 +75,24 @@ export async function POST(req: NextRequest) {
     const endDate   = new Date(startDate.getTime() + 25 * 60 * 1000); // +25 min
 
     const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
+
+    // Verificar conflicto de horario — previene double booking
+    const { data: conflicts } = await supabase
+      .schema("medical")
+      .from("appointments")
+      .select("id")
+      .eq("doctor_id", doctorId)
+      .in("status", ["confirmed", "pending"])
+      .lt("slot_start", endDate.toISOString())
+      .gt("slot_end", startDate.toISOString())
+      .limit(1);
+
+    if (conflicts && conflicts.length > 0) {
+      return NextResponse.json(
+        { error: "Este horario ya no está disponible. Por favor elige otro." },
+        { status: 409 }
+      );
+    }
 
     // Intentar crear sala Whereby (HIPAA-compliant) — fallback a Google Meet
     let meetLink: string | null = null;
@@ -227,7 +240,7 @@ export async function POST(req: NextRequest) {
       calendarLink,
     });
   } catch (err) {
-    console.error("Booking error:", err);
+    console.error("Booking error:", sanitizeError(err));
     return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

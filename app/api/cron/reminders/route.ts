@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { sendWhatsAppTemplate } from "@/lib/whatsapp/wati";
 
@@ -12,8 +13,12 @@ function adminClient() {
 // Vercel Cron job — invoked via cron.json or Vercel dashboard
 // Messages must NOT include clinical data (PHI) — logistics only
 export async function GET(req: NextRequest) {
-  const secret = req.nextUrl.searchParams.get("secret");
-  if (secret !== process.env.CRON_SECRET) {
+  const secret = req.nextUrl.searchParams.get("secret") ?? "";
+  const expected = process.env.CRON_SECRET ?? "";
+  const match =
+    secret.length === expected.length &&
+    timingSafeEqual(Buffer.from(secret), Buffer.from(expected));
+  if (!match) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 

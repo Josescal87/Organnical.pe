@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { Calendar, FileText, ArrowRight, Clock, CheckCircle, CalendarClock } from "lucide-react";
 import type { UserRole, AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
+import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
 type AppointmentRow = {
   id: string;
@@ -22,13 +23,6 @@ const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   confirmed: { label: "Confirmada", color: "bg-sky-50 text-sky-600" },
   completed: { label: "Completada", color: "bg-emerald-50 text-emerald-600" },
   cancelled: { label: "Cancelada",  color: "bg-zinc-100 text-zinc-500" },
-};
-
-const SPECIALTY_LABELS: Record<string, string> = {
-  sleep:         "Sueño",
-  pain:          "Dolor Crónico",
-  anxiety:       "Ansiedad",
-  womens_health: "Salud Femenina",
 };
 
 export default async function MedicoDashboard() {

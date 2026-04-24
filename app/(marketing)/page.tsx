@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { posts } from "@/lib/blog";
 import { createClient } from "@/lib/supabase/client";
+import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
 /* ─── Brand tokens ─────────────────────────────────────────── */
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -29,7 +30,17 @@ const specialties = [
   { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1552058544-f2b08422138a", count: "320+ atendidos", slug: "salud-femenina" },
 ];
 
-const doctors = [
+type DoctorCard = {
+  name: string;
+  specialty: string;
+  cmp: string;
+  photo: string;
+  rating: number;
+  reviews: number;
+  tags: string[];
+};
+
+const FALLBACK_DOCTORS: DoctorCard[] = [
   {
     name: "Dra. Estefanía Poma",
     specialty: "Médico General · Medicina Integrativa",
@@ -37,7 +48,6 @@ const doctors = [
     photo: "/dra-poma-300x300.png",
     rating: 4.9,
     reviews: 142,
-    nextAvail: "Hoy disponible",
     tags: ["Sueño", "Salud Femenina"],
   },
   {
@@ -47,7 +57,6 @@ const doctors = [
     photo: "/drgodman-300x300.png",
     rating: 4.8,
     reviews: 118,
-    nextAvail: "Hoy disponible",
     tags: ["Dolor Crónico", "Ansiedad"],
   },
 ];
@@ -119,7 +128,31 @@ const steps = [
 
 export default function LandingPage() {
   const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
+  const [doctors, setDoctors] = useState<DoctorCard[]>(FALLBACK_DOCTORS);
   const router = useRouter();
+
+  // Cargar médicos desde DB (fallback a datos estáticos si falla)
+  useEffect(() => {
+    createClient()
+      .schema("medical")
+      .from("profiles")
+      .select("full_name, cmp, specialty_label, photo_url, verticals")
+      .eq("role", "doctor")
+      .then(({ data }) => {
+        if (!data?.length) return;
+        setDoctors(
+          data.map((d) => ({
+            name: d.full_name ?? "Médico",
+            specialty: d.specialty_label ?? "Medicina Integrativa",
+            cmp: d.cmp ? `CMP ${d.cmp}` : "",
+            photo: d.photo_url ?? "/dra-poma-300x300.png",
+            rating: 4.9,
+            reviews: 0,
+            tags: (d.verticals ?? []).map((v: string) => SPECIALTY_LABELS[v] ?? v),
+          }))
+        );
+      });
+  }, []);
 
   // Redirect logged-in users to their dashboard
   useEffect(() => {
@@ -445,13 +478,15 @@ export default function LandingPage() {
                         <h3 className="font-display font-bold text-[#0B1D35] text-lg">{d.name}</h3>
                         <p className="text-xs text-[#A78BFA] font-medium mt-0.5">{d.specialty}</p>
                       </div>
-                      <div className="text-right flex-shrink-0 ml-3">
-                        <div className="flex items-center gap-1 justify-end">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                          <span className="text-sm font-bold text-zinc-800">{d.rating}</span>
+                      {d.reviews > 0 && (
+                        <div className="text-right flex-shrink-0 ml-3">
+                          <div className="flex items-center gap-1 justify-end">
+                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                            <span className="text-sm font-bold text-zinc-800">{d.rating}</span>
+                          </div>
+                          <p className="text-[10px] text-zinc-400">{d.reviews} reseñas</p>
                         </div>
-                        <p className="text-[10px] text-zinc-400">{d.reviews} reseñas</p>
-                      </div>
+                      )}
                     </div>
 
                     <p className="text-xs text-zinc-400 mb-4">{d.cmp}</p>
@@ -466,7 +501,7 @@ export default function LandingPage() {
 
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-5">
                       <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                      {d.nextAvail}
+                      Hoy disponible
                     </div>
 
                     <Link

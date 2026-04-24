@@ -4,6 +4,7 @@ import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { sendAdminSaleNotification, sendProductPurchaseConfirmation } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
+import { sanitizeError } from "@/lib/sanitize-error";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -64,7 +65,7 @@ export async function POST(req: NextRequest) {
         .single() as { data: { num_orden: number } | null };
       const baseOrden = (maxOrden?.num_orden ?? 0) + 1;
 
-      console.log("Inserting ventas for cart:", JSON.stringify(cart));
+      console.log("Inserting ventas, items:", cart.length);
       for (let idx = 0; idx < cart.length; idx++) {
         const item = cart[idx];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -82,8 +83,7 @@ export async function POST(req: NextRequest) {
           fecha_compra:    fecha,
           comentarios:     `MP:${paymentId}`,
         });
-        if (ventaError) console.error("Venta insert error:", ventaError);
-        else console.log("Venta inserted for item:", item.descripcion);
+        if (ventaError) console.error("Venta insert error:", sanitizeError(ventaError));
       }
 
       const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
@@ -96,7 +96,7 @@ export async function POST(req: NextRequest) {
           items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
           total,
         });
-        console.log("Customer purchase email sent to:", user.email);
+        console.log("Customer purchase email sent");
       } catch (e) {
         console.error("Customer purchase email error:", e);
       }
@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
       // Email a admins — awaited so Vercel doesn't kill before sending
       try {
         const adminEmails = await getAdminEmails();
-        console.log("Admin emails found:", adminEmails);
+        console.log("Admin emails found:", adminEmails.length);
         await sendAdminSaleNotification({
           adminEmails,
           saleType: "product",
@@ -121,8 +121,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ status: result.status, payment_id: result.id });
   } catch (err) {
-    console.error("MP process-payment error:", JSON.stringify(err));
-    const message = typeof err === "object" ? JSON.stringify(err) : String(err);
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("MP process-payment error:", sanitizeError(err));
+    return NextResponse.json({ error: "Error interno del servidor" }, { status: 500 });
   }
 }

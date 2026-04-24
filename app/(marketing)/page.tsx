@@ -88,12 +88,41 @@ const testimonials = [
 ];
 
 
-const quizOptions = [
-  { glyph: "◑", label: "Cuesta dormir o descansar", slug: "sueno" },
-  { glyph: "◍", label: "Dolor que no se va", slug: "dolor-cronico" },
-  { glyph: "○", label: "Ansiedad o bajón emocional", slug: "ansiedad" },
-  { glyph: "◉", label: "Ciclo, hormonas o menopausia", slug: "salud-femenina" },
-  { glyph: "◌", label: "Otra cosa / todavía no lo tengo claro", slug: null },
+const QUIZ_STEPS = [
+  {
+    question: "¿Qué te trae hoy?",
+    sub: "Elige la que más resuene. Puedes cambiarla después.",
+    type: "glyph",
+    options: [
+      { label: "Cuesta dormir o descansar",          icon: "◑" },
+      { label: "Dolor que no se va",                  icon: "◍" },
+      { label: "Ansiedad o bajón emocional",          icon: "○" },
+      { label: "Ciclo, hormonas o menopausia",        icon: "◉" },
+      { label: "Otra cosa / todavía no lo tengo claro", icon: "◌" },
+    ],
+  },
+  {
+    question: "¿Hace cuánto lo vienes cargando?",
+    sub: "Esto ayuda a tu médico a priorizar el plan.",
+    type: "dots",
+    options: [
+      { label: "Semanas",                 icon: "1" },
+      { label: "Meses",                   icon: "2" },
+      { label: "Un año o más",            icon: "3" },
+      { label: "Prácticamente siempre",   icon: "4" },
+    ],
+  },
+  {
+    question: "¿Con qué horario te acomoda empezar?",
+    sub: "Te mostramos doctores disponibles en ese rango.",
+    type: "arrow",
+    options: [
+      { label: "Lo antes posible (hoy / mañana)", icon: "" },
+      { label: "Esta semana",                      icon: "" },
+      { label: "Tengo flexibilidad",               icon: "" },
+      { label: "Solo noches / fines de semana",    icon: "" },
+    ],
+  },
 ];
 
 const trustItems = [
@@ -134,7 +163,7 @@ const steps = [
 export default function LandingPage() {
   const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
   const [doctors, setDoctors] = useState<DoctorCard[]>(FALLBACK_DOCTORS);
-  const [quizAnswer, setQuizAnswer] = useState<string | null>(null);
+  const [quizStep, setQuizStep] = useState(1);
   const router = useRouter();
 
   // Cargar médicos desde DB (fallback a datos estáticos si falla)
@@ -269,45 +298,69 @@ export default function LandingPage() {
 
               {/* Right — mini quiz */}
               <div className="hero-card relative hidden lg:flex items-center justify-center">
-                <div className="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden" style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.22)" }}>
-                  {!quizAnswer ? (
-                    <div className="p-8">
-                      {/* Header */}
-                      <div className="flex items-center justify-between mb-7">
-                        <span className="font-mono text-[10px] font-semibold tracking-widest text-zinc-400 uppercase">Mini-Quiz · 45 seg</span>
-                        <div className="flex gap-1.5">
-                          <span className="h-1 w-8 rounded-full bg-zinc-800" />
-                          <span className="h-1 w-4 rounded-full bg-zinc-200" />
-                          <span className="h-1 w-4 rounded-full bg-zinc-200" />
+                <div className="w-full max-w-sm rounded-3xl bg-white overflow-hidden" style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.22)" }}>
+                  {quizStep <= 3 ? (() => {
+                    const step = QUIZ_STEPS[quizStep - 1];
+                    return (
+                      <div className="p-7">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-6">
+                          <span className="font-mono text-[10px] font-semibold tracking-widest text-[#A78BFA] uppercase">Mini-Quiz · 45 seg</span>
+                          <div className="flex gap-1.5">
+                            {[1, 2, 3].map((n) => (
+                              <span key={n} className={`h-1 rounded-full transition-all ${n === quizStep ? "w-8 bg-zinc-800" : n < quizStep ? "w-6 bg-[#A78BFA]" : "w-4 bg-zinc-200"}`} />
+                            ))}
+                          </div>
                         </div>
-                      </div>
 
-                      {/* Question */}
-                      <h3 className="font-display text-2xl font-black text-zinc-900 mb-1.5">¿Qué te trae hoy?</h3>
-                      <p className="text-sm text-zinc-400 mb-6">Elige la que más resuene. Puedes cambiarla después.</p>
+                        {/* Question */}
+                        <h3 className="font-display text-[1.4rem] font-black text-zinc-900 leading-tight mb-1.5">{step.question}</h3>
+                        <p className="text-sm text-zinc-400 mb-5">{step.sub}</p>
 
-                      {/* Options */}
-                      <div className="flex flex-col gap-2.5">
-                        {quizOptions.map((opt) => (
-                          <button
-                            key={opt.label}
-                            onClick={() => setQuizAnswer(opt.label)}
-                            className="group flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3.5 text-left text-sm font-medium text-zinc-700 transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700"
-                          >
-                            <span className="text-lg leading-none text-zinc-400 group-hover:text-violet-400 transition-colors select-none">{opt.glyph}</span>
-                            {opt.label}
+                        {/* Options */}
+                        <div className="flex flex-col gap-2">
+                          {step.options.map((opt) => (
+                            <button
+                              key={opt.label}
+                              onClick={() => setQuizStep(quizStep + 1)}
+                              className="group flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3 text-left text-sm font-medium text-zinc-700 transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700"
+                            >
+                              {step.type === "glyph" && (
+                                <span className="text-base leading-none text-zinc-400 group-hover:text-violet-400 transition-colors select-none w-5 text-center">{opt.icon}</span>
+                              )}
+                              {step.type === "dots" && (
+                                <span className="w-8 h-8 flex-shrink-0 rounded-lg bg-white border border-zinc-200 flex flex-wrap items-center justify-center gap-[3px] p-2 group-hover:border-violet-300 transition-colors">
+                                  {Array.from({ length: parseInt(opt.icon) }).map((_, i) => (
+                                    <span key={i} className="w-[5px] h-[5px] rounded-full bg-zinc-400 group-hover:bg-violet-400 transition-colors" />
+                                  ))}
+                                </span>
+                              )}
+                              {step.type === "arrow" && (
+                                <span className="w-8 h-8 flex-shrink-0 rounded-lg bg-white border border-zinc-200 flex items-center justify-center group-hover:border-violet-300 transition-colors">
+                                  <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-violet-400 transition-colors" />
+                                </span>
+                              )}
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Back */}
+                        {quizStep > 1 && (
+                          <button onClick={() => setQuizStep(quizStep - 1)} className="mt-4 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                            ← atrás
                           </button>
-                        ))}
+                        )}
                       </div>
-                    </div>
-                  ) : (
+                    );
+                  })() : (
                     <div className="p-8 flex flex-col items-center text-center">
                       <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5" style={{ background: G }}>
                         <CheckCircle className="w-7 h-7 text-white" />
                       </div>
                       <h3 className="font-display text-xl font-black text-zinc-900 mb-2">Tenemos médicos para ti</h3>
                       <p className="text-sm text-zinc-500 mb-7 leading-relaxed">
-                        Basado en tu respuesta, hay especialistas disponibles para atenderte hoy.
+                        Hay especialistas con disponibilidad hoy. Agenda en 2 minutos.
                       </p>
                       <Link
                         href="/registro"
@@ -316,11 +369,8 @@ export default function LandingPage() {
                       >
                         Agendar mi consulta <ArrowRight className="w-4 h-4" />
                       </Link>
-                      <button
-                        onClick={() => setQuizAnswer(null)}
-                        className="mt-3 text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
-                      >
-                        ← Volver
+                      <button onClick={() => setQuizStep(1)} className="mt-3 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
+                        ← Volver al inicio
                       </button>
                     </div>
                   )}
@@ -374,7 +424,8 @@ export default function LandingPage() {
                       src={u(s.photo, 500, 280)}
                       alt={s.title}
                       fill
-                      className={`object-cover transition-transform duration-500 group-hover:scale-110 ${s.slug === "salud-femenina" ? "object-top" : ""}`}
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      style={s.slug === "salud-femenina" ? { objectPosition: "center 15%" } : undefined}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <span className="absolute bottom-3 left-3 text-2xl">{s.icon}</span>

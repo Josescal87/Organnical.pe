@@ -1,11 +1,12 @@
 import { createClient } from "@supabase/supabase-js";
+import type { Database } from "@/lib/supabase/database.types";
 
 export type IpressMode = "disabled" | "enabled";
 
-let _client: ReturnType<typeof createClient> | null = null;
+let _client: ReturnType<typeof createClient<Database>> | null = null;
 function adminClient() {
   if (!_client) {
-    _client = createClient(
+    _client = createClient<Database>(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SECRET_KEY!,
     );

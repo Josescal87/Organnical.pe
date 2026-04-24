@@ -26,7 +26,7 @@ const specialties = [
   { icon: "🌙", title: "Sueño", desc: "Insomnio, apnea y ritmo circadiano", photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
   { icon: "🦴", title: "Dolor Crónico", desc: "Fibromialgia, neuropático y musculoesquelético", photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
   { icon: "🧠", title: "Ansiedad", desc: "Estrés crónico y bienestar emocional", photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
-  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1607746882-cedd4cc5a8aa", count: "320+ atendidos", slug: "salud-femenina" },
+  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1554151228-14d9def656e4", count: "320+ atendidos", slug: "salud-femenina" },
 ];
 
 type DoctorCard = {

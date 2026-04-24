@@ -179,11 +179,21 @@ export function generateStaticParams() {
   return Object.keys(SPECIALTIES).map((slug) => ({ slug }));
 }
 
+const SLUG_TO_VERTICAL: Record<string, string> = {
+  sueno: "sleep",
+  "dolor-cronico": "pain",
+  ansiedad: "anxiety",
+  "salud-femenina": "womens_health",
+};
+
 /* ─── Page ───────────────────────────────────────────────────── */
 export default async function EspecialidadPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const sp = SPECIALTIES[slug];
   if (!sp) notFound();
+
+  const verticalId = SLUG_TO_VERTICAL[slug] ?? "";
+  const bookingHref = verticalId ? `/agendar?v=${verticalId}` : "/agendar";
 
   return (
     <main style={{ background: NAVY, color: "#fff", fontFamily: "var(--font-sans, sans-serif)" }}>
@@ -211,7 +221,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 16 }}>
             <Link
-              href="/agendar"
+              href={bookingHref}
               style={{ display: "inline-flex", alignItems: "center", gap: 10, background: G, color: "#fff", fontWeight: 700, fontSize: "1.05rem", padding: "16px 32px", borderRadius: 12, textDecoration: "none" }}
             >
               Agenda tu consulta <ArrowRight size={18} />
@@ -226,7 +236,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
             </a>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 24, marginTop: 40 }}>
-            {[{ icon: "✅", text: "Médicos certificados MINSA" }, { icon: "🏥", text: "Médicos certificados MINSA" }, { icon: "⚡", text: "Cita disponible hoy" }].map((t) => (
+            {[{ icon: "✅", text: "Médicos certificados MINSA" }, { icon: "💰", text: "Desde S/ 60 por consulta" }, { icon: "⚡", text: "Cita en menos de 48 h" }].map((t) => (
               <div key={t.text} style={{ display: "flex", alignItems: "center", gap: 8, fontSize: 14, color: "rgba(255,255,255,0.8)" }}>
                 <span>{t.icon}</span><span>{t.text}</span>
               </div>
@@ -337,7 +347,7 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
                   <div style={{ width: 8, height: 8, borderRadius: "50%", background: "#34D399" }} />
                   Disponible hoy
                 </div>
-                <Link href="/agendar" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: G, color: "#fff", fontWeight: 700, padding: "14px 24px", borderRadius: 10, textDecoration: "none", fontSize: 15 }}>
+                <Link href={bookingHref} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, background: G, color: "#fff", fontWeight: 700, padding: "14px 24px", borderRadius: 10, textDecoration: "none", fontSize: 15 }}>
                   <Video size={16} /> Agendar consulta
                 </Link>
               </div>
@@ -396,11 +406,14 @@ export default async function EspecialidadPage({ params }: { params: Promise<{ s
           <h2 style={{ fontSize: "clamp(1.6rem, 3vw, 2.4rem)", fontWeight: 800, marginBottom: 16 }}>
             {sp.subtitle}
           </h2>
-          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1.05rem", marginBottom: 36, lineHeight: 1.6 }}>
+          <p style={{ color: "rgba(255,255,255,0.65)", fontSize: "1.05rem", marginBottom: 16, lineHeight: 1.6 }}>
             Médicos certificados MINSA. Atención en menos de 48 horas. Historia clínica oficial.
           </p>
+          <p style={{ color: "rgba(255,255,255,0.5)", fontSize: "0.95rem", marginBottom: 32 }}>
+            Primera consulta desde <strong style={{ color: "#fff" }}>S/ 60</strong> · Sin suscripción · Pagas solo tu consulta
+          </p>
           <Link
-            href="/agendar"
+            href={bookingHref}
             style={{ display: "inline-flex", alignItems: "center", gap: 12, background: G, color: "#fff", fontWeight: 700, fontSize: "1.1rem", padding: "18px 40px", borderRadius: 12, textDecoration: "none" }}
           >
             Agenda tu consulta <ArrowRight size={20} />

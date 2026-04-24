@@ -410,7 +410,7 @@ export default function LandingPage() {
                   <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>importa</span>
                 </h2>
               </div>
-              <Link href="/registro" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all">
+              <Link href="/servicios" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all">
                 Todos los servicios <ArrowRight className="w-4 h-4" />
               </Link>
             </div>

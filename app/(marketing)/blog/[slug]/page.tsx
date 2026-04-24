@@ -219,7 +219,31 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <p className="text-lg text-zinc-500 leading-relaxed mb-8 font-medium border-b border-zinc-50 pb-8">
                 {post.excerpt}
               </p>
-              {post.content.map((block, i) => renderBlock(block, i))}
+              {post.content.flatMap((block, i) => {
+                const rendered = renderBlock(block, i)
+                if (i !== Math.floor(post.content.length / 2) - 1) return rendered ? [rendered] : []
+                return [
+                  ...(rendered ? [rendered] : []),
+                  <div
+                    key="mid-cta"
+                    className="my-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl p-5 bg-violet-50 border border-violet-100"
+                  >
+                    <div className="flex-1">
+                      <p className="font-bold text-[#0B1D35] text-sm mb-1">¿Esto resuena contigo?</p>
+                      <p className="text-sm text-zinc-500 leading-snug">
+                        Nuestros médicos especializados en {post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.
+                      </p>
+                    </div>
+                    <Link
+                      href={bookingHref}
+                      className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
+                      style={{ background: G }}
+                    >
+                      Agendar consulta <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+                  </div>,
+                ]
+              })}
 
               {/* Tags */}
               <div className="mt-10 pt-8 border-t border-zinc-100">

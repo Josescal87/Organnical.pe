@@ -1,4 +1,4 @@
--- Migration 013: IPRESS Light Mode
+-- Migration 13: IPRESS Light Mode
 -- Adds ipress_mode flag to system_config.
 -- When 'disabled': prescriptions use ORG- prefix, PDFs show doctor info only.
 -- When 'enabled': prescriptions use IPRESS code prefix, PDFs show full IPRESS block.
@@ -10,13 +10,19 @@ ON CONFLICT (key) DO NOTHING;
 
 -- 2. Update the prescription number generator to respect the flag
 CREATE OR REPLACE FUNCTION medical.generate_prescription_number()
-RETURNS text LANGUAGE plpgsql AS $$
+RETURNS text LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = medical, public
+AS $$
 DECLARE
-  v_mode  text;
+  v_mode text;
   v_ipress text;
 BEGIN
-  SELECT value INTO v_mode  FROM medical.system_config WHERE key = 'ipress_mode';
-  SELECT value INTO v_ipress FROM medical.system_config WHERE key = 'ipress_code';
+  SELECT
+    MAX(value) FILTER (WHERE key = 'ipress_mode') INTO v_mode,
+    MAX(value) FILTER (WHERE key = 'ipress_code') INTO v_ipress
+  FROM medical.system_config
+  WHERE key IN ('ipress_mode', 'ipress_code');
 
   IF v_mode = 'enabled' AND v_ipress IS NOT NULL AND v_ipress NOT IN ('PENDIENTE', '') THEN
     RETURN v_ipress
@@ -29,3 +35,6 @@ BEGIN
   END IF;
 END;
 $$;
+
+COMMENT ON FUNCTION medical.generate_prescription_number() IS
+  'Genera número correlativo de receta. Formato: ORG-YYYY-NNNNNN (modo Light) o {IPRESS_CODE}-YYYY-NNNNNN (modo IPRESS). Controlado por medical.system_config.ipress_mode.';

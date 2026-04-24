@@ -14,12 +14,12 @@ export async function getAdminEmails(): Promise<string[]> {
 
   if (!adminProfiles?.length) return [];
 
-  const emails: string[] = [];
-  await Promise.all(
-    adminProfiles.map(async (p) => {
-      const { data } = await admin.auth.admin.getUserById(p.id);
-      if (data?.user?.email) emails.push(data.user.email);
-    })
-  );
-  return emails;
+  const adminIds = new Set(adminProfiles.map((p) => p.id));
+
+  // Una sola llamada a Auth en lugar de N llamadas individuales
+  const { data: { users } } = await admin.auth.admin.listUsers({ perPage: 1000 });
+
+  return users
+    .filter((u) => adminIds.has(u.id) && u.email)
+    .map((u) => u.email!);
 }

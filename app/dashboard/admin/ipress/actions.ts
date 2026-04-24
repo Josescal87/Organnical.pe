@@ -50,3 +50,62 @@ export async function updateIpressConfig(config: IpressConfig) {
   revalidatePath("/dashboard/admin/ipress");
   return { success: true };
 }
+
+export async function activateIpressMode(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "No autorizado" };
+
+  const { data: profile } = await supabase
+    .schema("medical")
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") return { error: "Solo administradores pueden modificar la configuración IPRESS" };
+
+  const admin = adminClient();
+  // Verify ipress_code is set and not PENDIENTE before allowing activation
+  const { data: codeRow } = await admin
+    .schema("medical")
+    .from("system_config")
+    .select("value")
+    .eq("key", "ipress_code")
+    .single();
+
+  const code = codeRow?.value;
+  if (!code || code === "PENDIENTE" || code.trim() === "") {
+    return { error: "Configura el código IPRESS antes de activar el modo IPRESS." };
+  }
+
+  const { error } = await admin
+    .schema("medical")
+    .from("system_config")
+    .upsert({ key: "ipress_mode", value: "enabled", updated_at: new Date().toISOString() }, { onConflict: "key" });
+
+  return error ? { error: error.message } : {};
+}
+
+export async function deactivateIpressMode(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "No autorizado" };
+
+  const { data: profile } = await supabase
+    .schema("medical")
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
+  if (profile?.role !== "admin") return { error: "Solo administradores pueden modificar la configuración IPRESS" };
+
+  const admin = adminClient();
+  const { error } = await admin
+    .schema("medical")
+    .from("system_config")
+    .upsert({ key: "ipress_mode", value: "disabled", updated_at: new Date().toISOString() }, { onConflict: "key" });
+
+  return error ? { error: error.message } : {};
+}

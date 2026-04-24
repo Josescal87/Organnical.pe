@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { timingSafeEqual } from "crypto";
 import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 
@@ -16,8 +17,12 @@ export async function GET() {
 
 export async function PUT(req: NextRequest) {
   // Solo accessible con service key (desde Ruby)
-  const auth = req.headers.get("authorization");
-  if (auth !== `Bearer ${process.env.SUPABASE_SECRET_KEY}`) {
+  const auth     = req.headers.get("authorization") ?? "";
+  const expected = `Bearer ${process.env.SUPABASE_SECRET_KEY ?? ""}`;
+  const match =
+    auth.length === expected.length &&
+    timingSafeEqual(Buffer.from(auth), Buffer.from(expected));
+  if (!match) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 

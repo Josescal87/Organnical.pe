@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { Resend } from "resend";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const FROM = "Organnical <reservas@organnical.com>";
 function getResend() { return new Resend(process.env.RESEND_API_KEY); }
@@ -12,6 +13,11 @@ function getAdminClient() {
 }
 
 export async function POST(req: NextRequest) {
+  const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (!checkRateLimit(`reclamaciones:${ip}`, 5, 15 * 60 * 1000)) {
+    return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
+  }
+
   try {
     const body = await req.json();
     const { tipo, nombre, dni, email, telefono, descripcion, pedido } = body;

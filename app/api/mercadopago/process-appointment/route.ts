@@ -10,6 +10,7 @@ import {
 } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
+import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -23,13 +24,6 @@ function addDays(date: Date, days: number) {
   d.setDate(d.getDate() + days);
   return d;
 }
-
-const SPECIALTY_LABELS: Record<string, string> = {
-  sleep:         "Sueño",
-  pain:          "Dolor Crónico",
-  anxiety:       "Ansiedad",
-  womens_health: "Salud Femenina",
-};
 
 export async function POST(req: NextRequest) {
   try {

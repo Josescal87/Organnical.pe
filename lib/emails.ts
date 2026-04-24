@@ -1,18 +1,33 @@
 import { Resend } from "resend";
+import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
 const FROM = "Organnical <reservas@organnical.com>";
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "${BASE_URL}";
+const SPECIALTY_EMOJI: Record<string, string> = {
+  sleep: "🌙", pain: "🦴", anxiety: "🧠", womens_health: "🌸",
+};
 
 function getResend() {
   return new Resend(process.env.RESEND_API_KEY);
 }
 
-const SPECIALTY_LABELS: Record<string, string> = {
-  sleep:         "🌙 Sueño",
-  pain:          "🦴 Dolor Crónico",
-  anxiety:       "🧠 Ansiedad",
-  womens_health: "🌸 Salud Femenina",
-};
+async function sendWithRetry(
+  params: Parameters<InstanceType<typeof Resend>["emails"]["send"]>[0],
+  attempts = 3,
+): Promise<void> {
+  const resend = getResend();
+  for (let i = 0; i < attempts; i++) {
+    const { error } = await resend.emails.send(params);
+    if (!error) return;
+    if (i < attempts - 1) await new Promise((r) => setTimeout(r, 500 * 2 ** i));
+  }
+}
+
+function emailSpecialtyLabel(specialty: string): string {
+  const emoji = SPECIALTY_EMOJI[specialty] ?? "";
+  const label = SPECIALTY_LABELS[specialty] ?? specialty;
+  return emoji ? `${emoji} ${label}` : label;
+}
 
 function baseTemplate(content: string) {
   return `<!DOCTYPE html>
@@ -70,7 +85,7 @@ export async function sendAppointmentConfirmation({
   const date = new Date(slotStart);
   const dateStr = date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const timeStr = date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
-  const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
+  const specialtyLabel = emailSpecialtyLabel(specialty);
 
   const meetSection = meetLink
     ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0">
@@ -121,7 +136,7 @@ export async function sendAppointmentConfirmation({
     </p>
   `);
 
-  return getResend().emails.send({
+  return sendWithRetry({
     from: FROM,
     to: toEmail,
     subject: `✅ Cita confirmada — ${specialtyLabel} · ${dateStr}`,
@@ -175,7 +190,7 @@ export async function sendPrescriptionNotification({
     </table>
   `);
 
-  return getResend().emails.send({
+  return sendWithRetry({
     from: FROM,
     to: toEmail,
     subject: `📋 Tu receta médica de ${doctorName} — Organnical`,
@@ -233,7 +248,7 @@ export async function sendProductPurchaseConfirmation({
     </table>
   `);
 
-  return getResend().emails.send({
+  return sendWithRetry({
     from: FROM,
     to: toEmail,
     subject: `🛍 Pedido confirmado — S/ ${total.toFixed(2)} · Organnical`,
@@ -306,7 +321,7 @@ export async function sendAdminSaleNotification({
     </table>
   `);
 
-  return getResend().emails.send({
+  return sendWithRetry({
     from: FROM,
     to: adminEmails,
     subject: `${icon} Nueva venta — ${patientName} · S/ ${total.toFixed(2)}`,
@@ -332,7 +347,7 @@ export async function sendNewAppointmentToDoctor({
   const date = new Date(slotStart);
   const dateStr = date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
   const timeStr = date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
-  const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
+  const specialtyLabel = emailSpecialtyLabel(specialty);
 
   const html = baseTemplate(`
     <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">Nueva consulta agendada 🗓</h1>
@@ -366,7 +381,7 @@ export async function sendNewAppointmentToDoctor({
     </table>
   `);
 
-  return getResend().emails.send({
+  return sendWithRetry({
     from: FROM,
     to: toEmail,
     subject: `🗓 Nueva consulta — ${patientName} · ${dateStr}`,

@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import type { IpressMode } from "@/lib/ipress-config";
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -67,6 +68,8 @@ export type PrescriptionItem = {
 };
 
 export type PrescriptionPDFData = {
+  // Modo
+  ipress_mode:     IpressMode;
   // IPRESS
   ipress_name:     string;
   ipress_code:     string;
@@ -111,16 +114,24 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
   });
 
   return (
-    <Document title={`Receta ${data.prescription_number} — ${data.patient_name}`} author="Organnical Salud S.A.C.">
+    <Document title={`Receta ${data.prescription_number} — ${data.patient_name}`} author={data.ipress_mode === "enabled" ? data.ipress_name : "Organnical Salud S.A.C."}>
       <Page size="A4" style={s.page}>
 
         {/* ── Encabezado ── */}
         <View style={s.headerRow}>
-          <View>
-            <Text style={s.ipressName}>{data.ipress_name}</Text>
-            <Text style={s.ipressSub}>{data.ipress_address}</Text>
-            <Text style={s.ipressSub}>RUC: {data.ipress_ruc}  ·  Código: {data.ipress_code}  ·  Categoría {data.ipress_category}</Text>
-          </View>
+          {data.ipress_mode === "enabled" ? (
+            <View>
+              <Text style={s.ipressName}>{data.ipress_name}</Text>
+              <Text style={s.ipressSub}>{data.ipress_address}</Text>
+              <Text style={s.ipressSub}>RUC: {data.ipress_ruc}  ·  Código: {data.ipress_code}  ·  Categoría {data.ipress_category}</Text>
+            </View>
+          ) : (
+            <View>
+              <Text style={s.ipressName}>Dr(a). {data.doctor_name}</Text>
+              <Text style={s.ipressSub}>CMP {data.doctor_cmp}{data.doctor_rne ? `  ·  RNE ${data.doctor_rne}` : ""}</Text>
+              <Text style={s.ipressSub}>{data.doctor_specialty}  ·  Lima, Perú</Text>
+            </View>
+          )}
           <View style={s.rxBox}>
             <Text style={s.rxLabel}>N° Receta</Text>
             <Text style={s.rxNumber}>{data.prescription_number}</Text>
@@ -241,7 +252,9 @@ export function PrescriptionPDF({ data }: { data: PrescriptionPDFData }) {
         {/* ── Footer ── */}
         <View style={s.footer} fixed>
           <Text style={s.footerText}>
-            {data.ipress_name}  ·  {data.ipress_code}  ·  Ley 30681 — Cannabis Medicinal Perú
+            {data.ipress_mode === "enabled"
+              ? `${data.ipress_name}  ·  ${data.ipress_code}  ·  Ley 30681 — Cannabis Medicinal Perú`
+              : `Organnical Salud S.A.C.  ·  RUC 20607170615  ·  Ley 30681 — Cannabis Medicinal Perú`}
           </Text>
           <Text style={s.footerText} render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} />
         </View>

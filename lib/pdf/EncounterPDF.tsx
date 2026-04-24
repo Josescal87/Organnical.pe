@@ -7,6 +7,7 @@ import {
   StyleSheet,
   Font,
 } from "@react-pdf/renderer";
+import type { IpressMode } from "@/lib/ipress-config";
 
 Font.registerHyphenationCallback((word) => [word]);
 
@@ -69,6 +70,8 @@ export type DiagnosisItem = {
 };
 
 export type EncounterPDFData = {
+  // Modo
+  ipress_mode:     IpressMode;
   // IPRESS
   ipress_name:     string;
   ipress_code:     string;
@@ -167,16 +170,24 @@ export function EncounterPDF({ data }: { data: EncounterPDFData }) {
     data.vital_weight_kg || data.vital_height_cm;
 
   return (
-    <Document title={`HC ${data.hc_number} — ${data.patient_name}`} author="Organnical Salud S.A.C.">
+    <Document title={`HC ${data.hc_number} — ${data.patient_name}`} author={data.ipress_mode === "enabled" ? data.ipress_name : "Organnical Salud S.A.C."}>
       <Page size="A4" style={s.page}>
 
-        {/* ── Encabezado IPRESS ── */}
+        {/* ── Encabezado ── */}
         <View style={s.headerRow}>
-          <View>
-            <Text style={s.ipressName}>{data.ipress_name}</Text>
-            <Text style={s.ipressSub}>{data.ipress_address}</Text>
-            <Text style={s.ipressSub}>RUC: {data.ipress_ruc}  ·  Código IPRESS: {data.ipress_code}  ·  Categoría {data.ipress_category}</Text>
-          </View>
+          {data.ipress_mode === "enabled" ? (
+            <View>
+              <Text style={s.ipressName}>{data.ipress_name}</Text>
+              <Text style={s.ipressSub}>{data.ipress_address}</Text>
+              <Text style={s.ipressSub}>RUC: {data.ipress_ruc}  ·  Código IPRESS: {data.ipress_code}  ·  Categoría {data.ipress_category}</Text>
+            </View>
+          ) : (
+            <View>
+              <Text style={s.ipressName}>Dr(a). {data.doctor_name}</Text>
+              <Text style={s.ipressSub}>CMP {data.doctor_cmp}{data.doctor_rne ? `  ·  RNE ${data.doctor_rne}` : ""}</Text>
+              <Text style={s.ipressSub}>{data.doctor_specialty}  ·  Lima, Perú</Text>
+            </View>
+          )}
           <View style={s.hcBox}>
             <Text style={s.hcLabel}>N° Historia Clínica</Text>
             <Text style={s.hcNumber}>{data.hc_number}</Text>
@@ -305,7 +316,9 @@ export function EncounterPDF({ data }: { data: EncounterPDFData }) {
         {/* ── Footer ── */}
         <View style={s.footer} fixed>
           <Text style={s.footerText}>
-            {data.ipress_name}  ·  {data.ipress_code}  ·  Conforme NTS 139-MINSA/2018
+            {data.ipress_mode === "enabled"
+              ? `${data.ipress_name}  ·  ${data.ipress_code}  ·  Conforme NTS 139-MINSA/2018`
+              : `Organnical Salud S.A.C.  ·  RUC 20607170615  ·  Conforme NTS 139-MINSA/2018`}
           </Text>
           <Text style={s.footerText} render={({ pageNumber, totalPages }) => `Página ${pageNumber} de ${totalPages}`} />
         </View>

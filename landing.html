@@ -1,1460 +1,1230 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Organnical.pe — Telemedicina de cannabis medicinal en Perú. Médicos certificados MINSA para dolor crónico, insomnio, ansiedad y salud femenina. S/ 150 la consulta inicial.">
-  <title>Organnical.pe — Telemedicina de Cannabis Medicinal en Perú</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="Medicina integrativa online en Perú. Médicos colegiados para sueño, dolor crónico, ansiedad y salud femenina. Primera consulta en menos de 48 horas." />
+<title>Organnical — Medicina que te escucha</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,600;1,9..144,700&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Inter+Tight:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <style>
-    /* ============================================================
-       TOKENS
-    ============================================================ */
-    :root {
-      --navy:       #0B1D35;
-      --navy-2:     #0E2545;
-      --navy-deep:  #060f1d;
+<style>
+/* ══════════════════════════════════════════════════════════
+   Organnical — Landing
+   Brandbook: Inter · Electric Lavender · Orchid Bloom · Vital Teal · Obsidian
+   ══════════════════════════════════════════════════════════ */
+:root {
+  --lavender:   #968DEF;
+  --lavender-2: #B3ACF3;
+  --lavender-3: #E3E0FB;
+  --orchid:     #F06BCA;
+  --orchid-2:   #F69EDA;
+  --orchid-3:   #FBDAF0;
+  --teal:       #00DBB1;
+  --teal-2:     #5CE9CC;
+  --teal-3:     #CEF7EE;
+  --obsidian:   #1A1A1A;
+  --obsidian-2: #2A2A2A;
+  --bg:         #F7F4EE;
+  --bg-2:       #EFE9DF;
+  --surface:    #FFFFFF;
+  --ink:        #1A1A1A;
+  --ink-70:     rgba(26,26,26,.70);
+  --ink-55:     rgba(26,26,26,.55);
+  --ink-35:     rgba(26,26,26,.35);
+  --line:       rgba(26,26,26,.08);
+  --line-2:     rgba(26,26,26,.14);
+  --grad:       linear-gradient(120deg, #968DEF 0%, #F06BCA 55%, #00DBB1 100%);
+  --grad-soft:  linear-gradient(120deg, #E3E0FB 0%, #FBDAF0 55%, #CEF7EE 100%);
+  --r-sm: 10px; --r: 16px; --r-lg: 24px; --r-pill: 999px;
+  --shadow-sm: 0 1px 2px rgba(26,26,26,.06), 0 2px 8px rgba(26,26,26,.04);
+  --shadow:    0 6px 18px rgba(26,26,26,.08), 0 24px 48px -16px rgba(26,26,26,.14);
+  --shadow-lg: 0 30px 60px -20px rgba(26,26,26,.35);
+}
+*, *::before, *::after { box-sizing: border-box; }
+* { margin: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+img, picture, svg { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+a { color: inherit; text-decoration: none; }
+input, textarea, select { font: inherit; color: inherit; }
 
-      --pink:       #F472B6;
-      --violet:     #A78BFA;
-      --cyan:       #38BDF8;
-      --lavender:   #9b8ff5;
-      --salmon:     #e8836e;
+.display {
+  font-family: 'Inter Tight', 'Inter', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+.mono {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.eyebrow {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-55);
+  font-weight: 500;
+}
+.grad-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-style: italic;
+  font-weight: 600;
+}
+.wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+@media (max-width: 768px) { .section { padding: 64px 0; } }
 
-      --gradient:        linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%);
-      --gradient-45:     linear-gradient(45deg,  #F472B6 0%, #A78BFA 60%, #38BDF8 100%);
-      --gradient-hover:  linear-gradient(135deg, #e05ca8 0%, #9070f0 50%, #22aee8 100%);
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: 8px; padding: 14px 22px; border-radius: var(--r-pill);
+  font-weight: 600; font-size: 15px; letter-spacing: -0.01em;
+  transition: all .2s ease; white-space: nowrap; cursor: pointer;
+}
+.btn-primary { background: var(--obsidian); color: #fff; }
+.btn-primary:hover { transform: translateY(-1px); box-shadow: 0 12px 24px -8px rgba(26,26,26,.5); }
+.btn-primary:disabled { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+.btn-ghost { background: transparent; color: var(--ink); border: 1.5px solid var(--line-2); }
+.btn-ghost:hover { border-color: var(--ink); background: rgba(26,26,26,.03); }
+.btn-white { background: #fff; color: var(--obsidian); }
+.btn-white:hover { transform: translateY(-1px); box-shadow: 0 14px 32px -10px rgba(0,0,0,.3); }
+.btn-lg { padding: 18px 32px; font-size: 16px; }
+.btn-sm { padding: 10px 16px; font-size: 13px; }
 
-      --text-dark:   #0f172a;
-      --text-mid:    #475569;
-      --text-light:  rgba(255,255,255,0.82);
-      --text-dim:    rgba(255,255,255,0.46);
+.card {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--teal);
+  box-shadow: 0 0 0 4px rgba(0,219,177,.25);
+}
 
-      --surface:     #F8FAFC;
-      --border:      #E4E4E7;
+/* Nav */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 40;
+  padding: 18px 0;
+  transition: background .3s ease, border-color .3s ease, backdrop-filter .3s ease;
+  background: rgba(247,244,238,.0);
+  border-bottom: 1px solid transparent;
+}
+.nav--scrolled {
+  background: rgba(247,244,238,.88);
+  backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+  border-bottom-color: var(--line);
+}
+.nav__inner { display: flex; align-items: center; justify-content: space-between; gap: 32px; }
+.nav__logo { height: 30px; width: auto; }
+.nav__links { display: flex; gap: 28px; font-size: 14px; color: var(--ink-70); font-weight: 500; }
+.nav__links a { transition: color .2s; }
+.nav__links a:hover { color: var(--ink); }
+.nav__actions { display: flex; gap: 10px; align-items: center; }
+@media (max-width: 860px) { .nav__links { display: none; } .nav__actions .btn-ghost { display: none; } }
 
-      --ff-display:  'Fraunces', Georgia, serif;
-      --ff-body:     'DM Sans', system-ui, sans-serif;
+/* Hero */
+.hero { padding-top: 120px; padding-bottom: 80px; position: relative; overflow: hidden; }
+.hero__bg-blob { position: absolute; pointer-events: none; filter: blur(80px); opacity: .55; z-index: 0; }
+.hero__bg-blob--1 {
+  width: 520px; height: 520px; top: -120px; right: -120px;
+  background: radial-gradient(circle, var(--lavender), transparent 60%);
+}
+.hero__bg-blob--2 {
+  width: 460px; height: 460px; bottom: -160px; left: -80px;
+  background: radial-gradient(circle, var(--teal), transparent 60%); opacity: .35;
+}
+.hero__bg-blob--3 {
+  width: 340px; height: 340px; top: 40%; left: 40%;
+  background: radial-gradient(circle, var(--orchid), transparent 60%); opacity: .25;
+}
+.hero__grid {
+  position: relative; z-index: 1;
+  display: grid; grid-template-columns: 1.05fr 1fr;
+  gap: 60px; align-items: center;
+}
+@media (max-width: 960px) { .hero__grid { grid-template-columns: 1fr; gap: 40px; } .hero { padding-top: 100px; padding-bottom: 40px; } }
+.hero__eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-bottom: 28px; padding: 7px 14px 7px 10px;
+  border-radius: var(--r-pill);
+  background: var(--surface); border: 1px solid var(--line);
+  font-size: 12px; font-weight: 500; color: var(--ink-70);
+}
+.hero__title { font-size: clamp(40px, 6.2vw, 76px); margin-bottom: 24px; }
+.hero__sub {
+  font-size: clamp(17px, 1.4vw, 19px); color: var(--ink-70);
+  max-width: 520px; margin-bottom: 36px; line-height: 1.5;
+}
 
-      --r-sm:   8px;
-      --r-md:   12px;
-      --r-lg:   16px;
-      --r-xl:   20px;
-      --r-2xl:  28px;
-      --r-3xl:  36px;
-      --r-full: 9999px;
+/* Quiz card */
+.quiz {
+  background: var(--surface);
+  border-radius: 28px; padding: 28px;
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+.quiz__head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.quiz__progress { display: flex; gap: 6px; }
+.quiz__dot { width: 22px; height: 4px; border-radius: 2px; background: var(--line-2); transition: background .25s; }
+.quiz__dot--active { background: var(--ink); }
+.quiz__dot--done { background: var(--lavender); }
+.quiz__q { font-size: 22px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.25; margin-bottom: 18px; text-wrap: balance; }
+.quiz__options { display: grid; gap: 10px; margin-bottom: 24px; }
+.quiz__opt {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px; border: 1.5px solid var(--line);
+  border-radius: var(--r); background: #fff;
+  text-align: left; font-size: 15px; font-weight: 500;
+  transition: all .15s;
+}
+.quiz__opt:hover { border-color: var(--ink); transform: translateY(-1px); }
+.quiz__opt--picked { border-color: var(--ink); background: var(--obsidian); color: #fff; }
+.quiz__opt-ico {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: var(--bg-2); display: grid; place-items: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.quiz__opt--picked .quiz__opt-ico { background: rgba(255,255,255,.15); }
+.quiz__footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.quiz__back { color: var(--ink-55); font-size: 13px; font-weight: 500; }
+.quiz__back:hover { color: var(--ink); }
 
-      --shadow-sm:   0 1px 4px rgba(0,0,0,0.07);
-      --shadow-md:   0 4px 20px rgba(0,0,0,0.1);
-      --shadow-lg:   0 12px 40px rgba(0,0,0,0.18);
-      --shadow-glow: 0 0 48px rgba(167,139,250,0.28);
+/* Trust row */
+.trust { display: flex; flex-wrap: wrap; gap: 24px; margin-top: 28px; font-size: 13px; color: var(--ink-55); }
+.trust__item { display: inline-flex; align-items: center; gap: 8px; }
 
-      --ease:  cubic-bezier(0.4, 0, 0.2, 1);
-      --ease-out: cubic-bezier(0, 0, 0.2, 1);
-    }
+/* Sections */
+.sec-head { max-width: 680px; margin: 0 auto 48px; text-align: center; }
+.sec-head h2 {
+  font-size: clamp(32px, 4.2vw, 50px); letter-spacing: -0.03em;
+  font-weight: 600; line-height: 1.05; margin-top: 12px; margin-bottom: 16px; text-wrap: balance;
+}
+.sec-head p { font-size: 17px; color: var(--ink-70); line-height: 1.5; text-wrap: pretty; }
 
-    /* ============================================================
-       RESET
-    ============================================================ */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
-    body {
-      font-family: var(--ff-body);
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--text-dark);
-      background: #fff;
-      overflow-x: hidden;
-    }
-    img  { max-width: 100%; height: auto; display: block; }
-    a    { color: inherit; text-decoration: none; }
-    ul   { list-style: none; }
-    button { cursor: pointer; border: none; background: none; font: inherit; }
+/* Explain (dark obsidian card) */
+.explain {
+  background: var(--obsidian); color: #fff;
+  border-radius: 32px; padding: 64px;
+  position: relative; overflow: hidden;
+}
+.explain::before {
+  content: ""; position: absolute; width: 500px; height: 500px;
+  top: -200px; right: -200px;
+  background: radial-gradient(circle, var(--lavender), transparent 65%);
+  opacity: .35; filter: blur(40px); pointer-events: none;
+}
+.explain::after {
+  content: ""; position: absolute; width: 400px; height: 400px;
+  bottom: -180px; left: -120px;
+  background: radial-gradient(circle, var(--teal), transparent 65%);
+  opacity: .22; filter: blur(40px); pointer-events: none;
+}
+.explain__grid {
+  position: relative; display: grid;
+  grid-template-columns: 1fr 1fr; gap: 56px; align-items: flex-start;
+}
+@media (max-width: 820px) { .explain { padding: 40px 28px; } .explain__grid { grid-template-columns: 1fr; gap: 32px; } }
+.explain h2 { font-size: clamp(30px, 3.6vw, 42px); font-weight: 500; letter-spacing: -0.025em; line-height: 1.1; margin-bottom: 20px; }
+.explain p { color: rgba(255,255,255,.75); font-size: 16px; line-height: 1.6; }
+.explain__vs { display: grid; gap: 14px; }
+.explain__row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+  border-top: 1px solid rgba(255,255,255,.12); padding-top: 14px;
+}
+.explain__row:first-child { border-top: 0; padding-top: 0; }
+.explain__col { font-size: 14px; line-height: 1.45; }
+.explain__col--a { color: rgba(255,255,255,.5); }
+.explain__col--b { color: #fff; font-weight: 500; }
+.explain__col-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  margin-bottom: 6px; color: rgba(255,255,255,.4); display: block;
+}
 
-    /* ============================================================
-       UTILITIES
-    ============================================================ */
-    .g-text {
-      background: var(--gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+/* Conditions */
+.cond-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+@media (max-width: 960px) { .cond-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 520px) { .cond-grid { grid-template-columns: 1fr; } }
+.cond {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 24px;
+  transition: all .25s; cursor: pointer; position: relative; overflow: hidden;
+}
+.cond:hover { transform: translateY(-3px); box-shadow: var(--shadow); border-color: var(--line-2); }
+.cond__glyph {
+  width: 48px; height: 48px; border-radius: 14px;
+  display: grid; place-items: center; margin-bottom: 20px;
+  font-size: 22px; color: #fff;
+}
+.cond__title { font-size: 19px; font-weight: 600; letter-spacing: -0.015em; margin-bottom: 6px; }
+.cond__desc { font-size: 14px; color: var(--ink-55); line-height: 1.45; margin-bottom: 16px; }
+.cond__signals { display: flex; flex-wrap: wrap; gap: 6px; }
+.cond__signal {
+  font-size: 11px; padding: 4px 10px; border-radius: var(--r-pill);
+  background: var(--bg-2); color: var(--ink-70); font-weight: 500;
+}
+.cond__check {
+  position: absolute; top: 20px; right: 20px;
+  font-size: 12px; color: var(--teal); opacity: 0;
+  transition: opacity .2s; font-weight: 600;
+}
+.cond:hover .cond__check { opacity: 1; }
 
-    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 28px; }
+.matcher {
+  margin-top: 40px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  padding: 28px 32px; display: flex;
+  align-items: center; justify-content: space-between;
+  gap: 20px; flex-wrap: wrap;
+}
+.matcher__txt h4 { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; margin-bottom: 4px; }
+.matcher__txt p { font-size: 14px; color: var(--ink-55); }
 
-    .section { padding: 100px 0; }
+/* Pricing */
+.price-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 28px; align-items: stretch; }
+@media (max-width: 860px) { .price-grid { grid-template-columns: 1fr; } }
+.price-card {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: 28px; padding: 40px; position: relative; overflow: hidden;
+}
+.price-card--feature { background: var(--obsidian); color: #fff; border-color: transparent; }
+.price-card--feature::before {
+  content: ""; position: absolute; inset: 0;
+  background: var(--grad); opacity: .10; pointer-events: none;
+}
+.price-card__tag {
+  font-family: 'JetBrains Mono', monospace; font-size: 10px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-55); margin-bottom: 12px;
+}
+.price-card--feature .price-card__tag { color: rgba(255,255,255,.6); }
+.price-card__amount { font-size: clamp(46px, 6vw, 64px); font-weight: 600; letter-spacing: -0.035em; line-height: 1; margin-bottom: 6px; }
+.price-card__unit { font-size: 16px; color: var(--ink-55); font-weight: 500; }
+.price-card--feature .price-card__unit { color: rgba(255,255,255,.6); }
+.price-card__sub { font-size: 14px; color: var(--ink-55); margin-bottom: 24px; }
+.price-card--feature .price-card__sub { color: rgba(255,255,255,.7); }
+.price-card__list { display: grid; gap: 12px; margin-bottom: 28px; position: relative; z-index: 1; }
+.price-card__item { display: grid; grid-template-columns: 20px 1fr; gap: 12px; font-size: 14.5px; align-items: start; line-height: 1.45; }
+.price-card__check {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--teal); color: var(--obsidian);
+  display: grid; place-items: center;
+  font-size: 11px; font-weight: 700; margin-top: 2px;
+}
 
-    .badge {
-      display: inline-flex; align-items: center; gap: 7px;
-      font-size: 11.5px; font-weight: 700; letter-spacing: 0.09em;
-      text-transform: uppercase;
-      padding: 6px 14px; border-radius: var(--r-full);
-    }
-    .badge-light {
-      background: rgba(167,139,250,0.1);
-      border: 1px solid rgba(167,139,250,0.25);
-      color: var(--lavender);
-    }
-    .badge-dark {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid rgba(255,255,255,0.13);
-      color: rgba(255,255,255,0.6);
-    }
+/* Reviews */
+.rev-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+@media (max-width: 960px) { .rev-grid { grid-template-columns: 1fr; } }
+.rev {
+  background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--r-lg); padding: 28px; display: flex; flex-direction: column;
+}
+.rev__stars { display: flex; gap: 2px; color: var(--orchid); margin-bottom: 16px; font-size: 15px; letter-spacing: -1px; }
+.rev__quote { font-size: 16px; line-height: 1.5; margin-bottom: 20px; flex: 1; color: var(--ink); text-wrap: pretty; }
+.rev__who { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--line); padding-top: 16px; }
+.rev__ava { width: 36px; height: 36px; border-radius: 50%; background: var(--grad); display: grid; place-items: center; color: #fff; font-weight: 600; font-size: 13px; }
+.rev__name { font-weight: 600; font-size: 14px; }
+.rev__meta { font-size: 12px; color: var(--ink-55); }
+.rating-sum {
+  display: inline-flex; align-items: center; gap: 16px;
+  padding: 14px 20px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-pill); margin-bottom: 32px;
+}
+.rating-sum__num { font-size: 28px; font-weight: 600; letter-spacing: -0.02em; }
+.rating-sum__meta { font-size: 13px; color: var(--ink-55); line-height: 1.3; }
 
-    /* ============================================================
-       SCROLL REVEAL
-    ============================================================ */
-    .rv {
-      opacity: 0;
-      transform: translateY(26px);
-      transition: opacity 0.72s var(--ease), transform 0.72s var(--ease);
-    }
-    .rv.in  { opacity: 1; transform: translateY(0); }
-    .d1 { transition-delay: 0.08s; }
-    .d2 { transition-delay: 0.18s; }
-    .d3 { transition-delay: 0.28s; }
-    .d4 { transition-delay: 0.38s; }
-    .d5 { transition-delay: 0.48s; }
+/* Doctors */
+.docs-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; max-width: 820px; margin: 0 auto; }
+@media (max-width: 720px) { .docs-grid { grid-template-columns: 1fr; } }
+.doc { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-lg); overflow: hidden; display: grid; grid-template-columns: 130px 1fr; }
+@media (max-width: 520px) { .doc { grid-template-columns: 1fr; } }
+.doc__photo { aspect-ratio: 1/1.15; background: var(--grad-soft); position: relative; overflow: hidden; }
+.doc__photo img { width: 100%; height: 100%; object-fit: cover; }
+.doc__body { padding: 20px; }
+.doc__name { font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+.doc__spec { font-size: 13px; color: var(--ink-55); margin-bottom: 8px; }
+.doc__cmp { font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.1em; color: var(--ink-55); text-transform: uppercase; }
+.doc__tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+.doc__tag { font-size: 11px; padding: 3px 10px; border-radius: var(--r-pill); background: var(--lavender-3); color: #5B4FCE; font-weight: 500; }
 
-    /* ============================================================
-       KEYFRAMES
-    ============================================================ */
-    @keyframes fadeUp   { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
-    @keyframes fadeIn   { from { opacity:0; } to { opacity:1; } }
-    @keyframes scaleUp  { from { opacity:0; transform:scale(0.92) translateY(18px); } to { opacity:1; transform:scale(1) translateY(0); } }
+/* FAQ */
+.faq { max-width: 780px; margin: 0 auto; display: grid; gap: 10px; }
+.faq__item { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: 20px 24px; cursor: pointer; transition: border-color .15s; }
+.faq__item:hover { border-color: var(--line-2); }
+.faq__q { display: flex; align-items: center; justify-content: space-between; gap: 16px; font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
+.faq__plus { font-size: 20px; color: var(--ink-55); transition: transform .2s; flex-shrink: 0; }
+.faq__item--open .faq__plus { transform: rotate(45deg); }
+.faq__a { font-size: 15px; color: var(--ink-70); line-height: 1.55; max-height: 0; overflow: hidden; transition: max-height .3s ease, margin .3s ease; }
+.faq__item--open .faq__a { max-height: 300px; margin-top: 12px; }
 
-    @keyframes blob1 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(32px,-28px) scale(1.06);} }
-    @keyframes blob2 { 0%,100%{transform:translate(0,0) scale(1);}   50%{transform:translate(-22px,18px) scale(1.04);} }
-    @keyframes blob3 { 0%,100%{transform:translate(0,0);}  33%{transform:translate(14px,-12px);}  66%{transform:translate(-10px,9px);} }
+/* Final CTA */
+.cta-final {
+  background: var(--grad); border-radius: 36px; padding: 80px 48px;
+  text-align: center; color: #fff; position: relative; overflow: hidden;
+}
+@media (max-width: 720px) { .cta-final { padding: 56px 28px; border-radius: 28px; } }
+.cta-final::before {
+  content: ""; position: absolute; inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.15'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay; pointer-events: none;
+}
+.cta-final h2 { font-size: clamp(32px, 4.4vw, 52px); font-weight: 500; letter-spacing: -0.03em; line-height: 1.05; margin-bottom: 16px; position: relative; }
+.cta-final p { font-size: 17px; opacity: .92; margin-bottom: 32px; position: relative; max-width: 560px; margin-left: auto; margin-right: auto; }
+.cta-final__actions { position: relative; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
 
-    @keyframes pulseGreen {
-      0%,100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.7); }
-      50%      { box-shadow: 0 0 0 7px rgba(74,222,128,0); }
-    }
+/* Footer */
+.foot { padding: 64px 0 40px; border-top: 1px solid var(--line); font-size: 13px; color: var(--ink-55); }
+.foot__grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 48px; }
+@media (max-width: 780px) { .foot__grid { grid-template-columns: 1fr 1fr; gap: 28px; } }
+.foot__col h4 { font-size: 12px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 500; color: var(--ink); margin-bottom: 14px; }
+.foot__col a { display: block; padding: 4px 0; }
+.foot__col a:hover { color: var(--ink); }
+.foot__logo { height: 28px; margin-bottom: 16px; }
+.foot__tag { font-size: 13px; line-height: 1.5; max-width: 320px; }
+.foot__bot { display: flex; justify-content: space-between; padding-top: 24px; border-top: 1px solid var(--line); flex-wrap: wrap; gap: 12px; font-size: 12px; }
 
-    @keyframes wheelScroll {
-      0%   { opacity: 1; top: 6px; }
-      100% { opacity: 0; top: 22px; }
-    }
+/* Sticky CTA mobile */
+.stickycta {
+  position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 30;
+  display: none; gap: 8px; padding: 10px 10px 10px 18px;
+  background: var(--obsidian); color: #fff;
+  border-radius: var(--r-pill);
+  box-shadow: 0 18px 40px -10px rgba(0,0,0,.45);
+  align-items: center; justify-content: space-between;
+  animation: slideup .4s ease both;
+}
+@keyframes slideup { from { transform: translateY(120%); opacity:0 } to { transform: translateY(0); opacity: 1 } }
+.stickycta__label { font-size: 13px; font-weight: 500; }
+.stickycta__label strong { color: var(--teal-2); font-weight: 600; }
+.stickycta .btn { padding: 10px 18px; font-size: 13px; background: #fff; color: var(--obsidian); }
+@media (max-width: 720px) { .stickycta { display: flex; } }
 
-    @keyframes shimmer {
-      0%   { background-position: -400% 0; }
-      100% { background-position: 400% 0; }
-    }
+/* WhatsApp */
+.wa { position: fixed; right: 22px; bottom: 22px; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; animation: waIn .45s cubic-bezier(.2,.9,.25,1.1) both; }
+@keyframes waIn { from { transform: translateY(24px) scale(.85); opacity: 0 } to { transform: translateY(0) scale(1); opacity: 1 } }
+.wa--raised { bottom: 84px; }
+@media (max-width: 720px) { .wa { right: 14px; bottom: 14px; } }
+.wa__btn {
+  position: relative; width: 60px; height: 60px; border-radius: 50%;
+  background: var(--obsidian); color: var(--teal-2);
+  display: grid; place-items: center;
+  box-shadow: 0 12px 32px -8px rgba(0,0,0,.45), 0 0 0 1px rgba(255,255,255,.06) inset, 0 0 0 3px rgba(0,219,177,.18);
+  transition: transform .2s ease, box-shadow .25s ease, color .2s; cursor: pointer; text-decoration: none;
+}
+.wa__btn:hover { transform: translateY(-2px) scale(1.04); color: var(--teal); box-shadow: 0 18px 40px -8px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08) inset, 0 0 0 4px rgba(0,219,177,.28); }
+.wa__btn:active { transform: translateY(0) scale(.98); }
+.wa__icon { width: 30px; height: 30px; position: relative; z-index: 2; }
+.wa__pulse { position: absolute; inset: -3px; border-radius: 50%; border: 2px solid var(--teal); opacity: 0; animation: waPulse 2.6s ease-out infinite; pointer-events: none; }
+@keyframes waPulse { 0% { transform: scale(.95); opacity: .55 } 70% { transform: scale(1.45); opacity: 0 } 100% { transform: scale(1.45); opacity: 0 } }
+.wa__hint {
+  position: relative; background: #fff; color: var(--ink); border: 1px solid var(--line);
+  border-radius: 14px; padding: 12px 34px 12px 14px;
+  box-shadow: 0 14px 32px -10px rgba(0,0,0,.22);
+  max-width: 248px; font-size: 13px; line-height: 1.45;
+  animation: waHintIn .35s cubic-bezier(.2,.9,.25,1.1) both; transform-origin: bottom right;
+}
+@keyframes waHintIn { from { transform: translateY(6px) scale(.94); opacity: 0 } to { transform: translateY(0) scale(1); opacity: 1 } }
+.wa__hint::after { content: ""; position: absolute; right: 22px; bottom: -6px; width: 12px; height: 12px; background: #fff; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); transform: rotate(45deg); }
+.wa__hint-eyebrow { display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--teal); margin-bottom: 3px; font-weight: 500; }
+.wa__hint-text { display: block; color: var(--ink-70); }
+.wa__hint-close { position: absolute; top: 4px; right: 4px; width: 22px; height: 22px; border-radius: 50%; color: var(--ink-55); font-size: 16px; line-height: 1; display: grid; place-items: center; transition: background .15s, color .15s; cursor: pointer; }
+.wa__hint-close:hover { background: var(--bg-2); color: var(--ink); }
 
-    /* ============================================================
-       NAVBAR
-    ============================================================ */
-    .nav {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      padding: 22px 0;
-      transition: padding 0.3s var(--ease), background 0.3s var(--ease), box-shadow 0.3s var(--ease);
-    }
-    .nav.stuck {
-      padding: 14px 0;
-      background: rgba(6, 15, 29, 0.94);
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      box-shadow: 0 1px 0 rgba(255,255,255,0.05);
-    }
-    .nav-inner {
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .nav-logo {
-      font-family: var(--ff-display);
-      font-size: 21px; font-weight: 700;
-      color: #fff; letter-spacing: -0.03em;
-    }
-    .nav-logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-links {
-      display: flex; align-items: center; gap: 30px;
-    }
-    .nav-links a {
-      font-size: 14px; font-weight: 500;
-      color: rgba(255,255,255,0.65);
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: #fff; }
-    .nav-cta {
-      background: var(--gradient);
-      color: #fff; font-size: 13.5px; font-weight: 600;
-      padding: 10px 22px; border-radius: var(--r-full);
-      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 3px 14px rgba(167,139,250,0.35);
-    }
-    .nav-cta:hover { opacity: 0.88; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(167,139,250,0.45); }
-    @media (max-width: 780px) { .nav-links { display: none; } }
+/* Scroll reveal */
+.rv { opacity: 0; transform: translateY(20px); transition: opacity .7s ease, transform .7s ease; }
+.rv.in { opacity: 1; transform: translateY(0); }
 
-    /* ============================================================
-       HERO
-    ============================================================ */
-    .hero {
-      position: relative; min-height: 100vh;
-      display: flex; align-items: center;
-      background: var(--navy-deep);
-      overflow: hidden; padding-top: 88px;
-    }
+/* Modal */
+.modal-bg { position: fixed; inset: 0; background: rgba(26,26,26,.55); backdrop-filter: blur(8px); z-index: 60; display: grid; place-items: center; padding: 20px; animation: fadein .2s ease both; }
+@keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
+.modal { width: min(520px, 100%); max-height: calc(100dvh - 40px); overflow-y: auto; background: var(--surface); border-radius: 28px; padding: 32px; position: relative; box-shadow: 0 40px 80px -20px rgba(0,0,0,.4); }
+.modal__close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; border: 1px solid var(--line); background: var(--bg); font-size: 18px; display: grid; place-items: center; }
+.modal__close:hover { background: var(--bg-2); }
 
-    /* ---- animated mesh ---- */
-    .hero-mesh { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
-    .blob {
-      position: absolute; border-radius: 50%;
-    }
-    .blob-a {
-      width: 680px; height: 680px;
-      background: radial-gradient(circle, rgba(167,139,250,0.22) 0%, transparent 68%);
-      top: -160px; right: -120px;
-      animation: blob1 9s ease-in-out infinite;
-    }
-    .blob-b {
-      width: 540px; height: 540px;
-      background: radial-gradient(circle, rgba(244,114,182,0.17) 0%, transparent 68%);
-      bottom: -60px; left: -130px;
-      animation: blob2 11s ease-in-out infinite;
-    }
-    .blob-c {
-      width: 420px; height: 420px;
-      background: radial-gradient(circle, rgba(56,189,248,0.13) 0%, transparent 68%);
-      top: 44%; left: 38%;
-      animation: blob3 13s ease-in-out infinite;
-    }
-    .hero-dots {
-      position: absolute; inset: 0;
-      background-image: radial-gradient(rgba(255,255,255,0.055) 1px, transparent 1px);
-      background-size: 30px 30px;
-    }
-    /* diagonal accent line */
-    .hero-line {
-      position: absolute;
-      width: 2px; height: 260px;
-      background: linear-gradient(to bottom, transparent, rgba(167,139,250,0.35), transparent);
-      top: 15%; right: 18%;
-      transform: rotate(18deg);
-    }
-
-    .hero-inner {
-      position: relative; z-index: 2;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 56px; align-items: center;
-    }
-    @media (max-width: 880px) {
-      .hero-inner { grid-template-columns: 1fr; text-align: center; gap: 44px; }
-    }
-
-    /* hero badge */
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.065);
-      border: 1px solid rgba(255,255,255,0.11);
-      backdrop-filter: blur(12px);
-      color: rgba(255,255,255,0.78);
-      font-size: 11.5px; font-weight: 700;
-      letter-spacing: 0.1em; text-transform: uppercase;
-      padding: 8px 16px; border-radius: var(--r-full);
-      margin-bottom: 26px;
-      animation: fadeUp 0.6s var(--ease) 0.1s both;
-    }
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%; background: #4ade80;
-      animation: pulseGreen 2.2s ease-in-out infinite;
-    }
-
-    .hero-h1 {
-      font-family: var(--ff-display);
-      font-size: clamp(2.7rem, 4.8vw, 4.4rem);
-      font-weight: 700; line-height: 1.07;
-      letter-spacing: -0.03em; color: #fff;
-      margin-bottom: 18px;
-      animation: fadeUp 0.7s var(--ease) 0.24s both;
-    }
-    .hero-h1 em { font-style: italic; font-weight: 400; }
-
-    .hero-p {
-      font-size: 17px; line-height: 1.68;
-      color: rgba(255,255,255,0.62);
-      margin-bottom: 32px; max-width: 460px;
-      animation: fadeUp 0.7s var(--ease) 0.38s both;
-    }
-    @media (max-width: 880px) { .hero-p { margin-left: auto; margin-right: auto; } }
-
-    /* specialty pills */
-    .spec-pills {
-      display: flex; flex-wrap: wrap; gap: 7px;
-      margin-bottom: 32px;
-      animation: fadeUp 0.7s var(--ease) 0.48s both;
-    }
-    @media (max-width: 880px) { .spec-pills { justify-content: center; } }
-    .pill {
-      background: rgba(255,255,255,0.055);
-      border: 1px solid rgba(255,255,255,0.11);
-      color: rgba(255,255,255,0.72);
-      font-size: 12.5px; font-weight: 500;
-      padding: 6px 14px; border-radius: var(--r-full);
-      transition: all 0.2s;
-    }
-    .pill:hover, .pill.on {
-      background: rgba(167,139,250,0.18);
-      border-color: rgba(167,139,250,0.42);
-      color: #fff;
-    }
-
-    /* cta row */
-    .hero-ctas {
-      display: flex; align-items: center; gap: 12px;
-      margin-bottom: 36px; flex-wrap: wrap;
-      animation: fadeUp 0.7s var(--ease) 0.56s both;
-    }
-    @media (max-width: 880px) { .hero-ctas { justify-content: center; } }
-
-    .btn-grad {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--gradient);
-      color: #fff; font-size: 14.5px; font-weight: 600;
-      padding: 14px 28px; border-radius: var(--r-full);
-      transition: opacity 0.2s, transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 22px rgba(167,139,250,0.38);
-      white-space: nowrap;
-    }
-    .btn-grad:hover { opacity: 0.88; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(167,139,250,0.5); }
-
-    .btn-ghost {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: transparent;
-      color: rgba(255,255,255,0.76);
-      font-size: 14.5px; font-weight: 500;
-      padding: 14px 22px; border-radius: var(--r-full);
-      border: 1px solid rgba(255,255,255,0.18);
-      transition: all 0.22s;
-      white-space: nowrap;
-    }
-    .btn-ghost:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.34); color: #fff; }
-
-    /* trust mini row */
-    .hero-trust {
-      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
-      animation: fadeIn 0.6s var(--ease) 0.78s both;
-    }
-    @media (max-width: 880px) { .hero-trust { justify-content: center; } }
-    .htrust {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 11.5px; font-weight: 500; color: rgba(255,255,255,0.44);
-    }
-    .htrust svg { width: 13px; height: 13px; color: #4ade80; flex-shrink: 0; }
-
-    /* ---- glass stats card (right) ---- */
-    .hero-card {
-      background: rgba(255,255,255,0.055);
-      backdrop-filter: blur(22px); -webkit-backdrop-filter: blur(22px);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: var(--r-2xl);
-      padding: 28px;
-      position: relative; overflow: hidden;
-      animation: scaleUp 0.8s var(--ease) 0.44s both;
-    }
-    .hero-card::before {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(167,139,250,0.07) 0%, transparent 55%);
-      pointer-events: none;
-    }
-
-    .stat-grid {
-      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
-      margin-bottom: 14px;
-    }
-    .stat-cell {
-      background: rgba(255,255,255,0.045);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--r-lg);
-      padding: 18px 16px;
-    }
-    .stat-val {
-      font-family: var(--ff-display);
-      font-size: 1.9rem; font-weight: 700;
-      color: #fff; line-height: 1;
-      margin-bottom: 4px;
-    }
-    .stat-lbl { font-size: 11px; color: rgba(255,255,255,0.44); font-weight: 500; }
-
-    .doc-row {
-      display: flex; align-items: center; gap: 11px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--r-md);
-      padding: 13px 15px;
-    }
-    .doc-avatars { display: flex; }
-    .doc-av {
-      width: 38px; height: 38px; border-radius: 50%;
-      border: 2px solid rgba(255,255,255,0.18);
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #fff;
-      margin-left: -9px; overflow: hidden;
-    }
-    .doc-av:first-child { margin-left: 0; }
-    .doc-info { flex: 1; }
-    .doc-info-name { font-size: 12.5px; font-weight: 600; color: #fff; }
-    .doc-info-sub  { font-size: 10.5px; color: rgba(255,255,255,0.42); }
-    .avail {
-      display: flex; align-items: center; gap: 5px;
-      background: rgba(74,222,128,0.1);
-      border: 1px solid rgba(74,222,128,0.24);
-      color: #4ade80;
-      font-size: 10.5px; font-weight: 700;
-      padding: 4px 10px; border-radius: var(--r-full);
-      white-space: nowrap;
-    }
-    .avail-dot { width: 5px; height: 5px; border-radius: 50%; background: #4ade80; animation: pulseGreen 2s ease-in-out infinite; }
-
-    /* floating mini cards */
-    .fc {
-      position: absolute;
-      background: #fff;
-      border-radius: var(--r-md);
-      padding: 10px 14px;
-      box-shadow: var(--shadow-lg);
-      display: flex; align-items: center; gap: 9px;
-    }
-    .fc-1 { right: -18px; top: 16px; animation: blob1 6s ease-in-out infinite; }
-    .fc-2 { left: -26px; bottom: 36px; animation: blob2 7s ease-in-out infinite; }
-    .fc-icon {
-      width: 32px; height: 32px; border-radius: 9px;
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; flex-shrink: 0;
-    }
-    .fc-main { font-size: 12px; font-weight: 700; color: var(--text-dark); }
-    .fc-sub  { font-size: 10px; color: var(--text-mid); }
-
-    /* scroll cue */
-    .scroll-cue {
-      position: absolute; bottom: 36px; left: 50%; transform: translateX(-50%);
-      display: flex; flex-direction: column; align-items: center; gap: 7px;
-      animation: fadeIn 0.5s var(--ease) 1.3s both;
-    }
-    .scroll-cue span { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255,255,255,0.28); }
-    .mouse { width: 22px; height: 34px; border: 2px solid rgba(255,255,255,0.18); border-radius: 11px; position: relative; overflow: hidden; }
-    .wheel { width: 4px; height: 7px; background: rgba(255,255,255,0.46); border-radius: 2px; position: absolute; left: 50%; transform: translateX(-50%); top: 6px; animation: wheelScroll 2s ease-in-out infinite; }
-
-    /* ============================================================
-       TRUST BAR
-    ============================================================ */
-    .trust-bar {
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 18px 0;
-    }
-    .tb-row {
-      display: flex; align-items: center; justify-content: center;
-      flex-wrap: wrap; gap: 28px 44px;
-    }
-    .tb-item {
-      display: flex; align-items: center; gap: 9px;
-      font-size: 12.5px; font-weight: 500;
-      color: var(--text-mid); white-space: nowrap;
-    }
-    .tb-item svg { width: 17px; height: 17px; color: var(--lavender); flex-shrink: 0; }
-
-    /* ============================================================
-       SECCIÓN HEADER (shared)
-    ============================================================ */
-    .sec-head { text-align: center; margin-bottom: 56px; }
-    .sec-h2 {
-      font-family: var(--ff-display);
-      font-size: clamp(1.95rem, 3.6vw, 3.1rem);
-      font-weight: 700; letter-spacing: -0.025em; line-height: 1.13;
-      color: var(--text-dark); margin-bottom: 14px;
-    }
-    .sec-h2 em { font-style: italic; font-weight: 400; }
-    .sec-h2.light { color: #fff; }
-    .sec-p { font-size: 16.5px; color: var(--text-mid); max-width: 460px; margin: 0 auto; line-height: 1.65; }
-    .sec-p.light { color: rgba(255,255,255,0.54); }
-
-    /* ============================================================
-       ESPECIALIDADES
-    ============================================================ */
-    .espec { background: var(--surface); }
-
-    .espec-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 18px;
-    }
-    @media (max-width: 860px) { .espec-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 460px) { .espec-grid { grid-template-columns: 1fr; } }
-
-    .espec-card {
-      background: #fff;
-      border: 1px solid var(--border);
-      border-radius: var(--r-2xl);
-      padding: 26px 22px;
-      cursor: default;
-      transition: transform 0.3s var(--ease), border-color 0.3s, box-shadow 0.3s;
-      position: relative; overflow: hidden;
-    }
-    .espec-card::after {
-      content: '';
-      position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(167,139,250,0.05) 0%, rgba(244,114,182,0.04) 100%);
-      opacity: 0;
-      transition: opacity 0.3s;
-    }
-    .espec-card:hover { transform: translateY(-5px); border-color: rgba(167,139,250,0.38); box-shadow: var(--shadow-md), 0 0 0 1px rgba(167,139,250,0.12); }
-    .espec-card:hover::after { opacity: 1; }
-
-    .espec-icon {
-      width: 50px; height: 50px; border-radius: var(--r-lg);
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 21px; margin-bottom: 14px;
-      position: relative; z-index: 1;
-    }
-    .espec-name {
-      font-family: var(--ff-display);
-      font-size: 19px; font-weight: 700;
-      color: var(--text-dark); letter-spacing: -0.015em;
-      margin-bottom: 7px; position: relative; z-index: 1;
-    }
-    .espec-desc {
-      font-size: 13px; color: var(--text-mid);
-      line-height: 1.58; margin-bottom: 16px;
-      position: relative; z-index: 1;
-    }
-    .espec-count {
-      display: inline-flex; align-items: center; gap: 5px;
-      background: rgba(167,139,250,0.09);
-      border: 1px solid rgba(167,139,250,0.2);
-      color: var(--lavender);
-      font-size: 11px; font-weight: 700;
-      padding: 4px 10px; border-radius: var(--r-full);
-      position: relative; z-index: 1;
-    }
-
-    /* ============================================================
-       MÉDICOS
-    ============================================================ */
-    .medicos { background: #fff; }
-
-    .doc-grid {
-      display: grid; grid-template-columns: repeat(2, 1fr);
-      gap: 24px; max-width: 780px; margin: 0 auto;
-    }
-    @media (max-width: 600px) { .doc-grid { grid-template-columns: 1fr; } }
-
-    .doc-card {
-      border: 1px solid var(--border);
-      border-radius: var(--r-2xl);
-      overflow: hidden;
-      transition: transform 0.3s var(--ease), box-shadow 0.3s, border-color 0.3s;
-    }
-    .doc-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); border-color: rgba(167,139,250,0.28); }
-
-    .doc-bar { height: 5px; background: var(--gradient); }
-
-    .doc-body { padding: 26px; }
-
-    .doc-avatar-lg {
-      width: 76px; height: 76px; border-radius: 50%;
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-family: var(--ff-display);
-      font-size: 26px; font-weight: 700; color: #fff;
-      margin: 0 auto 14px;
-      box-shadow: 0 4px 20px rgba(167,139,250,0.35);
-    }
-    .doc-name {
-      font-family: var(--ff-display);
-      font-size: 19px; font-weight: 700;
-      text-align: center; color: var(--text-dark);
-      letter-spacing: -0.01em; margin-bottom: 4px;
-    }
-    .doc-spec {
-      font-size: 12.5px; color: var(--text-mid);
-      text-align: center; margin-bottom: 10px;
-    }
-    .doc-cmp {
-      background: var(--surface);
-      font-size: 10.5px; font-weight: 700;
-      color: var(--text-mid); letter-spacing: 0.03em;
-      padding: 4px 10px; border-radius: var(--r-full);
-      display: table; margin: 0 auto 14px;
-    }
-    .doc-stars {
-      display: flex; align-items: center; justify-content: center;
-      gap: 5px; margin-bottom: 14px;
-    }
-    .stars { color: #FBBF24; font-size: 13px; letter-spacing: 1px; }
-    .star-val { font-size: 13px; font-weight: 700; color: var(--text-dark); }
-    .star-n   { font-size: 11px; color: var(--text-mid); }
-    .doc-tags {
-      display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;
-      margin-bottom: 16px;
-    }
-    .dtag {
-      background: rgba(167,139,250,0.08);
-      border: 1px solid rgba(167,139,250,0.17);
-      color: var(--lavender);
-      font-size: 10.5px; font-weight: 700;
-      padding: 3px 9px; border-radius: var(--r-full);
-    }
-    .doc-avail {
-      display: flex; align-items: center; justify-content: center;
-      gap: 5px; font-size: 11.5px; font-weight: 600;
-      color: #16a34a; margin-bottom: 14px;
-    }
-    .green-dot {
-      width: 7px; height: 7px; border-radius: 50%; background: #4ade80;
-      animation: pulseGreen 2.2s ease-in-out infinite;
-    }
-    .doc-btn {
-      display: block; width: 100%; text-align: center;
-      background: var(--gradient);
-      color: #fff; font-size: 14px; font-weight: 600;
-      padding: 12px; border-radius: var(--r-lg);
-      transition: opacity 0.2s, transform 0.2s;
-    }
-    .doc-btn:hover { opacity: 0.88; transform: translateY(-1px); }
-
-    .cred-bar {
-      background: var(--surface);
-      border-top: 1px solid var(--border);
-      padding: 13px 20px;
-      display: flex; align-items: center; justify-content: center;
-      gap: 18px; flex-wrap: wrap;
-    }
-    .cred {
-      display: flex; align-items: center; gap: 5px;
-      font-size: 10.5px; font-weight: 600; color: var(--text-mid);
-    }
-    .cred svg { width: 13px; height: 13px; color: var(--violet); }
-
-    /* ============================================================
-       CÓMO FUNCIONA
-    ============================================================ */
-    .como { background: var(--surface); }
-
-    .steps { display: flex; flex-direction: column; gap: 44px; max-width: 880px; margin: 0 auto; }
-
-    .step-row {
-      display: grid; grid-template-columns: 1fr 1fr;
-      gap: 44px; align-items: center;
-    }
-    .step-row.flip { direction: rtl; }
-    .step-row.flip > * { direction: ltr; }
-    @media (max-width: 620px) {
-      .step-row { grid-template-columns: 1fr; }
-      .step-row.flip { direction: ltr; }
-    }
-
-    .step-num {
-      font-family: var(--ff-display);
-      font-size: 12px; font-weight: 700;
-      letter-spacing: 0.13em; text-transform: uppercase;
-      color: var(--violet); margin-bottom: 10px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .step-num::after {
-      content: ''; display: block;
-      width: 28px; height: 2px;
-      background: var(--gradient); border-radius: 2px;
-    }
-    .step-title {
-      font-family: var(--ff-display);
-      font-size: 24px; font-weight: 700;
-      color: var(--text-dark); letter-spacing: -0.02em;
-      line-height: 1.2; margin-bottom: 10px;
-    }
-    .step-desc {
-      font-size: 14.5px; color: var(--text-mid);
-      line-height: 1.68; margin-bottom: 14px;
-    }
-    .step-chip {
-      display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(167,139,250,0.08);
-      border: 1px solid rgba(167,139,250,0.2);
-      color: var(--lavender);
-      font-size: 11.5px; font-weight: 700;
-      padding: 5px 12px; border-radius: var(--r-full);
-    }
-
-    .step-vis {
-      background: linear-gradient(135deg, rgba(167,139,250,0.09), rgba(244,114,182,0.06));
-      border: 1px solid rgba(167,139,250,0.14);
-      border-radius: var(--r-2xl);
-      aspect-ratio: 4/3;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 60px;
-      transition: transform 0.3s;
-    }
-    .step-vis:hover { transform: scale(1.025); }
-
-    /* ============================================================
-       TESTIMONIOS
-    ============================================================ */
-    .testim { background: var(--navy-2); }
-
-    .testim-grid {
-      display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px;
-    }
-    @media (max-width: 860px) { .testim-grid { grid-template-columns: repeat(2, 1fr); } }
-    @media (max-width: 540px) { .testim-grid { grid-template-columns: 1fr; } }
-
-    .t-card {
-      background: rgba(255,255,255,0.046);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: var(--r-xl);
-      padding: 26px;
-      transition: transform 0.3s var(--ease), background 0.3s, border-color 0.3s;
-    }
-    .t-card:hover { background: rgba(255,255,255,0.08); border-color: rgba(167,139,250,0.22); transform: translateY(-3px); }
-    .t-stars { color: #FBBF24; font-size: 13px; margin-bottom: 12px; letter-spacing: 1px; }
-    .t-quote {
-      font-size: 13.5px; line-height: 1.68;
-      color: rgba(255,255,255,0.72); font-style: italic;
-      margin-bottom: 18px;
-    }
-    .t-author { display: flex; align-items: center; gap: 11px; }
-    .t-av {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: var(--gradient);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0;
-    }
-    .t-name   { font-size: 12.5px; font-weight: 700; color: #fff; }
-    .t-detail { font-size: 10.5px; color: rgba(255,255,255,0.38); margin-top: 2px; }
-
-    /* ============================================================
-       PRICING CALLOUT
-    ============================================================ */
-    .pricing {
-      background: #fff;
-      padding: 80px 0;
-    }
-    .pricing-card {
-      max-width: 680px; margin: 0 auto;
-      background: linear-gradient(135deg, rgba(167,139,250,0.07) 0%, rgba(244,114,182,0.05) 100%);
-      border: 1.5px solid rgba(167,139,250,0.24);
-      border-radius: var(--r-3xl);
-      padding: 48px 40px;
-      text-align: center;
-      position: relative; overflow: hidden;
-    }
-    .pricing-card::before {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(from 0deg at 50% 50%, transparent 0%, rgba(167,139,250,0.04) 25%, transparent 50%);
-      animation: shimmer 8s linear infinite;
-    }
-    .price-amt {
-      font-family: var(--ff-display);
-      font-size: 4.5rem; font-weight: 900;
-      line-height: 1; letter-spacing: -0.04em;
-      margin-bottom: 6px; position: relative; z-index: 1;
-    }
-    .price-label {
-      font-size: 14px; color: var(--text-mid);
-      margin-bottom: 24px; position: relative; z-index: 1;
-    }
-    .price-includes {
-      display: flex; flex-wrap: wrap; justify-content: center;
-      gap: 10px; margin-bottom: 28px; position: relative; z-index: 1;
-    }
-    .p-incl {
-      display: flex; align-items: center; gap: 6px;
-      font-size: 12.5px; font-weight: 500; color: var(--text-mid);
-    }
-    .p-incl svg { width: 14px; height: 14px; color: #4ade80; }
-    .price-cta {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: var(--gradient);
-      color: #fff; font-size: 15px; font-weight: 700;
-      padding: 15px 36px; border-radius: var(--r-full);
-      box-shadow: 0 5px 24px rgba(167,139,250,0.4);
-      transition: opacity 0.2s, transform 0.2s;
-      position: relative; z-index: 1;
-    }
-    .price-cta:hover { opacity: 0.88; transform: translateY(-2px); }
-    .price-note {
-      margin-top: 14px; font-size: 11px; color: var(--text-mid);
-      position: relative; z-index: 1;
-    }
-
-    /* ============================================================
-       CTA FINAL
-    ============================================================ */
-    .cta-sec {
-      background: var(--navy-deep);
-      padding: 108px 0;
-      text-align: center;
-      position: relative; overflow: hidden;
-    }
-    .cta-blob-bg {
-      position: absolute; inset: 0; pointer-events: none;
-    }
-    .cta-blob-bg::before {
-      content: '';
-      position: absolute;
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(167,139,250,0.18) 0%, transparent 62%);
-      top: 50%; left: 50%; transform: translate(-50%,-50%);
-      border-radius: 50%;
-    }
-    .cta-inner { position: relative; z-index: 2; }
-    .cta-tag {
-      display: inline-flex; align-items: center; gap: 7px;
-      background: rgba(255,255,255,0.065);
-      border: 1px solid rgba(255,255,255,0.11);
-      color: rgba(255,255,255,0.56);
-      font-size: 11px; font-weight: 700;
-      letter-spacing: 0.09em; text-transform: uppercase;
-      padding: 7px 15px; border-radius: var(--r-full);
-      margin-bottom: 22px;
-    }
-    .cta-h2 {
-      font-family: var(--ff-display);
-      font-size: clamp(1.95rem, 3.8vw, 3.4rem);
-      font-weight: 700; color: #fff;
-      line-height: 1.1; letter-spacing: -0.03em;
-      margin-bottom: 16px;
-    }
-    .cta-sub {
-      font-size: 16.5px; color: rgba(255,255,255,0.5);
-      margin-bottom: 36px; max-width: 430px;
-      margin-left: auto; margin-right: auto;
-    }
-    .cta-btns {
-      display: flex; align-items: center; justify-content: center;
-      gap: 12px; flex-wrap: wrap;
-    }
-    .cta-note { margin-top: 18px; font-size: 11px; color: rgba(255,255,255,0.25); }
-
-    /* ============================================================
-       FOOTER
-    ============================================================ */
-    .footer {
-      background: var(--navy-deep);
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 52px 0 32px;
-    }
-    .footer-grid {
-      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 44px;
-      margin-bottom: 44px;
-    }
-    @media (max-width: 720px) { .footer-grid { grid-template-columns: 1fr; gap: 28px; } }
-    .f-logo { font-family: var(--ff-display); font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 10px; letter-spacing: -0.025em; }
-    .f-logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .f-desc { font-size: 12.5px; color: rgba(255,255,255,0.4); line-height: 1.68; max-width: 280px; margin-bottom: 14px; }
-    .f-legal { font-size: 10.5px; color: rgba(255,255,255,0.22); line-height: 1.5; }
-    .f-heading { font-size: 11px; font-weight: 700; letter-spacing: 0.11em; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 14px; }
-    .f-links { display: flex; flex-direction: column; gap: 9px; }
-    .f-links a { font-size: 12.5px; color: rgba(255,255,255,0.45); transition: color 0.2s; }
-    .f-links a:hover { color: #fff; }
-    .footer-bottom {
-      border-top: 1px solid rgba(255,255,255,0.05);
-      padding-top: 22px;
-      display: flex; align-items: center; justify-content: space-between;
-      gap: 12px; flex-wrap: wrap;
-    }
-    .f-copy { font-size: 11.5px; color: rgba(255,255,255,0.22); }
-    .f-reg  { font-size: 10.5px; color: rgba(255,255,255,0.18); text-align: right; }
-
-    /* ============================================================
-       WHATSAPP FAB
-    ============================================================ */
-    .wa-fab {
-      position: fixed; bottom: 28px; right: 28px; z-index: 99;
-      width: 52px; height: 52px; border-radius: 50%;
-      background: #25D366;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 18px rgba(37,211,102,0.48);
-      transition: transform 0.2s, box-shadow 0.2s;
-      animation: fadeIn 0.4s var(--ease) 1.6s both;
-    }
-    .wa-fab:hover { transform: scale(1.1); box-shadow: 0 6px 26px rgba(37,211,102,0.58); }
-    .wa-fab svg { width: 27px; height: 27px; fill: #fff; }
-  </style>
+/* Slot picker */
+.slots { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 20px; }
+.slot { padding: 14px; border: 1.5px solid var(--line); border-radius: var(--r); font-size: 14px; font-weight: 500; background: #fff; text-align: center; transition: all .15s; }
+.slot__day { display: block; font-size: 11px; color: var(--ink-55); margin-bottom: 2px; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+.slot:hover { border-color: var(--ink); }
+.slot--picked { background: var(--obsidian); color: #fff; border-color: var(--obsidian); }
+.slot--picked .slot__day { color: rgba(255,255,255,.65); }
+</style>
 </head>
 <body>
+<div id="root"></div>
 
-<!-- ============================================================
-     NAVBAR
-============================================================ -->
-<nav class="nav" id="nav">
-  <div class="wrap">
-    <div class="nav-inner">
-      <a href="#" class="nav-logo">Organnical<span>.pe</span></a>
-      <div class="nav-links">
-        <a href="#especialidades">Especialidades</a>
-        <a href="#medicos">Médicos</a>
-        <a href="#como-funciona">Proceso</a>
-        <a href="#testimonios">Testimonios</a>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" crossorigin></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" crossorigin></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" crossorigin></script>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+/* ── COPY ── */
+const COPY = {
+  navLinks: [
+    { href: '#como-funciona', label: 'Cómo funciona' },
+    { href: '#condiciones',   label: '¿Aplica a mí?' },
+    { href: '#precio',        label: 'Precio' },
+    { href: '#medicos',       label: 'Médicos' },
+  ],
+  hero: {
+    badge: 'Medicina integrativa · 100% online · Perú',
+    title: ['Medicina que', 'te escucha', 'y trata la raíz, no el síntoma.'],
+    sub: 'Tu primera consulta en menos de 48 horas. Sin filas, sin recetas genéricas. Médicos colegiados que diseñan un plan hecho para ti.',
+    trust: ['Médicos con CMP activo', 'Sin compromiso', 'Reembolso si no te convence'],
+  },
+  quiz: {
+    q1: {
+      q: '¿Qué te trae hoy?',
+      sub: 'Elige la que más resuene. Puedes cambiarla después.',
+      options: [
+        { id: 'sueno',  label: 'Cuesta dormir o descansar',           ico: '◐' },
+        { id: 'dolor',  label: 'Dolor que no se va',                  ico: '◍' },
+        { id: 'animo',  label: 'Ansiedad o bajón emocional',          ico: '○' },
+        { id: 'mujer',  label: 'Ciclo, hormonas o menopausia',        ico: '◉' },
+        { id: 'otro',   label: 'Otra cosa / todavía no lo tengo claro', ico: '◌' },
+      ],
+    },
+    q2: {
+      q: '¿Hace cuánto lo vienes cargando?',
+      sub: 'Esto ayuda a tu médico a priorizar el plan.',
+      options: [
+        { id: 'semanas', label: 'Semanas',               ico: '•' },
+        { id: 'meses',   label: 'Meses',                 ico: '••' },
+        { id: 'año',     label: 'Un año o más',          ico: '•••' },
+        { id: 'siempre', label: 'Prácticamente siempre', ico: '•••' },
+      ],
+    },
+    q3: {
+      q: '¿Con qué horario te acomoda empezar?',
+      sub: 'Te mostramos doctores disponibles en ese rango.',
+      options: [
+        { id: 'asap',   label: 'Lo antes posible (hoy / mañana)', ico: '⌁' },
+        { id: 'semana', label: 'Esta semana',                     ico: '⌁' },
+        { id: 'flex',   label: 'Tengo flexibilidad',              ico: '⌁' },
+        { id: 'noche',  label: 'Solo noches / fines de semana',   ico: '⌁' },
+      ],
+    },
+  },
+  explain: {
+    eyebrow: 'Qué es',
+    title: 'Medicina integrativa, en palabras simples.',
+    body: 'Tratamos al cuerpo como un sistema entero. En vez de apagar un síntoma, buscamos qué lo está causando — sueño, estrés, hormonas, inflamación — y diseñamos un plan con evidencia clínica.',
+    body2: 'No reemplaza a tu médico de siempre. Lo complementa cuando nada termina de funcionar.',
+    vs: [
+      { a: 'Consulta de 8 minutos',   b: 'Primera consulta de 45 min' },
+      { a: 'Receta estándar',          b: 'Plan hecho para tu caso' },
+      { a: 'Te ves una vez',           b: 'Seguimiento por chat incluido' },
+      { a: '"Toma esto y vuelve"',     b: '"Entendamos qué está pasando"' },
+    ],
+  },
+  conditions: [
+    { id: 'sueno', glyph: '◐', bg: '#968DEF', title: 'Sueño',          desc: 'Insomnio, sueño fragmentado, despertares de madrugada.',       signals: ['Insomnio', 'Apnea', 'Circadiano', 'Sueño no reparador'] },
+    { id: 'dolor', glyph: '◍', bg: '#F06BCA', title: 'Dolor crónico',  desc: 'Dolor que no cede con analgésicos comunes y te limita el día.', signals: ['Fibromialgia', 'Lumbar', 'Migrañas', 'Neuropático'] },
+    { id: 'animo', glyph: '○', bg: '#00DBB1', title: 'Ansiedad & ánimo', desc: 'Estrés que no baja, ansiedad, sensación de agotamiento.',       signals: ['Ansiedad', 'Burnout', 'Bajón anímico', 'Pánico'] },
+    { id: 'mujer', glyph: '◉', bg: '#1A1A1A', title: 'Salud femenina', desc: 'Ciclo irregular, SPM severo, perimenopausia, menopausia.',       signals: ['SPM', 'Menopausia', 'Hormonal', 'Fertilidad'] },
+  ],
+  price: {
+    eyebrow: 'Precio transparente',
+    title: 'Una consulta, sin sorpresas.',
+    sub: 'Incluye la videoconsulta, el plan documentado y 14 días de seguimiento por chat con tu médico.',
+    primary: {
+      tag: 'Primera consulta',
+      amount: 'S/ 180',
+      unit: '/ consulta',
+      sub: 'Videoconsulta de 45 minutos · Colegiado CMP',
+      list: [
+        'Historia clínica integrativa (45 min)',
+        'Plan de tratamiento documentado y firmado',
+        'Recetas digitales oficiales cuando aplique',
+        '14 días de seguimiento por chat con tu médico',
+        'Resumen descargable para tu médico de cabecera',
+        'Si no te convence la primera sesión, te devolvemos el 100%',
+      ],
+      cta: 'Agendar primera consulta',
+    },
+    secondary: {
+      tag: 'Seguimiento',
+      amount: 'S/ 120',
+      unit: '/ sesión',
+      sub: 'A partir de la segunda consulta — 30 minutos',
+      list: [
+        'Revisión del progreso',
+        'Ajustes al plan de tratamiento',
+        '30 días de seguimiento por chat',
+        'Sin suscripción, pagas solo cuando la necesitas',
+      ],
+      cta: 'Ver detalles',
+    },
+  },
+  reviews: {
+    eyebrow: 'Reseñas verificadas',
+    title: 'Lo que dicen quienes ya empezaron.',
+    rating: { num: '4.9', meta: '260+ reseñas · Google y Doctoralia' },
+    items: [
+      { stars: 5, text: 'Llevaba 3 años durmiendo mal. Otros médicos me mandaban pastillas y listo. Acá me hicieron preguntas que nadie me había hecho. En 6 semanas volví a dormir como antes.', name: 'María C.', meta: 'Paciente · Sueño · Lima' },
+      { stars: 5, text: 'Tengo fibromialgia desde hace años. Por primera vez sentí que alguien entendía lo que es vivir con dolor crónico. El plan es claro y el chat de seguimiento es de otro nivel.', name: 'Carlos R.', meta: 'Paciente · Dolor · Miraflores' },
+      { stars: 5, text: 'Entré con muchas dudas — no quería "otra medicina alternativa". Me encontré con una doctora con CMP que me explicó todo con evidencia. Mi SPM mejoró muchísimo.', name: 'Ana P.', meta: 'Paciente · Salud femenina · San Isidro' },
+    ],
+  },
+  doctors: {
+    eyebrow: 'Tu equipo médico',
+    title: 'Médicos colegiados, entrenados en medicina integrativa.',
+    sub: 'Todos con CMP activo. Todos con habilitación para telemedicina. Ninguno con prisa.',
+    list: [
+      { name: 'Dra. Estefanía Poma', spec: 'Medicina General · Integrativa', cmp: 'CMP 059636', tags: ['Sueño', 'Salud femenina'], avatar: 'EP' },
+      { name: 'Dr. Robert Goodman',  spec: 'Medicina General · Integrativa', cmp: 'CMP 095719', tags: ['Dolor crónico', 'Ansiedad'],  avatar: 'RG' },
+    ],
+  },
+  faq: {
+    eyebrow: 'Dudas frecuentes',
+    title: 'Lo que todos preguntan antes de agendar.',
+    items: [
+      { q: '¿Esto reemplaza a mi médico de siempre?', a: 'No. Nuestra medicina integrativa complementa tu atención — especialmente cuando los tratamientos convencionales no terminan de funcionar. Todos nuestros médicos son colegiados (CMP) y te envían un resumen que puedes compartir con tu médico de cabecera.' },
+      { q: '¿Y si no estoy seguro de que mi caso aplique?', a: 'Agenda la primera consulta de todas formas. En 45 minutos tu médico te dirá con honestidad si puede ayudarte o si conviene derivar con otro especialista. Si no te aporta valor, te devolvemos el 100% del pago.' },
+      { q: '¿Cómo es una consulta? ¿Realmente funciona por video?', a: 'Sí. Nos conectamos por una plataforma segura (sin descargas). Tu médico revisa tu historial, hace preguntas que no te hicieron antes, y te envía un plan documentado por email al terminar. Si necesitas exámenes, te deriva a un laboratorio cerca.' },
+      { q: '¿Qué pasa con las recetas?', a: 'Si tu plan las requiere, te enviamos recetas digitales oficiales válidas en todo el Perú. Cumplen con la normativa del MINSA y puedes usarlas en cualquier farmacia.' },
+      { q: '¿Mis datos están seguros?', a: 'Sí. Cumplimos con la Ley de Protección de Datos del Perú y estándares de ciberseguridad para salud. Tu historia clínica solo la ve tu médico — nadie más, ni siquiera el equipo comercial.' },
+      { q: '¿Puedo pagar después de la consulta?', a: 'Requerimos el pago al agendar para asegurar tu horario. Pero tenemos garantía: si al terminar la primera consulta no te convence, te devolvemos el 100% — sin preguntas.' },
+    ],
+  },
+  ctaFinal: {
+    title: 'Tu cuerpo lleva tiempo hablándote.',
+    sub: 'Agenda tu primera consulta hoy. En menos de 2 minutos eliges médico y horario — la charla la tienen ustedes dos.',
+    primary: 'Empezar el quiz',
+    secondary: 'Hablar con un asesor',
+  },
+};
+
+/* ── Logo ── */
+function Logo({ white = false, className = '', style = {} }) {
+  const src = white ? '/logo-white.png' : '/logo-horizontal.png';
+  return <img src={src} alt="organnical.pe" className={className} style={{ ...style, height: '30px' }}
+    onError={e => { e.target.style.display='none'; e.target.insertAdjacentHTML('afterend', '<span style="font-family:Inter Tight,Inter,sans-serif;font-weight:700;font-size:18px;letter-spacing:-0.03em;color:'+(white?'#fff':'#1A1A1A')+'">organnical<span style=\'background:linear-gradient(120deg,#968DEF,#F06BCA,#00DBB1);-webkit-background-clip:text;-webkit-text-fill-color:transparent\'>.pe</span></span>') }} />;
+}
+
+/* ── Nav ── */
+function Nav({ onBook, onSignin }) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const f = () => setScrolled(window.scrollY > 24);
+    f(); window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, []);
+  return (
+    <header className={'nav' + (scrolled ? ' nav--scrolled' : '')}>
+      <div className="wrap nav__inner">
+        <a href="#top" onClick={e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }}>
+          <Logo className="nav__logo" />
+        </a>
+        <nav className="nav__links">
+          {COPY.navLinks.map(l => <a key={l.href} href={l.href}>{l.label}</a>)}
+        </nav>
+        <div className="nav__actions">
+          <button className="btn btn-ghost btn-sm" onClick={onSignin}>Iniciar sesión</button>
+          <button className="btn btn-primary btn-sm" onClick={onBook}>Agendar consulta</button>
+        </div>
       </div>
-      <a href="#agendar" class="nav-cta">Agendar consulta</a>
-    </div>
-  </div>
-</nav>
+    </header>
+  );
+}
 
+/* ── Hero with inline quiz ── */
+function Hero({ onDone }) {
+  const Q = COPY.quiz;
+  const H = COPY.hero;
+  const [step, setStep] = useState(0);
+  const [ans, setAns] = useState({});
+  const questions = [Q.q1, Q.q2, Q.q3];
+  const current = questions[step];
 
-<!-- ============================================================
-     HERO
-============================================================ -->
-<section class="hero" id="inicio">
-  <!-- animated mesh background -->
-  <div class="hero-mesh">
-    <div class="blob blob-a"></div>
-    <div class="blob blob-b"></div>
-    <div class="blob blob-c"></div>
-    <div class="hero-dots"></div>
-    <div class="hero-line"></div>
-  </div>
+  const pick = (id) => {
+    const key = ['intent', 'duration', 'timing'][step];
+    const next = { ...ans, [key]: id };
+    setAns(next);
+    setTimeout(() => {
+      if (step < 2) setStep(step + 1);
+      else onDone(next);
+    }, 180);
+  };
+  const back = () => setStep(Math.max(0, step - 1));
 
-  <div class="wrap">
-    <div class="hero-inner">
-
-      <!-- LEFT -->
-      <div class="hero-left">
-        <div class="hero-badge">
-          <div class="live-dot"></div>
-          Telemedicina Integrativa · Perú
-        </div>
-
-        <h1 class="hero-h1">
-          La medicina que<br>
-          <em class="g-text">te escucha</em><br>
-          y trata la raíz
-        </h1>
-
-        <p class="hero-p">
-          Consultas médicas online especializadas en cannabis medicinal,
-          dolor crónico, insomnio y salud femenina. Prescripción oficial
-          bajo Ley 30681.
-        </p>
-
-        <div class="spec-pills">
-          <button class="pill on">🌙 Sueño</button>
-          <button class="pill">🩹 Dolor Crónico</button>
-          <button class="pill">🧘 Ansiedad</button>
-          <button class="pill">🌸 Salud Femenina</button>
-        </div>
-
-        <div class="hero-ctas">
-          <a href="#agendar" class="btn-grad">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Agendar consulta
-          </a>
-          <a href="#como-funciona" class="btn-ghost">
-            Cómo funciona
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
-          </a>
-        </div>
-
-        <div class="hero-trust">
-          <div class="htrust">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Médicos CMP activo
-          </div>
-          <div class="htrust">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Primera cita &lt;48h
-          </div>
-          <div class="htrust">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            100% confidencial
+  return (
+    <section className="hero" id="top">
+      <span className="hero__bg-blob hero__bg-blob--1" />
+      <span className="hero__bg-blob hero__bg-blob--2" />
+      <span className="hero__bg-blob hero__bg-blob--3" />
+      <div className="wrap hero__grid">
+        <div>
+          <span className="hero__eyebrow"><span className="dot" /> {H.badge}</span>
+          <h1 className="display hero__title">
+            {H.title[0]} <span className="grad-text">{H.title[1]}</span> {H.title[2]}
+          </h1>
+          <p className="hero__sub">{H.sub}</p>
+          <div className="trust">
+            {H.trust.map(t => <span key={t} className="trust__item">✓ {t}</span>)}
           </div>
         </div>
-      </div>
-
-      <!-- RIGHT — glass stats card -->
-      <div class="hero-right" style="position:relative;">
-        <div class="hero-card">
-          <div class="stat-grid">
-            <div class="stat-cell">
-              <div class="stat-val g-text">2,400+</div>
-              <div class="stat-lbl">Pacientes atendidos</div>
+        <div>
+          <div className="quiz">
+            <div className="quiz__head">
+              <span className="mono" style={{ color: 'var(--ink-55)' }}>Mini-quiz · 45 seg</span>
+              <div className="quiz__progress">
+                {[0,1,2].map(i => (
+                  <span key={i} className={'quiz__dot' + (i === step ? ' quiz__dot--active' : '') + (i < step ? ' quiz__dot--done' : '')} />
+                ))}
+              </div>
             </div>
-            <div class="stat-cell">
-              <div class="stat-val" style="color:#fff">4.9 ★</div>
-              <div class="stat-lbl">Calificación promedio</div>
+            <h3 className="quiz__q">{current.q}</h3>
+            <p style={{ fontSize: 13, color: 'var(--ink-55)', marginBottom: 18 }}>{current.sub}</p>
+            <div className="quiz__options">
+              {current.options.map(o => {
+                const key = ['intent', 'duration', 'timing'][step];
+                const picked = ans[key] === o.id;
+                return (
+                  <button key={o.id}
+                    className={'quiz__opt' + (picked ? ' quiz__opt--picked' : '')}
+                    onClick={() => pick(o.id)}>
+                    <span className="quiz__opt-ico" aria-hidden>{o.ico}</span>
+                    <span>{o.label}</span>
+                  </button>
+                );
+              })}
             </div>
-            <div class="stat-cell">
-              <div class="stat-val" style="color:#fff">&lt;48h</div>
-              <div class="stat-lbl">Primera cita disponible</div>
-            </div>
-            <div class="stat-cell">
-              <div class="stat-val g-text">S/ 150</div>
-              <div class="stat-lbl">Consulta inicial</div>
-            </div>
-          </div>
-
-          <div class="doc-row">
-            <div class="doc-avatars">
-              <div class="doc-av">EP</div>
-              <div class="doc-av">RG</div>
-            </div>
-            <div class="doc-info">
-              <div class="doc-info-name">Dra. Poma · Dr. Goodman</div>
-              <div class="doc-info-sub">Médicos certificados MINSA</div>
-            </div>
-            <div class="avail">
-              <div class="avail-dot"></div>
-              En línea
+            <div className="quiz__footer">
+              {step > 0
+                ? <button className="quiz__back" onClick={back}>← atrás</button>
+                : <span />}
+              <span className="mono" style={{ color: 'var(--ink-35)' }}>{step + 1} / 3</span>
             </div>
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
 
-        <!-- floating cards -->
-        <div class="fc fc-1">
-          <div class="fc-icon">🛡️</div>
-          <div>
-            <div class="fc-main">100% Legal</div>
-            <div class="fc-sub">Ley 30681 · Perú</div>
-          </div>
-        </div>
-        <div class="fc fc-2">
-          <div class="fc-icon">📋</div>
-          <div>
-            <div class="fc-main">Prescripción oficial</div>
-            <div class="fc-sub">Documento médico válido</div>
+/* ── Explain ── */
+function Explain() {
+  const E = COPY.explain;
+  return (
+    <section className="section" id="como-funciona">
+      <div className="wrap">
+        <div className="explain rv">
+          <div className="explain__grid">
+            <div>
+              <span className="mono" style={{ color: 'rgba(255,255,255,.5)', marginBottom: 16, display: 'block' }}>{E.eyebrow}</span>
+              <h2 className="display">{E.title}</h2>
+              <p style={{ marginTop: 16 }}>{E.body}</p>
+              <p style={{ marginTop: 14 }}>{E.body2}</p>
+            </div>
+            <div>
+              <div className="explain__vs">
+                <div className="explain__row">
+                  <div className="explain__col explain__col--a"><span className="explain__col-label">Consulta común</span></div>
+                  <div className="explain__col explain__col--b"><span className="explain__col-label" style={{ color: 'rgba(0,219,177,.9)' }}>Acá</span></div>
+                </div>
+                {E.vs.map(row => (
+                  <div key={row.a} className="explain__row">
+                    <div className="explain__col explain__col--a">{row.a}</div>
+                    <div className="explain__col explain__col--b">{row.b}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
+    </section>
+  );
+}
 
+/* ── Conditions ── */
+function Conditions({ onQuiz }) {
+  return (
+    <section className="section" id="condiciones">
+      <div className="wrap">
+        <div className="sec-head rv">
+          <span className="eyebrow">¿Aplica a lo mío?</span>
+          <h2 className="display">Tratamos lo que la medicina apurada <span className="grad-text">no alcanza a escuchar.</span></h2>
+          <p>Si tu caso no está acá, igual puedes agendar. Si no podemos ayudarte, te lo decimos con honestidad — sin cobro.</p>
+        </div>
+        <div className="cond-grid rv">
+          {COPY.conditions.map(c => (
+            <div key={c.id} className="cond" onClick={onQuiz}>
+              <span className="cond__check">✓ aplica</span>
+              <span className="cond__glyph" style={{ background: c.bg }}>{c.glyph}</span>
+              <h3 className="cond__title">{c.title}</h3>
+              <p className="cond__desc">{c.desc}</p>
+              <div className="cond__signals">
+                {c.signals.map(s => <span key={s} className="cond__signal">{s}</span>)}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="matcher rv">
+          <div className="matcher__txt">
+            <h4>¿No estás seguro si tu caso aplica?</h4>
+            <p>3 preguntas. 45 segundos. Te decimos con qué especialista encaja mejor.</p>
+          </div>
+          <button className="btn btn-primary" onClick={onQuiz}>Hacer el mini-quiz →</button>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Pricing ── */
+function Pricing({ onBook }) {
+  const P = COPY.price;
+  return (
+    <section className="section" id="precio">
+      <div className="wrap">
+        <div className="sec-head rv">
+          <span className="eyebrow">{P.eyebrow}</span>
+          <h2 className="display">{P.title}</h2>
+          <p>{P.sub}</p>
+        </div>
+        <div className="price-grid rv">
+          <div className="price-card price-card--feature">
+            <div className="price-card__tag">{P.primary.tag}</div>
+            <div>
+              <span className="price-card__amount">{P.primary.amount}</span>
+              <span className="price-card__unit"> {P.primary.unit}</span>
+            </div>
+            <p className="price-card__sub">{P.primary.sub}</p>
+            <div className="price-card__list">
+              {P.primary.list.map(item => (
+                <div key={item} className="price-card__item">
+                  <span className="price-card__check">✓</span><span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-white btn-lg" style={{ width: '100%', justifyContent: 'center', position: 'relative', zIndex: 1 }} onClick={onBook}>
+              {P.primary.cta} →
+            </button>
+          </div>
+          <div className="price-card">
+            <div className="price-card__tag">{P.secondary.tag}</div>
+            <div>
+              <span className="price-card__amount">{P.secondary.amount}</span>
+              <span className="price-card__unit"> {P.secondary.unit}</span>
+            </div>
+            <p className="price-card__sub">{P.secondary.sub}</p>
+            <div className="price-card__list">
+              {P.secondary.list.map(item => (
+                <div key={item} className="price-card__item">
+                  <span className="price-card__check">✓</span><span>{item}</span>
+                </div>
+              ))}
+            </div>
+            <p style={{ fontSize: 13, color: 'var(--ink-55)', marginTop: 8 }}>Se desbloquea automáticamente tras tu primera consulta.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Reviews ── */
+function Reviews() {
+  const R = COPY.reviews;
+  return (
+    <section className="section">
+      <div className="wrap">
+        <div className="sec-head rv">
+          <span className="eyebrow">{R.eyebrow}</span>
+          <h2 className="display">{R.title}</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: 24 }}>
+            <div className="rating-sum">
+              <span className="rating-sum__num">{R.rating.num}</span>
+              <div>
+                <div style={{ color: 'var(--orchid)', letterSpacing: '-1px', fontSize: 15 }}>★★★★★</div>
+                <div className="rating-sum__meta">{R.rating.meta}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="rev-grid rv">
+          {R.items.map(r => (
+            <div key={r.name} className="rev">
+              <div className="rev__stars">{'★'.repeat(r.stars)}</div>
+              <p className="rev__quote">"{r.text}"</p>
+              <div className="rev__who">
+                <span className="rev__ava">{r.name.split(' ').map(w => w[0]).join('')}</span>
+                <div>
+                  <div className="rev__name">{r.name}</div>
+                  <div className="rev__meta">{r.meta}</div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Doctors ── */
+function Doctors() {
+  const D = COPY.doctors;
+  return (
+    <section className="section" id="medicos">
+      <div className="wrap">
+        <div className="sec-head rv">
+          <span className="eyebrow">{D.eyebrow}</span>
+          <h2 className="display">{D.title}</h2>
+          <p>{D.sub}</p>
+        </div>
+        <div className="docs-grid rv">
+          {D.list.map(d => (
+            <div key={d.name} className="doc">
+              <div className="doc__photo">
+                <div style={{ width: '100%', height: '100%', display: 'grid', placeItems: 'center', fontFamily: "'Inter Tight', sans-serif", fontSize: 42, fontWeight: 600, color: 'rgba(26,26,26,.3)', letterSpacing: '-0.03em' }}>{d.avatar}</div>
+              </div>
+              <div className="doc__body">
+                <div className="doc__name">{d.name}</div>
+                <div className="doc__spec">{d.spec}</div>
+                <div className="doc__cmp">{d.cmp}</div>
+                <div className="doc__tags">{d.tags.map(t => <span key={t} className="doc__tag">{t}</span>)}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── FAQ ── */
+function FAQ() {
+  const F = COPY.faq;
+  const [open, setOpen] = useState(0);
+  return (
+    <section className="section" id="faq">
+      <div className="wrap">
+        <div className="sec-head rv">
+          <span className="eyebrow">{F.eyebrow}</span>
+          <h2 className="display">{F.title}</h2>
+        </div>
+        <div className="faq rv">
+          {F.items.map((it, i) => (
+            <div key={i} className={'faq__item' + (open === i ? ' faq__item--open' : '')} onClick={() => setOpen(open === i ? -1 : i)}>
+              <div className="faq__q"><span>{it.q}</span><span className="faq__plus">+</span></div>
+              <div className="faq__a">{it.a}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Final CTA ── */
+function FinalCTA({ onQuiz }) {
+  const C = COPY.ctaFinal;
+  return (
+    <section className="section">
+      <div className="wrap">
+        <div className="cta-final rv">
+          <h2 className="display">{C.title}</h2>
+          <p>{C.sub}</p>
+          <div className="cta-final__actions">
+            <button className="btn btn-white btn-lg" onClick={onQuiz}>{C.primary} →</button>
+            <a className="btn btn-ghost btn-lg" href="https://wa.me/51952476574" style={{ borderColor: 'rgba(255,255,255,.4)', color: '#fff' }}>{C.secondary}</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ── */
+function Footer() {
+  return (
+    <footer className="foot">
+      <div className="wrap">
+        <div className="foot__grid">
+          <div className="foot__col">
+            <Logo className="foot__logo" />
+            <p className="foot__tag">Medicina integrativa online. Médicos colegiados, planes personalizados, resultados que se sienten en el cuerpo.</p>
+          </div>
+          <div className="foot__col">
+            <h4>Plataforma</h4>
+            <a href="#condiciones">¿Aplica a mí?</a>
+            <a href="#precio">Precio</a>
+            <a href="#medicos">Médicos</a>
+            <a href="#faq">Preguntas</a>
+          </div>
+          <div className="foot__col">
+            <h4>Empresa</h4>
+            <a href="#">Blog</a>
+            <a href="#">Nosotros</a>
+            <a href="#">Contacto</a>
+            <a href="#">Trabaja con nosotros</a>
+          </div>
+          <div className="foot__col">
+            <h4>Legal</h4>
+            <a href="/privacidad">Privacidad</a>
+            <a href="/terminos">Términos</a>
+            <a href="#">Libro de reclamaciones</a>
+            <a href="#">Verificar receta</a>
+          </div>
+        </div>
+        <div className="foot__bot">
+          <span>© {new Date().getFullYear()} organnical.pe · Av. La Mar 750, Of. 510, Miraflores, Lima</span>
+          <span>reservas@organnical.pe · +51 952 476 574</span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+/* ── Booking Modal ── */
+function BookingModal({ open, onClose, seed }) {
+  const Q = COPY.quiz;
+  const [step, setStep] = useState(0);
+  const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [slot, setSlot] = useState(null);
+  const [reason, setReason] = useState(seed?.intent || '');
+
+  useEffect(() => {
+    if (!open) { setStep(0); setEmail(''); setName(''); setSlot(null); return; }
+    if (seed?.intent) { setReason(seed.intent); setStep(1); }
+    else setStep(0);
+  }, [open, seed]);
+
+  if (!open) return null;
+
+  const slots = [
+    { day: 'HOY',    time: '19:00' },
+    { day: 'MAÑANA', time: '09:30' },
+    { day: 'MAÑANA', time: '15:00' },
+    { day: 'JUE',    time: '11:15' },
+    { day: 'JUE',    time: '18:45' },
+    { day: 'VIE',    time: '10:00' },
+  ];
+  const reasons = Q.q1.options;
+  const progress = ['1 / 4','2 / 4','3 / 4','4 / 4'][step];
+
+  return (
+    <div className="modal-bg" onClick={onClose}>
+      <div className="modal" onClick={e => e.stopPropagation()}>
+        <button className="modal__close" onClick={onClose} aria-label="Cerrar">×</button>
+        <span className="mono" style={{ color: 'var(--ink-55)', marginBottom: 12, display: 'block' }}>Reserva · {progress}</span>
+
+        {step === 0 && (
+          <>
+            <h3 className="display" style={{ fontSize: 26, marginBottom: 8, letterSpacing: '-0.02em' }}>¿Qué te trae hoy?</h3>
+            <p style={{ fontSize: 14, color: 'var(--ink-55)', marginBottom: 20 }}>Tu médico lo usará para prepararse antes de la llamada.</p>
+            <div className="quiz__options">
+              {reasons.map(r => (
+                <button key={r.id} className={'quiz__opt' + (reason === r.id ? ' quiz__opt--picked' : '')}
+                  onClick={() => { setReason(r.id); setTimeout(() => setStep(1), 160); }}>
+                  <span className="quiz__opt-ico">{r.ico}</span><span>{r.label}</span>
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+
+        {step === 1 && (
+          <>
+            <h3 className="display" style={{ fontSize: 26, marginBottom: 8, letterSpacing: '-0.02em' }}>Elige tu horario</h3>
+            <p style={{ fontSize: 14, color: 'var(--ink-55)', marginBottom: 20 }}>Disponibilidad real. La reserva se confirma al instante.</p>
+            <div className="slots">
+              {slots.map(s => (
+                <button key={s.day+s.time} className={'slot' + (slot === (s.day+s.time) ? ' slot--picked' : '')} onClick={() => setSlot(s.day+s.time)}>
+                  <span className="slot__day">{s.day}</span><span>{s.time}</span>
+                </button>
+              ))}
+            </div>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-ghost" style={{ flex: '0 0 auto' }} onClick={() => setStep(0)}>← atrás</button>
+              <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }} disabled={!slot} onClick={() => setStep(2)}>Continuar →</button>
+            </div>
+          </>
+        )}
+
+        {step === 2 && (
+          <>
+            <h3 className="display" style={{ fontSize: 26, marginBottom: 8, letterSpacing: '-0.02em' }}>Creemos tu cuenta</h3>
+            <p style={{ fontSize: 14, color: 'var(--ink-55)', marginBottom: 20 }}>Te enviaremos el link de videoconsulta y un cuestionario breve al correo.</p>
+            <div style={{ display: 'grid', gap: 10, marginBottom: 20 }}>
+              <label style={{ display: 'grid', gap: 6 }}>
+                <span style={{ fontSize: 12, color: 'var(--ink-55)', fontWeight: 500 }}>Nombre</span>
+                <input value={name} onChange={e => setName(e.target.value)} placeholder="Cómo te llamas"
+                  style={{ padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--line)', background: '#fff', outline: 'none', fontSize: 15 }}
+                  onFocus={e => e.target.style.borderColor='var(--ink)'} onBlur={e => e.target.style.borderColor='var(--line)'} />
+              </label>
+              <label style={{ display: 'grid', gap: 6 }}>
+                <span style={{ fontSize: 12, color: 'var(--ink-55)', fontWeight: 500 }}>Correo</span>
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="tu@correo.com"
+                  style={{ padding: '14px 16px', borderRadius: 14, border: '1.5px solid var(--line)', background: '#fff', outline: 'none', fontSize: 15 }}
+                  onFocus={e => e.target.style.borderColor='var(--ink)'} onBlur={e => e.target.style.borderColor='var(--line)'} />
+              </label>
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--ink-55)', marginBottom: 16, lineHeight: 1.45 }}>
+              Al continuar aceptas los <a href="/terminos" style={{ textDecoration: 'underline' }}>Términos</a> y nuestra <a href="/privacidad" style={{ textDecoration: 'underline' }}>Política de privacidad</a>. Tu historia clínica solo la ve tu médico.
+            </p>
+            <div style={{ display: 'flex', gap: 10 }}>
+              <button className="btn btn-ghost" style={{ flex: '0 0 auto' }} onClick={() => setStep(1)}>← atrás</button>
+              <button className="btn btn-primary" style={{ flex: 1, justifyContent: 'center' }}
+                disabled={!name || !email.includes('@')} onClick={() => setStep(3)}>
+                Confirmar reserva · S/ 180 →
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 3 && (
+          <>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 20 }}>
+              <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'var(--grad)', display: 'grid', placeItems: 'center', color: '#fff', fontSize: 32 }}>✓</div>
+            </div>
+            <h3 className="display" style={{ fontSize: 28, textAlign: 'center', letterSpacing: '-0.02em', marginBottom: 10 }}>¡Reserva confirmada!</h3>
+            <p style={{ textAlign: 'center', color: 'var(--ink-70)', marginBottom: 24 }}>
+              Te enviamos el link de videoconsulta a <b style={{ color: 'var(--ink)' }}>{email}</b>.
+            </p>
+            <div className="card" style={{ padding: 16, marginBottom: 20, boxShadow: 'none' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 8, fontSize: 14 }}>
+                <span style={{ color: 'var(--ink-55)' }}>Motivo</span><span style={{ fontWeight: 500, textAlign: 'right' }}>{reasons.find(r => r.id === reason)?.label}</span>
+                <span style={{ color: 'var(--ink-55)' }}>Horario</span><span style={{ fontWeight: 500, textAlign: 'right' }}>{slot}</span>
+                <span style={{ color: 'var(--ink-55)' }}>Pago</span><span style={{ fontWeight: 500, textAlign: 'right' }}>S/ 180 · pendiente</span>
+              </div>
+            </div>
+            <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={onClose}>Listo</button>
+          </>
+        )}
+      </div>
     </div>
-  </div>
+  );
+}
 
-  <div class="scroll-cue">
-    <div class="mouse"><div class="wheel"></div></div>
-    <span>Desplazar</span>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     TRUST BAR
-============================================================ -->
-<div class="trust-bar">
-  <div class="wrap">
-    <div class="tb-row">
-      <div class="tb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        Médicos certificados MINSA
-      </div>
-      <div class="tb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        Documentación médica oficial
-      </div>
-      <div class="tb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        Primera cita en &lt;48 horas
-      </div>
-      <div class="tb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        +2,400 pacientes
-      </div>
-      <div class="tb-item">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        100% confidencial
-      </div>
+/* ── Sticky CTA (mobile) ── */
+function StickyCta({ onQuiz }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const f = () => setShow(window.scrollY > 600);
+    f(); window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, []);
+  if (!show) return null;
+  return (
+    <div className="stickycta">
+      <span className="stickycta__label"><strong>Primera consulta</strong> · S/ 180</span>
+      <button className="btn" onClick={onQuiz}>Agendar →</button>
     </div>
-  </div>
-</div>
+  );
+}
 
+/* ── WhatsApp bubble ── */
+function WhatsappBubble({ raised }) {
+  const [show, setShow] = useState(false);
+  const [hint, setHint] = useState(false);
+  const [dismissed, setDismissed] = useState(false);
 
-<!-- ============================================================
-     ESPECIALIDADES
-============================================================ -->
-<section class="section espec" id="especialidades">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="badge badge-light" style="margin-bottom:16px;">Especialidades</div>
-      <h2 class="sec-h2">Tratamos lo que los <em class="g-text">demás no ven</em></h2>
-      <p class="sec-p">Condiciones crónicas que merecen atención médica especializada, integrativa y basada en evidencia.</p>
-    </div>
+  useEffect(() => {
+    const f = () => setShow(window.scrollY > 240);
+    f(); window.addEventListener('scroll', f, { passive: true });
+    return () => window.removeEventListener('scroll', f);
+  }, []);
 
-    <div class="espec-grid">
-      <div class="espec-card rv d1">
-        <div class="espec-icon">🌙</div>
-        <div class="espec-name">Sueño</div>
-        <div class="espec-desc">Insomnio, apnea, ritmo circadiano alterado. Recupera el descanso que tu cuerpo necesita para sanar.</div>
-        <div class="espec-count">180+ atendidos</div>
-      </div>
-      <div class="espec-card rv d2">
-        <div class="espec-icon">🩹</div>
-        <div class="espec-name">Dolor Crónico</div>
-        <div class="espec-desc">Fibromialgia, dolor neuropático y musculoesquelético. Tratamiento sin dependencia ni efectos secundarios graves.</div>
-        <div class="espec-count">320+ atendidos</div>
-      </div>
-      <div class="espec-card rv d3">
-        <div class="espec-icon">🧘</div>
-        <div class="espec-name">Ansiedad</div>
-        <div class="espec-desc">Ansiedad generalizada, estrés crónico y pánico. Un enfoque integrativo, empático y compasivo.</div>
-        <div class="espec-count">290+ atendidos</div>
-      </div>
-      <div class="espec-card rv d4">
-        <div class="espec-icon">🌸</div>
-        <div class="espec-name">Salud Femenina</div>
-        <div class="espec-desc">SPM, menopausia, vulvodinia y vestibulodinia. Especialistas que te escuchan con respeto y profundidad.</div>
-        <div class="espec-count">210+ atendidos</div>
-      </div>
-    </div>
-  </div>
-</section>
+  useEffect(() => {
+    if (!show || dismissed) return;
+    const t1 = setTimeout(() => setHint(true), 1400);
+    const t2 = setTimeout(() => setHint(false), 7200);
+    return () => { clearTimeout(t1); clearTimeout(t2); };
+  }, [show, dismissed]);
 
+  if (!show) return null;
+  const href = 'https://wa.me/51952476574?text=' + encodeURIComponent('Hola, me gustaría agendar una consulta en organnical.pe');
 
-<!-- ============================================================
-     MÉDICOS
-============================================================ -->
-<section class="section medicos" id="medicos">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="badge badge-light" style="margin-bottom:16px;">Nuestros médicos</div>
-      <h2 class="sec-h2">Especialistas que <em class="g-text">realmente</em> escuchan</h2>
-      <p class="sec-p">Médicos con CMP activo, formación en medicina integrativa y experiencia real acompañando a pacientes.</p>
-    </div>
-
-    <div class="doc-grid">
-      <!-- Dra. Poma -->
-      <div class="doc-card rv d1">
-        <div class="doc-bar"></div>
-        <div class="doc-body">
-          <div class="doc-avatar-lg">EP</div>
-          <div class="doc-name">Dra. Estefanía Poma</div>
-          <div class="doc-spec">Especialista en dolor crónico y sueño</div>
-          <div class="doc-cmp">CMP 059636</div>
-          <div class="doc-stars">
-            <span class="stars">★★★★★</span>
-            <span class="star-val">4.9</span>
-            <span class="star-n">(127 reseñas)</span>
-          </div>
-          <div class="doc-tags">
-            <span class="dtag">Sueño</span>
-            <span class="dtag">Dolor Crónico</span>
-            <span class="dtag">Fibromialgia</span>
-          </div>
-          <div class="doc-avail">
-            <div class="green-dot"></div>
-            Disponible esta semana
-          </div>
-          <a href="#agendar" class="doc-btn">Agendar consulta</a>
+  return (
+    <div className={`wa ${raised ? 'wa--raised' : ''}`}>
+      {hint && !dismissed && (
+        <div className="wa__hint" role="status">
+          <button className="wa__hint-close" aria-label="Cerrar"
+            onClick={e => { e.preventDefault(); e.stopPropagation(); setHint(false); setDismissed(true); }}>×</button>
+          <span className="wa__hint-eyebrow">Consulta rápida</span>
+          <span className="wa__hint-text">¿Dudas antes de agendar?<br/>Escríbenos por WhatsApp.</span>
         </div>
-        <div class="cred-bar">
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            CMP activo
-          </div>
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            RENEC
-          </div>
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Telemedicina
-          </div>
-        </div>
-      </div>
-
-      <!-- Dr. Goodman -->
-      <div class="doc-card rv d2">
-        <div class="doc-bar"></div>
-        <div class="doc-body">
-          <div class="doc-avatar-lg">RG</div>
-          <div class="doc-name">Dr. Robert Goodman</div>
-          <div class="doc-spec">Medicina integrativa y ansiedad</div>
-          <div class="doc-cmp">CMP 095719</div>
-          <div class="doc-stars">
-            <span class="stars">★★★★★</span>
-            <span class="star-val">4.8</span>
-            <span class="star-n">(98 reseñas)</span>
-          </div>
-          <div class="doc-tags">
-            <span class="dtag">Ansiedad</span>
-            <span class="dtag">Salud Femenina</span>
-            <span class="dtag">Integrativa</span>
-          </div>
-          <div class="doc-avail">
-            <div class="green-dot"></div>
-            Disponible esta semana
-          </div>
-          <a href="#agendar" class="doc-btn">Agendar consulta</a>
-        </div>
-        <div class="cred-bar">
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            CMP activo
-          </div>
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-            RENEC
-          </div>
-          <div class="cred">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            Telemedicina
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     CÓMO FUNCIONA
-============================================================ -->
-<section class="section como" id="como-funciona">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="badge badge-light" style="margin-bottom:16px;">Proceso</div>
-      <h2 class="sec-h2">Sencillo, claro y <em class="g-text">sin burocracia</em></h2>
-      <p class="sec-p">Tres pasos para tu primera consulta médica integrativa, desde cualquier lugar del Perú.</p>
-    </div>
-
-    <div class="steps">
-      <div class="step-row rv">
-        <div class="step-content">
-          <div class="step-num">01</div>
-          <div class="step-title">Agenda tu cita en línea</div>
-          <div class="step-desc">Elige la especialidad, el médico y el horario que más te convenga. Sin filas, sin esperas. Disponibilidad confirmada en minutos.</div>
-          <div class="step-chip">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            Primera cita en &lt;48 horas
-          </div>
-        </div>
-        <div class="step-vis rv d2">📅</div>
-      </div>
-
-      <div class="step-row flip rv">
-        <div class="step-content">
-          <div class="step-num">02</div>
-          <div class="step-title">Consulta por videollamada</div>
-          <div class="step-desc">Tu médico te escucha en profundidad. Evalúa tu historial, síntomas y objetivos para diseñar un plan de tratamiento personalizado.</div>
-          <div class="step-chip">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            Sesión de 45 a 60 minutos
-          </div>
-        </div>
-        <div class="step-vis rv d2">💬</div>
-      </div>
-
-      <div class="step-row rv">
-        <div class="step-content">
-          <div class="step-num">03</div>
-          <div class="step-title">Recibe tu prescripción oficial</div>
-          <div class="step-desc">Si corresponde, obtienes tu prescripción médica conforme a la Ley 30681, con protocolo de seguimiento incluido sin costo adicional.</div>
-          <div class="step-chip">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            Bajo Ley 30681 — 100% legal
-          </div>
-        </div>
-        <div class="step-vis rv d2">📋</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     TESTIMONIOS
-============================================================ -->
-<section class="section testim" id="testimonios">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <div class="badge badge-dark" style="margin-bottom:16px;">Testimonios reales</div>
-      <h2 class="sec-h2 light">Lo que dicen <em class="g-text">nuestros pacientes</em></h2>
-      <p class="sec-p light">Más de 2,400 personas ya encontraron una alternativa médica que funciona bajo supervisión especializada.</p>
-    </div>
-
-    <div class="testim-grid">
-      <div class="t-card rv d1">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-quote">"Después de años con insomnio severo, la Dra. Poma fue la primera médica que tomó mis síntomas en serio. El tratamiento cambió mi calidad de vida completamente."</div>
-        <div class="t-author">
-          <div class="t-av">MV</div>
-          <div>
-            <div class="t-name">María V.</div>
-            <div class="t-detail">Insomnio crónico · Lima</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="t-card rv d2">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-quote">"Tenía fibromialgia y ningún tratamiento convencional me ayudaba. Con el Dr. Goodman encontré un enfoque integrativo que redujo mi dolor en un 70%."</div>
-        <div class="t-author">
-          <div class="t-av">CR</div>
-          <div>
-            <div class="t-name">Carlos R.</div>
-            <div class="t-detail">Fibromialgia · Arequipa</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="t-card rv d3">
-        <div class="t-stars">★★★★★</div>
-        <div class="t-quote">"Lo que más valoro es la seriedad del proceso. Prescripción oficial, seguimiento real y un médico que responde tus dudas. Profesionalismo total."</div>
-        <div class="t-author">
-          <div class="t-av">LP</div>
-          <div>
-            <div class="t-name">Lucía P.</div>
-            <div class="t-detail">Ansiedad generalizada · Cusco</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-
-<!-- ============================================================
-     PRICING CALLOUT
-============================================================ -->
-<section class="pricing" id="precios">
-  <div class="wrap">
-    <div class="pricing-card rv">
-      <div class="badge badge-light" style="margin-bottom:18px;">Precio transparente</div>
-      <div class="price-amt"><span class="g-text">S/ 150</span></div>
-      <div class="price-label">Teleconsulta inicial · Sin costos ocultos</div>
-
-      <div class="price-includes">
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Consulta de 45–60 min
-        </div>
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Evaluación personalizada
-        </div>
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Prescripción médica oficial
-        </div>
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Protocolo de seguimiento
-        </div>
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Médicos CMP activo
-        </div>
-        <div class="p-incl">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          100% online, desde Perú
-        </div>
-      </div>
-
-      <a href="https://organnical.pe/registro" class="price-cta">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-        Reservar mi consulta
+      )}
+      <a className="wa__btn" href={href} target="_blank" rel="noopener noreferrer" aria-label="Chatear por WhatsApp"
+        onMouseEnter={() => setHint(true)}>
+        <span className="wa__pulse" aria-hidden="true"></span>
+        <svg className="wa__icon" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+          <path d="M16.02 4C9.4 4 4.04 9.36 4.04 15.98c0 2.11.55 4.17 1.6 5.99L4 28l6.2-1.62a11.9 11.9 0 0 0 5.82 1.48h.01c6.62 0 11.98-5.36 11.98-11.98C28.01 9.36 22.64 4 16.02 4Zm0 21.86h-.01a9.92 9.92 0 0 1-5.06-1.39l-.36-.22-3.68.96.98-3.59-.24-.37a9.93 9.93 0 0 1-1.52-5.27c0-5.49 4.47-9.96 9.98-9.96 2.66 0 5.17 1.04 7.05 2.93a9.88 9.88 0 0 1 2.92 7.05c0 5.49-4.47 9.96-10.06 9.96Zm5.47-7.45c-.3-.15-1.77-.87-2.05-.97-.28-.1-.48-.15-.68.15-.2.3-.78.97-.96 1.17-.18.2-.35.22-.65.07-.3-.15-1.27-.47-2.42-1.49-.89-.8-1.5-1.77-1.67-2.07-.18-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.18.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.68-1.63-.93-2.23-.24-.58-.49-.5-.68-.51l-.58-.01c-.2 0-.52.07-.8.37-.27.3-1.05 1.03-1.05 2.52 0 1.48 1.07 2.91 1.22 3.11.15.2 2.11 3.22 5.1 4.51.71.31 1.27.49 1.7.63.72.23 1.37.2 1.88.12.57-.08 1.77-.72 2.02-1.42.25-.7.25-1.29.18-1.42-.07-.13-.27-.2-.57-.35Z" fill="currentColor"/>
+        </svg>
       </a>
-      <div class="price-note">Tratamiento bajo supervisión médica especializada · Ley 30681</div>
     </div>
-  </div>
-</section>
+  );
+}
 
+/* ── App ── */
+function App() {
+  const [booking, setBooking] = useState(false);
+  const [seed, setSeed] = useState(null);
 
-<!-- ============================================================
-     CTA FINAL
-============================================================ -->
-<section class="cta-sec" id="agendar">
-  <div class="cta-blob-bg"></div>
-  <div class="wrap">
-    <div class="cta-inner rv">
-      <div class="cta-tag">Sin filas · Sin esperas · 100% online</div>
-      <h2 class="cta-h2">Tu primera consulta<br>a un click de distancia</h2>
-      <p class="cta-sub">Médicos certificados. Prescripción oficial. Teleconsulta desde cualquier parte del Perú.</p>
-      <div class="cta-btns">
-        <a href="https://organnical.pe/registro" class="btn-grad">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-          Agendar ahora — S/ 150
-        </a>
-        <a href="https://wa.me/51952476574" class="btn-ghost" target="_blank" rel="noopener">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-          WhatsApp
-        </a>
-      </div>
-      <div class="cta-note">Resultados pueden variar · Tratamiento bajo supervisión médica</div>
-    </div>
-  </div>
-</section>
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }),
+      { threshold: 0.12 }
+    );
+    document.querySelectorAll('.rv').forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
 
+  const openBook = (s) => { setSeed(s || null); setBooking(true); };
+  const scrollToTop = () => document.getElementById('top')?.scrollIntoView({ behavior: 'smooth' });
+  const onSignin = () => { window.location.href = '/login'; };
 
-<!-- ============================================================
-     FOOTER
-============================================================ -->
-<footer class="footer">
-  <div class="wrap">
-    <div class="footer-grid">
-      <div>
-        <div class="f-logo">Organnical<span>.pe</span></div>
-        <div class="f-desc">Telemedicina de cannabis medicinal en Perú. Médicos certificados MINSA. Tratamiento bajo supervisión médica especializada conforme a la Ley 30681.</div>
-        <div class="f-legal">© 2025 Organnical.pe · Todos los derechos reservados</div>
-      </div>
-      <div>
-        <div class="f-heading">Servicios</div>
-        <ul class="f-links">
-          <li><a href="#">Consulta de sueño</a></li>
-          <li><a href="#">Dolor crónico</a></li>
-          <li><a href="#">Ansiedad</a></li>
-          <li><a href="#">Salud femenina</a></li>
-          <li><a href="#">Cómo funciona</a></li>
-        </ul>
-      </div>
-      <div>
-        <div class="f-heading">Legal</div>
-        <ul class="f-links">
-          <li><a href="#">Política de privacidad</a></li>
-          <li><a href="#">Términos y condiciones</a></li>
-          <li><a href="#">Devoluciones</a></li>
-          <li><a href="#">Preguntas frecuentes</a></li>
-        </ul>
-      </div>
-    </div>
+  return (
+    <>
+      <Nav onBook={() => openBook()} onSignin={onSignin} />
+      <Hero onDone={ans => openBook(ans)} />
+      <Explain />
+      <Conditions onQuiz={() => { scrollToTop(); }} />
+      <Pricing onBook={() => openBook()} />
+      <Reviews />
+      <Doctors />
+      <FAQ />
+      <FinalCTA onQuiz={() => { scrollToTop(); }} />
+      <Footer />
+      <StickyCta onQuiz={() => openBook()} />
+      <WhatsappBubble raised={true} />
+      <BookingModal open={booking} onClose={() => setBooking(false)} seed={seed} />
+    </>
+  );
+}
 
-    <div class="footer-bottom">
-      <div class="f-copy">organnical.pe · WhatsApp +51 952 476 574</div>
-      <div class="f-reg">Resultados pueden variar · Ley 30681 Perú</div>
-    </div>
-  </div>
-</footer>
-
-
-<!-- WhatsApp FAB -->
-<a href="https://wa.me/51952476574" class="wa-fab" target="_blank" rel="noopener" aria-label="Contactar por WhatsApp">
-  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
-</a>
-
-
-<!-- ============================================================
-     JS
-============================================================ -->
-<script>
-  // Sticky nav
-  const nav = document.getElementById('nav');
-  window.addEventListener('scroll', () => {
-    nav.classList.toggle('stuck', window.scrollY > 40);
-  }, { passive: true });
-
-  // Scroll reveal
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); });
-  }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
-  document.querySelectorAll('.rv').forEach(el => io.observe(el));
-
-  // Specialty pill toggle
-  const pills = document.querySelectorAll('.pill');
-  pills.forEach(p => p.addEventListener('click', () => {
-    pills.forEach(x => x.classList.remove('on'));
-    p.classList.add('on');
-  }));
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
 </script>
-
 </body>
 </html>

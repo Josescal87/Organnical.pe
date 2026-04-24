@@ -15,6 +15,20 @@ const CATEGORY_COLORS: Record<string, string> = {
   "Medicina": "bg-sky-50 text-sky-600",
 }
 
+const CATEGORY_TO_VERTICAL: Record<string, string> = {
+  "Sueño": "sleep",
+  "Dolor Crónico": "pain",
+  "Ansiedad": "anxiety",
+  "Salud Femenina": "womens_health",
+}
+
+const CATEGORY_TO_SPECIALTY: Record<string, string> = {
+  "Sueño": "sueno",
+  "Dolor Crónico": "dolor-cronico",
+  "Ansiedad": "ansiedad",
+  "Salud Femenina": "salud-femenina",
+}
+
 export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }))
 }
@@ -128,7 +142,16 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const post = getPost(slug)
   if (!post) notFound()
 
-  const related = posts.filter((p) => p.slug !== post.slug).slice(0, 2)
+  const verticalId = CATEGORY_TO_VERTICAL[post.category] ?? ""
+  const specialtySlug = CATEGORY_TO_SPECIALTY[post.category] ?? ""
+  const bookingHref = verticalId ? `/agendar?v=${verticalId}` : "/registro"
+  const specialtyHref = specialtySlug ? `/especialidades/${specialtySlug}` : "/registro"
+
+  // Same-category posts first
+  const related = posts
+    .filter((p) => p.slug !== post.slug)
+    .sort((a) => (a.category === post.category ? -1 : 1))
+    .slice(0, 2)
 
   return (
     <>
@@ -222,18 +245,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 className="rounded-2xl p-6 text-white"
                 style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3a6e 100%)` }}
               >
-                <h3 className="font-display font-black text-lg mb-2">¿Tienes esta condición?</h3>
+                <h3 className="font-display font-black text-lg mb-2">¿Te identificas con esto?</h3>
                 <p className="text-white/60 text-sm mb-5 leading-relaxed">
-                  Agenda una consulta con nuestros médicos especializados y recibe un plan personalizado.
+                  Nuestros médicos especializados en {post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.
                 </p>
                 <Link
-                  href="/registro"
+                  href={bookingHref}
                   className="block w-full text-center rounded-full py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ background: G }}
                 >
-                  Agendar consulta
+                  Agendar consulta de {post.category}
                 </Link>
-                <p className="text-center text-xs text-white/30 mt-3">Primera consulta sin compromiso</p>
+                {specialtyHref && (
+                  <Link
+                    href={specialtyHref}
+                    className="block w-full text-center rounded-full py-2.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors mt-2"
+                  >
+                    Ver especialidad →
+                  </Link>
+                )}
               </div>
 
               {/* Author card */}
@@ -292,7 +322,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <ArrowLeft className="w-4 h-4" /> Todos los artículos
             </Link>
             <Link
-              href="/registro"
+              href={bookingHref}
               className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
             >

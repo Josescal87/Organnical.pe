@@ -302,7 +302,7 @@ export default function LandingPage() {
               </div>
 
               {/* Right — mini quiz */}
-              <div className="hero-card relative hidden lg:flex items-center justify-center">
+              <div className="hero-card relative flex items-center justify-center mt-4 lg:mt-0">
                 <div className="w-full max-w-sm rounded-3xl bg-white overflow-hidden" style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.22)" }}>
                   {quizStep <= 3 ? (() => {
                     const step = QUIZ_STEPS[quizStep - 1];

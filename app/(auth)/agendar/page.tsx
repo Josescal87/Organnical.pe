@@ -123,32 +123,20 @@ function AgendarWizard() {
     { sesiones: 5, precio: 270, label: "Ahorra S/ 30" },
   ]);
 
-  // Gate: verificar consentimientos y perfil antes de continuar
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) return;
-      const userId = data.user.id;
+  // Inline profile + consent gate state
+  const [authedUserId, setAuthedUserId] = useState<string | null>(null);
+  const [confirmSubStep, setConfirmSubStep] = useState<"auth" | "profile" | "consents">("auth");
+  const [docId, setDocId] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [pendingConsents, setPendingConsents] = useState<string[]>([]);
+  const [acceptedConsents, setAcceptedConsents] = useState<Set<string>>(new Set());
 
-      const [profileRes, consentsRes] = await Promise.all([
-        supabase.schema("medical").from("profiles").select("document_id, birth_date").eq("id", userId).single(),
-        supabase.schema("medical").from("consent_records").select("consent_type").eq("patient_id", userId).eq("accepted", true),
-      ]);
-
-      const profile = profileRes.data;
-      if (!profile?.document_id || !profile?.birth_date) {
-        router.replace("/dashboard/paciente/perfil?redirect=/agendar&required=true");
-        return;
-      }
-
-      const REQUIRED = ["general_treatment", "telemedicine", "cannabis_use", "data_processing"];
-      const accepted = new Set((consentsRes.data ?? []).map((c) => c.consent_type));
-      if (REQUIRED.some((t) => !accepted.has(t))) {
-        router.replace("/dashboard/paciente/consentimiento?redirect=/agendar");
-        return;
-      }
-    });
-  }, [router]);
+  const CONSENT_LABELS: Record<string, string> = {
+    general_treatment: "Consentimiento de tratamiento médico general",
+    telemedicine: "Consentimiento para consulta por telemedicina",
+    cannabis_use: "Consentimiento de uso de cannabis medicinal (si aplica)",
+    data_processing: "Consentimiento de tratamiento de datos personales de salud",
+  };
 
   // Load user session + doctors + pricing from DB
   useEffect(() => {
@@ -243,12 +231,44 @@ function AgendarWizard() {
     ?? { "1": DEFAULT_HOURS, "2": DEFAULT_HOURS, "3": DEFAULT_HOURS, "4": DEFAULT_HOURS, "5": DEFAULT_HOURS };
   const slots = generateSlots(selectedDate, doctorSchedule, bookedSlots);
 
+  async function checkAndAdvance(userId: string) {
+    const supabase = createClient();
+    const REQUIRED = ["general_treatment", "telemedicine", "cannabis_use", "data_processing"];
+
+    const [profileRes, consentsRes] = await Promise.all([
+      supabase.schema("medical").from("profiles").select("document_id, birth_date").eq("id", userId).single(),
+      supabase.schema("medical").from("consent_records").select("consent_type").eq("patient_id", userId).eq("accepted", true),
+    ]);
+
+    const profile = profileRes.data;
+    if (!profile?.document_id || !profile?.birth_date) {
+      setAuthedUserId(userId);
+      setConfirmSubStep("profile");
+      setSubmitting(false);
+      return;
+    }
+
+    const accepted = new Set((consentsRes.data ?? []).map((c: { consent_type: string }) => c.consent_type));
+    const missing = REQUIRED.filter((t) => !accepted.has(t));
+    if (missing.length > 0) {
+      setAuthedUserId(userId);
+      setPendingConsents(missing);
+      setConfirmSubStep("consents");
+      setSubmitting(false);
+      return;
+    }
+
+    setSubmitting(false);
+    setStep("payment");
+  }
+
   async function handleConfirm() {
     setSubmitting(true);
     setError(null);
 
+    const supabase = createClient();
+
     if (!user) {
-      const supabase = createClient();
       if (!showLogin) {
         if (!guestName.trim() || !guestEmail.trim() || !guestPassword) {
           setError("Completa todos los campos para continuar.");
@@ -285,9 +305,45 @@ function AgendarWizard() {
           return;
         }
       }
-      setUser({ email: showLogin ? guestEmail.trim() : guestEmail.trim() });
+      setUser({ email: guestEmail.trim() });
     }
 
+    const { data: { user: authUser } } = await supabase.auth.getUser();
+    if (!authUser) { setSubmitting(false); return; }
+    await checkAndAdvance(authUser.id);
+  }
+
+  async function handleSaveProfile() {
+    if (!docId.trim() || !birthDate) {
+      setError("Completa tu DNI y fecha de nacimiento para continuar.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    const supabase = createClient();
+    const { error } = await supabase.schema("medical").from("profiles")
+      .upsert({ id: authedUserId, document_id: docId.trim(), birth_date: birthDate }, { onConflict: "id" });
+    if (error) { setError(error.message); setSubmitting(false); return; }
+    await checkAndAdvance(authedUserId!);
+  }
+
+  async function handleSaveConsents() {
+    if (pendingConsents.some((c) => !acceptedConsents.has(c))) {
+      setError("Debes aceptar todos los consentimientos para continuar.");
+      return;
+    }
+    setSubmitting(true);
+    setError(null);
+    const supabase = createClient();
+    const records = pendingConsents.map((consent_type) => ({
+      patient_id: authedUserId,
+      consent_type,
+      accepted: true,
+      accepted_at: new Date().toISOString(),
+      version: "1.0",
+    }));
+    const { error } = await supabase.schema("medical").from("consent_records").insert(records);
+    if (error) { setError(error.message); setSubmitting(false); return; }
     setSubmitting(false);
     setStep("payment");
   }
@@ -697,24 +753,119 @@ function AgendarWizard() {
               </div>
             )}
 
+            {/* ── Inline profile gate ── */}
+            {confirmSubStep === "profile" && (
+              <div className="bg-white rounded-2xl border border-violet-100 p-6 mb-6">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(167,139,250,0.12)" }}>
+                    <User className="w-3.5 h-3.5 text-[#A78BFA]" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-[#0B1D35] text-sm">Un dato más antes de pagar</h2>
+                    <p className="text-xs text-zinc-400">Lo necesitamos para emitir tu receta médica.</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-500 mb-1 block">DNI / Documento de identidad</label>
+                    <input
+                      type="text"
+                      placeholder="Ej. 12345678"
+                      value={docId}
+                      onChange={(e) => setDocId(e.target.value)}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-zinc-500 mb-1 block">Fecha de nacimiento</label>
+                    <input
+                      type="date"
+                      value={birthDate}
+                      onChange={(e) => setBirthDate(e.target.value)}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-800 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* ── Inline consent gate ── */}
+            {confirmSubStep === "consents" && (
+              <div className="bg-white rounded-2xl border border-violet-100 p-6 mb-6">
+                <div className="flex items-center gap-2.5 mb-4">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: "rgba(167,139,250,0.12)" }}>
+                    <CheckCircle className="w-3.5 h-3.5 text-[#A78BFA]" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-[#0B1D35] text-sm">Consentimientos médicos</h2>
+                    <p className="text-xs text-zinc-400">Requeridos por la normativa MINSA para teleconsulta.</p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  {pendingConsents.map((key) => (
+                    <label key={key} className="flex items-start gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={acceptedConsents.has(key)}
+                        onChange={(e) => {
+                          const next = new Set(acceptedConsents);
+                          if (e.target.checked) next.add(key); else next.delete(key);
+                          setAcceptedConsents(next);
+                        }}
+                        className="mt-0.5 w-4 h-4 rounded accent-violet-500 flex-shrink-0"
+                      />
+                      <span className="text-sm text-zinc-600 group-hover:text-zinc-800 transition-colors leading-snug">
+                        {CONSENT_LABELS[key] ?? key}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {error && (
               <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 mb-4 text-sm text-rose-600">
                 {error}
               </div>
             )}
 
-            <button
-              onClick={handleConfirm}
-              disabled={submitting}
-              className="w-full rounded-xl py-3.5 text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
-              style={{ background: G }}
-            >
-              {submitting ? (
-                <><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</>
-              ) : (
-                <><CreditCard className="w-4 h-4" /> {user ? "Proceder al pago" : showLogin ? "Iniciar sesión y pagar" : "Crear cuenta y pagar"}</>
-              )}
-            </button>
+            {confirmSubStep === "auth" && (
+              <button
+                onClick={handleConfirm}
+                disabled={submitting}
+                className="w-full rounded-xl py-3.5 text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
+                style={{ background: G }}
+              >
+                {submitting ? (
+                  <><Loader2 className="w-4 h-4 animate-spin" /> Procesando...</>
+                ) : (
+                  <><CreditCard className="w-4 h-4" /> {user ? "Proceder al pago" : showLogin ? "Iniciar sesión y pagar" : "Crear cuenta y pagar"}</>
+                )}
+              </button>
+            )}
+
+            {confirmSubStep === "profile" && (
+              <button
+                onClick={handleSaveProfile}
+                disabled={submitting}
+                className="w-full rounded-xl py-3.5 text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
+                style={{ background: G }}
+              >
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Guardando...</> : <><ArrowRight className="w-4 h-4" /> Continuar al pago</>}
+              </button>
+            )}
+
+            {confirmSubStep === "consents" && (
+              <button
+                onClick={handleSaveConsents}
+                disabled={submitting || pendingConsents.some((c) => !acceptedConsents.has(c))}
+                className="w-full rounded-xl py-3.5 text-sm font-semibold text-white flex items-center justify-center gap-2 transition-all hover:opacity-90 disabled:opacity-60"
+                style={{ background: G }}
+              >
+                {submitting ? <><Loader2 className="w-4 h-4 animate-spin" /> Guardando...</> : <><CreditCard className="w-4 h-4" /> Confirmar y pagar</>}
+              </button>
+            )}
+
             <p className="text-center text-xs text-zinc-400 mt-3">
               Pagarás S/ {comboPrice.toFixed(2)} con Mercado Pago de forma segura.
             </p>

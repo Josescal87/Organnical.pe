@@ -41,7 +41,7 @@ const sections = [
     faqs: [
       {
         q: "¿Las recetas son válidas en farmacias peruanas?",
-        a: "Sí. Las recetas emitidas en Organnical tienen firma digital del médico, número correlativo oficial, CMP y RNE del médico, y sello de la IPRESS. Son válidas en cualquier farmacia del Perú.",
+        a: "Sí. Las recetas emitidas en Organnical tienen firma digital del médico, número correlativo oficial, CMP y RNE del médico. Son válidas en cualquier farmacia del Perú.",
       },
       {
         q: "¿Puedo acceder a mi historia clínica?",

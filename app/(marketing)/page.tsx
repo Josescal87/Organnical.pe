@@ -6,7 +6,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   Star, Shield, Clock, Video, CheckCircle, ArrowRight,
-  Heart, Phone, Lock, FileText, Zap, ChevronRight,
+  Heart, Phone, Zap, ChevronRight,
   Calendar, Award, Users, MessageSquare,
 } from "lucide-react";
 import { posts } from "@/lib/blog";
@@ -90,11 +90,9 @@ const testimonials = [
 
 
 const trustItems = [
-  { icon: Shield, text: "Médicos certificados MINSA" },
-  { icon: FileText, text: "Documentación médica oficial" },
+  { icon: Shield, text: "Médicos con CMP activo" },
   { icon: Clock, text: "Primera cita en < 48h" },
-  { icon: Heart, text: "+2,400 pacientes" },
-  { icon: Lock, text: "100% confidencial" },
+  { icon: Heart, text: "+3,000 pacientes" },
 ];
 
 const steps = [

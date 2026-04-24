@@ -4,8 +4,10 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { BackLink } from "@/components/BackLink";
 import IpressForm from "./IpressForm";
+import { IpressModeToggle } from "./IpressModeToggle";
 import type { IpressConfig } from "./actions";
-import { Building2, ShieldCheck } from "lucide-react";
+import { getIpressMode } from "@/lib/ipress-config";
+import { Building2, ShieldCheck, Info } from "lucide-react";
 
 const CONFIG_KEYS: (keyof IpressConfig)[] = [
   "ipress_code",
@@ -44,11 +46,14 @@ export default async function AdminIpressPage() {
   const role = profile?.role ?? user.user_metadata?.role;
   if (role !== "admin") redirect("/dashboard");
 
-  const { data: rows } = await supabase
-    .schema("medical")
-    .from("system_config")
-    .select("key, value")
-    .in("key", CONFIG_KEYS);
+  const [{ data: rows }, ipressMode] = await Promise.all([
+    supabase
+      .schema("medical")
+      .from("system_config")
+      .select("key, value")
+      .in("key", CONFIG_KEYS),
+    getIpressMode(),
+  ]);
 
   const config: IpressConfig = { ...DEFAULT_CONFIG };
   for (const row of rows ?? []) {
@@ -57,7 +62,8 @@ export default async function AdminIpressPage() {
     }
   }
 
-  const isConfigured = config.ipress_code !== "" && config.ipress_code !== "PENDIENTE";
+  const ipressCode = config.ipress_code;
+  const isConfigured = ipressCode !== "" && ipressCode !== "PENDIENTE";
 
   return (
     <div className="p-6 md:p-10 max-w-2xl">
@@ -73,6 +79,31 @@ export default async function AdminIpressPage() {
           </div>
         </div>
       </div>
+
+      {ipressMode === "disabled" ? (
+        <div className="mb-6 rounded-2xl border border-blue-200 bg-blue-50 p-4 flex gap-3">
+          <Info className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-blue-800">Modo Light activo</p>
+            <p className="text-xs text-blue-600 mt-0.5">
+              Las recetas se emiten bajo CMP del médico (ORG-YYYY-NNNNNN).
+              Para activar modo IPRESS, configura el código IPRESS abajo y haz clic en &quot;Activar modo IPRESS&quot;.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex gap-3">
+          <ShieldCheck className="w-5 h-5 text-emerald-500 flex-shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-semibold text-emerald-800">Modo IPRESS activo</p>
+            <p className="text-xs text-emerald-600 mt-0.5">
+              Las recetas usan el código IPRESS configurado.
+            </p>
+          </div>
+        </div>
+      )}
+
+      <IpressModeToggle currentMode={ipressMode} ipressCode={ipressCode} />
 
       {!isConfigured && (
         <div className="mb-6 rounded-2xl border border-amber-200 bg-amber-50 p-4 flex gap-3">

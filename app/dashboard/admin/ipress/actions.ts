@@ -50,3 +50,36 @@ export async function updateIpressConfig(config: IpressConfig) {
   revalidatePath("/dashboard/admin/ipress");
   return { success: true };
 }
+
+export async function activateIpressMode(): Promise<{ error?: string }> {
+  const admin = adminClient();
+  // Verify ipress_code is set and not PENDIENTE before allowing activation
+  const { data: codeRow } = await admin
+    .schema("medical")
+    .from("system_config")
+    .select("value")
+    .eq("key", "ipress_code")
+    .single();
+
+  const code = codeRow?.value;
+  if (!code || code === "PENDIENTE" || code.trim() === "") {
+    return { error: "Configura el código IPRESS antes de activar el modo IPRESS." };
+  }
+
+  const { error } = await admin
+    .schema("medical")
+    .from("system_config")
+    .upsert({ key: "ipress_mode", value: "enabled", updated_at: new Date().toISOString() }, { onConflict: "key" });
+
+  return error ? { error: error.message } : {};
+}
+
+export async function deactivateIpressMode(): Promise<{ error?: string }> {
+  const admin = adminClient();
+  const { error } = await admin
+    .schema("medical")
+    .from("system_config")
+    .upsert({ key: "ipress_mode", value: "disabled", updated_at: new Date().toISOString() }, { onConflict: "key" });
+
+  return error ? { error: error.message } : {};
+}

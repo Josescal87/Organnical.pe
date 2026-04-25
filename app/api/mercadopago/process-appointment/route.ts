@@ -100,9 +100,10 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    console.log("[process-appointment] MP result status:", paymentResult.status, "status_detail:", (paymentResult as Record<string, unknown>).status_detail);
+    const mpResult = paymentResult as unknown as Record<string, unknown>;
+    console.log("[process-appointment] MP result status:", paymentResult.status, "status_detail:", mpResult.status_detail);
     if (paymentResult.status !== "approved") {
-      return NextResponse.json({ status: paymentResult.status, status_detail: (paymentResult as Record<string, unknown>).status_detail });
+      return NextResponse.json({ status: paymentResult.status, status_detail: mpResult.status_detail });
     }
     const paymentId = String(paymentResult.id);
 

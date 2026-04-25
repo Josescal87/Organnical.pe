@@ -48,30 +48,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
     }
 
-    // Fetch server-side price — never trust client-supplied amount
-    const { data: comboRows } = await supabase
-      .from("consulta_combos")
-      .select("precio")
-      .eq("sesiones", sessions)
-      .limit(1) as unknown as { data: { precio: number }[] | null };
-    const combo = comboRows?.[0] ?? null;
+    // Check for per-user price override (e.g. test accounts)
+    const { data: profileOverride } = await supabase
+      .schema("medical")
+      .from("profiles")
+      .select("precio_override")
+      .eq("id", user.id)
+      .single() as { data: { precio_override: number | null } | null };
 
     let totalCharged: number;
     let pricePerSession: number;
 
-    if (combo?.precio) {
-      totalCharged = combo.precio;
-      pricePerSession = Math.round((combo.precio / sessions) * 100) / 100;
+    if (profileOverride?.precio_override != null) {
+      totalCharged  = profileOverride.precio_override;
+      pricePerSession = profileOverride.precio_override;
     } else {
-      const { data: config } = await supabase
-        .from("consulta_config")
-        .select("precio, descuento_porcentaje")
-        .eq("id", 1)
-        .single() as { data: { precio: number; descuento_porcentaje: number } | null };
-      const precioBase = config?.precio ?? 60;
-      const descuento  = config?.descuento_porcentaje ?? 0;
-      pricePerSession  = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;
-      totalCharged     = Math.round(pricePerSession * sessions * 100) / 100;
+      // Fetch server-side price — never trust client-supplied amount
+      const { data: comboRows } = await supabase
+        .from("consulta_combos")
+        .select("precio")
+        .eq("sesiones", sessions)
+        .limit(1) as unknown as { data: { precio: number }[] | null };
+      const combo = comboRows?.[0] ?? null;
+
+      if (combo?.precio) {
+        totalCharged = combo.precio;
+        pricePerSession = Math.round((combo.precio / sessions) * 100) / 100;
+      } else {
+        const { data: config } = await supabase
+          .from("consulta_config")
+          .select("precio, descuento_porcentaje")
+          .eq("id", 1)
+          .single() as { data: { precio: number; descuento_porcentaje: number } | null };
+        const precioBase = config?.precio ?? 60;
+        const descuento  = config?.descuento_porcentaje ?? 0;
+        pricePerSession  = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;
+        totalCharged     = Math.round(pricePerSession * sessions * 100) / 100;
+      }
     }
 
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });

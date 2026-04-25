@@ -1,25 +1,28 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-// Mock Upstash so tests don't need real Redis
-vi.mock("@upstash/redis", () => ({
-  Redis: vi.fn().mockImplementation(() => ({})),
-}));
-
 const counters = new Map<string, number>();
 
-vi.mock("@upstash/ratelimit", () => ({
-  Ratelimit: vi.fn().mockImplementation(({ limiter: _ }) => ({
-    limit: vi.fn().mockImplementation(async (key: string) => {
-      const count = (counters.get(key) ?? 0) + 1;
-      counters.set(key, count);
-      return { success: count <= 3 };
-    }),
-  })),
+vi.mock("@upstash/redis", () => ({
+  Redis: class {
+    constructor(_opts: unknown) {}
+  },
 }));
 
-// Assign static limit method to satisfy constructor usage
-const { Ratelimit } = await import("@upstash/ratelimit");
-(Ratelimit as unknown as { slidingWindow: () => unknown }).slidingWindow = vi.fn().mockReturnValue({});
+vi.mock("@upstash/ratelimit", () => {
+  class Ratelimit {
+    constructor(_opts: unknown) {}
+    async limit(key: string) {
+      const count = (counters.get(key) ?? 0) + 1;
+      counters.set(key, count);
+      // Mock: limit of 3 per window
+      return { success: count <= 3 };
+    }
+    static slidingWindow(_limit: number, _window: string) {
+      return {};
+    }
+  }
+  return { Ratelimit };
+});
 
 let checkRateLimit: (key: string, limit: number, windowMs: number) => Promise<boolean>;
 
@@ -40,19 +43,19 @@ describe("checkRateLimit", () => {
 
   it("bloquea al superar el límite", async () => {
     const key = `test:${Date.now()}-block`;
-    await checkRateLimit(key, 2, 60_000);
-    await checkRateLimit(key, 2, 60_000);
-    await checkRateLimit(key, 2, 60_000);
-    expect(await checkRateLimit(key, 2, 60_000)).toBe(false);
+    await checkRateLimit(key, 3, 60_000);
+    await checkRateLimit(key, 3, 60_000);
+    await checkRateLimit(key, 3, 60_000);
+    expect(await checkRateLimit(key, 3, 60_000)).toBe(false);
   });
 
   it("keys distintas no interfieren entre sí", async () => {
     const a = `test:${Date.now()}-a`;
     const b = `test:${Date.now()}-b`;
-    await checkRateLimit(a, 1, 60_000);
-    await checkRateLimit(a, 1, 60_000);
-    await checkRateLimit(a, 1, 60_000);
-    await checkRateLimit(a, 1, 60_000);
-    expect(await checkRateLimit(b, 1, 60_000)).toBe(true);
+    await checkRateLimit(a, 3, 60_000);
+    await checkRateLimit(a, 3, 60_000);
+    await checkRateLimit(a, 3, 60_000);
+    await checkRateLimit(a, 3, 60_000);
+    expect(await checkRateLimit(b, 3, 60_000)).toBe(true);
   });
 });

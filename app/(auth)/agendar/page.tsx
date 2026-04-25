@@ -115,6 +115,8 @@ function AgendarWizard() {
   const [sessions, setSessions] = useState(1);
   const [preferenceId, setPreferenceId] = useState<string | null>(null);
   const [loadingPreference, setLoadingPreference] = useState(false);
+  const [preferenceError, setPreferenceError] = useState<string | null>(null);
+  const [preferenceRetry, setPreferenceRetry] = useState(0);
   const mpInitialized = useRef(false);
   const [paymentResult, setPaymentResult] = useState<{ appointmentIds: string[]; meetLinks: (string | null)[] } | null>(null);
   const [combos, setCombos] = useState<{ sesiones: number; precio: number; label: string | null }[]>([
@@ -175,6 +177,7 @@ function AgendarWizard() {
       mpInitialized.current = true;
     }
     if (preferenceId) return;
+    setPreferenceError(null);
     setLoadingPreference(true);
     const combo = combos.find((c) => c.sesiones === sessions) ?? combos[0];
     const totalAmount = combo?.precio ?? pricing.precioFinal * sessions;
@@ -190,11 +193,21 @@ function AgendarWizard() {
         }],
       }),
     })
-      .then((r) => r.json())
-      .then((d) => { if (d.preference_id) setPreferenceId(d.preference_id); })
-      .catch((e) => console.error("Preference error:", e))
+      .then(async (r) => {
+        const d = await r.json();
+        if (d.preference_id) {
+          setPreferenceId(d.preference_id);
+        } else {
+          setPreferenceError(d.error ?? "No se pudo iniciar el pago");
+          console.error("Preference error:", d);
+        }
+      })
+      .catch((e) => {
+        console.error("Preference fetch error:", e);
+        setPreferenceError("Error de conexión al iniciar el pago");
+      })
       .finally(() => setLoadingPreference(false));
-  }, [step]);
+  }, [step, preferenceRetry]);
 
   // Load booked slots when doctor + date changes
   useEffect(() => {
@@ -958,6 +971,17 @@ function AgendarWizard() {
                     {loadingPreference && (
                       <div className="bg-white rounded-2xl border border-zinc-100 p-10 flex items-center justify-center">
                         <div className="w-6 h-6 rounded-full border-2 border-violet-300 border-t-violet-600 animate-spin" />
+                      </div>
+                    )}
+                    {preferenceError && !loadingPreference && (
+                      <div className="bg-white rounded-2xl border border-red-100 p-6 flex flex-col gap-3">
+                        <p className="text-sm text-red-600 font-medium">{preferenceError}</p>
+                        <button
+                          onClick={() => { setPreferenceId(null); setPreferenceError(null); setPreferenceRetry((n) => n + 1); }}
+                          className="text-sm text-violet-600 hover:underline text-left"
+                        >
+                          Intentar de nuevo
+                        </button>
                       </div>
                     )}
                     {preferenceId && !loadingPreference && (

@@ -14,7 +14,7 @@ function getAdminClient() {
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (!checkRateLimit(`reclamaciones:${ip}`, 5, 15 * 60 * 1000)) {
+  if (!(await checkRateLimit(`reclamaciones:${ip}`, 5, 15 * 60 * 1000))) {
     return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
   }
 

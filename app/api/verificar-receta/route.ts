@@ -13,7 +13,7 @@ function adminClient() {
 
 export async function GET(req: NextRequest) {
   const ip = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  if (!checkRateLimit(`verificar-receta:${ip}`, 30, 60 * 1000)) {
+  if (!(await checkRateLimit(`verificar-receta:${ip}`, 30, 60 * 1000))) {
     return NextResponse.json({ error: "Demasiadas solicitudes." }, { status: 429 });
   }
 

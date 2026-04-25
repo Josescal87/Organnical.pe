@@ -91,7 +91,6 @@ export async function POST(req: NextRequest) {
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
     const paymentClient = new Payment(mp);
 
-    console.log("[process-appointment] Creating payment, amount:", totalCharged, "formData keys:", Object.keys(formData ?? {}));
     const paymentResult = await paymentClient.create({
       body: {
         ...formData,
@@ -102,7 +101,6 @@ export async function POST(req: NextRequest) {
     });
 
     const mpResult = paymentResult as unknown as Record<string, unknown>;
-    console.log("[process-appointment] MP result status:", paymentResult.status, "status_detail:", mpResult.status_detail);
     if (paymentResult.status !== "approved") {
       return NextResponse.json({ status: paymentResult.status, status_detail: mpResult.status_detail });
     }

@@ -62,28 +62,25 @@ const FALLBACK_DOCTORS: DoctorCard[] = [
 
 const testimonials = [
   {
-    name: "María Castro",
-    location: "San Borja, Lima",
-    photo: "1531746020-1b38a7c9a1fd",
-    rating: 5,
-    text: "Llevaba tres años sin poder dormir más de cuatro horas seguidas. La Dra. Poma identificó la causa en la primera consulta y diseñó un protocolo que al mes ya funcionaba. Nunca me habían explicado mi propio cuerpo con tanta claridad.",
+    name: "Raúl I.",
+    headline: "Recuperando la calidad del sueño",
+    text: "Mi mente era como una computadora que no se apagaba. Dormía en 'modo suspensión' y al día siguiente arrastraba el cansancio. En Organnical me explicaron cómo el tratamiento funcionaba en mi caso. Por fin apago el ruido y duermo profundo. Me despierto entero.",
     specialty: "Paciente · Sueño",
-  },
-  {
-    name: "Carlos Ríos",
-    location: "Miraflores, Lima",
-    photo: "1507003211169-0a1dd7228f2d",
-    rating: 4,
-    text: "Tengo fibromialgia hace 6 años. He visto neurólogos, reumatólogos, traumatólogos — todos me mandaban de vuelta a cero. Aquí por fin alguien miró el cuadro completo. No es magia, es proceso, pero por fin hay proceso.",
-    specialty: "Paciente · Dolor Crónico",
-  },
-  {
-    name: "Ana Paredes",
-    location: "San Isidro, Lima",
-    photo: "1438761681033-6461ffad8d80",
     rating: 5,
-    text: "A los 44 empecé a dormir mal, a tener ansiedad sin razón y a sentirme completamente distinta. Todos me decían que era el estrés. Aquí me dijeron que era perimenopausia y me dieron un plan real. La diferencia en dos meses fue enorme.",
-    specialty: "Paciente · Salud Femenina",
+  },
+  {
+    name: "Patricia C.",
+    headline: "La importancia de la asesoría personalizada",
+    text: "Dormía 2 o 3 horas cortadas cada noche. Probé tratamientos por mi cuenta y no pasó nada. La doctora de Organnical revisó mi caso completo y me explicó exactamente qué necesitaba y en qué dosis. Ahora descanso más de 8 horas seguidas. La diferencia fue la asesoría.",
+    specialty: "Paciente · Sueño",
+    rating: 5,
+  },
+  {
+    name: "Juan Carlos M.",
+    headline: "Recuperando la movilidad y la pasión",
+    text: "El dolor crónico de espalda me había quitado lo que más amo: cabalgar. Probé de todo sin resultados reales. En Organnical me armaron un tratamiento personalizado y la mejoría fue progresiva hasta recuperar mi movilidad. Hoy ya estoy de vuelta en el caballo.",
+    specialty: "Paciente · Dolor Crónico",
+    rating: 5,
   },
 ];
 
@@ -595,24 +592,32 @@ export default function LandingPage() {
               {testimonials.map((t, i) => (
                 <div
                   key={t.name}
-                  className="reveal rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/[0.08] transition-colors"
+                  className="reveal flex flex-col rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/[0.08] transition-colors"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
-                  <div className="flex gap-1 mb-5">
-                    {[...Array(t.rating)].map((_, j) => (
-                      <Star key={j} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+                  {/* Headline + stars */}
+                  <div className="mb-5">
+                    <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">{t.headline}</p>
+                    <div className="flex gap-1">
+                      {[...Array(t.rating)].map((_, j) => (
+                        <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
                   </div>
 
-                  <p className="text-white/70 leading-relaxed text-sm mb-8">&ldquo;{t.text}&rdquo;</p>
+                  <p className="text-white/70 leading-relaxed text-sm mb-8 flex-1">&ldquo;{t.text}&rdquo;</p>
 
-                  <div className="flex items-center gap-3">
-                    <div className="relative h-10 w-10 rounded-full overflow-hidden flex-shrink-0 ring-2 ring-white/10">
-                      <Image src={u(t.photo, 80, 80)} alt={t.name} fill className="object-cover" />
+                  {/* Author — initials avatar, no photo */}
+                  <div className="flex items-center gap-3 pt-5 border-t border-white/8">
+                    <div
+                      className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                      style={{ background: G }}
+                    >
+                      {t.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <p className="text-white font-semibold text-sm">{t.name}</p>
-                      <p className="text-white/35 text-xs">{t.specialty} · {t.location}</p>
+                      <p className="text-white/35 text-xs">{t.specialty}</p>
                     </div>
                   </div>
                 </div>

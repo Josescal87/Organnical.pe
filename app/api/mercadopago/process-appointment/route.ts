@@ -11,6 +11,7 @@ import {
 import { getAdminEmails } from "@/lib/get-admin-emails";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -30,6 +31,10 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+
+    if (!(await checkRateLimit(`mp-appointment:${user.id}`, 10, 15 * 60 * 1000))) {
+      return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
+    }
 
     const body = await req.json();
     const { doctorId, specialty, slotStart, sessions, ...formData } = body as {

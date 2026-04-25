@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { MercadoPagoConfig, Preference } from "mercadopago";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 type CartItem = {
   sku:         string;
@@ -20,6 +21,10 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+
+    if (!(await checkRateLimit(`mp-preference:${user.id}`, 10, 15 * 60 * 1000))) {
+      return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
+    }
 
     const { items } = await req.json() as { items: CartItem[] };
     if (!items?.length) return NextResponse.json({ error: "Carrito vacío" }, { status: 400 });

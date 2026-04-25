@@ -5,6 +5,7 @@ import { MercadoPagoConfig, Payment } from "mercadopago";
 import { sendAdminSaleNotification, sendProductPurchaseConfirmation } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
 import { sanitizeError } from "@/lib/sanitize-error";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -20,6 +21,10 @@ export async function POST(req: NextRequest) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+
+    if (!(await checkRateLimit(`mp-payment:${user.id}`, 10, 15 * 60 * 1000))) {
+      return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
+    }
 
     const body = await req.json();
     const { cart, ...formData } = body as { cart: CartItem[] } & Record<string, unknown>;

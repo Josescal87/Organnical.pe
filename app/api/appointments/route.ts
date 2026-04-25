@@ -8,6 +8,7 @@ import { createWherebyMeeting } from "@/lib/whereby/client";
 import type { AppointmentSpecialty, MedicalAppointmentInsert } from "@/lib/supabase/database.types";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 import { sanitizeError } from "@/lib/sanitize-error";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -23,6 +24,10 @@ export async function POST(req: NextRequest) {
 
     if (!user) {
       return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
+    if (!(await checkRateLimit(`appointments:${user.id}`, 10, 15 * 60 * 1000))) {
+      return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 15 minutos." }, { status: 429 });
     }
 
     const body = await req.json();

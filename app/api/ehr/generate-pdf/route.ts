@@ -8,6 +8,7 @@ import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import React from "react";
 import { EncounterPDF, type EncounterPDFData } from "@/lib/pdf/EncounterPDF";
 import { PrescriptionPDF, type PrescriptionPDFData } from "@/lib/pdf/PrescriptionPDF";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 const BUCKET = "medical-documents";
 
@@ -46,6 +47,10 @@ export async function POST(req: NextRequest) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+
+  if (!(await checkRateLimit(`generate-pdf:${user.id}`, 20, 60 * 60 * 1000))) {
+    return NextResponse.json({ error: "Demasiadas solicitudes. Intenta en 1 hora." }, { status: 429 });
+  }
 
   const body = await req.json() as { type: "encounter" | "prescription"; id: string };
   const admin = adminClient();

@@ -8,8 +8,8 @@ import { getAdminEmails } from "@/lib/get-admin-emails";
 function verifyWebhookSignature(req: NextRequest, dataId: string): boolean {
   const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
   if (!secret) {
-    console.warn("[webhook] MERCADOPAGO_WEBHOOK_SECRET not set — skipping signature check");
-    return true;
+    console.error("[webhook] MERCADOPAGO_WEBHOOK_SECRET not set — rejecting request");
+    return false;
   }
   const xSignature = req.headers.get("x-signature");
   const xRequestId = req.headers.get("x-request-id");

@@ -359,7 +359,7 @@ function AgendarWizard() {
     <div className="min-h-screen bg-[#F8FAFC]">
       {/* Header */}
       <div className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-zinc-100">
-        <div className="mx-auto max-w-3xl px-6 h-16 flex items-center justify-between">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/">
             <Image src="/logo-color.png" alt="Organnical" width={130} height={32} />
           </Link>
@@ -381,7 +381,7 @@ function AgendarWizard() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-3xl px-6 py-10">
+      <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10">
 
         {/* ── STEP: vertical ── */}
         {step === "vertical" && (
@@ -498,7 +498,7 @@ function AgendarWizard() {
                 </button>
               </div>
 
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-5 gap-1 sm:gap-2">
                 {weekDays.map((day) => {
                   const isSelected = isSameDay(day, selectedDate);
                   const isPast = day < addDays(new Date(), 0);
@@ -510,7 +510,7 @@ function AgendarWizard() {
                       key={day.toISOString()}
                       onClick={() => { if (!isDisabled) { setSelectedDate(day); setSelectedSlot(""); } }}
                       disabled={isDisabled}
-                      className={`flex flex-col items-center py-2.5 rounded-xl text-sm transition-all ${
+                      className={`flex flex-col items-center py-2 sm:py-2.5 rounded-xl transition-all ${
                         isDisabled
                           ? "opacity-30 cursor-not-allowed"
                           : isSelected
@@ -519,10 +519,10 @@ function AgendarWizard() {
                       }`}
                       style={isSelected ? { background: G } : {}}
                     >
-                      <span className="text-[10px] uppercase font-medium opacity-70">
-                        {day.toLocaleDateString("es-PE", { weekday: "short" })}
+                      <span className="text-[9px] sm:text-[10px] uppercase font-medium opacity-70">
+                        {day.toLocaleDateString("es-PE", { weekday: "short" }).replace(".", "")}
                       </span>
-                      <span className="text-lg font-black mt-0.5">{day.getDate()}</span>
+                      <span className="text-base sm:text-lg font-black mt-0.5">{day.getDate()}</span>
                     </button>
                   );
                 })}
@@ -544,7 +544,7 @@ function AgendarWizard() {
                   No hay horarios disponibles para este día.
                 </p>
               ) : (
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-2">
                   {slots.map((slot) => {
                     const isSelected = slot === selectedSlot;
                     const time = new Date(slot).toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
@@ -586,7 +586,7 @@ function AgendarWizard() {
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Confirma tu cita</h1>
             <p className="text-zinc-500 text-sm mb-8">Revisa los detalles antes de confirmar.</p>
 
-            <div className="bg-white rounded-2xl border border-zinc-100 p-6 mb-6 space-y-4">
+            <div className="bg-white rounded-2xl border border-zinc-100 p-4 sm:p-6 mb-6 space-y-4">
               <div className="flex items-center gap-4">
                 {selectedDoctor?.photo_url ? (
                   <Image
@@ -609,7 +609,7 @@ function AgendarWizard() {
 
               <div className="h-px bg-zinc-50" />
 
-              <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="grid grid-cols-2 gap-3 text-sm">
                 <div>
                   <p className="text-xs text-zinc-400 mb-1">Especialidad</p>
                   <p className="font-semibold text-[#0B1D35]">
@@ -645,12 +645,12 @@ function AgendarWizard() {
 
               <div>
                 <p className="text-xs text-zinc-400 mb-2">Número de sesiones</p>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {combos.map((c) => (
                     <button
                       key={c.sesiones}
                       onClick={() => setSessions(c.sesiones)}
-                      className={`flex-1 rounded-xl py-2.5 text-sm font-bold border transition-all ${
+                      className={`flex-1 min-w-[80px] rounded-xl py-2.5 text-sm font-bold border transition-all ${
                         sessions === c.sesiones
                           ? "text-white border-transparent"
                           : "border-zinc-200 text-zinc-600 hover:border-violet-300"
@@ -687,7 +687,7 @@ function AgendarWizard() {
             </div>
 
             {!user && (
-              <div className="bg-white rounded-2xl border border-violet-100 p-6 mb-6">
+              <div className="bg-white rounded-2xl border border-violet-100 p-4 sm:p-6 mb-6">
                 <div className="flex items-center gap-2.5 mb-1">
                   <div
                     className="w-7 h-7 rounded-full flex items-center justify-center flex-shrink-0"

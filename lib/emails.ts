@@ -83,8 +83,9 @@ export async function sendAppointmentConfirmation({
   meetLink: string | null;
 }) {
   const date = new Date(slotStart);
-  const dateStr = date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const timeStr = date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  const limaOpts = { timeZone: "America/Lima" } as const;
+  const dateStr = date.toLocaleDateString("es-PE", { ...limaOpts, weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const timeStr = date.toLocaleTimeString("es-PE", { ...limaOpts, hour: "2-digit", minute: "2-digit" });
   const specialtyLabel = emailSpecialtyLabel(specialty);
 
   const meetSection = meetLink
@@ -345,8 +346,9 @@ export async function sendNewAppointmentToDoctor({
   appointmentId: string;
 }) {
   const date = new Date(slotStart);
-  const dateStr = date.toLocaleDateString("es-PE", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
-  const timeStr = date.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit" });
+  const limaOpts = { timeZone: "America/Lima" } as const;
+  const dateStr = date.toLocaleDateString("es-PE", { ...limaOpts, weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const timeStr = date.toLocaleTimeString("es-PE", { ...limaOpts, hour: "2-digit", minute: "2-digit" });
   const specialtyLabel = emailSpecialtyLabel(specialty);
 
   const html = baseTemplate(`

@@ -6,7 +6,7 @@
   "crons": [
     {
       "path": "/api/cron/reminders?secret=$CRON_SECRET",
-      "schedule": "0 * * * *"
+      "schedule": "0 14 * * *"
     }
   ]
 }

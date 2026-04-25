@@ -24,12 +24,26 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { cart, ...formData } = body as { cart: CartItem[] } & Record<string, unknown>;
 
+    // Validate product prices server-side — never trust client amounts
+    const adminClient = createAdminClient();
+    const skus = (cart ?? []).map((i) => i.sku).filter(Boolean);
+    const { data: productRows } = skus.length
+      ? await adminClient.from("productos").select("sku, precio").in("sku", skus)
+      : { data: [] };
+    const priceMap = Object.fromEntries((productRows ?? []).map((p) => [p.sku, p.precio as number]));
+    const validatedCart: CartItem[] = (cart ?? []).map((item) => ({
+      ...item,
+      precio: priceMap[item.sku] ?? item.precio,
+    }));
+    const serverTotal = Math.round(validatedCart.reduce((s, i) => s + i.precio * i.qty, 0) * 100) / 100;
+
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
     const paymentClient = new Payment(mp);
 
     const result = await paymentClient.create({
       body: {
         ...formData,
+        transaction_amount: serverTotal,
         external_reference: user.id,
         statement_descriptor: "Organnical",
       },
@@ -37,8 +51,7 @@ export async function POST(req: NextRequest) {
 
     // Registrar venta y notificar admins si aprobado
     console.log("Payment result status:", result.status, "cart length:", cart?.length ?? 0);
-    if (result.status === "approved" && cart?.length) {
-      const adminClient = createAdminClient();
+    if (result.status === "approved" && validatedCart.length) {
 
       // Nombre del paciente
       let patientName = "Paciente";
@@ -66,8 +79,8 @@ export async function POST(req: NextRequest) {
       const baseOrden = (maxOrden?.num_orden ?? 0) + 1;
 
       console.log("Inserting ventas, items:", cart.length);
-      for (let idx = 0; idx < cart.length; idx++) {
-        const item = cart[idx];
+      for (let idx = 0; idx < validatedCart.length; idx++) {
+        const item = validatedCart[idx];
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const { error: ventaError } = await (adminClient as any).from("ventas").insert({
           num_orden:       baseOrden + idx,
@@ -86,14 +99,14 @@ export async function POST(req: NextRequest) {
         if (ventaError) console.error("Venta insert error:", sanitizeError(ventaError));
       }
 
-      const total = cart.reduce((s, i) => s + i.precio * i.qty, 0);
+      const total = serverTotal;
 
       // Email al cliente
       try {
         await sendProductPurchaseConfirmation({
           toEmail: user.email!,
           patientName,
-          items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
+          items: validatedCart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
           total,
         });
         console.log("Customer purchase email sent");
@@ -109,7 +122,7 @@ export async function POST(req: NextRequest) {
           adminEmails,
           saleType: "product",
           patientName,
-          items: cart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
+          items: validatedCart.map((i) => ({ descripcion: i.descripcion, qty: i.qty, precio: i.precio })),
           total,
           paymentMethod: "Mercado Pago",
         });

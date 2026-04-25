@@ -24,6 +24,17 @@ export async function POST(req: NextRequest) {
     const { items } = await req.json() as { items: CartItem[] };
     if (!items?.length) return NextResponse.json({ error: "Carrito vacío" }, { status: 400 });
 
+    // Validate product prices server-side
+    const skus = items.map((i) => i.sku).filter(Boolean);
+    const { data: productRows } = (skus.length
+      ? await supabase.from("productos").select("sku, precio").in("sku", skus)
+      : { data: [] }) as unknown as { data: { sku: string; precio: number }[] | null };
+    const priceMap = Object.fromEntries((productRows ?? []).map((p) => [p.sku, p.precio]));
+    const validatedItems: CartItem[] = items.map((item) => ({
+      ...item,
+      precio: priceMap[item.sku] ?? item.precio,
+    }));
+
     const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe").trim();
 
     const mp = new MercadoPagoConfig({ accessToken: token.trim() });
@@ -31,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     const response = await preference.create({
       body: {
-        items: items.map((i) => ({
+        items: validatedItems.map((i) => ({
           id:          i.sku,
           title:       i.descripcion,
           quantity:    i.qty,
@@ -55,7 +66,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Respuesta inesperada de Mercado Pago" }, { status: 500 });
     }
 
-    const amount = items.reduce((s, i) => s + i.precio * i.qty, 0);
+    const amount = validatedItems.reduce((s, i) => s + i.precio * i.qty, 0);
     return NextResponse.json({ preference_id: response.id, amount });
   } catch (err) {
     console.error("MercadoPago preference error:", JSON.stringify(err, null, 2));

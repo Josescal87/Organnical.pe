@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/", "/login", "/registro"],
+      disallow: ["/api/", "/dashboard/", "/agendar", "/login", "/registro", "/recuperar-password", "/nueva-password"],
     },
     sitemap: "https://organnical.pe/sitemap.xml",
   };

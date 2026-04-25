@@ -1,8 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createHmac, timingSafeEqual } from "crypto";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { sendAdminSaleNotification } from "@/lib/emails";
 import { getAdminEmails } from "@/lib/get-admin-emails";
+
+function verifyWebhookSignature(req: NextRequest, dataId: string): boolean {
+  const secret = process.env.MERCADOPAGO_WEBHOOK_SECRET;
+  if (!secret) {
+    console.warn("[webhook] MERCADOPAGO_WEBHOOK_SECRET not set — skipping signature check");
+    return true;
+  }
+  const xSignature = req.headers.get("x-signature");
+  const xRequestId = req.headers.get("x-request-id");
+  if (!xSignature) return false;
+
+  const parts = Object.fromEntries(
+    xSignature.split(",").map((p) => { const [k, ...v] = p.split("="); return [k.trim(), v.join("=")] })
+  );
+  const { ts, v1 } = parts as { ts?: string; v1?: string };
+  if (!ts || !v1) return false;
+
+  const manifest = [
+    `id:${dataId}`,
+    xRequestId ? `request-id:${xRequestId}` : null,
+    `ts:${ts}`,
+  ].filter(Boolean).join(";") + ";";
+
+  const expected = createHmac("sha256", secret).update(manifest).digest("hex");
+  try {
+    return timingSafeEqual(Buffer.from(v1), Buffer.from(expected));
+  } catch {
+    return false;
+  }
+}
 
 function createAdminClient() {
   return createSupabaseClient(
@@ -21,6 +52,11 @@ export async function POST(req: NextRequest) {
     }
 
     const paymentId = String(body.data.id);
+
+    if (!verifyWebhookSignature(req, paymentId)) {
+      console.warn("[webhook] Invalid signature for payment", paymentId);
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
     const paymentClient = new Payment(mp);

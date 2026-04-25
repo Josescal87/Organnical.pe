@@ -34,6 +34,19 @@ export async function createOrUpdateBackground(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "No autorizado" };
 
+  // Admins can edit any patient; doctors only their own patients
+  const role = (user.user_metadata?.role as string | undefined) ?? "";
+  if (role !== "admin") {
+    const { data: appt } = await supabase
+      .schema("medical")
+      .from("appointments")
+      .select("id")
+      .eq("doctor_id", user.id)
+      .eq("patient_id", patientId)
+      .limit(1);
+    if (!appt?.length) return { error: "No autorizado" };
+  }
+
   const { error } = await supabase
     .schema("medical")
     .from("patient_background")

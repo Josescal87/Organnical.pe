@@ -32,39 +32,59 @@ export async function POST(req: NextRequest) {
     if (!user) return NextResponse.json({ error: "No autorizado" }, { status: 401 });
 
     const body = await req.json();
-    const { doctorId, specialty, slotStart, sessions, precioFinal, ...formData } = body as {
+    const { doctorId, specialty, slotStart, sessions, ...formData } = body as {
       doctorId:    string;
       specialty:   string;
       slotStart:   string;
       sessions:    number;
-      precioFinal: number;
     } & Record<string, unknown>;
 
     if (!doctorId || !specialty || !slotStart || !sessions) {
       return NextResponse.json({ error: "Faltan campos requeridos" }, { status: 400 });
     }
 
-    // Bypass de pago: si PAYMENT_BYPASS=true en .env.local se omite MP (solo para testing)
-    const bypassPayment = process.env.PAYMENT_BYPASS === "true";
-    let paymentId = "BYPASS";
+    // Fetch server-side price — never trust client-supplied amount
+    const { data: comboRows } = await supabase
+      .from("consulta_combos")
+      .select("precio")
+      .eq("sesiones", sessions)
+      .limit(1) as unknown as { data: { precio: number }[] | null };
+    const combo = comboRows?.[0] ?? null;
 
-    if (!bypassPayment) {
-      const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
-      const paymentClient = new Payment(mp);
+    let totalCharged: number;
+    let pricePerSession: number;
 
-      const paymentResult = await paymentClient.create({
-        body: {
-          ...formData,
-          external_reference: user.id,
-          statement_descriptor: "Organnical",
-        },
-      });
-
-      if (paymentResult.status !== "approved") {
-        return NextResponse.json({ status: paymentResult.status });
-      }
-      paymentId = String(paymentResult.id);
+    if (combo?.precio) {
+      totalCharged = combo.precio;
+      pricePerSession = Math.round((combo.precio / sessions) * 100) / 100;
+    } else {
+      const { data: config } = await supabase
+        .from("consulta_config")
+        .select("precio, descuento_porcentaje")
+        .eq("id", 1)
+        .single() as { data: { precio: number; descuento_porcentaje: number } | null };
+      const precioBase = config?.precio ?? 60;
+      const descuento  = config?.descuento_porcentaje ?? 0;
+      pricePerSession  = Math.round(precioBase * (1 - descuento / 100) * 100) / 100;
+      totalCharged     = Math.round(pricePerSession * sessions * 100) / 100;
     }
+
+    const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
+    const paymentClient = new Payment(mp);
+
+    const paymentResult = await paymentClient.create({
+      body: {
+        ...formData,
+        transaction_amount: totalCharged,
+        external_reference: user.id,
+        statement_descriptor: "Organnical",
+      },
+    });
+
+    if (paymentResult.status !== "approved") {
+      return NextResponse.json({ status: paymentResult.status });
+    }
+    const paymentId = String(paymentResult.id);
 
     const adminClient = createAdminClient();
     const specialtyLabel = SPECIALTY_LABELS[specialty] ?? specialty;
@@ -153,9 +173,9 @@ export async function POST(req: NextRequest) {
         num_orden:       nextOrden++,
         item:            sessions > 1 ? `Teleconsulta — ${specialtyLabel} (Sesión ${i + 1}/${sessions})` : `Teleconsulta — ${specialtyLabel}`,
         unidades:        1,
-        precio_item:     precioFinal,
+        precio_item:     pricePerSession,
         precio_delivery: 0,
-        total:           precioFinal,
+        total:           pricePerSession,
         metodo_pago:     "Online - Mercado Pago",
         vendedor:        "Organnical.pe",
         nombre,
@@ -184,13 +204,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Email a admins
-    const totalPagado = precioFinal * sessions;
+    const totalPagado = totalCharged;
     getAdminEmails().then((adminEmails) =>
       sendAdminSaleNotification({
         adminEmails,
         saleType: "appointment",
         patientName,
-        items: [{ descripcion: `Teleconsulta — ${specialtyLabel} ×${sessions} sesión${sessions > 1 ? "es" : ""}`, qty: sessions, precio: precioFinal }],
+        items: [{ descripcion: `Teleconsulta — ${specialtyLabel} ×${sessions} sesión${sessions > 1 ? "es" : ""}`, qty: sessions, precio: pricePerSession }],
         total: totalPagado,
         paymentMethod: "Mercado Pago",
       })

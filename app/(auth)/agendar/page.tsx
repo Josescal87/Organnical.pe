@@ -140,6 +140,14 @@ function AgendarWizard() {
     data_processing: "Consentimiento de tratamiento de datos personales de salud",
   };
 
+  // Initialize MP SDK once on mount
+  useEffect(() => {
+    if (!mpInitialized.current && process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY) {
+      initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY, { locale: "es-PE" });
+      mpInitialized.current = true;
+    }
+  }, []);
+
   // Load user session + doctors + pricing from DB
   useEffect(() => {
     const supabase = createClient();
@@ -169,13 +177,9 @@ function AgendarWizard() {
   const comboPrice    = selectedCombo?.precio ?? pricing.precioFinal * sessions;
   const pricePerSession = sessions > 0 ? comboPrice / sessions : pricing.precioFinal;
 
-  // Initialize MP once + create preference when entering payment step
+  // Create preference when entering payment step
   useEffect(() => {
     if (step !== "payment") return;
-    if (!mpInitialized.current) {
-      initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY!, { locale: "es-PE" });
-      mpInitialized.current = true;
-    }
     if (preferenceId) return;
     setPreferenceError(null);
     setLoadingPreference(true);

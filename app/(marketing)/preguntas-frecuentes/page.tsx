@@ -97,9 +97,25 @@ const sections = [
   },
 ];
 
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: sections.flatMap((s) =>
+    s.faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.q,
+      acceptedAnswer: { "@type": "Answer", text: faq.a },
+    }))
+  ),
+};
+
 export default function FaqPage() {
   return (
     <main style={{ background: NAVY, color: "#fff", minHeight: "100vh" }}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Header */}
       <section style={{ padding: "100px 24px 60px", textAlign: "center" }}>
         <div style={{ maxWidth: 700, margin: "0 auto" }}>

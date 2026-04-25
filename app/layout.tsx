@@ -85,6 +85,7 @@ const schemaOrg = {
         { "@type": "MedicalTherapy", name: "Manejo de ansiedad" },
         { "@type": "MedicalTherapy", name: "Salud femenina y hormonal" },
       ],
+      areaServed: { "@type": "Country", name: "Peru" },
       sameAs: ["https://www.instagram.com/organnical"],
     },
     {

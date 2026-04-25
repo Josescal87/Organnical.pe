@@ -147,6 +147,25 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
   const bookingHref = verticalId ? `/agendar?v=${verticalId}` : "/registro"
   const specialtyHref = specialtySlug ? `/especialidades/${specialtySlug}` : "/registro"
 
+  const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe"
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt,
+    image: post.image.startsWith("http") ? post.image : `${BASE}${post.image}`,
+    datePublished: post.date,
+    dateModified: post.date,
+    url: `${BASE}/blog/${post.slug}`,
+    author: { "@type": "Person", name: post.author },
+    publisher: {
+      "@type": "Organization",
+      name: "Organnical",
+      logo: { "@type": "ImageObject", url: `${BASE}/logo.png` },
+    },
+    mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
+  }
+
   // Same-category posts first
   const related = posts
     .filter((p) => p.slug !== post.slug)
@@ -155,6 +174,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
       {/* ── Hero ── */}
       <section className="relative pt-28 pb-0 overflow-hidden" style={{ background: NAVY }}>
         <div className="absolute inset-0 dot-grid opacity-20" />

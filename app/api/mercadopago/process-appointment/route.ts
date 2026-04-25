@@ -37,11 +37,12 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { doctorId, specialty, slotStart, sessions, ...formData } = body as {
+    const { doctorId, specialty, slotStart, sessions, precioFinal: _ignored, ...formData } = body as {
       doctorId:    string;
       specialty:   string;
       slotStart:   string;
       sessions:    number;
+      precioFinal: number;
     } & Record<string, unknown>;
 
     if (!doctorId || !specialty || !slotStart || !sessions) {

@@ -113,6 +113,7 @@ function AgendarWizard() {
 
   // Sessions + payment state
   const [sessions, setSessions] = useState(1);
+  const [precioOverride, setPrecioOverride] = useState<number | null>(null);
   const mpInitialized = useRef(false);
   const [paymentResult, setPaymentResult] = useState<{ appointmentIds: string[]; meetLinks: (string | null)[] } | null>(null);
   const [combos, setCombos] = useState<{ sesiones: number; precio: number; label: string | null }[]>([
@@ -167,11 +168,15 @@ function AgendarWizard() {
       .then((r) => r.json())
       .then((d) => { if (Array.isArray(d) && d.length) setCombos(d); })
       .catch(() => {});
+    fetch("/api/precio-override")
+      .then((r) => r.json())
+      .then((d) => { if (d.precio_override != null) setPrecioOverride(d.precio_override); })
+      .catch(() => {});
   }, []);
 
   const selectedCombo = combos.find((c) => c.sesiones === sessions) ?? combos[0];
-  const comboPrice    = selectedCombo?.precio ?? pricing.precioFinal * sessions;
-  const pricePerSession = sessions > 0 ? comboPrice / sessions : pricing.precioFinal;
+  const comboPrice    = precioOverride ?? (selectedCombo?.precio ?? pricing.precioFinal * sessions);
+  const pricePerSession = precioOverride ?? (sessions > 0 ? comboPrice / sessions : pricing.precioFinal);
 
 
   // Load booked slots when doctor + date changes

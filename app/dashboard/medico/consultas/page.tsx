@@ -166,15 +166,13 @@ function ConsultaCard({ apt }: { apt: AppointmentWithPatient }) {
           Ver detalle
         </Link>
         {apt.meeting_link && ["pending", "confirmed"].includes(apt.status) && (
-          <a
-            href={apt.meeting_link}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href={`/consulta/${apt.id}`}
             className="flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold text-white"
             style={{ background: G }}
           >
             <Video className="w-3.5 h-3.5" /> Unirse
-          </a>
+          </Link>
         )}
       </div>
     </div>

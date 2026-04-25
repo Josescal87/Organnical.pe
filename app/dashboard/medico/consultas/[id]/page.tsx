@@ -169,16 +169,14 @@ export default async function ConsultaDetallePage({
             </div>
           </dl>
           {canJoin && (
-            <a
-              href={doctorMeetLink!}
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              href={`/consulta/${apt.id}`}
               className="mt-5 flex items-center justify-center gap-2 w-full rounded-xl py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
             >
               <Video className="w-4 h-4" />
-              {apt.meeting_provider === "whereby" ? "Unirse (Whereby)" : "Unirse a la videollamada"}
-            </a>
+              Unirse a la videoconsulta
+            </Link>
           )}
           {["pending", "confirmed"].includes(apt.status) && (
             <div className="mt-3 pt-3 border-t border-zinc-100">

@@ -936,6 +936,7 @@ function AgendarWizard() {
                     <Payment
                         initialization={{ amount: comboPrice }}
                         customization={{
+                          paymentMethods: { creditCard: "all", debitCard: "all" },
                           visual: {
                             style: {
                               customVariables: {

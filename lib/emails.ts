@@ -92,7 +92,7 @@ export async function sendAppointmentConfirmation({
     ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0">
         <tr><td align="center">
           <a href="${meetLink}" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
-            📹 Unirse a Google Meet
+            📹 Unirse a videoconsulta
           </a>
         </td></tr>
       </table>

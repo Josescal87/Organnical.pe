@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { createCalendarEvent } from "@/lib/google-calendar";
+import { createWherebyMeeting } from "@/lib/whereby/client";
 import {
   sendAppointmentConfirmation,
   sendNewAppointmentToDoctor,
@@ -141,18 +142,35 @@ export async function POST(req: NextRequest) {
       const startDate = addDays(new Date(slotStart), i * 7);
       const endDate   = new Date(startDate.getTime() + 25 * 60 * 1000);
 
-      // Google Calendar (non-fatal)
+      // Whereby room (non-fatal)
       let meetLink: string | null = null;
+      let hostMeetLink: string | null = null;
+      try {
+        const whereby = await createWherebyMeeting(
+          startDate.toISOString(),
+          endDate.toISOString(),
+          `consulta-${specialty}`
+        );
+        if (whereby) {
+          meetLink     = whereby.roomUrl;
+          hostMeetLink = whereby.hostRoomUrl;
+        }
+      } catch (e) {
+        console.error(`Whereby error session ${i + 1}:`, e);
+      }
+
+      // Google Calendar (non-fatal) — for calendar invites; uses Whereby URL as location
       try {
         const attendees = [user.email!];
         if (doctorEmail) attendees.push(doctorEmail);
-        const calEvent = await createCalendarEvent({
+        await createCalendarEvent({
           title: `Consulta Organnical — ${specialtyLabel} · ${patientName}`,
           description: [
             `Teleconsulta de ${specialtyLabel}`,
             `Paciente: ${patientName}`,
             `Médico: ${doctorName}`,
             sessions > 1 ? `Sesión ${i + 1} de ${sessions}` : "",
+            meetLink ? `Link videollamada: ${meetLink}` : "",
             ``,
             `Plataforma: Organnical — Medicina Integrativa`,
             `Soporte: reservas@organnical.com | +51 952 476 574`,
@@ -161,7 +179,6 @@ export async function POST(req: NextRequest) {
           endTime:   endDate.toISOString(),
           attendeeEmails: attendees,
         });
-        meetLink = calEvent.meetLink;
       } catch (e) {
         console.error(`Calendar error session ${i + 1}:`, e);
       }
@@ -170,13 +187,15 @@ export async function POST(req: NextRequest) {
 
       // Crear cita en DB
       const apptData: MedicalAppointmentInsert = {
-        patient_id:   user.id,
-        doctor_id:    doctorId,
-        slot_start:   startDate.toISOString(),
-        slot_end:     endDate.toISOString(),
-        status:       "confirmed",
-        specialty:    specialty as AppointmentSpecialty,
-        meeting_link: meetLink,
+        patient_id:        user.id,
+        doctor_id:         doctorId,
+        slot_start:        startDate.toISOString(),
+        slot_end:          endDate.toISOString(),
+        status:            "confirmed",
+        specialty:         specialty as AppointmentSpecialty,
+        meeting_link:      meetLink,
+        meeting_host_link: hostMeetLink,
+        meeting_provider:  meetLink ? "whereby" : undefined,
       };
 
       const { data: appt, error: insertError } = await supabase

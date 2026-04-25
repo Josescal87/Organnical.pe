@@ -90,6 +90,7 @@ export async function POST(req: NextRequest) {
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
     const paymentClient = new Payment(mp);
 
+    console.log("[process-appointment] Creating payment, amount:", totalCharged, "formData keys:", Object.keys(formData ?? {}));
     const paymentResult = await paymentClient.create({
       body: {
         ...formData,
@@ -99,8 +100,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
+    console.log("[process-appointment] MP result status:", paymentResult.status, "status_detail:", (paymentResult as Record<string, unknown>).status_detail);
     if (paymentResult.status !== "approved") {
-      return NextResponse.json({ status: paymentResult.status });
+      return NextResponse.json({ status: paymentResult.status, status_detail: (paymentResult as Record<string, unknown>).status_detail });
     }
     const paymentId = String(paymentResult.id);
 
@@ -241,8 +243,11 @@ export async function POST(req: NextRequest) {
       sessions,
     });
   } catch (err) {
-    console.error("process-appointment error:", JSON.stringify(err));
-    const message = typeof err === "object" ? JSON.stringify(err) : String(err);
+    const detail = err instanceof Error
+      ? { message: err.message, stack: err.stack }
+      : err;
+    console.error("[process-appointment] error:", JSON.stringify(detail, null, 2));
+    const message = err instanceof Error ? err.message : JSON.stringify(err);
     return NextResponse.json({ error: message }, { status: 500 });
   }
 }

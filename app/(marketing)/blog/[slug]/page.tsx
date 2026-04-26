@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, User } from "lucide-react"
 import { getPost, getAllSlugs, posts, type ContentBlock } from "@/lib/blog"
+import TrackEvent from "@/components/TrackEvent"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 const NAVY = "#0B1D35"
@@ -177,6 +178,12 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <TrackEvent
+        ga4Event="view_item"
+        ga4Params={{ item_id: post.slug, item_name: post.title, item_category: post.category }}
+        metaEvent="ViewContent"
+        metaParams={{ content_ids: [post.slug], content_name: post.title, content_type: "article" }}
       />
       {/* ── Hero ── */}
       <section className="relative pt-28 pb-0 overflow-hidden" style={{ background: NAVY }}>

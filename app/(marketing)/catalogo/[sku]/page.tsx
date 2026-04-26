@@ -4,6 +4,8 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { ArrowLeft, ArrowRight, ShieldAlert, FileText, Download } from "lucide-react"
+import TrackEvent from "@/components/TrackEvent"
+import ProductCTA from "@/components/ProductCTA"
 
 export const revalidate = 3600
 
@@ -80,6 +82,12 @@ export default async function ProductoDetallePage({
 
   return (
     <main className="bg-white pt-24">
+      <TrackEvent
+        ga4Event="view_item"
+        ga4Params={{ item_id: p.sku, item_name: p.descripcion, price: p.precio, currency: "PEN" }}
+        metaEvent="ViewContent"
+        metaParams={{ content_ids: [p.sku], content_name: p.descripcion, value: p.precio, currency: "PEN" }}
+      />
       <div className="mx-auto max-w-5xl px-6 py-10">
         {/* Back */}
         <Link
@@ -240,22 +248,12 @@ export default async function ProductoDetallePage({
             )}
 
             {/* CTA */}
-            <Link
-              href={p.requiere_receta ? "/agendar" : "/registro"}
-              className="w-full flex items-center justify-center gap-2 rounded-2xl py-4 text-sm font-semibold text-white transition-all hover:opacity-90"
-              style={{ background: G }}
-            >
-              {p.requiere_receta ? "Agendar consulta" : "Acceder al catálogo"}{" "}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-            {!p.requiere_receta && (
-              <p className="text-xs text-zinc-400 text-center mt-2">
-                ¿Ya tienes cuenta?{" "}
-                <Link href="/login" className="text-[#A78BFA] hover:underline">
-                  Inicia sesión
-                </Link>
-              </p>
-            )}
+            <ProductCTA
+              sku={p.sku}
+              descripcion={p.descripcion}
+              precio={p.precio}
+              requiere_receta={p.requiere_receta}
+            />
           </div>
         </div>
 

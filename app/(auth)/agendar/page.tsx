@@ -1,6 +1,13 @@
 "use client";
 
 import { useState, useEffect, useRef, Suspense } from "react";
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+    fbq?: (...args: unknown[]) => void
+  }
+}
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -144,6 +151,14 @@ function AgendarWizard() {
       mpInitialized.current = true;
     }
   }, []);
+
+  useEffect(() => {
+    if (step === "done") {
+      window.gtag?.("event", "generate_lead", { vertical, sessions })
+      window.fbq?.("track", "Schedule")
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   // Load user session + doctors + pricing from DB
   useEffect(() => {

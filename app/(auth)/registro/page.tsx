@@ -1,6 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void
+    fbq?: (...args: unknown[]) => void
+  }
+}
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -19,6 +26,12 @@ const BENEFITS = [
 
 export default function RegistroPage() {
   const router = useRouter();
+
+  useEffect(() => {
+    window.gtag?.("event", "begin_checkout")
+    window.fbq?.("track", "InitiateCheckout")
+  }, [])
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -56,6 +69,8 @@ export default function RegistroPage() {
       return;
     }
 
+    window.gtag?.("event", "sign_up", { method: "email" })
+    window.fbq?.("track", "CompleteRegistration")
     router.push("/dashboard/paciente");
   }
 

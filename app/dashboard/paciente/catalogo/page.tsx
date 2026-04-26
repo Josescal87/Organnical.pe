@@ -8,11 +8,14 @@ import CatalogCart from "@/components/CatalogCart";
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
 type ProductoRow = {
-  sku:             string;
-  descripcion:     string;
-  precio:          number;
-  categoria:       string;
-  requiere_receta: boolean;
+  sku:              string;
+  descripcion:      string;
+  descripcion_corta: string | null;
+  precio:           number;
+  precio_oferta:    number | null;
+  categoria:        string;
+  imagen_url:       string | null;
+  requiere_receta:  boolean;
 };
 
 export default async function CatalogoPacientePage() {
@@ -23,8 +26,10 @@ export default async function CatalogoPacientePage() {
   // Productos libres (sin receta) — visibles para todos
   const { data: libresData } = await supabase
     .from("productos")
-    .select("sku, descripcion, precio, categoria, requiere_receta")
+    .select("sku, descripcion, descripcion_corta, precio, precio_oferta, categoria, imagen_url, requiere_receta")
     .eq("requiere_receta", false)
+    .eq("activo", true)
+    .order("orden")
     .order("descripcion");
 
   const productosLibres = (libresData ?? []) as ProductoRow[];
@@ -55,8 +60,9 @@ export default async function CatalogoPacientePage() {
     if (skus.length > 0) {
       const { data: rxProductos } = await supabase
         .from("productos")
-        .select("sku, descripcion, precio, categoria, requiere_receta")
-        .in("sku", skus);
+        .select("sku, descripcion, descripcion_corta, precio, precio_oferta, categoria, imagen_url, requiere_receta")
+        .in("sku", skus)
+        .eq("activo", true);
       productosReceta = (rxProductos ?? []) as ProductoRow[];
     }
   }

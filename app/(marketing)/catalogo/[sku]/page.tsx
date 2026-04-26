@@ -45,13 +45,15 @@ export async function generateMetadata({
 
   if (!data) return { title: "Producto no encontrado — Organnical" }
 
+  const meta = data as { descripcion: string; descripcion_corta: string | null; imagen_url: string | null }
+
   return {
-    title: `${data.descripcion} — Organnical`,
+    title: `${meta.descripcion} — Organnical`,
     description:
-      data.descripcion_corta ??
-      `${data.descripcion} disponible en Organnical. Producto certificado bajo Ley 30681.`,
+      meta.descripcion_corta ??
+      `${meta.descripcion} disponible en Organnical. Producto certificado bajo Ley 30681.`,
     openGraph: {
-      images: data.imagen_url ? [{ url: data.imagen_url }] : [],
+      images: meta.imagen_url ? [{ url: meta.imagen_url }] : [],
     },
   }
 }

@@ -50,6 +50,10 @@ vi.mock("@/lib/get-admin-emails", () => ({
   getAdminEmails: vi.fn().mockResolvedValue([]),
 }));
 
+vi.mock("@/lib/rate-limit", () => ({
+  checkRateLimit: vi.fn().mockResolvedValue(true),
+}));
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function makeRequest(body: object) {
@@ -78,9 +82,6 @@ describe("POST /api/appointments", () => {
       error: null,
     });
 
-    // Consentimientos completos
-    mockSupabaseChain.select.mockReturnThis();
-    mockSupabaseChain.maybeSingle.mockResolvedValue({ data: { whatsapp_opt_in: false } });
   });
 
   it("rechaza sin autenticación (401)", async () => {

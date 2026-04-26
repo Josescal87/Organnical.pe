@@ -15,11 +15,11 @@ const securityHeaders = [
     key: "Content-Security-Policy",
     value: [
       "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://*.mercadopago.com https://*.mlstatic.com https://unpkg.com https://connect.facebook.net https://www.clarity.ms",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://*.mercadopago.com https://*.mlstatic.com https://unpkg.com https://connect.facebook.net https://*.clarity.ms",
       "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.mlstatic.com",
       "font-src 'self' https://fonts.gstatic.com https://*.mlstatic.com",
       "img-src 'self' data: blob: https: http:",
-      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://api.whereby.com https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com https://www.facebook.com https://www.clarity.ms",
+      "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://api.whereby.com https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com https://www.facebook.com https://*.clarity.ms",
       "frame-src https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com https://*.whereby.com https://meet.google.com https://www.facebook.com",
       "media-src 'self' blob:",
     ].join("; "),

@@ -34,21 +34,28 @@ export default async function ConsultaPage({
   const isDoctor = apt.doctor_id === user.id
   const rawUrl = isDoctor ? (apt.meeting_host_link ?? apt.meeting_link) : apt.meeting_link
 
-  const embedUrl = rawUrl.includes("?") ? `${rawUrl}&embed` : `${rawUrl}?embed`
+  // Fetch both profiles in parallel
+  const [{ data: otherProfile }, { data: currentProfile }] = await Promise.all([
+    supabase.schema("medical").from("profiles").select("full_name").eq("id", isDoctor ? apt.patient_id : apt.doctor_id).single(),
+    supabase.schema("medical").from("profiles").select("full_name").eq("id", user.id).single(),
+  ])
 
-  const otherPartyId = isDoctor ? apt.patient_id : apt.doctor_id
-  const { data: profile } = await supabase
-    .schema("medical")
-    .from("profiles")
-    .select("full_name")
-    .eq("id", otherPartyId)
-    .single()
+  // Build embed URL:
+  // - embed: enables Whereby embed mode
+  // - lang=es: Spanish UI
+  // - displayName: pre-fills user's name so they don't have to type it
+  // - skipMediaPermissionPrompt: we already requested permissions in our preflight screen
+  const separator = rawUrl.includes("?") ? "&" : "?"
+  const displayName = currentProfile?.full_name
+    ? `&displayName=${encodeURIComponent(currentProfile.full_name)}`
+    : ""
+  const embedUrl = `${rawUrl}${separator}embed&lang=es&skipMediaPermissionPrompt${displayName}`
 
   return (
     <VideoRoom
       embedUrl={embedUrl}
       isDoctor={isDoctor}
-      otherPartyName={profile?.full_name ?? (isDoctor ? "Paciente" : "Médico")}
+      otherPartyName={otherProfile?.full_name ?? (isDoctor ? "Paciente" : "Médico")}
       specialty={SPECIALTY_LABELS[apt.specialty as AppointmentSpecialty] ?? apt.specialty}
       slotStart={apt.slot_start}
       appointmentId={apt.id}

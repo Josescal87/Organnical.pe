@@ -1,69 +1,68 @@
 import type { Metadata } from 'next'
+import { createClient } from '@/lib/supabase/server'
+import type { SamiCategory } from '@/lib/supabase/database.types'
+import HomeClient from './_components/HomeClient'
 
 export const metadata: Metadata = {
   title: 'Inicio',
 }
 
-export default function SamiHomePage() {
-  const categories = [
-    { icon: '🧘', label: 'Meditaciones' },
-    { icon: '🌙', label: 'Cuentos para dormir' },
-    { icon: '🌊', label: 'Ruido blanco' },
-    { icon: '💨', label: 'Respiración guiada' },
-  ]
+function getGreeting(): string {
+  // Lima is UTC-5
+  const nowUtc = new Date()
+  const limaHour = (nowUtc.getUTCHours() - 5 + 24) % 24
+  if (limaHour >= 6 && limaHour < 12)  return 'Buenos días'
+  if (limaHour >= 12 && limaHour < 20) return 'Buenas tardes'
+  return 'Buenas noches'
+}
+
+export default async function SamiHomePage() {
+  const supabase = await createClient()
+
+  // Fetch all published content
+  const { data: content } = await supabase
+    .schema('sami')
+    .from('content')
+    .select('id, slug, title, description, category, duration_seconds, thumbnail_url, tags, audio_url, script_text, tts_voice, is_published, created_at, updated_at')
+    .eq('is_published', true)
+    .order('created_at', { ascending: false })
+
+  // Try to fetch last session for the logged-in user
+  let lastSlug: string | undefined
+  let lastTitle: string | undefined
+  let lastCategory: SamiCategory | undefined
+
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (user) {
+    const { data: lastSession } = await supabase
+      .schema('sami')
+      .from('listening_sessions')
+      .select('content_id, sami_content:content_id(slug, title, category)')
+      .eq('user_id', user.id)
+      .order('started_at', { ascending: false })
+      .limit(1)
+      .single()
+
+    if (lastSession) {
+      // Supabase returns the join as an object or array; handle both shapes
+      const joined = lastSession.sami_content
+      const joinedItem = Array.isArray(joined) ? joined[0] : joined
+      if (joinedItem && typeof joinedItem === 'object' && 'slug' in joinedItem) {
+        lastSlug     = (joinedItem as { slug: string; title: string; category: SamiCategory }).slug
+        lastTitle    = (joinedItem as { slug: string; title: string; category: SamiCategory }).title
+        lastCategory = (joinedItem as { slug: string; title: string; category: SamiCategory }).category
+      }
+    }
+  }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-8 py-12 md:py-20">
-      {/* Header */}
-      <div className="text-center">
-        <h1
-          className="text-5xl font-bold tracking-tight md:text-6xl"
-          style={{ color: '#a78bfa' }}
-        >
-          sami
-        </h1>
-        <p className="mt-2 text-sm" style={{ color: '#9ca3af' }}>
-          by Organnical
-        </p>
-      </div>
-
-      {/* Subtitle */}
-      <p className="text-center text-lg" style={{ color: '#f3f0ff' }}>
-        Tu espacio de bienestar está en camino ✨
-      </p>
-
-      {/* Categories Grid */}
-      <div className="grid w-full gap-4 grid-cols-2 md:grid-cols-4">
-        {categories.map((category) => (
-          <div
-            key={category.label}
-            className="group relative overflow-hidden rounded-lg border p-6 transition-all hover:border-opacity-60"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.05)',
-              borderColor: 'rgba(167,139,250,0.2)',
-            }}
-          >
-            {/* Badge */}
-            <div
-              className="absolute top-2 right-2 rounded-full px-2 py-1 text-xs font-medium"
-              style={{
-                backgroundColor: 'rgba(167,139,250,0.2)',
-                color: '#a78bfa',
-              }}
-            >
-              Próximamente
-            </div>
-
-            {/* Content */}
-            <div className="flex flex-col items-center gap-3 pt-4">
-              <span className="text-4xl">{category.icon}</span>
-              <p className="text-center text-sm font-medium" style={{ color: '#f3f0ff' }}>
-                {category.label}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <HomeClient
+      content={content ?? []}
+      lastSlug={lastSlug}
+      lastTitle={lastTitle}
+      lastCategory={lastCategory}
+      greeting={getGreeting()}
+    />
   )
 }

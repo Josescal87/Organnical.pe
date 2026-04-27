@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: { default: 'Sami by Organnical', template: '%s · Sami' },
@@ -40,15 +41,24 @@ export default function SamiLayout({
           </span>
         </div>
 
-        <a
-          href="https://organnical.pe"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-xs transition-colors"
-          style={{ color: '#6b7280' }}
-        >
-          by Organnical
-        </a>
+        <div className="flex items-center gap-4">
+          <Link
+            href="/instalar"
+            className="text-xs transition-opacity hover:opacity-80"
+            style={{ color: '#4b5563' }}
+          >
+            instalar
+          </Link>
+          <a
+            href="https://organnical.pe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs transition-colors"
+            style={{ color: '#6b7280' }}
+          >
+            by Organnical
+          </a>
+        </div>
       </nav>
 
       {/* Content */}

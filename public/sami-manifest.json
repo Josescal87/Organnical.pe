@@ -9,18 +9,32 @@
   "background_color": "#0f0a1e",
   "theme_color": "#1a1040",
   "lang": "es-PE",
+  "categories": ["health", "lifestyle"],
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "/icons/sami-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/icon-512.png",
+      "src": "/icons/sami-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Meditaciones",
+      "url": "/explorar?tab=meditacion",
+      "description": "Ir a meditaciones guiadas"
+    },
+    {
+      "name": "Respiración",
+      "url": "/respiracion",
+      "description": "Ejercicios de respiración"
     }
   ]
 }

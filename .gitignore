@@ -46,3 +46,6 @@ next-env.d.ts
 
 # Worktrees
 .worktrees/
+
+# Sami generator outputs
+sami-generator/outputs/

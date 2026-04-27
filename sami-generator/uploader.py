@@ -26,7 +26,7 @@ def upload_audio(slug: str, audio_path: Path) -> str:
     supabase.storage.from_("sami-audio").upload(
         file_name,
         audio_bytes,
-        {"content-type": "audio/mpeg", "upsert": "true"},
+        {"content-type": "audio/mpeg", "upsert": True},
     )
 
     # Construir URL pública

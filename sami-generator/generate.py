@@ -10,7 +10,6 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime
 from pathlib import Path
 from dotenv import load_dotenv
 import anthropic
@@ -96,7 +95,7 @@ Recuerda devolver UNICAMENTE el JSON especificado, sin markdown ni texto adicion
         for problema in review.get("problemas", []):
             print(f"   - {problema}")
         if review.get("guion_corregido"):
-            print("  Aplicando correcciones del revisor...")
+            print("⚠️  Aplicando corrección automática. Revisa el draft antes de publicar.")
             draft["guion"] = review["guion_corregido"]
         else:
             print("  El guion fue rechazado sin correccion automatica.")

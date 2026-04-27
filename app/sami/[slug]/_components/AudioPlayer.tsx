@@ -4,7 +4,7 @@ import { useRef, useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import type { SamiContent } from '@/lib/supabase/database.types'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
-import { categoryIcon, categoryLabel } from '@/app/(sami)/_components/content-helpers'
+import { categoryIcon, categoryLabel } from '@/app/sami/_components/content-helpers'
 
 interface Props {
   content: SamiContent

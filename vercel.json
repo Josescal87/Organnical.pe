@@ -1,11 +1,6 @@
 {
   "buildCommand": "npm test && next build",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "has": [{ "type": "host", "value": "sami.organnical.pe" }],
-      "destination": "/$1"
-    },
     { "source": "/", "destination": "/landing.html" }
   ],
   "crons": [

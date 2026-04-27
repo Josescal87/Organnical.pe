@@ -55,10 +55,9 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── Guard de autenticación ──────────────────────────────────────────────────
-  // En el subdominio Sami todas las rutas (excepto login) requieren auth.
-  const requiresAuth =
-    AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p)) ||
-    (isSami && pathname !== "/login")
+  // Sami es público: las cookies de organnical.pe no se comparten con el subdominio.
+  // La sesión se usa en los Server Components para personalización, pero no es obligatoria.
+  const requiresAuth = AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p))
 
   if (requiresAuth && !user) {
     const url = request.nextUrl.clone()

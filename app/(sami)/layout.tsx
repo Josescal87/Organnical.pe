@@ -30,8 +30,6 @@ export default async function SamiLayout({
     data: { user },
   } = await supabase.auth.getUser()
 
-  if (!user) redirect('/login')
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#0f0a1e', color: '#f3f0ff' }}>
       {/* Nav */}

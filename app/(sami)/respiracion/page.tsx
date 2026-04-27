@@ -102,13 +102,8 @@ export default function RespiracionPage() {
           const isNewCycle   = nextPhaseIdx === 0
 
           if (isNewCycle) {
-            setCurrentCycle(c => {
-              const newCycle = c + 1
-              if (newCycle >= tech.totalCycles) {
-                setScreen('complete')
-              }
-              return newCycle
-            })
+            const newCycle = cycleRef.current + 1  // use the ref (already exists and syncs)
+            setCurrentCycle(newCycle)
           }
 
           if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
@@ -127,6 +122,13 @@ export default function RespiracionPage() {
 
     return () => clearInterval(interval)
   }, [screen])
+
+  // ── Check if exercise is complete ─────────────────────────────────────────
+  useEffect(() => {
+    if (currentCycle > 0 && currentCycle >= selectedTech.totalCycles) {
+      setScreen('complete')
+    }
+  }, [currentCycle, selectedTech.totalCycles])
 
   // ── Helpers ──────────────────────────────────────────────────────────────
   function startExercise() {

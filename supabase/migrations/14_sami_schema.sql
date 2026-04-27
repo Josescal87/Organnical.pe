@@ -39,11 +39,11 @@ GRANT SELECT, INSERT, UPDATE ON sami.listening_sessions TO authenticated;
 GRANT ALL ON sami.content, sami.listening_sessions TO service_role;
 
 -- Índices
-CREATE INDEX IF NOT EXISTS ON sami.listening_sessions(user_id);
-CREATE INDEX IF NOT EXISTS ON sami.listening_sessions(content_id);
-CREATE INDEX IF NOT EXISTS ON sami.listening_sessions(user_id, content_id);
-CREATE INDEX IF NOT EXISTS ON sami.content(category);
-CREATE INDEX IF NOT EXISTS ON sami.content(is_published);
+CREATE INDEX IF NOT EXISTS idx_sami_sessions_user_id ON sami.listening_sessions(user_id);
+CREATE INDEX IF NOT EXISTS idx_sami_sessions_content_id ON sami.listening_sessions(content_id);
+CREATE INDEX IF NOT EXISTS idx_sami_sessions_user_content ON sami.listening_sessions(user_id, content_id);
+CREATE INDEX IF NOT EXISTS idx_sami_content_category ON sami.content(category);
+CREATE INDEX IF NOT EXISTS idx_sami_content_published ON sami.content(is_published);
 
 -- RLS
 ALTER TABLE sami.content ENABLE ROW LEVEL SECURITY;

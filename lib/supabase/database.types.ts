@@ -4,12 +4,14 @@
  * ARQUITECTURA DE SCHEMAS:
  *   - `public`  → Tablas de OrgannicalRuby (ventas, productos, etc.) + tablas legacy de telemedicina
  *   - `medical` → Tablas de telemedicina reorganizadas (fuente de verdad)
+ *   - `sami`    → App de bienestar Sami by Organnical (contenido de audio + sesiones)
  *
  * USO en queries:
  *   - public schema (default): supabase.from("productos").select(...)
  *   - medical schema:          supabase.schema("medical").from("profiles").select(...)
+ *   - sami schema:             supabase.schema("sami").from("content").select(...)
  *
- * REQUISITO: "medical" debe estar en Supabase Dashboard → Settings → API → Exposed schemas
+ * REQUISITO: "medical" y "sami" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
  *
  * Para regenerar desde Supabase CLI:
  *   npx supabase gen types typescript --project-id jeomfjulczuimrmonmom > lib/supabase/database.types.ts

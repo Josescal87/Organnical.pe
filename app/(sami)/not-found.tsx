@@ -16,7 +16,7 @@ export default function SamiNotFound() {
         El contenido que buscas no está disponible.
       </p>
       <Link
-        href="/sami"
+        href="/"
         className="mt-2 rounded-full px-6 py-2 text-sm font-medium transition-opacity hover:opacity-80"
         style={{ backgroundColor: '#7c3aed', color: '#ffffff' }}
       >

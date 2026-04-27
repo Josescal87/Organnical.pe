@@ -25,6 +25,19 @@ export default function PagoExitoPage() {
           <ArrowLeft className="w-4 h-4" /> Ir al inicio
         </Link>
       </div>
+
+      {/* Sami CTA */}
+      <div className="mt-6 rounded-xl border border-violet-100 bg-violet-50 px-6 py-4 text-sm text-zinc-500">
+        Mientras esperas tu consulta, tómate unos minutos para ti.{" "}
+        <a
+          href="https://sami.organnical.pe"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-violet-600 hover:text-violet-800 transition-colors"
+        >
+          Abre Sami →
+        </a>
+      </div>
     </div>
   );
 }

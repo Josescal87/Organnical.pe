@@ -18,6 +18,12 @@ const AUTH_REQUIRED_PREFIXES = ["/dashboard"]
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
+  // ── Detección de subdominio Sami ────────────────────────────────────────────
+  // sami.organnical.pe → las rutas se sirven desde app/(sami)/ via Vercel rewrites.
+  // El middleware solo registra el flag; no hace rewrites (Vercel los maneja).
+  const hostname = request.headers.get("host") ?? ""
+  const isSami = hostname.startsWith("sami.")
+
   // ── Paso obligatorio de Supabase SSR ────────────────────────────────────────
   // createServerClient + getUser() refresca el cookie de sesión en cada request.
   // getUser() valida el JWT localmente — NO hace query a la base de datos.
@@ -49,7 +55,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── Guard de autenticación ──────────────────────────────────────────────────
-  const requiresAuth = AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p))
+  // En el subdominio Sami todas las rutas (excepto login) requieren auth.
+  const requiresAuth =
+    AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p)) ||
+    (isSami && pathname !== "/login")
 
   if (requiresAuth && !user) {
     const url = request.nextUrl.clone()

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { SamiContent, SamiCategory } from '@/lib/supabase/database.types'
+import { categoryIcon, formatDuration } from './content-helpers'
 
 interface Props {
   content: SamiContent[]
@@ -18,21 +19,6 @@ const moods = [
   { id: 'estresado', label: 'Estresado',  emoji: '😤', tags: ['estrés', 'respiración', 'pausa'] },
   { id: 'bien',      label: 'Tranquilo',  emoji: '😌', tags: ['bienestar', 'meditación', 'foco'] },
 ] as const
-
-function categoryIcon(cat: SamiCategory): string {
-  const icons: Record<SamiCategory, string> = {
-    meditacion: '🧘',
-    cuento:     '🌙',
-    ruido:      '🌊',
-    respiracion: '💨',
-  }
-  return icons[cat]
-}
-
-function formatDuration(seconds: number): string {
-  const mins = Math.round(seconds / 60)
-  return `${mins} min`
-}
 
 interface ContentCardProps {
   item: SamiContent

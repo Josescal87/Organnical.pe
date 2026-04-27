@@ -4,12 +4,14 @@
  * ARQUITECTURA DE SCHEMAS:
  *   - `public`  → Tablas de OrgannicalRuby (ventas, productos, etc.) + tablas legacy de telemedicina
  *   - `medical` → Tablas de telemedicina reorganizadas (fuente de verdad)
+ *   - `sami`    → App de bienestar Sami by Organnical (contenido de audio + sesiones)
  *
  * USO en queries:
  *   - public schema (default): supabase.from("productos").select(...)
  *   - medical schema:          supabase.schema("medical").from("profiles").select(...)
+ *   - sami schema:             supabase.schema("sami").from("content").select(...)
  *
- * REQUISITO: "medical" debe estar en Supabase Dashboard → Settings → API → Exposed schemas
+ * REQUISITO: "medical" y "sami" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
  *
  * Para regenerar desde Supabase CLI:
  *   npx supabase gen types typescript --project-id jeomfjulczuimrmonmom > lib/supabase/database.types.ts
@@ -684,6 +686,95 @@ export interface Database {
       appointment_specialty: AppointmentSpecialty
     }
   }
+
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // SAMI SCHEMA — Contenido de audio terapéutico (meditaciones, cuentos, ruidos, respiración)
+  // Usar: supabase.schema("sami").from("tabla")
+  // ════════════════════════════════════════════════════════════════════════════
+  sami: {
+    Tables: {
+
+      // ── sami.content ──────────────────────────────────────────────────────
+      content: {
+        Row: {
+          id:               string
+          slug:             string
+          title:            string
+          description:      string | null
+          category:         'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          duration_seconds: number
+          audio_url:        string | null
+          thumbnail_url:    string | null
+          tags:             string[] | null
+          script_text:      string | null
+          tts_voice:        string | null
+          is_published:     boolean
+          created_at:       string
+          updated_at:       string
+        }
+        Insert: {
+          id?:               string
+          slug:              string
+          title:             string
+          description?:      string | null
+          category:          'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          duration_seconds:  number
+          audio_url?:        string | null
+          thumbnail_url?:    string | null
+          tags?:             string[] | null
+          script_text?:      string | null
+          tts_voice?:        string | null
+          is_published?:     boolean
+          created_at?:       string
+          updated_at?:       string
+        }
+        Update: {
+          slug?:             string
+          title?:            string
+          description?:      string | null
+          category?:         'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          duration_seconds?: number
+          audio_url?:        string | null
+          thumbnail_url?:    string | null
+          tags?:             string[] | null
+          script_text?:      string | null
+          tts_voice?:        string | null
+          is_published?:     boolean
+          updated_at?:       string
+        }
+      }
+
+      // ── sami.listening_sessions ───────────────────────────────────────────
+      listening_sessions: {
+        Row: {
+          id:               string
+          user_id:          string    // FK → auth.users
+          content_id:       string    // FK → sami.content
+          started_at:       string
+          completed:        boolean
+          seconds_listened: number
+        }
+        Insert: {
+          id?:               string
+          user_id:           string
+          content_id:        string
+          started_at?:       string
+          completed?:        boolean
+          seconds_listened?: number
+        }
+        Update: {
+          completed?:        boolean
+          seconds_listened?: number
+        }
+      }
+    }
+
+    Views:          { [_ in never]: never }
+    Functions:      { [_ in never]: never }
+    Enums:          { [_ in never]: never }
+    CompositeTypes: { [_ in never]: never }
+  }
 }
 
 
@@ -710,3 +801,10 @@ export type ConsentRecord               = Database["medical"]["Tables"]["consent
 
 // Tipos EHR (migración 06)
 export type ClinicalEncounter           = Database["medical"]["Tables"]["clinical_encounters"]["Row"]
+
+// Sami schema helpers
+export type SamiContent                 = Database['sami']['Tables']['content']['Row']
+export type SamiContentInsert           = Database['sami']['Tables']['content']['Insert']
+export type SamiListeningSession        = Database['sami']['Tables']['listening_sessions']['Row']
+export type SamiListeningSessionInsert  = Database['sami']['Tables']['listening_sessions']['Insert']
+export type SamiCategory                = SamiContent['category']

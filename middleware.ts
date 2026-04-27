@@ -18,6 +18,12 @@ const AUTH_REQUIRED_PREFIXES = ["/dashboard"]
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
+  // ── Detección de subdominio Sami ────────────────────────────────────────────
+  // sami.organnical.pe → rewrite interno a /sami/* para separar rutas sin
+  // conflicto con app/(marketing)/. Las rutas /api/* no se reescriben.
+  const hostname = request.headers.get("host") ?? ""
+  const isSami = hostname.startsWith("sami.")
+
   // ── Paso obligatorio de Supabase SSR ────────────────────────────────────────
   // createServerClient + getUser() refresca el cookie de sesión en cada request.
   // getUser() valida el JWT localmente — NO hace query a la base de datos.
@@ -49,7 +55,10 @@ export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // ── Guard de autenticación ──────────────────────────────────────────────────
-  const requiresAuth = AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p))
+  // En el subdominio Sami todas las rutas (excepto login) requieren auth.
+  const requiresAuth =
+    AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p)) ||
+    (isSami && pathname !== "/login")
 
   if (requiresAuth && !user) {
     const url = request.nextUrl.clone()
@@ -58,7 +67,15 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  if (!user) return supabaseResponse
+  if (!user) {
+    // Rewrite sami subdomain requests before returning (no-auth routes)
+    if (isSami && !pathname.startsWith("/sami") && !pathname.startsWith("/api/") && pathname !== "/login") {
+      const url = request.nextUrl.clone()
+      url.pathname = `/sami${pathname === "/" ? "" : pathname}`
+      return NextResponse.rewrite(url)
+    }
+    return supabaseResponse
+  }
 
   // ── Guard de rol ────────────────────────────────────────────────────────────
   // El rol se lee de user_metadata (parte del JWT — sin DB call adicional).
@@ -81,6 +98,20 @@ export async function middleware(request: NextRequest) {
     }
 
     break // La ruta más específica ya fue encontrada
+  }
+
+  // ── Rewrite de subdominio Sami ──────────────────────────────────────────────
+  // Usuarios autenticados en sami.organnical.pe: /foo → /sami/foo (interno).
+  // No se reescriben rutas /api/* (van a los API routes de Organnical normales).
+  if (isSami && !pathname.startsWith("/sami") && !pathname.startsWith("/api/") && pathname !== "/login") {
+    const url = request.nextUrl.clone()
+    url.pathname = `/sami${pathname === "/" ? "" : pathname}`
+    const rewriteResponse = NextResponse.rewrite(url)
+    // Propagar cookies de sesión al response de rewrite
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      rewriteResponse.cookies.set(name, value)
+    })
+    return rewriteResponse
   }
 
   return supabaseResponse

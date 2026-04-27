@@ -163,6 +163,29 @@ export default async function PacienteDashboard() {
         </Link>
       </div>
 
+      {/* Sami widget */}
+      <div
+        className="rounded-2xl p-5 mb-8 flex items-center gap-4"
+        style={{ background: "linear-gradient(135deg, #1a0533 0%, #2d1060 100%)" }}
+      >
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl bg-white/10">
+          🌙
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-white text-sm">Tu espacio de bienestar</p>
+          <p className="text-white/50 text-xs mt-0.5">Meditaciones, cuentos y respiración guiada</p>
+        </div>
+        <a
+          href="https://sami.organnical.pe"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex-shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-90"
+          style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)" }}
+        >
+          Abrir Sami →
+        </a>
+      </div>
+
       {/* Próximas citas */}
       <section className="mb-8">
         <div className="flex items-center justify-between mb-4">

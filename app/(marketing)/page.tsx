@@ -630,6 +630,32 @@ export default function LandingPage() {
           </div>
         </section>
 
+        {/* ══════════ SAMI BANNER ══════════ */}
+        <section className="py-16 px-6" style={{ background: "linear-gradient(135deg, #1a0533 0%, #2d1060 50%, #1a0533 100%)" }}>
+          <div className="reveal mx-auto max-w-4xl flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
+            <div className="flex-1">
+              <p className="text-xs font-bold uppercase tracking-widest text-violet-300 mb-3">Bienestar mental</p>
+              <h2 className="font-display text-3xl font-black text-white md:text-4xl mb-3">
+                Sami by Organnical
+              </h2>
+              <p className="text-white/60 text-lg leading-relaxed">
+                Tu espacio de bienestar. Meditación, cuentos para dormir y respiración guiada.
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <a
+                href="https://sami.organnical.pe"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+                style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)", boxShadow: "0 12px 32px rgba(124,58,237,0.4)" }}
+              >
+                Probar Sami →
+              </a>
+            </div>
+          </div>
+        </section>
+
         {/* ══════════ FINAL CTA ══════════ */}
         <section className="relative py-36 overflow-hidden">
           <div className="absolute inset-0">

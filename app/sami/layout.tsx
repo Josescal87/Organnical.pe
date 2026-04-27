@@ -1,0 +1,70 @@
+import type { Metadata, Viewport } from 'next'
+import Link from 'next/link'
+
+export const metadata: Metadata = {
+  title: { default: 'Sami by Organnical', template: '%s · Sami' },
+  description: 'Tu espacio de bienestar. Meditación, cuentos para dormir y respiración guiada.',
+  manifest: '/sami-manifest.json',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'Sami',
+  },
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
+  themeColor: '#1a1040',
+}
+
+export default function SamiLayout({
+  children,
+}: {
+  children: React.ReactNode
+}) {
+  return (
+    <div className="min-h-screen" style={{ backgroundColor: '#0f0a1e', color: '#f3f0ff' }}>
+      {/* Nav */}
+      <nav
+        className="sticky top-0 z-50 flex items-center justify-between px-4 py-3"
+        style={{ backgroundColor: '#1a1040' }}
+      >
+        <div className="flex items-center gap-3">
+          {/* Logo */}
+          <span
+            className="text-xl font-semibold tracking-wide"
+            style={{ color: '#a78bfa' }}
+          >
+            sami
+          </span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <Link
+            href="/instalar"
+            className="text-xs transition-opacity hover:opacity-80"
+            style={{ color: '#4b5563' }}
+          >
+            instalar
+          </Link>
+          <a
+            href="https://organnical.pe"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs transition-colors"
+            style={{ color: '#6b7280' }}
+          >
+            by Organnical
+          </a>
+        </div>
+      </nav>
+
+      {/* Content */}
+      <main className="mx-auto w-full max-w-2xl px-4 py-6">
+        {children}
+      </main>
+    </div>
+  )
+}

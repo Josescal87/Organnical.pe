@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import type { SamiCategory } from '@/lib/supabase/database.types'
+import type { SamiCategory, SamiContent } from '@/lib/supabase/database.types'
 import HomeClient from './_components/HomeClient'
 
 export const metadata: Metadata = {
@@ -28,40 +28,39 @@ export default async function SamiHomePage() {
     .order('created_at', { ascending: false })
 
   // Try to fetch last session for the logged-in user
-  let lastSlug: string | undefined
-  let lastTitle: string | undefined
-  let lastCategory: SamiCategory | undefined
+  let lastContent: Pick<SamiContent, 'slug' | 'title' | 'category'> | null = null
 
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    const { data: lastSession } = await supabase
+    // Step 1: get the content_id from the most recent session
+    const { data: lastSessionData } = await supabase
       .schema('sami')
       .from('listening_sessions')
-      .select('content_id, sami_content:content_id(slug, title, category)')
+      .select('content_id')
       .eq('user_id', user.id)
       .order('started_at', { ascending: false })
       .limit(1)
-      .single()
+      .maybeSingle()
 
-    if (lastSession) {
-      // Supabase returns the join as an object or array; handle both shapes
-      const joined = lastSession.sami_content
-      const joinedItem = Array.isArray(joined) ? joined[0] : joined
-      if (joinedItem && typeof joinedItem === 'object' && 'slug' in joinedItem) {
-        lastSlug     = (joinedItem as { slug: string; title: string; category: SamiCategory }).slug
-        lastTitle    = (joinedItem as { slug: string; title: string; category: SamiCategory }).title
-        lastCategory = (joinedItem as { slug: string; title: string; category: SamiCategory }).category
-      }
+    // Step 2: if there is a session, fetch the content record
+    if (lastSessionData?.content_id) {
+      const { data: lastContentData } = await supabase
+        .schema('sami')
+        .from('content')
+        .select('slug, title, category')
+        .eq('id', lastSessionData.content_id)
+        .maybeSingle()
+      lastContent = lastContentData
     }
   }
 
   return (
     <HomeClient
       content={content ?? []}
-      lastSlug={lastSlug}
-      lastTitle={lastTitle}
-      lastCategory={lastCategory}
+      lastSlug={lastContent?.slug}
+      lastTitle={lastContent?.title}
+      lastCategory={lastContent?.category}
       greeting={getGreeting()}
     />
   )

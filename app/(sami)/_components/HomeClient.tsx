@@ -26,7 +26,7 @@ function categoryIcon(cat: SamiCategory): string {
     ruido:      '🌊',
     respiracion: '💨',
   }
-  return icons[cat] ?? '✨'
+  return icons[cat]
 }
 
 function formatDuration(seconds: number): string {
@@ -90,25 +90,9 @@ export default function HomeClient({
       })()
     : content.slice(0, 6)
 
-  const lastItem =
-    lastSlug && lastTitle && lastCategory
-      ? content.find((c) => c.slug === lastSlug) ?? {
-          id:               lastSlug,
-          slug:             lastSlug,
-          title:            lastTitle,
-          category:         lastCategory,
-          duration_seconds: 0,
-          description:      null,
-          audio_url:        null,
-          thumbnail_url:    null,
-          tags:             null,
-          script_text:      null,
-          tts_voice:        null,
-          is_published:     true,
-          created_at:       '',
-          updated_at:       '',
-        }
-      : null
+  const lastItem = lastSlug
+    ? content.find((c) => c.slug === lastSlug) ?? null
+    : null
 
   return (
     <div className="flex flex-col gap-8">

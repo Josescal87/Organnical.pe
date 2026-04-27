@@ -49,3 +49,7 @@ next-env.d.ts
 
 # Sami generator outputs
 sami-generator/outputs/
+
+# Python cache
+__pycache__/
+*.pyc

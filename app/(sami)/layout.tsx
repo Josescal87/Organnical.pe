@@ -1,6 +1,4 @@
 import type { Metadata, Viewport } from 'next'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
   title: { default: 'Sami by Organnical', template: '%s · Sami' },
@@ -20,16 +18,11 @@ export const viewport: Viewport = {
   themeColor: '#1a1040',
 }
 
-export default async function SamiLayout({
+export default function SamiLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#0f0a1e', color: '#f3f0ff' }}>
       {/* Nav */}

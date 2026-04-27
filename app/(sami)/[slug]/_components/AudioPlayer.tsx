@@ -22,11 +22,12 @@ type SleepOption = typeof SLEEP_OPTIONS[number]
 export default function AudioPlayer({ content }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  const [isPlaying, setIsPlaying]     = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration]       = useState(content.duration_seconds)
-  const [sleepTimer, setSleepTimer]   = useState<number | null>(null) // remaining seconds
-  const [sessionId, setSessionId]     = useState<string | null>(null)
+  const [isPlaying, setIsPlaying]       = useState(false)
+  const [currentTime, setCurrentTime]   = useState(0)
+  const [duration, setDuration]         = useState(content.duration_seconds)
+  const [sleepTimer, setSleepTimer]     = useState<number | null>(null) // remaining seconds
+  const [activeSleepOption, setActiveSleepOption] = useState<number | null>(null)
+  const [sessionId, setSessionId]       = useState<string | null>(null)
 
   // Sleep timer interval ref
   const sleepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
@@ -123,6 +124,7 @@ export default function AudioPlayer({ content }: Props) {
     clearSleepInterval()
     const totalSeconds = minutes * 60
     setSleepTimer(totalSeconds)
+    setActiveSleepOption(minutes)
 
     sleepIntervalRef.current = setInterval(() => {
       setSleepTimer((prev) => {
@@ -130,6 +132,7 @@ export default function AudioPlayer({ content }: Props) {
           clearSleepInterval()
           audioRef.current?.pause()
           setIsPlaying(false)
+          setActiveSleepOption(null)
           return null
         }
         return prev - 1
@@ -140,6 +143,7 @@ export default function AudioPlayer({ content }: Props) {
   function cancelSleepTimer() {
     clearSleepInterval()
     setSleepTimer(null)
+    setActiveSleepOption(null)
   }
 
   // Cleanup on unmount
@@ -403,9 +407,7 @@ export default function AudioPlayer({ content }: Props) {
 
         <div className="flex flex-wrap gap-2">
           {SLEEP_OPTIONS.map((mins) => {
-            const isActive = sleepTimer !== null &&
-              Math.abs(sleepTimer - mins * 60) < mins * 60 &&
-              sleepTimer > 0
+            const isActive = activeSleepOption === mins
 
             return (
               <button

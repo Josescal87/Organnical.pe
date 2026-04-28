@@ -43,6 +43,7 @@ def insert_content(draft: dict, audio_url: str, published: bool = False) -> dict
         "title": draft["titulo"],
         "description": draft["descripcion"],
         "category": draft["tipo"],
+        "region": draft.get("region", "universal"),
         "duration_seconds": draft["duracion_estimada_segundos"],
         "audio_url": audio_url,
         "tags": draft.get("tags", []),

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
-import type { SamiCategory, SamiContent } from '@/lib/supabase/database.types'
+import type { SamiContent } from '@/lib/supabase/database.types'
 import HomeClient from './_components/HomeClient'
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default async function SamiHomePage() {
   const { data: content } = await supabase
     .schema('sami')
     .from('content')
-    .select('id, slug, title, description, category, duration_seconds, thumbnail_url, tags, audio_url, script_text, tts_voice, is_published, created_at, updated_at')
+    .select('id, slug, title, description, category, region, duration_seconds, thumbnail_url, tags, audio_url, script_text, tts_voice, is_published, created_at, updated_at')
     .eq('is_published', true)
     .order('created_at', { ascending: false })
 
@@ -59,7 +59,6 @@ export default async function SamiHomePage() {
     <HomeClient
       content={content ?? []}
       lastSlug={lastContent?.slug}
-      lastTitle={lastContent?.title}
       lastCategory={lastContent?.category}
       greeting={getGreeting()}
     />

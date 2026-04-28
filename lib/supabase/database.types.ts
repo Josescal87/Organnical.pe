@@ -703,6 +703,7 @@ export interface Database {
           title:            string
           description:      string | null
           category:         'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          region:           'costa' | 'sierra' | 'selva' | 'universal'
           duration_seconds: number
           audio_url:        string | null
           thumbnail_url:    string | null
@@ -719,6 +720,7 @@ export interface Database {
           title:             string
           description?:      string | null
           category:          'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          region?:           'costa' | 'sierra' | 'selva' | 'universal'
           duration_seconds:  number
           audio_url?:        string | null
           thumbnail_url?:    string | null
@@ -734,6 +736,7 @@ export interface Database {
           title?:            string
           description?:      string | null
           category?:         'meditacion' | 'cuento' | 'ruido' | 'respiracion'
+          region?:           'costa' | 'sierra' | 'selva' | 'universal'
           duration_seconds?: number
           audio_url?:        string | null
           thumbnail_url?:    string | null
@@ -808,3 +811,4 @@ export type SamiContentInsert           = Database['sami']['Tables']['content'][
 export type SamiListeningSession        = Database['sami']['Tables']['listening_sessions']['Row']
 export type SamiListeningSessionInsert  = Database['sami']['Tables']['listening_sessions']['Insert']
 export type SamiCategory                = SamiContent['category']
+export type SamiRegion                  = SamiContent['region']

@@ -12,7 +12,7 @@ export default async function ExplorarPage() {
   const { data: content } = await supabase
     .schema('sami')
     .from('content')
-    .select('id, slug, title, category, duration_seconds, tags')
+    .select('id, slug, title, category, region, duration_seconds, tags')
     .eq('is_published', true)
     .order('created_at', { ascending: false })
 

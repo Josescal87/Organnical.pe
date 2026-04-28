@@ -39,18 +39,19 @@ def load_prompt(name: str) -> str:
     return prompt_path.read_text(encoding="utf-8")
 
 
-def generate_script(tipo: str, tema: str, duracion_min: int) -> dict:
+def generate_script(tipo: str, tema: str, duracion_min: int, region: str = "universal") -> dict:
     """Llama a Claude para generar el guion."""
     client = anthropic.Anthropic()
     script_prompt = load_prompt("script_writer")
     quality_prompt = load_prompt("quality_checker")
 
-    print(f"  Generando guion ({tipo}, {duracion_min} min, tema: {tema})...")
+    print(f"  Generando guion ({tipo}, {duracion_min} min, region: {region}, tema: {tema})...")
 
     user_message = f"""
 Genera contenido de tipo: {tipo}
 Tema/titulo sugerido: {tema}
 Duracion objetivo: {duracion_min} minutos
+Region cultural: {region}
 
 Recuerda devolver UNICAMENTE el JSON especificado, sin markdown ni texto adicional.
 """
@@ -110,12 +111,13 @@ Recuerda devolver UNICAMENTE el JSON especificado, sin markdown ni texto adicion
 
 def cmd_generate(args: argparse.Namespace) -> None:
     """Genera guion + audio y guarda draft localmente."""
-    from tts.google_tts import text_to_speech
+    from tts.elevenlabs_tts import text_to_speech
 
-    draft = generate_script(args.type, args.tema, args.duracion)
+    draft = generate_script(args.type, args.tema, args.duracion, args.region)
     slug = slugify(f"{args.type}-{draft['titulo']}")
     draft["slug"] = slug
     draft["voz"] = args.voz
+    draft["region"] = args.region
 
     # Guardar draft JSON
     DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -125,8 +127,8 @@ def cmd_generate(args: argparse.Namespace) -> None:
 
     # Generar audio
     audio_path = OUTPUTS_DIR / "audio" / f"{slug}.mp3"
-    print(f"  Generando audio con {args.voz}...")
-    text_to_speech(draft["guion"], audio_path, voice_name=args.voz)
+    print(f"  Generando audio con ElevenLabs ({args.voz})...")
+    text_to_speech(draft["guion"], audio_path, voice_id=args.voz)
     draft["audio_path"] = str(audio_path)
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -187,7 +189,9 @@ def main() -> None:
     parser.add_argument("--type", choices=["meditacion", "cuento", "ruido", "respiracion"])
     parser.add_argument("--tema", type=str)
     parser.add_argument("--duracion", type=int, default=10, help="Duracion en minutos")
-    parser.add_argument("--voz", default="es-PE-Neural2-A", help="Nombre de voz Google TTS")
+    parser.add_argument("--region", choices=["costa", "sierra", "selva", "universal"], default="universal",
+                        help="Region cultural del contenido")
+    parser.add_argument("--voz", default="", help="ElevenLabs Voice ID (default: usa ELEVENLABS_VOICE_ID del .env.local)")
     parser.add_argument("--publish", type=str, help="Slug del draft a publicar")
 
     args = parser.parse_args()

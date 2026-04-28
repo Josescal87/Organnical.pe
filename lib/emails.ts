@@ -36,16 +36,23 @@ function baseTemplate(content: string) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Organnical</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+  </style>
 </head>
-<body style="margin:0;padding:0;background:#F8FAFC;font-family:'Helvetica Neue',Arial,sans-serif">
+<body style="margin:0;padding:0;background:#F8FAFC;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
   <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;padding:40px 16px">
     <tr><td align="center">
       <table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%">
+        <!-- Barra gradiente -->
+        <tr>
+          <td style="background:linear-gradient(90deg,#968DEF,#F06BCA,#00DBB1);height:4px;border-radius:16px 16px 0 0;font-size:0;line-height:0">&nbsp;</td>
+        </tr>
         <!-- Header -->
         <tr>
-          <td style="background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);border-radius:16px 16px 0 0;padding:32px 40px;text-align:center">
-            <p style="margin:0;color:white;font-size:24px;font-weight:900;letter-spacing:-0.5px">Organnical</p>
-            <p style="margin:4px 0 0;color:rgba(255,255,255,0.85);font-size:13px">Medicina Integrativa</p>
+          <td style="background:#1A1A1A;padding:28px 40px;text-align:center">
+            <img src="https://organnical.pe/logo-white.png" alt="organnical" width="180" border="0" style="display:block;margin:0 auto;max-width:180px;height:auto" />
+            <p style="margin:10px 0 0;color:rgba(255,255,255,0.55);font-size:13px;font-style:italic;font-family:'Inter','Helvetica Neue',Arial,sans-serif">Esencia orgánica.</p>
           </td>
         </tr>
         <!-- Body -->
@@ -54,9 +61,9 @@ function baseTemplate(content: string) {
             ${content}
             <!-- Footer -->
             <hr style="border:none;border-top:1px solid #F4F4F5;margin:32px 0" />
-            <p style="margin:0;color:#A1A1AA;font-size:12px;text-align:center">
-              Organnical · Medicina Integrativa · Lima, Perú<br/>
-              ¿Tienes dudas? Escríbenos a <a href="mailto:reservas@organnical.com" style="color:#A78BFA">reservas@organnical.com</a>
+            <p style="margin:0;color:#A1A1AA;font-size:12px;text-align:center;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
+              Organnical · <em>Esencia orgánica.</em> · Lima, Perú<br/>
+              ¿Tienes dudas? Escríbenos a <a href="mailto:reservas@organnical.com" style="color:#968DEF">reservas@organnical.com</a>
             </p>
           </td>
         </tr>
@@ -91,7 +98,7 @@ export async function sendAppointmentConfirmation({
   const meetSection = meetLink
     ? `<table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0">
         <tr><td align="center">
-          <a href="${meetLink}" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+          <a href="${meetLink}" style="display:inline-block;background:linear-gradient(135deg,#968DEF 0%,#F06BCA 50%,#00DBB1 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
             📹 Unirse a videoconsulta
           </a>
         </td></tr>
@@ -100,32 +107,32 @@ export async function sendAppointmentConfirmation({
     : `<p style="margin:0 0 24px;color:#71717A;font-size:13px;text-align:center">El link de videollamada estará disponible en tu dashboard pronto.</p>`;
 
   const html = baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">¡Cita confirmada! ✅</h1>
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">¡Cita confirmada! ✅</h1>
     <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${patientName}, tu consulta ha sido agendada correctamente.</p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
       <tr>
         <td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
           <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Médico</p>
-          <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${doctorName}</p>
+          <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${doctorName}</p>
         </td>
       </tr>
       <tr>
         <td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
           <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Especialidad</p>
-          <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${specialtyLabel}</p>
+          <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${specialtyLabel}</p>
         </td>
       </tr>
       <tr>
         <td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
           <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Fecha</p>
-          <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${dateStr}</p>
+          <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${dateStr}</p>
         </td>
       </tr>
       <tr>
         <td style="padding:8px 0">
           <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Hora</p>
-          <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${timeStr} (Lima)</p>
+          <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${timeStr} (Lima)</p>
         </td>
       </tr>
     </table>
@@ -133,7 +140,7 @@ export async function sendAppointmentConfirmation({
     ${meetSection}
 
     <p style="margin:0;color:#71717A;font-size:13px">También puedes ver los detalles de tu cita en tu
-      <a href="${BASE_URL}/dashboard/paciente/citas" style="color:#A78BFA;font-weight:600">dashboard de paciente</a>.
+      <a href="${BASE_URL}/dashboard/paciente/citas" style="color:#968DEF;font-weight:600">dashboard de paciente</a>.
     </p>
   `);
 
@@ -163,28 +170,28 @@ export async function sendPrescriptionNotification({
   const itemsHtml = items.map((it) => `
     <tr>
       <td style="padding:10px 0;border-bottom:1px solid #F4F4F5">
-        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:600">${it.nombre} <span style="color:#A1A1AA;font-weight:400">×${it.quantity}</span></p>
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:600">${it.nombre} <span style="color:#A1A1AA;font-weight:400">×${it.quantity}</span></p>
         ${it.dosage_instructions ? `<p style="margin:2px 0 0;color:#71717A;font-size:12px">${it.dosage_instructions}</p>` : ""}
       </td>
     </tr>
   `).join("");
 
   const html = baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">Tu receta médica 📋</h1>
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">Tu receta médica 📋</h1>
     <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${patientName}, el Dr./Dra. ${doctorName} ha emitido una receta para ti.</p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
       <tr><td>
         <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Productos recetados</p>
         <table width="100%" cellpadding="0" cellspacing="0">${itemsHtml}</table>
       </td></tr>
     </table>
 
-    <p style="margin:0 0 24px;color:#71717A;font-size:13px">Receta válida hasta <strong style="color:#0B1D35">${validStr}</strong>. Accede al catálogo de productos con tu receta activa.</p>
+    <p style="margin:0 0 24px;color:#71717A;font-size:13px">Receta válida hasta <strong style="color:#1A1A1A">${validStr}</strong>. Accede al catálogo de productos con tu receta activa.</p>
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
       <tr><td align="center">
-        <a href="${BASE_URL}/dashboard/paciente/recetas" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/paciente/recetas" style="display:inline-block;background:#1A1A1A;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
           Ver mi receta
         </a>
       </td></tr>
@@ -213,36 +220,36 @@ export async function sendProductPurchaseConfirmation({
   const itemsHtml = items.map((i) => `
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #F4F4F5">
-        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #F4F4F5;text-align:right">
-        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
       </td>
     </tr>
   `).join("");
 
   const html = baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">¡Pedido confirmado! 🛍</h1>
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">¡Pedido confirmado! 🛍</h1>
     <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${patientName}, recibimos tu pago correctamente. En breve nos pondremos en contacto contigo para coordinar el envío.</p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
       <tr><td>
         <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Tu pedido</p>
         <table width="100%" cellpadding="0" cellspacing="0">${itemsHtml}</table>
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px">
           <tr>
             <td style="color:#71717A;font-size:13px;font-weight:700;text-transform:uppercase">Total pagado</td>
-            <td style="text-align:right;color:#0B1D35;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
+            <td style="text-align:right;color:#1A1A1A;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
           </tr>
         </table>
       </td></tr>
     </table>
 
-    <p style="margin:0 0 24px;color:#71717A;font-size:13px">¿Tienes alguna pregunta? Escríbenos por WhatsApp al <a href="https://wa.me/51952476574" style="color:#A78BFA;font-weight:600">+51 952 476 574</a> o responde este correo.</p>
+    <p style="margin:0 0 24px;color:#71717A;font-size:13px">¿Tienes alguna pregunta? Escríbenos por WhatsApp al <a href="https://wa.me/51952476574" style="color:#968DEF;font-weight:600">+51 952 476 574</a> o responde este correo.</p>
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
-        <a href="${BASE_URL}/dashboard/paciente" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/paciente" style="display:inline-block;background:linear-gradient(135deg,#968DEF 0%,#F06BCA 50%,#00DBB1 100%);color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
           Ver mi dashboard
         </a>
       </td></tr>
@@ -277,10 +284,10 @@ export async function sendAdminSaleNotification({
   const itemsHtml = items.map((i) => `
     <tr>
       <td style="padding:8px 0;border-bottom:1px solid #F4F4F5">
-        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
       </td>
       <td style="padding:8px 0;border-bottom:1px solid #F4F4F5;text-align:right">
-        <p style="margin:0;color:#0B1D35;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
       </td>
     </tr>
   `).join("");
@@ -289,17 +296,17 @@ export async function sendAdminSaleNotification({
   const label = saleType === "appointment" ? "Cita médica" : "Productos";
 
   const html = baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">${icon} Nueva venta — ${label}</h1>
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">${icon} Nueva venta — ${label}</h1>
     <p style="margin:0 0 28px;color:#71717A;font-size:15px">Se registró una nueva venta en Organnical.</p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
       <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Paciente</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${patientName}</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${patientName}</p>
       </td></tr>
       <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Método de pago</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${paymentMethod}</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${paymentMethod}</p>
       </td></tr>
       <tr><td style="padding:8px 0">
         <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Detalle</p>
@@ -307,7 +314,7 @@ export async function sendAdminSaleNotification({
         <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px">
           <tr>
             <td style="color:#71717A;font-size:13px;font-weight:700;text-transform:uppercase">Total</td>
-            <td style="text-align:right;color:#0B1D35;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
+            <td style="text-align:right;color:#1A1A1A;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
           </tr>
         </table>
       </td></tr>
@@ -315,7 +322,7 @@ export async function sendAdminSaleNotification({
 
     <table width="100%" cellpadding="0" cellspacing="0">
       <tr><td align="center">
-        <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#1A1A1A;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
           Ver en Ruby
         </a>
       </td></tr>
@@ -352,31 +359,31 @@ export async function sendNewAppointmentToDoctor({
   const specialtyLabel = emailSpecialtyLabel(specialty);
 
   const html = baseTemplate(`
-    <h1 style="margin:0 0 8px;color:#0B1D35;font-size:22px;font-weight:900">Nueva consulta agendada 🗓</h1>
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">Nueva consulta agendada 🗓</h1>
     <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${doctorName}, tienes una nueva cita programada.</p>
 
-    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
       <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Paciente</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${patientName}</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${patientName}</p>
       </td></tr>
       <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Especialidad</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${specialtyLabel}</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${specialtyLabel}</p>
       </td></tr>
       <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Fecha</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${dateStr}</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${dateStr}</p>
       </td></tr>
       <tr><td style="padding:8px 0">
         <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Hora</p>
-        <p style="margin:4px 0 0;color:#0B1D35;font-size:14px;font-weight:600">${timeStr} (Lima)</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${timeStr} (Lima)</p>
       </td></tr>
     </table>
 
     <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px">
       <tr><td align="center">
-        <a href="${BASE_URL}/dashboard/medico/consultas/${appointmentId}" style="display:inline-block;background:#0B1D35;color:white;text-decoration:none;padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px">
+        <a href="${BASE_URL}/dashboard/medico/consultas/${appointmentId}" style="display:inline-block;background:#1A1A1A;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
           Ver consulta
         </a>
       </td></tr>

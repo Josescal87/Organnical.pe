@@ -2,7 +2,7 @@ import { Resend } from "resend";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
 const FROM = "Organnical <reservas@organnical.com>";
-const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "${BASE_URL}";
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe";
 const SPECIALTY_EMOJI: Record<string, string> = {
   sleep: "🌙", pain: "🦴", anxiety: "🧠", womens_health: "🌸",
 };

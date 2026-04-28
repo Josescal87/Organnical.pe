@@ -21,9 +21,9 @@ BEGIN
       ),
       body    := jsonb_build_object(
         'record', jsonb_build_object(
-          'id',          NEW.id,
-          'slot_start',  NEW.slot_start,
-          'slot_end',    NEW.slot_end,
+          'id',           NEW.id,
+          'slot_start',   NEW.slot_start,
+          'slot_end',     NEW.slot_end,
           'meeting_link', NEW.meeting_link
         )
       )

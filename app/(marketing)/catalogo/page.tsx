@@ -7,9 +7,9 @@ import { ArrowRight, ShieldAlert } from "lucide-react"
 export const revalidate = 3600
 
 export const metadata: Metadata = {
-  title: "Catálogo de Productos — Organnical | Cannabis Medicinal y Suplementos",
+  title: "Catálogo de Productos — Organnical | Suplementos y Bienestar",
   description:
-    "Aceites CBD, cápsulas, cremas y suplementos certificados para sueño, dolor, ansiedad y salud femenina. Verificados bajo Ley 30681.",
+    "Productos certificados para sueño, dolor, ansiedad y salud femenina. Bajo supervisión médica especializada.",
 }
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
@@ -77,7 +77,7 @@ export default async function CatalogoPublicoPage() {
             </span>
           </h1>
           <p className="text-white/55 text-lg max-w-xl mx-auto">
-            Aceites CBD, cápsulas, cremas y suplementos certificados para tu bienestar.
+            Suplementos y productos certificados para tu bienestar, bajo supervisión médica.
           </p>
         </div>
       </section>

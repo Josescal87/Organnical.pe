@@ -2,8 +2,8 @@
   "name": "Sami by Organnical",
   "short_name": "Sami",
   "description": "Tu espacio de bienestar. Meditación, cuentos para dormir y respiración guiada.",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": "/sami",
+  "scope": "/sami",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#0f0a1e",
@@ -28,12 +28,12 @@
   "shortcuts": [
     {
       "name": "Meditaciones",
-      "url": "/explorar?tab=meditacion",
+      "url": "/sami/explorar?tab=meditacion",
       "description": "Ir a meditaciones guiadas"
     },
     {
       "name": "Respiración",
-      "url": "/respiracion",
+      "url": "/sami/respiracion",
       "description": "Ejercicios de respiración"
     }
   ]

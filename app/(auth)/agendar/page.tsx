@@ -154,8 +154,9 @@ function AgendarWizard() {
 
   useEffect(() => {
     if (step === "done") {
-      window.gtag?.("event", "generate_lead", { vertical, sessions })
-      window.fbq?.("track", "Schedule")
+      window.gtag?.("event", "generate_lead", { vertical, sessions, value: comboPrice, currency: "PEN" })
+      window.fbq?.("track", "Lead", { currency: "PEN", value: comboPrice })
+      window.fbq?.("track", "Purchase", { currency: "PEN", value: comboPrice })
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);

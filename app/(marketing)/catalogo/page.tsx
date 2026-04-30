@@ -10,6 +10,7 @@ export const metadata: Metadata = {
   title: "Catálogo de Productos — Organnical | Suplementos y Bienestar",
   description:
     "Productos certificados para sueño, dolor, ansiedad y salud femenina. Bajo supervisión médica especializada.",
+  alternates: { canonical: "https://organnical.pe/catalogo" },
 }
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"

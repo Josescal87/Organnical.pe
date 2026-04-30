@@ -46,8 +46,35 @@ const nextConfig: NextConfig = {
       // Old WordPress core files (prevent 404 noise)
       { source: "/wp-content/:path*",        destination: "/",          permanent: true },
       { source: "/wp-admin/:path*",          destination: "/",          permanent: true },
+      { source: "/wp-includes/:path*",       destination: "/",          permanent: true },
+      { source: "/wp-json/:path*",           destination: "/",          permanent: true },
       { source: "/wp-login.php",             destination: "/",          permanent: true },
       { source: "/wp-cron.php",              destination: "/",          permanent: true },
+      // Old WooCommerce taxonomy pages → catalog
+      { source: "/marca/:path*",             destination: "/catalogo",  permanent: true },
+      { source: "/catalogos-post/:path*",    destination: "/catalogo",  permanent: true },
+      // Old WordPress blog taxonomy → blog
+      { source: "/tag/:path*",               destination: "/blog",      permanent: true },
+      { source: "/category/:path*",          destination: "/blog",      permanent: true },
+      { source: "/author/:path*",            destination: "/",          permanent: true },
+      // Old WordPress patient/doctor profile pages → home
+      { source: "/pacientes/:path*",         destination: "/",          permanent: true },
+      { source: "/medicos/:path*",           destination: "/",          permanent: true },
+      { source: "/citas-medicas",            destination: "/",          permanent: true },
+      { source: "/citas-medicas/:path*",     destination: "/",          permanent: true },
+      // Old URL pattern with /p suffix (e.g. /producto-nombre-8337/p)
+      { source: "/:slug/p",                  destination: "/catalogo",  permanent: true },
+      // Old WordPress misc pages
+      { source: "/embed",                    destination: "/",          permanent: true },
+      { source: "/sysven",                   destination: "/",          permanent: true },
+      { source: "/sysven/:path*",            destination: "/",          permanent: true },
+      { source: "/coming",                   destination: "/",          permanent: true },
+      { source: "/coming/:path*",            destination: "/",          permanent: true },
+      // Old blog post URLs (migrated slugs → current blog)
+      { source: "/que-son-los-cannabinoides",                                                               destination: "/blog",      permanent: true },
+      { source: "/inteligencia-artificial-en-la-medicina-del-peru-una-nueva-era-de-salud-personalizada",    destination: "/blog",      permanent: true },
+      // Old privacy policy URL → current
+      { source: "/politicas-privacidad",     destination: "/privacidad", permanent: true },
     ];
   },
   async headers() {

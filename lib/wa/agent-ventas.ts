@@ -29,13 +29,13 @@ const TOOLS: Anthropic.Tool[] = [
   },
   {
     name: 'book_appointment',
-    description: 'Genera el link y la información para agendar una teleconsulta médica (S/60). Úsalo cuando el paciente quiera agendar.',
+    description: 'Genera el link y la información para agendar una teleconsulta médica (S/60). Úsalo cuando el paciente quiera agendar. patient_id es opcional — omítelo si el paciente es un lead nuevo.',
     input_schema: {
       type: 'object' as const,
       properties: {
-        patient_id: { type: 'string', description: 'UUID del paciente, o vacío si es lead nuevo' },
+        patient_id: { type: 'string', description: 'UUID del paciente si está registrado. Omitir para leads nuevos.' },
       },
-      required: ['patient_id'],
+      required: [],
     },
   },
   {
@@ -117,18 +117,18 @@ ${patientSection}`
 
 async function executeToolCall(
   name: string,
-  input: Record<string, string>,
+  input: Record<string, unknown>,
   conversationId: string
 ): Promise<unknown> {
   switch (name) {
     case 'get_catalog':
       return toolGetCatalog()
     case 'get_prescription':
-      return toolGetPrescription(input.patient_id)
+      return toolGetPrescription(String(input.patient_id ?? ''))
     case 'book_appointment':
-      return toolBookAppointment(input.patient_id ?? '')
+      return toolBookAppointment(String(input.patient_id ?? ''))
     case 'escalate_to_human':
-      return toolEscalateToHuman(conversationId, input.reason)
+      return toolEscalateToHuman(conversationId, String(input.reason ?? ''))
     default:
       return { error: `Tool desconocida: ${name}` }
   }
@@ -148,12 +148,16 @@ export async function runAgenteVentas({
   const systemPrompt = buildSystemPrompt(patientContext)
 
   // Build message history — last 20 messages to keep context manageable
-  const historyMessages: Anthropic.MessageParam[] = messageHistory
+  const rawHistory: Anthropic.MessageParam[] = messageHistory
     .slice(-20)
     .map((m) => ({
       role: m.direction === 'inbound' ? 'user' : 'assistant',
       content: m.content,
     }))
+
+  // Claude API requires messages to start with role='user'
+  const firstUserIdx = rawHistory.findIndex((m) => m.role === 'user')
+  const historyMessages = firstUserIdx > 0 ? rawHistory.slice(firstUserIdx) : rawHistory
 
   let messages: Anthropic.MessageParam[] = [
     ...historyMessages,
@@ -164,7 +168,7 @@ export async function runAgenteVentas({
   for (let i = 0; i < 5; i++) {
     const response = await client.messages.create({
       model: 'claude-sonnet-4-6',
-      max_tokens: 512,
+      max_tokens: 1024,
       system: systemPrompt,
       tools: TOOLS,
       messages,
@@ -187,7 +191,7 @@ export async function runAgenteVentas({
           content: JSON.stringify(
             await executeToolCall(
               block.name,
-              block.input as Record<string, string>,
+              block.input as Record<string, unknown>,
               conversationId
             )
           ),
@@ -202,8 +206,14 @@ export async function runAgenteVentas({
       continue
     }
 
+    if (response.stop_reason === 'max_tokens') {
+      const textBlock = response.content.find((b) => b.type === 'text')
+      return textBlock?.type === 'text' ? textBlock.text : null
+    }
+
     break
   }
 
+  console.warn('[agente-ventas] tool loop exhausted without end_turn', { conversationId })
   return null
 }

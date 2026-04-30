@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useEffect, useCallback } from 'react'
+import { useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import type { SamiContent } from '@/lib/supabase/database.types'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
@@ -16,21 +16,13 @@ function formatTime(seconds: number): string {
   return `${m}:${s.toString().padStart(2, '0')}`
 }
 
-const SLEEP_OPTIONS = [15, 30, 60] as const
-type SleepOption = typeof SLEEP_OPTIONS[number]
-
 export default function AudioPlayer({ content }: Props) {
   const audioRef = useRef<HTMLAudioElement>(null)
 
-  const [isPlaying, setIsPlaying]       = useState(false)
-  const [currentTime, setCurrentTime]   = useState(0)
-  const [duration, setDuration]         = useState(content.duration_seconds)
-  const [sleepTimer, setSleepTimer]     = useState<number | null>(null) // remaining seconds
-  const [activeSleepOption, setActiveSleepOption] = useState<number | null>(null)
-  const [sessionId, setSessionId]       = useState<string | null>(null)
-
-  // Sleep timer interval ref
-  const sleepIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const [isPlaying, setIsPlaying]     = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [duration, setDuration]       = useState(content.duration_seconds)
+  const [sessionId, setSessionId]     = useState<string | null>(null)
 
   // ── Session helpers ────────────────────────────────────────────────────────
 
@@ -76,24 +68,33 @@ export default function AudioPlayer({ content }: Props) {
 
   async function handleEnded() {
     setIsPlaying(false)
-    clearSleepInterval()
     await completeSession(audioRef.current?.currentTime ?? currentTime)
   }
 
   // ── Playback controls ──────────────────────────────────────────────────────
 
-  async function togglePlay() {
+  function togglePlay() {
     const audio = audioRef.current
     if (!audio) return
 
     if (isPlaying) {
       audio.pause()
       setIsPlaying(false)
-    } else {
-      await startSession()
-      await audio.play()
-      setIsPlaying(true)
+      return
     }
+
+    // Fire session tracking in the background. Do NOT await — iOS Safari
+    // requires audio.play() to be called synchronously inside the user
+    // gesture, otherwise it rejects with NotAllowedError.
+    void startSession()
+
+    audio
+      .play()
+      .then(() => setIsPlaying(true))
+      .catch((err) => {
+        console.error('audio.play() failed:', err)
+        setIsPlaying(false)
+      })
   }
 
   function seek(value: number) {
@@ -111,52 +112,8 @@ export default function AudioPlayer({ content }: Props) {
     setCurrentTime(next)
   }
 
-  // ── Sleep timer ────────────────────────────────────────────────────────────
-
-  function clearSleepInterval() {
-    if (sleepIntervalRef.current !== null) {
-      clearInterval(sleepIntervalRef.current)
-      sleepIntervalRef.current = null
-    }
-  }
-
-  function activateSleepTimer(minutes: SleepOption) {
-    clearSleepInterval()
-    const totalSeconds = minutes * 60
-    setSleepTimer(totalSeconds)
-    setActiveSleepOption(minutes)
-
-    sleepIntervalRef.current = setInterval(() => {
-      setSleepTimer((prev) => {
-        if (prev === null || prev <= 1) {
-          clearSleepInterval()
-          audioRef.current?.pause()
-          setIsPlaying(false)
-          setActiveSleepOption(null)
-          return null
-        }
-        return prev - 1
-      })
-    }, 1000)
-  }
-
-  function cancelSleepTimer() {
-    clearSleepInterval()
-    setSleepTimer(null)
-    setActiveSleepOption(null)
-  }
-
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      clearSleepInterval()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   // ── Derived values ─────────────────────────────────────────────────────────
 
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0
   const icon = categoryIcon(content.category)
   const label = categoryLabel(content.category)
 
@@ -170,7 +127,7 @@ export default function AudioPlayer({ content }: Props) {
           Audio no disponible todavía.
         </p>
         <Link
-          href="/"
+          href="/sami"
           className="text-sm underline underline-offset-2 transition-colors hover:opacity-80"
           style={{ color: '#a78bfa' }}
         >
@@ -184,7 +141,7 @@ export default function AudioPlayer({ content }: Props) {
     <div className="flex flex-col gap-8">
       {/* Back link */}
       <Link
-        href="/"
+        href="/sami"
         className="flex w-fit items-center gap-1 text-sm transition-colors hover:opacity-80"
         style={{ color: '#a78bfa' }}
       >
@@ -372,86 +329,6 @@ export default function AudioPlayer({ content }: Props) {
             </text>
           </svg>
         </button>
-      </div>
-
-      {/* Sleep timer */}
-      <div
-        className="rounded-xl border p-4"
-        style={{
-          backgroundColor: 'rgba(255,255,255,0.04)',
-          borderColor: 'rgba(167,139,250,0.15)',
-        }}
-      >
-        <div className="mb-3 flex items-center gap-2">
-          {/* Clock icon */}
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ color: '#a78bfa' }}
-            aria-hidden="true"
-          >
-            <circle cx="12" cy="12" r="10" />
-            <polyline points="12 6 12 12 16 14" />
-          </svg>
-          <span className="text-xs font-medium uppercase tracking-wider" style={{ color: '#a78bfa' }}>
-            Timer de sueño
-          </span>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {SLEEP_OPTIONS.map((mins) => {
-            const isActive = activeSleepOption === mins
-
-            return (
-              <button
-                key={mins}
-                onClick={() => {
-                  if (isActive) {
-                    cancelSleepTimer()
-                  } else {
-                    activateSleepTimer(mins)
-                  }
-                }}
-                className="rounded-lg border px-3 py-1.5 text-sm font-medium transition-all hover:opacity-90 active:scale-95"
-                style={{
-                  backgroundColor: isActive
-                    ? 'rgba(167,139,250,0.25)'
-                    : 'rgba(255,255,255,0.06)',
-                  borderColor: isActive
-                    ? '#a78bfa'
-                    : 'rgba(167,139,250,0.2)',
-                  color: isActive ? '#a78bfa' : '#d1d5db',
-                }}
-              >
-                {mins} min
-              </button>
-            )
-          })}
-        </div>
-
-        {sleepTimer !== null && (
-          <p className="mt-3 text-sm" style={{ color: '#9ca3af' }}>
-            Apaga en{' '}
-            <span className="font-semibold tabular-nums" style={{ color: '#a78bfa' }}>
-              {formatTime(sleepTimer)}
-            </span>
-            {' '}
-            <button
-              onClick={cancelSleepTimer}
-              className="underline underline-offset-2 transition-opacity hover:opacity-80"
-              style={{ color: '#6b7280', fontSize: '0.75rem' }}
-            >
-              cancelar
-            </button>
-          </p>
-        )}
       </div>
 
       {/* Native audio element (hidden) */}

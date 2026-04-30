@@ -1,18 +1,22 @@
-"use client";
-
-import { useState, useEffect, useRef, useCallback } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import {
-  Star, Shield, Clock, Video, CheckCircle, ArrowRight,
-  Heart, Phone, Zap, ChevronRight,
-  Calendar, Users, MessageSquare,
+  Star, Shield, Clock, Heart, Phone,
+  Zap, ChevronRight, Calendar, Users, MessageSquare, ArrowRight,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/server";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
+import HeroSection from "./_components/HeroSection";
+import ScrollReveal from "./_components/ScrollReveal";
+import AuthRedirect from "./_components/AuthRedirect";
 
-/* ─── Brand tokens ─────────────────────────────────────────── */
+export const metadata: Metadata = {
+  title: "Organnical — Medicina Integrativa Online · Perú",
+  description: "Consultas médicas especializadas en sueño, dolor crónico, ansiedad y salud femenina. Médicos certificados MINSA. Agenda tu teleconsulta en menos de 48 horas.",
+  alternates: { canonical: "https://organnical.pe" },
+};
+
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
 const NAVY2 = "#0E2545";
@@ -20,367 +24,81 @@ const NAVY2 = "#0E2545";
 const u = (id: string, w = 1200, h = 800) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=85`;
 
-/* ─── Data ──────────────────────────────────────────────────── */
-
 const specialties = [
-  { icon: "🌙", title: "Sueño", desc: "Insomnio, apnea y ritmo circadiano", photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
-  { icon: "🦴", title: "Dolor Crónico", desc: "Fibromialgia, neuropático y musculoesquelético", photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
-  { icon: "🧠", title: "Ansiedad", desc: "Estrés crónico y bienestar emocional", photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
-  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal", photo: "1554151228-14d9def656e4", count: "320+ atendidos", slug: "salud-femenina" },
+  { icon: "🌙", title: "Sueño",          desc: "Insomnio, apnea y ritmo circadiano",              photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
+  { icon: "🦴", title: "Dolor Crónico",  desc: "Fibromialgia, neuropático y musculoesquelético",  photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
+  { icon: "🧠", title: "Ansiedad",       desc: "Estrés crónico y bienestar emocional",            photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
+  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal",           photo: "1554151228-14d9def656e4", count: "320+ atendidos", slug: "salud-femenina" },
 ];
 
 type DoctorCard = {
-  name: string;
-  specialty: string;
-  cmp: string;
-  photo: string;
-  rating: number;
-  reviews: number;
-  tags: string[];
+  name: string; specialty: string; cmp: string;
+  photo: string; rating: number; reviews: number; tags: string[];
 };
 
 const FALLBACK_DOCTORS: DoctorCard[] = [
-  {
-    name: "Dra. Estefanía Poma",
-    specialty: "Médico General · Medicina Integrativa",
-    cmp: "CMP 059636",
-    photo: "/dra-poma-300x300.png",
-    rating: 4.9,
-    reviews: 142,
-    tags: ["Sueño", "Salud Femenina"],
-  },
-  {
-    name: "Dr. Robert Goodman",
-    specialty: "Médico General · Medicina Integrativa",
-    cmp: "CMP 095719",
-    photo: "/drgodman-300x300.png",
-    rating: 4.8,
-    reviews: 118,
-    tags: ["Dolor Crónico", "Ansiedad"],
-  },
+  { name: "Dra. Estefanía Poma",  specialty: "Médico General · Medicina Integrativa", cmp: "CMP 059636", photo: "/dra-poma-300x300.png",  rating: 4.9, reviews: 142, tags: ["Sueño", "Salud Femenina"] },
+  { name: "Dr. Robert Goodman",   specialty: "Médico General · Medicina Integrativa", cmp: "CMP 095719", photo: "/drgodman-300x300.png",   rating: 4.8, reviews: 118, tags: ["Dolor Crónico", "Ansiedad"] },
 ];
 
 const testimonials = [
   {
-    name: "Raúl I.",
-    headline: "Recuperando la calidad del sueño",
+    name: "Raúl I.", headline: "Recuperando la calidad del sueño", specialty: "Paciente · Sueño", rating: 5,
     text: "Mi mente era como una computadora que no se apagaba. Dormía en 'modo suspensión' y al día siguiente arrastraba el cansancio. En Organnical me explicaron cómo el tratamiento funcionaba en mi caso. Por fin apago el ruido y duermo profundo. Me despierto entero.",
-    specialty: "Paciente · Sueño",
-    rating: 5,
   },
   {
-    name: "Patricia C.",
-    headline: "La importancia de la asesoría personalizada",
+    name: "Patricia C.", headline: "La importancia de la asesoría personalizada", specialty: "Paciente · Sueño", rating: 5,
     text: "Dormía 2 o 3 horas cortadas cada noche. Probé tratamientos por mi cuenta y no pasó nada. La doctora de Organnical revisó mi caso completo y me explicó exactamente qué necesitaba y en qué dosis. Ahora descanso más de 8 horas seguidas. La diferencia fue la asesoría.",
-    specialty: "Paciente · Sueño",
-    rating: 5,
   },
   {
-    name: "Juan Carlos M.",
-    headline: "Recuperando la movilidad y la pasión",
+    name: "Juan Carlos M.", headline: "Recuperando la movilidad y la pasión", specialty: "Paciente · Dolor Crónico", rating: 5,
     text: "El dolor crónico de espalda me había quitado lo que más amo: cabalgar. Probé de todo sin resultados reales. En Organnical me armaron un tratamiento personalizado y la mejoría fue progresiva hasta recuperar mi movilidad. Hoy ya estoy de vuelta en el caballo.",
-    specialty: "Paciente · Dolor Crónico",
-    rating: 5,
   },
-];
-
-
-const QUIZ_STEPS = [
-  {
-    question: "¿Qué te trae hoy?",
-    sub: "Elige la que más resuene. Puedes cambiarla después.",
-    type: "glyph",
-    options: [
-      { label: "Cuesta dormir o descansar",          icon: "◑" },
-      { label: "Dolor que no se va",                  icon: "◍" },
-      { label: "Ansiedad o bajón emocional",          icon: "○" },
-      { label: "Ciclo, hormonas o menopausia",        icon: "◉" },
-      { label: "Otra cosa / todavía no lo tengo claro", icon: "◌" },
-    ],
-  },
-  {
-    question: "¿Hace cuánto lo vienes cargando?",
-    sub: "Esto ayuda a tu médico a priorizar el plan.",
-    type: "dots",
-    options: [
-      { label: "Semanas",                 icon: "1" },
-      { label: "Meses",                   icon: "2" },
-      { label: "Un año o más",            icon: "3" },
-      { label: "Prácticamente siempre",   icon: "4" },
-    ],
-  },
-  {
-    question: "¿Con qué horario te acomoda empezar?",
-    sub: "Te mostramos doctores disponibles en ese rango.",
-    type: "arrow",
-    options: [
-      { label: "Lo antes posible (hoy / mañana)", icon: "" },
-      { label: "Esta semana",                      icon: "" },
-      { label: "Tengo flexibilidad",               icon: "" },
-      { label: "Solo noches / fines de semana",    icon: "" },
-    ],
-  },
-];
-
-const trustItems = [
-  { icon: Shield, text: "Médicos con CMP activo" },
-  { icon: Clock, text: "Primera cita en < 48h" },
-  { icon: Heart, text: "+3,000 pacientes" },
 ];
 
 const steps = [
-  {
-    number: "01",
-    icon: Calendar,
-    title: "Elige tu especialidad",
-    description: "Selecciona el área de salud que necesitas atender. Filtra por síntomas o especialidad médica.",
-    detail: "Búsqueda inteligente",
-    photo: "1486312338219-ce68d2c6f44d",
-  },
-  {
-    number: "02",
-    icon: Users,
-    title: "Agenda con tu médico",
-    description: "Elige el horario que más te convenga. Consulta disponibilidad en tiempo real y recibe confirmación inmediata.",
-    detail: "Agenda en tiempo real",
-    photo: "1556742049-0cfed4f6a45d",
-  },
-  {
-    number: "03",
-    icon: MessageSquare,
-    title: "Recibe tu tratamiento",
-    description: "Tu médico elabora un plan personalizado documentado. Acompañamiento continuo hasta tu recuperación.",
-    detail: "Plan de tratamiento documentado",
-    photo: "1631217868264-e5b90bb7e133",
-  },
+  { number: "01", icon: Calendar,    title: "Elige tu especialidad", detail: "Búsqueda inteligente",          photo: "1486312338219-ce68d2c6f44d", description: "Selecciona el área de salud que necesitas atender. Filtra por síntomas o especialidad médica." },
+  { number: "02", icon: Users,       title: "Agenda con tu médico",  detail: "Agenda en tiempo real",         photo: "1556742049-0cfed4f6a45d", description: "Elige el horario que más te convenga. Consulta disponibilidad en tiempo real y recibe confirmación inmediata." },
+  { number: "03", icon: MessageSquare, title: "Recibe tu tratamiento", detail: "Plan de tratamiento documentado", photo: "1631217868264-e5b90bb7e133", description: "Tu médico elabora un plan personalizado documentado. Acompañamiento continuo hasta tu recuperación." },
 ];
 
-/* ─── Component ─────────────────────────────────────────────── */
+const trustItems = [
+  { icon: Shield,  text: "Médicos con CMP activo" },
+  { icon: Clock,   text: "Primera cita en < 48h" },
+  { icon: Heart,   text: "+3,000 pacientes" },
+];
 
-export default function LandingPage() {
-  const [activeSpecialty, setActiveSpecialty] = useState<string | null>(null);
-  const [doctors, setDoctors] = useState<DoctorCard[]>(FALLBACK_DOCTORS);
-  const [quizStep, setQuizStep] = useState(1);
-  const router = useRouter();
-
-  // Cargar médicos desde DB (fallback a datos estáticos si falla)
-  useEffect(() => {
-    createClient()
+export default async function LandingPage() {
+  let doctors: DoctorCard[] = FALLBACK_DOCTORS;
+  try {
+    const supabase = await createClient();
+    const { data } = await supabase
       .schema("medical")
       .from("profiles")
       .select("full_name, cmp, specialty_label, photo_url, verticals")
-      .eq("role", "doctor")
-      .then(({ data }) => {
-        if (!data?.length) return;
-        setDoctors(
-          data.map((d) => ({
-            name: d.full_name ?? "Médico",
-            specialty: d.specialty_label ?? "Medicina Integrativa",
-            cmp: d.cmp ? `CMP ${d.cmp}` : "",
-            photo: d.photo_url ?? "/dra-poma-300x300.png",
-            rating: 4.9,
-            reviews: 0,
-            tags: (d.verticals ?? []).map((v: string) => SPECIALTY_LABELS[v] ?? v),
-          }))
-        );
-      });
-  }, []);
-
-  // Redirect logged-in users to their dashboard
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (data.user) router.replace("/dashboard");
-    });
-  }, [router]);
-
-  // Scroll reveal
-  useEffect(() => {
-    const els = document.querySelectorAll(".reveal");
-    const obs = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((e, i) => {
-          if (e.isIntersecting) {
-            setTimeout(() => e.target.classList.add("visible"), i * 60);
-            obs.unobserve(e.target);
-          }
-        });
-      },
-      { threshold: 0.08 }
-    );
-    els.forEach((el) => obs.observe(el));
-    return () => obs.disconnect();
-  }, []);
+      .eq("role", "doctor");
+    if (data?.length) {
+      doctors = data.map((d) => ({
+        name:      d.full_name ?? "Médico",
+        specialty: d.specialty_label ?? "Medicina Integrativa",
+        cmp:       d.cmp ? `CMP ${d.cmp}` : "",
+        photo:     d.photo_url ?? "/dra-poma-300x300.png",
+        rating:    4.9,
+        reviews:   0,
+        tags:      ((d.verticals ?? []) as string[]).map((v) => SPECIALTY_LABELS[v] ?? v),
+      }));
+    }
+  } catch {
+    // fall back to static data
+  }
 
   return (
     <>
+      <AuthRedirect />
+      <ScrollReveal />
       <main>
         {/* ══════════ HERO ══════════ */}
-        <section className="relative min-h-screen flex items-center overflow-hidden" style={{ background: NAVY }}>
-          {/* Background texture */}
-          <div className="absolute inset-0 dot-grid opacity-30" />
-          <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 80% at 70% 50%, #1a3a6e 0%, transparent 70%)" }} />
-
-          <div className="relative z-10 mx-auto max-w-7xl px-6 w-full">
-            <div className="grid lg:grid-cols-2 gap-12 items-center pt-28 pb-16 lg:pt-32 lg:pb-20 min-h-screen">
-
-              {/* Left — text */}
-              <div className="max-w-xl">
-                <div className="hero-badge mb-6 inline-flex items-center gap-2.5 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2">
-                  <span className="h-2 w-2 rounded-full animate-pulse bg-[#F472B6]" />
-                  <span className="text-sm font-medium text-white/80">Telemedicina Integrativa · Perú</span>
-                </div>
-
-                <h1 className="hero-title font-display text-5xl font-black text-white leading-[1.06] tracking-tight md:text-[3.8rem] lg:text-[4.2rem]">
-                  El médico que{" "}
-                  <span className="font-display italic" style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>
-                    te escucha
-                  </span>{" "}
-                  y trata la raíz del problema.
-                </h1>
-
-                <p className="hero-subtitle mt-6 text-lg text-white/55 leading-relaxed">
-                  Medicina integrativa basada en evidencia. Tratamientos personalizados
-                  para sueño, dolor crónico, ansiedad y salud femenina.
-                </p>
-
-                {/* Quick specialty selector */}
-                <div className="hero-ctas mt-8">
-                  <p className="text-xs text-white/40 uppercase tracking-widest mb-3 font-medium">¿Qué necesitas tratar?</p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {specialties.map((s) => (
-                      <button
-                        key={s.title}
-                        onClick={() => setActiveSpecialty(activeSpecialty === s.title ? null : s.title)}
-                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all border ${
-                          activeSpecialty === s.title
-                            ? "text-white border-transparent"
-                            : "border-white/20 text-white/60 hover:border-white/40 hover:text-white/90"
-                        }`}
-                        style={activeSpecialty === s.title ? { background: G, borderColor: "transparent" } : {}}
-                      >
-                        {s.icon} {s.title}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="flex flex-wrap gap-3">
-                    <Link
-                      href="/registro"
-                      className="group inline-flex items-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-all shadow-2xl hover:opacity-90"
-                      style={{ background: G, boxShadow: "0 16px 36px rgba(167,139,250,0.35)" }}
-                    >
-                      Agendar consulta
-                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                    </Link>
-                    <a
-                      href="#como-funciona"
-                      className="inline-flex items-center gap-2 rounded-full border border-white/20 px-7 py-3.5 text-sm font-semibold text-white/80 hover:bg-white/[0.08] transition-all"
-                    >
-                      <Video className="w-4 h-4" />
-                      Ver cómo funciona
-                    </a>
-                  </div>
-                </div>
-
-                {/* Price anchor */}
-                <p className="mt-5 text-xs text-white/35">
-                  Consultas desde <span className="text-white/60 font-semibold">S/ 60</span> · Primera cita disponible en menos de 48 h
-                </p>
-
-                {/* Trust row */}
-                <div className="hero-trust mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/40">
-                  {["Médicos con CMP activo", "Documentación oficial", "Sin suscripción"].map((t) => (
-                    <span key={t} className="flex items-center gap-1.5">
-                      <CheckCircle className="w-3.5 h-3.5 text-[#A78BFA]" /> {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Right — mini quiz */}
-              <div className="hero-card relative flex items-center justify-center mt-4 lg:mt-0">
-                <div className="w-full max-w-sm rounded-3xl bg-white overflow-hidden" style={{ boxShadow: "0 32px 80px rgba(0,0,0,0.22)" }}>
-                  {quizStep <= 3 ? (() => {
-                    const step = QUIZ_STEPS[quizStep - 1];
-                    return (
-                      <div className="p-7">
-                        {/* Header */}
-                        <div className="flex items-center justify-between mb-6">
-                          <span className="font-mono text-[10px] font-semibold tracking-widest text-[#A78BFA] uppercase">Mini-Quiz · 45 seg</span>
-                          <div className="flex gap-1.5">
-                            {[1, 2, 3].map((n) => (
-                              <span key={n} className={`h-1 rounded-full transition-all ${n === quizStep ? "w-8 bg-zinc-800" : n < quizStep ? "w-6 bg-[#A78BFA]" : "w-4 bg-zinc-200"}`} />
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Question */}
-                        <h3 className="font-display text-[1.4rem] font-black text-zinc-900 leading-tight mb-1.5">{step.question}</h3>
-                        <p className="text-sm text-zinc-400 mb-5">{step.sub}</p>
-
-                        {/* Options */}
-                        <div className="flex flex-col gap-2">
-                          {step.options.map((opt) => (
-                            <button
-                              key={opt.label}
-                              onClick={() => setQuizStep(quizStep + 1)}
-                              className="group flex items-center gap-3 rounded-xl border border-zinc-100 bg-zinc-50 px-4 py-3 text-left text-sm font-medium text-zinc-700 transition-all hover:border-violet-300 hover:bg-violet-50 hover:text-violet-700"
-                            >
-                              {step.type === "glyph" && (
-                                <span className="text-base leading-none text-zinc-400 group-hover:text-violet-400 transition-colors select-none w-5 text-center">{opt.icon}</span>
-                              )}
-                              {step.type === "dots" && (
-                                <span className="w-8 h-8 flex-shrink-0 rounded-lg bg-white border border-zinc-200 flex flex-wrap items-center justify-center gap-[3px] p-2 group-hover:border-violet-300 transition-colors">
-                                  {Array.from({ length: parseInt(opt.icon) }).map((_, i) => (
-                                    <span key={i} className="w-[5px] h-[5px] rounded-full bg-zinc-400 group-hover:bg-violet-400 transition-colors" />
-                                  ))}
-                                </span>
-                              )}
-                              {step.type === "arrow" && (
-                                <span className="w-8 h-8 flex-shrink-0 rounded-lg bg-white border border-zinc-200 flex items-center justify-center group-hover:border-violet-300 transition-colors">
-                                  <ChevronRight className="w-3.5 h-3.5 text-zinc-400 group-hover:text-violet-400 transition-colors" />
-                                </span>
-                              )}
-                              {opt.label}
-                            </button>
-                          ))}
-                        </div>
-
-                        {/* Back */}
-                        {quizStep > 1 && (
-                          <button onClick={() => setQuizStep(quizStep - 1)} className="mt-4 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                            ← atrás
-                          </button>
-                        )}
-                      </div>
-                    );
-                  })() : (
-                    <div className="p-8 flex flex-col items-center text-center">
-                      <div className="w-14 h-14 rounded-full flex items-center justify-center mb-5" style={{ background: G }}>
-                        <CheckCircle className="w-7 h-7 text-white" />
-                      </div>
-                      <h3 className="font-display text-xl font-black text-zinc-900 mb-2">Tenemos médicos para ti</h3>
-                      <p className="text-sm text-zinc-500 mb-7 leading-relaxed">
-                        Hay especialistas con disponibilidad hoy. Agenda en 2 minutos.
-                      </p>
-                      <Link
-                        href="/registro"
-                        className="w-full inline-flex items-center justify-center gap-2 rounded-full px-7 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
-                        style={{ background: G, boxShadow: "0 12px 28px rgba(167,139,250,0.35)" }}
-                      >
-                        Agendar mi consulta <ArrowRight className="w-4 h-4" />
-                      </Link>
-                      <button onClick={() => setQuizStep(1)} className="mt-3 text-xs text-zinc-400 hover:text-zinc-600 transition-colors">
-                        ← Volver al inicio
-                      </button>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        <HeroSection specialties={specialties} />
 
         {/* ══════════ TRUST BAR ══════════ */}
         <section className="bg-white border-b border-zinc-100 px-6 py-5">
@@ -420,20 +138,18 @@ export default function LandingPage() {
                   className="reveal group bg-white rounded-2xl overflow-hidden border border-zinc-100 hover:border-violet-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                   style={{ transitionDelay: `${i * 60}ms`, textDecoration: "none", color: "inherit" }}
                 >
-                  {/* Image */}
                   <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
                     <Image
                       src={u(s.photo, 500, 280)}
                       alt={s.title}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                       style={s.slug === "salud-femenina" ? { objectPosition: "center 15%" } : undefined}
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
                     <span className="absolute bottom-3 left-3 text-2xl">{s.icon}</span>
                   </div>
-
-                  {/* Content */}
                   <div className="p-5">
                     <h3 className="font-display font-bold text-[#0B1D35] text-lg mb-1">{s.title}</h3>
                     <p className="text-xs text-zinc-500 leading-relaxed mb-4">{s.desc}</p>
@@ -471,20 +187,19 @@ export default function LandingPage() {
                   style={{ transitionDelay: `${i * 100}ms` }}
                 >
                   <div className="h-1" style={{ background: G }} />
-
                   <div className="relative h-64 overflow-hidden bg-zinc-50">
                     <Image
                       src={d.photo}
                       alt={d.name}
                       fill
                       className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 640px) 100vw, 50vw"
                     />
                     <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1.5 shadow-sm">
                       <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                       <span className="text-xs font-semibold text-zinc-700">Disponible</span>
                     </div>
                   </div>
-
                   <div className="p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div>
@@ -501,22 +216,16 @@ export default function LandingPage() {
                         </div>
                       )}
                     </div>
-
                     <p className="text-xs text-zinc-400 mb-4">{d.cmp}</p>
-
                     <div className="flex flex-wrap gap-1.5 mb-5">
                       {d.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-[#7c6fed]">
-                          {tag}
-                        </span>
+                        <span key={tag} className="px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-[#7c6fed]">{tag}</span>
                       ))}
                     </div>
-
                     <div className="flex items-center gap-2 text-xs text-zinc-400 mb-5">
                       <Clock className="w-3.5 h-3.5 flex-shrink-0" />
                       Disponible esta semana
                     </div>
-
                     <Link
                       href="/registro"
                       className="block w-full text-center rounded-full text-sm font-semibold py-2.5 text-white transition-all hover:opacity-90"
@@ -528,7 +237,6 @@ export default function LandingPage() {
                 </div>
               ))}
             </div>
-
           </div>
         </section>
 
@@ -550,16 +258,12 @@ export default function LandingPage() {
                   className={`reveal flex flex-col gap-10 items-center lg:flex-row ${i % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
                 >
                   <div className="relative w-full lg:w-1/2 overflow-hidden rounded-3xl shadow-lg" style={{ aspectRatio: "16/9" }}>
-                    <Image src={u(step.photo, 800, 450)} alt={step.title} fill className="object-cover" />
+                    <Image src={u(step.photo, 800, 450)} alt={step.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
                     <div className="absolute inset-0 bg-gradient-to-br from-[#0B1D35]/30 to-transparent" />
-                    <div
-                      className="absolute top-5 left-5 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg"
-                      style={{ background: G }}
-                    >
+                    <div className="absolute top-5 left-5 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: G }}>
                       <step.icon className="w-5 h-5 text-white" />
                     </div>
                   </div>
-
                   <div className="lg:w-1/2">
                     <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 mb-5">
                       <span className="font-display text-xl font-black text-[#A78BFA]">{step.number}</span>
@@ -595,7 +299,6 @@ export default function LandingPage() {
                   className="reveal flex flex-col rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/[0.08] transition-colors"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
-                  {/* Headline + stars */}
                   <div className="mb-5">
                     <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">{t.headline}</p>
                     <div className="flex gap-1">
@@ -604,15 +307,9 @@ export default function LandingPage() {
                       ))}
                     </div>
                   </div>
-
                   <p className="text-white/70 leading-relaxed text-sm mb-8 flex-1">&ldquo;{t.text}&rdquo;</p>
-
-                  {/* Author — initials avatar, no photo */}
                   <div className="flex items-center gap-3 pt-5 border-t border-white/8">
-                    <div
-                      className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
-                      style={{ background: G }}
-                    >
+                    <div className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ background: G }}>
                       {t.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
                     <div>
@@ -635,9 +332,7 @@ export default function LandingPage() {
           <div className="reveal mx-auto max-w-4xl flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
             <div className="flex-1">
               <p className="text-xs font-bold uppercase tracking-widest text-violet-300 mb-3">Bienestar mental</p>
-              <h2 className="font-display text-3xl font-black text-white md:text-4xl mb-3">
-                Sami by Organnical
-              </h2>
+              <h2 className="font-display text-3xl font-black text-white md:text-4xl mb-3">Sami by Organnical</h2>
               <p className="text-white/60 text-lg leading-relaxed">
                 Tu espacio de bienestar. Meditación, cuentos para dormir y respiración guiada.
               </p>
@@ -664,23 +359,21 @@ export default function LandingPage() {
               alt="Consulta online"
               fill
               className="object-cover"
+              sizes="100vw"
             />
             <div className="absolute inset-0" style={{ background: `${NAVY}DD` }} />
           </div>
-
           <div className="reveal relative z-10 mx-auto max-w-2xl px-6 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 mb-8">
               <Heart className="w-3.5 h-3.5 text-[#F472B6]" />
               <span className="text-sm text-white/70">Sin filas · Sin esperas · 100% online</span>
             </div>
-
             <h2 className="font-display text-4xl font-black text-white md:text-5xl mb-5">
               Tu primera consulta a un click de distancia
             </h2>
             <p className="text-white/50 text-lg mb-10">
               Agenda hoy y recibe atención en menos de 48 horas. Primera consulta sin compromiso.
             </p>
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/registro"
@@ -701,7 +394,6 @@ export default function LandingPage() {
           </div>
         </section>
       </main>
-
     </>
   );
 }

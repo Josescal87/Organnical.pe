@@ -61,9 +61,14 @@ export function SimulatorClient() {
       })
 
       if (!res.ok) {
+        let detail = ''
+        try {
+          const errBody = await res.json()
+          detail = errBody.error ?? ''
+        } catch { /* ignore */ }
         setMessages((prev) => [
           ...prev,
-          { id: crypto.randomUUID(), role: 'system', content: `Error ${res.status}: ${res.statusText}` },
+          { id: crypto.randomUUID(), role: 'system', content: `Error ${res.status}${detail ? `: ${detail}` : ''}` },
         ])
         return
       }
@@ -134,6 +139,7 @@ export function SimulatorClient() {
       <div className="border-b border-gray-800 px-4 py-2 flex items-center gap-3 bg-gray-900">
         <span className="text-xs text-gray-500 shrink-0">Número:</span>
         <input
+          aria-label="Número de teléfono simulado"
           className="flex-1 bg-transparent text-sm text-gray-300 outline-none font-mono"
           value={phoneNumber}
           onChange={(e) => {
@@ -142,6 +148,7 @@ export function SimulatorClient() {
             setConversationId(null)
             setMode('ai')
             setState('new')
+            setInput('')
           }}
           placeholder="+519XXXXXXXX"
         />
@@ -152,6 +159,7 @@ export function SimulatorClient() {
         </span>
         <span className="text-xs text-gray-600 font-mono">{state}</span>
         <button
+          type="button"
           onClick={newConversation}
           className="text-xs bg-gray-700 hover:bg-gray-600 rounded-lg px-3 py-1.5 transition shrink-0"
         >

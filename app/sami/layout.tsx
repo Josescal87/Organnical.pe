@@ -56,8 +56,14 @@ export default function SamiLayout({
 
       {/* Nav */}
       <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-5 py-3"
-        style={{ backgroundColor: 'rgba(11,8,24,0.85)', backdropFilter: 'blur(12px)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}
+        className="sticky top-0 z-50 flex items-center justify-between px-5"
+        style={{
+          backgroundColor: 'rgba(11,8,24,0.85)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          paddingTop: 'calc(env(safe-area-inset-top) + 12px)',
+          paddingBottom: '12px',
+        }}
       >
         <div className="flex items-center gap-2">
           <span

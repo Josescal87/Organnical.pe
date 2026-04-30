@@ -64,7 +64,7 @@ interface ContentCardProps {
 function ContentCard({ item, accent }: ContentCardProps) {
   return (
     <Link
-      href={`/${item.slug}`}
+      href={`/sami/${item.slug}`}
       className="group flex flex-col gap-3 rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
       style={{
         backgroundColor: 'rgba(255,255,255,0.04)',

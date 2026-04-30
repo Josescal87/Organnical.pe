@@ -155,7 +155,7 @@ export default function ExplorarClient({ content }: Props) {
             return (
               <Link
                 key={item.id}
-                href={`/${item.slug}`}
+                href={`/sami/${item.slug}`}
                 className="group flex flex-col gap-3 rounded-xl border p-4 transition-all hover:scale-[1.02]"
                 style={{
                   backgroundColor: 'rgba(255,255,255,0.05)',

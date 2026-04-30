@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import Link from 'next/link'
 import { Playfair_Display } from 'next/font/google'
+import PwaGuard from './_components/PwaGuard'
 
 const playfair = Playfair_Display({
   subsets: ['latin'],
@@ -33,6 +34,7 @@ export default function SamiLayout({
   children: React.ReactNode
 }) {
   return (
+    <PwaGuard>
     <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundColor: '#0b0818', color: '#f3f0ff' }}>
       {/* Stars background */}
       <div aria-hidden className="sami-star-bg pointer-events-none fixed inset-0 z-0" style={{
@@ -83,5 +85,6 @@ export default function SamiLayout({
         {children}
       </main>
     </div>
+    </PwaGuard>
   )
 }

@@ -165,7 +165,7 @@ export default async function PacienteDashboard() {
 
       {/* Asesoría Express */}
       <a
-        href="https://wa.me/51952476574?text=Hola%20Organnical%2C%20quiero%20una%20asesor%C3%ADa%20express.%20Ya%20s%C3%A9%20qu%C3%A9%20producto%20necesito%20y%20solo%20requiero%20la%20prescripci%C3%B3n%20m%C3%A9dica."
+        href="https://wa.me/51952476574?text=Hola%20Organnical%2C%20quiero%20una%20asesor%C3%ADa%20express.%20Ya%20s%C3%A9%20qu%C3%A9%20producto%20creo%20que%20necesito."
         target="_blank"
         rel="noopener noreferrer"
         className="rounded-2xl p-5 mb-8 flex items-center gap-4 hover:opacity-90 transition-opacity"

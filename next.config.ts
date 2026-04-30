@@ -27,6 +27,29 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
+  async redirects() {
+    return [
+      // Old WordPress product pages → current catalog
+      { source: "/producto/:path*",          destination: "/catalogo",  permanent: true },
+      { source: "/tienda/:path*",            destination: "/catalogo",  permanent: true },
+      { source: "/product-tag/:path*",       destination: "/catalogo",  permanent: true },
+      { source: "/product-category/:path*",  destination: "/catalogo",  permanent: true },
+      { source: "/c/:path*",                 destination: "/catalogo",  permanent: true },
+      // Old WordPress checkout
+      { source: "/checkout",                 destination: "/catalogo",  permanent: true },
+      // Old WordPress-specific pages
+      { source: "/cita-medica",              destination: "/",          permanent: true },
+      { source: "/prescripciones-antiguas",  destination: "/catalogo",  permanent: true },
+      { source: "/sisven-2-0",               destination: "/",          permanent: true },
+      { source: "/themencode-pdf-viewer-sc", destination: "/",          permanent: true },
+      { source: "/suscripcion-al-erp",       destination: "/",          permanent: true },
+      // Old WordPress core files (prevent 404 noise)
+      { source: "/wp-content/:path*",        destination: "/",          permanent: true },
+      { source: "/wp-admin/:path*",          destination: "/",          permanent: true },
+      { source: "/wp-login.php",             destination: "/",          permanent: true },
+      { source: "/wp-cron.php",              destination: "/",          permanent: true },
+    ];
+  },
   async headers() {
     return [
       {

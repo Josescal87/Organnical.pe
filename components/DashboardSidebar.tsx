@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
   ClipboardList, Users, ShieldCheck, Building2, BookOpen,
-  ScrollText, Award,
+  ScrollText, Award, MessageSquare, Bot,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
@@ -43,6 +43,8 @@ const ADMIN_LINKS = [
   { href: "/dashboard/admin/protocolos",   label: "Protocolos",    icon: BookOpen },
   { href: "/dashboard/admin/auditoria",    label: "Auditoría",     icon: ScrollText },
   { href: "/dashboard/admin/legitscript",  label: "LegitScript",   icon: Award },
+  { href: "/dashboard/admin/whatsapp",     label: "WhatsApp IA",   icon: MessageSquare },
+  { href: "/dashboard/admin/whatsapp/simulator", label: "Simulador WA", icon: Bot },
   { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
 ];
 

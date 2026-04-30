@@ -109,12 +109,20 @@ export default async function PatientOverviewPage({
               {patient.blood_type && <span className="font-bold text-red-500">{patient.blood_type}</span>}
             </div>
           </div>
-          <Link
-            href={`/dashboard/medico/pacientes/${patientId}/antecedentes`}
-            className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-800 flex-shrink-0"
-          >
-            <ClipboardList className="w-3.5 h-3.5" /> Editar antecedentes
-          </Link>
+          <div className="flex flex-col gap-1.5 flex-shrink-0">
+            <Link
+              href={`/dashboard/medico/pacientes/${patientId}/antecedentes`}
+              className="flex items-center gap-1.5 text-xs font-semibold text-violet-600 hover:text-violet-800"
+            >
+              <ClipboardList className="w-3.5 h-3.5" /> Editar antecedentes
+            </Link>
+            <Link
+              href={`/dashboard/medico/pacientes/${patientId}/express`}
+              className="flex items-center gap-1 text-xs font-semibold text-amber-600 hover:text-amber-800"
+            >
+              ⚡ Formulario Express
+            </Link>
+          </div>
         </div>
       </div>
 

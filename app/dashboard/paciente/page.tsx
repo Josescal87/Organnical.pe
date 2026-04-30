@@ -163,28 +163,28 @@ export default async function PacienteDashboard() {
         </Link>
       </div>
 
-      {/* Sami widget */}
-      <div
-        className="rounded-2xl p-5 mb-8 flex items-center gap-4"
-        style={{ background: "linear-gradient(135deg, #1a0533 0%, #2d1060 100%)" }}
+      {/* Asesoría Express */}
+      <a
+        href="https://wa.me/51952476574?text=Hola%20Organnical%2C%20quiero%20una%20asesor%C3%ADa%20express.%20Ya%20s%C3%A9%20qu%C3%A9%20producto%20necesito%20y%20solo%20requiero%20la%20prescripci%C3%B3n%20m%C3%A9dica."
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-2xl p-5 mb-8 flex items-center gap-4 hover:opacity-90 transition-opacity"
+        style={{ background: "#0B1D35" }}
       >
         <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl bg-white/10">
-          🌙
+          ⚡
         </div>
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-white text-sm">Tu espacio de bienestar</p>
-          <p className="text-white/50 text-xs mt-0.5">Meditaciones, cuentos y respiración guiada</p>
+          <p className="font-semibold text-white text-sm">¿Ya sabes qué producto necesitas?</p>
+          <p className="text-white/50 text-xs mt-0.5">Agenda una asesoría express y obtén tu receta en minutos</p>
         </div>
-        <a
-          href="https://sami.organnical.pe"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex-shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white transition-all hover:opacity-90"
-          style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)" }}
+        <span
+          className="flex-shrink-0 rounded-xl px-4 py-2 text-xs font-semibold text-white"
+          style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)" }}
         >
-          Abrir Sami →
-        </a>
-      </div>
+          Escribir →
+        </span>
+      </a>
 
       {/* Próximas citas */}
       <section className="mb-8">

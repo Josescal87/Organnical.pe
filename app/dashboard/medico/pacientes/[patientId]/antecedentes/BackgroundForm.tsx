@@ -4,6 +4,26 @@ import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
 import { createOrUpdateBackground, type BackgroundFormData, type AllergyItem, type MedicationItem } from "./actions";
 
+const CHRONIC_CONDITIONS = [
+  "Insomnio crónico",
+  "Ansiedad generalizada",
+  "Estrés crónico",
+  "Depresión",
+  "Hipertensión",
+  "Diabetes tipo 2",
+  "Hipotiroidismo",
+  "Fibromialgia",
+  "Dolor lumbar crónico",
+  "Dolor articular crónico",
+  "Migraña / Cefalea crónica",
+  "Artritis / Artrosis",
+  "Menopausia / Perimenopausia",
+  "SOP",
+  "Endometriosis",
+  "Asma / EPOC",
+  "Gastritis / Reflujo",
+];
+
 const SMOKING_OPTIONS = [
   { value: "never",   label: "Nunca fumó" },
   { value: "former",  label: "Ex-fumador" },
@@ -29,14 +49,30 @@ type Props = {
 
 export default function BackgroundForm({ patientId, initial }: Props) {
   const [form, setForm] = useState<BackgroundFormData>(initial);
+  const [checkedConditions, setCheckedConditions] = useState<string[]>(
+    () => initial.chronic_conditions.filter(c => CHRONIC_CONDITIONS.includes(c))
+  );
+  const [otherConditions, setOtherConditions] = useState<string>(
+    () => initial.chronic_conditions.filter(c => !CHRONIC_CONDITIONS.includes(c)).join(", ")
+  );
   const [saving, setSaving] = useState(false);
   const [msg, setMsg] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+
+  function toggleCondition(condition: string) {
+    setCheckedConditions(prev =>
+      prev.includes(condition) ? prev.filter(c => c !== condition) : [...prev, condition]
+    );
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setSaving(true);
     setMsg(null);
-    const res = await createOrUpdateBackground(patientId, form);
+    const finalConditions = [
+      ...checkedConditions,
+      ...(otherConditions.trim() ? [otherConditions.trim()] : []),
+    ];
+    const res = await createOrUpdateBackground(patientId, { ...form, chronic_conditions: finalConditions });
     setSaving(false);
     setMsg(res.error
       ? { type: "err", text: res.error }
@@ -63,13 +99,29 @@ export default function BackgroundForm({ patientId, initial }: Props) {
 
       {/* Condiciones crónicas */}
       <Section title="Condiciones crónicas">
-        <StringList
-          items={form.chronic_conditions}
-          placeholder="Ej: Hipertensión arterial"
-          onChange={(i, v) => updateStrArray("chronic_conditions", i, v)}
-          onAdd={() => addStrItem("chronic_conditions")}
-          onRemove={(i) => removeStrItem("chronic_conditions", i)}
-        />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4 mb-3">
+          {CHRONIC_CONDITIONS.map(condition => (
+            <label key={condition} className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={checkedConditions.includes(condition)}
+                onChange={() => toggleCondition(condition)}
+                className="accent-violet-500 w-4 h-4 rounded"
+              />
+              <span className="text-sm text-zinc-700">{condition}</span>
+            </label>
+          ))}
+        </div>
+        <div>
+          <label className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1 block">Otro</label>
+          <input
+            type="text"
+            value={otherConditions}
+            onChange={e => setOtherConditions(e.target.value)}
+            placeholder="Otras condiciones no listadas…"
+            className={inputCls}
+          />
+        </div>
       </Section>
 
       {/* Alergias */}

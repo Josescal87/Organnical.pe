@@ -308,32 +308,7 @@ export default function ClinicalEncounterForm({ aptId, existing }: Props) {
       </Section>
 
       {/* O — Objetivo */}
-      <Section title="Signos vitales y Examen físico (Objetivo)" tag="O">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
-          {[
-            { label: "Peso (kg)",    field: "vital_weight_kg",      placeholder: "70.5" },
-            { label: "Talla (cm)",   field: "vital_height_cm",      placeholder: "170" },
-            { label: "PA sistólica", field: "vital_bp_systolic",    placeholder: "120" },
-            { label: "PA diastólica",field: "vital_bp_diastolic",   placeholder: "80" },
-            { label: "FC (lpm)",     field: "vital_heart_rate",     placeholder: "72" },
-            { label: "FR (rpm)",     field: "vital_respiratory_rate",placeholder: "16" },
-            { label: "Temp. (°C)",   field: "vital_temperature_c",  placeholder: "36.6" },
-            { label: "SpO2 (%)",     field: "vital_spo2_pct",       placeholder: "98" },
-          ].map(({ label, field, placeholder }) => (
-            <div key={field}>
-              <label className={labelCls}>{label}</label>
-              <input type="number" step="any" placeholder={placeholder}
-                value={form[field as keyof EncounterFormData] as string}
-                onChange={e => set(field as keyof EncounterFormData, e.target.value)}
-                className={inputCls} />
-            </div>
-          ))}
-        </div>
-        {form.vital_weight_kg && form.vital_height_cm && (
-          <p className="text-xs text-zinc-500 mb-3">
-            IMC calculado: <strong>{(parseFloat(form.vital_weight_kg) / Math.pow(parseFloat(form.vital_height_cm) / 100, 2)).toFixed(1)}</strong> kg/m²
-          </p>
-        )}
+      <Section title="Examen físico (Objetivo)" tag="O">
         <div>
           <label className={labelCls}>Examen físico por sistemas</label>
           <textarea rows={3} value={form.physical_exam_notes} onChange={e => set("physical_exam_notes", e.target.value)}

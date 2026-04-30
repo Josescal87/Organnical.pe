@@ -14,22 +14,19 @@ function admin() {
 async function getOrCreateConversation(phoneNumber: string): Promise<WaConversation> {
   const supabase = admin()
 
-  const { data: existing } = await supabase
+  // Upsert: insert if not exists (ignoreDuplicates avoids overwriting existing state)
+  await supabase
+    .from('wa_conversations')
+    .upsert({ phone_number: phoneNumber }, { onConflict: 'phone_number', ignoreDuplicates: true })
+
+  const { data, error } = await supabase
     .from('wa_conversations')
     .select('*')
     .eq('phone_number', phoneNumber)
-    .maybeSingle()
-
-  if (existing) return existing as WaConversation
-
-  const { data: created, error } = await supabase
-    .from('wa_conversations')
-    .insert({ phone_number: phoneNumber })
-    .select('*')
     .single()
 
-  if (error || !created) throw new Error(`Failed to create conversation: ${error?.message}`)
-  return created as WaConversation
+  if (error || !data) throw new Error(`Failed to get conversation: ${error?.message}`)
+  return data as WaConversation
 }
 
 async function getMessageHistory(conversationId: string): Promise<WaMessage[]> {
@@ -49,14 +46,15 @@ async function saveMessage(
   content: string,
   agentType?: string
 ): Promise<void> {
-  await admin().from('wa_messages').insert({
+  const supabase = admin()
+  const { error } = await supabase.from('wa_messages').insert({
     conversation_id: conversationId,
     direction,
     content,
     agent_type: agentType ?? null,
   })
-
-  await admin()
+  if (error) throw new Error(`Failed to save message: ${error.message}`)
+  await supabase
     .from('wa_conversations')
     .update({ last_message_at: new Date().toISOString() })
     .eq('id', conversationId)
@@ -66,8 +64,6 @@ export async function handleIncomingMessage(
   phoneNumber: string,
   content: string
 ): Promise<SimulateResponse> {
-  const supabase = admin()
-
   // 1. Get or create conversation
   const conversation = await getOrCreateConversation(phoneNumber)
 
@@ -99,7 +95,7 @@ export async function handleIncomingMessage(
   })
 
   // 6. Re-read conversation — agent may have updated mode via escalate_to_human
-  const { data: updatedConv } = await supabase
+  const { data: updatedConv } = await admin()
     .from('wa_conversations')
     .select('mode, state')
     .eq('id', conversation.id)

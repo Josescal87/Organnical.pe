@@ -142,7 +142,7 @@ export async function toolEscalateToHuman(
   conversationId: string,
   reason: string
 ): Promise<unknown> {
-  const { error } = await admin()
+  const { data, error } = await admin()
     .from('wa_conversations')
     .update({
       mode: 'human',
@@ -150,7 +150,9 @@ export async function toolEscalateToHuman(
       escalation_reason: reason,
     })
     .eq('id', conversationId)
+    .select('id')
 
   if (error) return { success: false, error: error.message }
+  if (!data || data.length === 0) return { success: false, error: 'Conversation not found' }
   return { success: true, reason }
 }

@@ -2,29 +2,39 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import type { ConversationMode } from '@/lib/wa/types'
 
 export function ControlButtons({
   conversationId,
   currentMode,
 }: {
   conversationId: string
-  currentMode: string
+  currentMode: ConversationMode
 }) {
   const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   async function toggle() {
     setLoading(true)
-    await fetch('/api/wa/control', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        conversation_id: conversationId,
-        action: currentMode === 'ai' ? 'take' : 'return',
-      }),
-    })
-    setLoading(false)
-    router.refresh()
+    try {
+      const res = await fetch('/api/wa/control', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          conversation_id: conversationId,
+          action: currentMode === 'ai' ? 'take' : 'return',
+        }),
+      })
+      if (!res.ok) {
+        alert('Error al cambiar el modo. Intenta de nuevo.')
+        return
+      }
+      router.refresh()
+    } catch {
+      alert('Error de red. Intenta de nuevo.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

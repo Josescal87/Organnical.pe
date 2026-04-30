@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
-import type { WaMessage } from '@/lib/wa/types'
+import type { ConversationMode, WaMessage } from '@/lib/wa/types'
 
 const AGENT_LABELS: Record<string, string> = {
   ventas: '🤖 Agente',
@@ -18,14 +18,15 @@ export function ChatThread({
 }: {
   conversationId: string
   initialMessages: WaMessage[]
-  initialMode: string
+  initialMode: ConversationMode
 }) {
   const [messages, setMessages] = useState<WaMessage[]>(initialMessages)
-  const [mode, setMode] = useState(initialMode)
+  const [mode, setMode] = useState<ConversationMode>(initialMode)
   const [input, setInput] = useState('')
   const [sending, setSending] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
-  const supabase = createClient()
+  const supabaseRef = useRef(createClient())
+  const supabase = supabaseRef.current
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -43,7 +44,10 @@ export function ChatThread({
           filter: `conversation_id=eq.${conversationId}`,
         },
         (payload) => {
-          setMessages((prev) => [...prev, payload.new as WaMessage])
+          const incoming = payload.new as WaMessage
+          setMessages((prev) =>
+            prev.some((m) => m.id === incoming.id) ? prev : [...prev, incoming]
+          )
         }
       )
       .subscribe()
@@ -59,7 +63,7 @@ export function ChatThread({
           filter: `id=eq.${conversationId}`,
         },
         (payload) => {
-          setMode((payload.new as { mode: string }).mode)
+          setMode((payload.new as { mode: ConversationMode }).mode)
         }
       )
       .subscribe()
@@ -73,14 +77,24 @@ export function ChatThread({
   async function sendHumanMessage() {
     if (!input.trim() || sending) return
     setSending(true)
-    const content = input
+    const content = input.trim()
     setInput('')
-    await fetch('/api/wa/human-message', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ conversation_id: conversationId, content }),
-    })
-    setSending(false)
+    try {
+      const res = await fetch('/api/wa/human-message', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ conversation_id: conversationId, content }),
+      })
+      if (!res.ok) {
+        setInput(content)
+        alert('Error al enviar el mensaje. Intenta de nuevo.')
+      }
+    } catch {
+      setInput(content)
+      alert('Error de red. Intenta de nuevo.')
+    } finally {
+      setSending(false)
+    }
   }
 
   return (

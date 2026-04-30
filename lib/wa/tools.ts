@@ -72,7 +72,7 @@ export async function getPatientContext(phoneNumber: string): Promise<PatientCon
   const appointment = appointmentRes.data as {
     slot_start: string
     specialty: string
-    doctor: { full_name: string } | null
+    doctor: Array<{ full_name: string }> | null
   } | null
 
   const background = backgroundRes.data as {
@@ -99,7 +99,7 @@ export async function getPatientContext(phoneNumber: string): Promise<PatientCon
       ? {
           slot_start: appointment.slot_start,
           specialty: appointment.specialty,
-          doctor_name: appointment.doctor?.full_name ?? 'Médico',
+          doctor_name: appointment.doctor?.[0]?.full_name ?? 'Médico',
         }
       : null,
   }

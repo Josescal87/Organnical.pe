@@ -34,6 +34,52 @@ def slugify(text: str) -> str:
     return text[:60]
 
 
+# Direcciones escénicas que el LLM podría dejar y que el TTS leería literalmente.
+# Mapean a un total de silencio en segundos (se distribuye en tags <break> de hasta 3s).
+# Orden importante: patrones más específicos primero (corchetes/paréntesis) antes que
+# el "Pausa" simple, para que `[pausa de 5s]` se consuma entero, no solo la palabra.
+_STAGE_DIRECTIONS = [
+    (r'\(\s*silencio[^)]*\)',              3.0),
+    (r'\[\s*silencio[^\]]*\]',             3.0),
+    (r'\(\s*pausa[^)]*\)',                 3.0),
+    (r'\[\s*pausa[^\]]*\]',                3.0),
+    (r'\bpausa\s+(?:muy\s+)?larga\b\.?',   9.0),
+    (r'\bpausa\s+prolongada\b\.?',         9.0),
+    (r'\bpausa\s+media\b\.?',              5.0),
+    (r'\bpausa\s+corta\b\.?',              2.0),
+    (r'\bpausa\b\.?',                      3.0),
+]
+
+
+def _seconds_to_breaks(total_seconds: float) -> str:
+    """Convierte N segundos en una secuencia de tags <break> (max 3s cada uno)."""
+    remaining = total_seconds
+    parts = []
+    while remaining > 0.0001:
+        chunk = min(3.0, remaining)
+        parts.append(f'<break time="{chunk:.1f}s" />')
+        remaining -= chunk
+    return "".join(parts)
+
+
+def normalize_script_pauses(text: str) -> tuple[str, int]:
+    """Convierte direcciones escénicas residuales en tags SSML.
+
+    Retorna (texto_normalizado, total_de_reemplazos).
+    """
+    replacements = 0
+    for pattern, seconds in _STAGE_DIRECTIONS:
+        breaks = _seconds_to_breaks(seconds)
+
+        def _replace(_match: re.Match) -> str:
+            nonlocal replacements
+            replacements += 1
+            return breaks
+
+        text = re.sub(pattern, _replace, text, flags=re.IGNORECASE)
+    return text, replacements
+
+
 def load_prompt(name: str) -> str:
     prompt_path = Path(__file__).parent / "agents" / f"{name}.md"
     return prompt_path.read_text(encoding="utf-8")
@@ -125,10 +171,26 @@ def cmd_generate(args: argparse.Namespace) -> None:
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"  Draft guardado: {draft_path}")
 
+    # Normalizar pausas: convierte cualquier dirección escénica residual ("Pausa larga", etc.)
+    # en tags <break> SSML para que el TTS las trate como silencio en lugar de leerlas.
+    normalized_guion, n_fixed = normalize_script_pauses(draft["guion"])
+    if n_fixed > 0:
+        print(f"  ⚠ Normalizadas {n_fixed} direccion(es) escénica(s) → tags <break> SSML")
+        draft["guion"] = normalized_guion
+        draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
+
     # Generar audio
     audio_path = OUTPUTS_DIR / "audio" / f"{slug}.mp3"
-    print(f"  Generando audio con ElevenLabs ({args.voz})...")
-    text_to_speech(draft["guion"], audio_path, voice_id=args.voz)
+    ambient_path = Path(__file__).parent / "ambient" / f"{args.region}.mp3"
+    if not ambient_path.exists():
+        print(f"  ⚠ No hay ambient para región '{args.region}' (esperado: {ambient_path})")
+        ambient_path = None
+
+    print(f"  Generando audio con ElevenLabs ({args.voz or 'default'})...")
+    text_to_speech(draft["guion"], audio_path, voice_id=args.voz,
+                   stability=args.stability, similarity_boost=args.similarity_boost,
+                   style=args.style, speaking_rate=args.speaking_rate,
+                   ambient_path=ambient_path)
     draft["audio_path"] = str(audio_path)
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -136,6 +198,39 @@ def cmd_generate(args: argparse.Namespace) -> None:
     print(f"   JSON:  {draft_path}")
     print(f"   Audio: {audio_path}")
     print(f"\nPara publicar: python generate.py --publish {slug}")
+
+
+def cmd_retts(args: argparse.Namespace) -> None:
+    """Re-genera SOLO el audio de un draft existente (sin re-llamar a Claude).
+
+    Útil cuando editas el guión a mano o cambias parámetros del TTS/ambient.
+    """
+    from tts.elevenlabs_tts import text_to_speech
+
+    slug = args.retts
+    draft_path = DRAFTS_DIR / f"{slug}.json"
+
+    if not draft_path.exists():
+        print(f"  Draft no encontrado: {draft_path}")
+        sys.exit(1)
+
+    draft = json.loads(draft_path.read_text(encoding="utf-8"))
+    region = draft.get("region", "universal")
+
+    audio_path = OUTPUTS_DIR / "audio" / f"{slug}.mp3"
+    ambient_path = Path(__file__).parent / "ambient" / f"{region}.mp3"
+    if not ambient_path.exists():
+        print(f"  ⚠ No hay ambient para región '{region}' (esperado: {ambient_path})")
+        ambient_path = None
+
+    print(f"  Re-generando audio (slug={slug}, región={region})...")
+    text_to_speech(draft["guion"], audio_path, voice_id=draft.get("voz", ""),
+                   stability=args.stability, similarity_boost=args.similarity_boost,
+                   style=args.style, speaking_rate=args.speaking_rate,
+                   ambient_path=ambient_path)
+    draft["audio_path"] = str(audio_path)
+    draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
+    print(f"\n  Listo: {audio_path}")
 
 
 def cmd_publish(args: argparse.Namespace) -> None:
@@ -192,12 +287,19 @@ def main() -> None:
     parser.add_argument("--region", choices=["costa", "sierra", "selva", "universal"], default="universal",
                         help="Region cultural del contenido")
     parser.add_argument("--voz", default="", help="ElevenLabs Voice ID (default: usa ELEVENLABS_VOICE_ID del .env.local)")
+    parser.add_argument("--stability", type=float, default=0.60, help="Consistencia de la voz 0-1 (default: 0.60)")
+    parser.add_argument("--similarity-boost", type=float, default=0.80, dest="similarity_boost", help="Fidelidad a la voz original 0-1 (default: 0.80)")
+    parser.add_argument("--style", type=float, default=0.15, help="Expresividad 0-1 (default: 0.15)")
+    parser.add_argument("--speaking-rate", type=float, default=0.80, dest="speaking_rate", help="Velocidad de habla 0.7-1.0 (default: 0.80)")
     parser.add_argument("--publish", type=str, help="Slug del draft a publicar")
+    parser.add_argument("--retts", type=str, help="Slug del draft a re-renderizar (audio only, no re-genera guion)")
 
     args = parser.parse_args()
 
     if args.publish:
         cmd_publish(args)
+    elif args.retts:
+        cmd_retts(args)
     elif args.type and args.tema:
         check_api_key()
         cmd_generate(args)

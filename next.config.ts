@@ -21,7 +21,7 @@ const securityHeaders = [
       "img-src 'self' data: blob: https: http:",
       "connect-src 'self' https://*.supabase.co https://www.google-analytics.com https://analytics.google.com https://api.whereby.com https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com https://www.facebook.com https://*.clarity.ms",
       "frame-src https://*.mercadopago.com https://*.mercadolibre.com https://*.mlstatic.com https://*.whereby.com https://meet.google.com https://www.facebook.com",
-      "media-src 'self' blob:",
+      "media-src 'self' blob: https://jeomfjulczuimrmonmom.supabase.co",
     ].join("; "),
   },
 ];

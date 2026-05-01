@@ -75,10 +75,7 @@ export default function AudioPlayer({ content }: Props) {
 
   function togglePlay() {
     const audio = audioRef.current
-    if (!audio) {
-      setDebugMsg('audio element no disponible')
-      return
-    }
+    if (!audio) return
 
     if (!audio.paused) {
       audio.pause()

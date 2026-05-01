@@ -23,7 +23,6 @@ export default function AudioPlayer({ content }: Props) {
   const [currentTime, setCurrentTime] = useState(0)
   const [duration, setDuration]       = useState(content.duration_seconds)
   const [sessionId, setSessionId]     = useState<string | null>(null)
-  const [debugMsg, setDebugMsg]       = useState<string | null>(null)
 
   // ── Session helpers ────────────────────────────────────────────────────────
 
@@ -86,21 +85,14 @@ export default function AudioPlayer({ content }: Props) {
       return
     }
 
-    setDebugMsg(`tap → readyState=${audio.readyState} networkState=${audio.networkState}`)
-
-    // Fire session tracking in background — never await before play().
     void startSession()
 
     const promise = audio.play()
-    if (promise === undefined) {
-      setDebugMsg('audio.play() devolvió undefined (browser muy viejo?)')
-      return
+    if (promise !== undefined) {
+      promise.catch((err: Error) => {
+        console.error('audio.play() failed:', err)
+      })
     }
-    promise.catch((err: Error) => {
-      const msg = `${err.name}: ${err.message}`
-      console.error('audio.play() failed:', err)
-      setDebugMsg(msg)
-    })
   }
 
   function seek(value: number) {
@@ -337,38 +329,16 @@ export default function AudioPlayer({ content }: Props) {
         </button>
       </div>
 
-      {/* Debug message (visible while diagnosing iOS PWA audio) */}
-      {debugMsg && (
-        <p
-          className="rounded-lg px-3 py-2 text-xs"
-          style={{
-            backgroundColor: 'rgba(248,113,113,0.12)',
-            border: '1px solid rgba(248,113,113,0.35)',
-            color: '#fca5a5',
-            fontFamily: 'monospace',
-            wordBreak: 'break-word',
-          }}
-        >
-          {debugMsg}
-        </p>
-      )}
-
       {/* Native audio element (hidden) */}
       <audio
         ref={audioRef}
         src={content.audio_url}
         preload="auto"
-        onPlay={() => { setIsPlaying(true); setDebugMsg(null); }}
+        onPlay={() => setIsPlaying(true)}
         onPause={() => setIsPlaying(false)}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
-        onError={(e) => {
-          const a = e.currentTarget
-          setDebugMsg(`audio error: code=${a.error?.code} msg=${a.error?.message ?? 'n/a'}`)
-        }}
-        onStalled={() => setDebugMsg('audio stalled (red lenta?)')}
-        onWaiting={() => setDebugMsg('audio buffering...')}
       />
     </div>
   )

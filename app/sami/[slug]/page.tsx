@@ -32,7 +32,7 @@ export default async function ContentPage({ params }: Props) {
   const { data: content } = await supabase
     .schema('sami')
     .from('content')
-    .select('id, slug, title, description, category, duration_seconds, audio_url, thumbnail_url, tags, script_text, tts_voice, is_published, created_at, updated_at')
+    .select('id, slug, title, description, category, region, duration_seconds, audio_url, thumbnail_url, tags, script_text, tts_voice, is_published, created_at, updated_at')
     .eq('slug', slug)
     .eq('is_published', true)
     .maybeSingle()

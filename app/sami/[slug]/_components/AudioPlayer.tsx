@@ -25,7 +25,7 @@ export default function AudioPlayer({ content }: Props) {
   const [sessionId, setSessionId]     = useState<string | null>(null)
   const [showRipple, setShowRipple]   = useState(false)
 
-  const playerStyle = REGION_PLAYER_STYLES[content.region]
+  const playerStyle = REGION_PLAYER_STYLES[content.region] ?? REGION_PLAYER_STYLES.universal
 
   // ── Session helpers ────────────────────────────────────────────────────────
 

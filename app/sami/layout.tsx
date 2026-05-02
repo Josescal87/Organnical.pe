@@ -1,12 +1,20 @@
 import type { Metadata, Viewport } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
-import { Playfair_Display } from 'next/font/google'
+import { Nunito, Nunito_Sans } from 'next/font/google'
 import PwaGuard from './_components/PwaGuard'
 
-const playfair = Playfair_Display({
+const nunito = Nunito({
   subsets: ['latin'],
-  style: ['italic'],
-  weight: ['400'],
+  weight: ['400', '600', '700', '800', '900'],
+  variable: '--font-nunito',
+  display: 'swap',
+})
+
+const nunitoSans = Nunito_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600'],
+  variable: '--font-nunito-sans',
   display: 'swap',
 })
 
@@ -25,7 +33,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#1a1040',
+  themeColor: '#0c0920',
 }
 
 export default function SamiLayout({
@@ -35,59 +43,55 @@ export default function SamiLayout({
 }) {
   return (
     <PwaGuard>
-    <div className="relative min-h-screen overflow-x-hidden" style={{ backgroundColor: '#0b0818', color: '#f3f0ff' }}>
-      {/* Stars background */}
-      <div aria-hidden className="sami-star-bg pointer-events-none fixed inset-0 z-0" style={{
-        backgroundImage: `
-          radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
-          radial-gradient(1px 1px at 42% 8%, rgba(255,255,255,0.4) 0%, transparent 100%),
-          radial-gradient(1px 1px at 68% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
-          radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.3) 0%, transparent 100%),
-          radial-gradient(1.5px 1.5px at 25% 55%, rgba(255,255,255,0.4) 0%, transparent 100%),
-          radial-gradient(1px 1px at 55% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
-          radial-gradient(1px 1px at 78% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
-          radial-gradient(1.5px 1.5px at 10% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
-          radial-gradient(1px 1px at 35% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
-          radial-gradient(1px 1px at 62% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
-          radial-gradient(1px 1px at 90% 90%, rgba(255,255,255,0.4) 0%, transparent 100%),
-          radial-gradient(1px 1px at 48% 95%, rgba(255,255,255,0.3) 0%, transparent 100%)
-        `,
-      }} />
-
+    <div
+      className={`${nunito.variable} ${nunitoSans.variable} relative min-h-screen overflow-x-hidden`}
+      style={{
+        backgroundColor: '#0c0920',
+        color: '#f0ecff',
+        fontFamily: 'var(--font-nunito-sans), sans-serif',
+      }}
+    >
       {/* Nav */}
       <nav
-        className="sticky top-0 z-50 flex items-center justify-between px-5"
+        className="sticky top-0 z-50 flex items-center justify-between px-4"
         style={{
-          backgroundColor: 'rgba(11,8,24,0.85)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          paddingTop: 'calc(env(safe-area-inset-top) + 12px)',
-          paddingBottom: '12px',
+          backgroundColor: '#0c0920',
+          borderBottom: '3px solid #3d2b6e',
+          boxShadow: '0 3px 0 #3b2d80',
+          paddingTop: 'calc(env(safe-area-inset-top) + 10px)',
+          paddingBottom: '10px',
         }}
       >
-        <div className="flex items-center gap-2">
-          <span
-            className={`${playfair.className} text-2xl`}
-            style={{ color: '#c4b5fd', letterSpacing: '0.02em' }}
-          >
-            sami
-          </span>
-          <span className="text-xs" style={{ color: 'rgba(167,139,250,0.35)', marginTop: '4px' }}>
-            by organnical
-          </span>
-        </div>
+        <Link href="/sami">
+          <Image
+            src="/sami/logo.png"
+            alt="Sami by Organnical"
+            width={52}
+            height={52}
+            className="object-contain"
+            priority
+          />
+        </Link>
 
         <Link
-          href="/instalar"
-          className="rounded-full border px-3 py-1 text-xs transition-all hover:opacity-80"
-          style={{ borderColor: 'rgba(167,139,250,0.2)', color: '#6b7280' }}
+          href="/sami/explorar"
+          className="rounded-full px-4 py-1.5 text-sm font-extrabold transition-all active:scale-95"
+          style={{
+            fontFamily: 'var(--font-nunito)',
+            background: 'linear-gradient(160deg,#8b6fe8 0%,#5b45b0 100%)',
+            border: '3px solid #3d2b6e',
+            borderRadius: 99,
+            color: 'white',
+            boxShadow: '0 4px 0 #3d2b6e',
+            textShadow: '0 1px 0 #3d2b6e',
+          }}
         >
-          instalar
+          Explorar
         </Link>
       </nav>
 
       {/* Content */}
-      <main className="relative z-10 mx-auto w-full max-w-2xl px-4 py-8">
+      <main className="relative z-10 mx-auto w-full max-w-2xl px-4 py-6">
         {children}
       </main>
     </div>

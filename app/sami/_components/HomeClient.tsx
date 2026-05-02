@@ -4,11 +4,20 @@ import { useState } from 'react'
 import Link from 'next/link'
 import type { SamiContent, SamiCategory, SamiRegion } from '@/lib/supabase/database.types'
 import {
-  categoryIcon, formatDuration, REGION_THEMES, REGIONS,
-  REGION_BADGE_LABELS, REGION_TRAVEL_SUBTITLES,
+  C,
+  categoryLabel,
+  formatDuration,
+  REGION_THEMES,
+  REGIONS,
+  REGION_BADGE_LABELS,
 } from './content-helpers'
-import SamiSpirit from './SamiSpirit'
-import RegionLandscape from './RegionLandscape'
+import SamiMascot from './SamiMascot'
+import {
+  CartoonCostaScene,
+  CartoonSierraScene,
+  CartoonSelvaScene,
+  CARTOON_KEYFRAMES,
+} from './CartoonScenes'
 
 type ActiveRegion = Exclude<SamiRegion, 'universal'>
 
@@ -19,48 +28,53 @@ interface Props {
   greeting: string
 }
 
-const PARTICLES: Record<ActiveRegion, Array<{ x: number; y: number; s: number; d: number; dl: number }>> = {
-  costa: [
-    { x: 8,  y: 78, s: 3,   d: 4.2, dl: 0   }, { x: 23, y: 85, s: 2,   d: 5.1, dl: 0.8 },
-    { x: 36, y: 72, s: 4,   d: 3.8, dl: 1.5 }, { x: 50, y: 80, s: 2,   d: 6.0, dl: 0.3 },
-    { x: 63, y: 74, s: 3,   d: 4.5, dl: 2.1 }, { x: 78, y: 82, s: 2,   d: 5.3, dl: 1.2 },
-    { x: 89, y: 70, s: 4,   d: 3.9, dl: 0.6 }, { x: 14, y: 90, s: 2,   d: 7.0, dl: 1.8 },
-    { x: 44, y: 88, s: 3,   d: 4.8, dl: 2.4 }, { x: 72, y: 92, s: 2,   d: 5.6, dl: 0.9 },
-    { x: 30, y: 95, s: 2.5, d: 4.0, dl: 1.1 }, { x: 58, y: 96, s: 3,   d: 5.5, dl: 0.4 },
-  ],
-  sierra: [
-    { x: 10, y: 18, s: 1.5, d: 2.0, dl: 0   }, { x: 27, y: 32, s: 2,   d: 1.5, dl: 0.7 },
-    { x: 42, y: 12, s: 1.5, d: 3.0, dl: 1.4 }, { x: 56, y: 25, s: 2,   d: 2.2, dl: 0.2 },
-    { x: 71, y: 8,  s: 1.5, d: 1.8, dl: 1.9 }, { x: 83, y: 38, s: 2,   d: 2.5, dl: 0.5 },
-    { x: 94, y: 20, s: 1.5, d: 3.2, dl: 2.3 }, { x: 19, y: 42, s: 2,   d: 1.6, dl: 1.1 },
-    { x: 64, y: 48, s: 1.5, d: 2.8, dl: 0.4 }, { x: 79, y: 28, s: 2,   d: 2.0, dl: 1.7 },
-    { x: 31, y: 58, s: 1.5, d: 2.4, dl: 2.0 }, { x: 87, y: 52, s: 2,   d: 1.9, dl: 0.8 },
-    { x: 48, y: 68, s: 1.5, d: 2.6, dl: 1.5 }, { x: 6,  y: 30, s: 2,   d: 3.1, dl: 0.3 },
-  ],
-  selva: [
-    { x: 12, y: 28, s: 2.5, d: 3.5, dl: 0   }, { x: 28, y: 48, s: 2,   d: 4.0, dl: 1.2 },
-    { x: 44, y: 22, s: 3,   d: 3.2, dl: 0.5 }, { x: 59, y: 62, s: 2,   d: 4.8, dl: 1.8 },
-    { x: 73, y: 33, s: 2.5, d: 3.7, dl: 0.3 }, { x: 86, y: 54, s: 2,   d: 4.2, dl: 2.2 },
-    { x: 20, y: 68, s: 2.5, d: 3.0, dl: 0.9 }, { x: 38, y: 78, s: 2,   d: 5.0, dl: 1.5 },
-    { x: 54, y: 72, s: 3,   d: 3.5, dl: 0.6 }, { x: 67, y: 84, s: 2,   d: 4.5, dl: 2.0 },
-    { x: 81, y: 18, s: 2.5, d: 3.8, dl: 1.3 }, { x: 93, y: 72, s: 2,   d: 4.0, dl: 0.7 },
-    { x: 5,  y: 44, s: 2.5, d: 3.3, dl: 1.7 }, { x: 48, y: 38, s: 2,   d: 4.7, dl: 2.5 },
-    { x: 76, y: 63, s: 2.5, d: 3.6, dl: 0.4 }, { x: 34, y: 55, s: 2,   d: 4.1, dl: 1.0 },
-  ],
+// ── Category SVG icons (cartoon style) ──────────────────────────────────────
+
+function CatIcon({ cat, size = 26 }: { cat: SamiCategory; size?: number }) {
+  if (cat === 'cuento') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M26 17.5C24.5 21.5 20.5 24 16 24C10.5 24 6 19.5 6 14C6 9.5 8.5 5.5 12.5 4C9 6 7 9.5 7 13.5C7 19.5 11.5 24.5 17.5 24.5C21 24.5 24 22.5 26 19.5"
+        fill="#a78bfa" stroke={C.stroke} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="22" cy="9" r="2" fill="#a78bfa" stroke={C.stroke} strokeWidth="1.5" />
+      <circle cx="27" cy="14" r="1.3" fill="#a78bfa" stroke={C.stroke} strokeWidth="1.2" />
+    </svg>
+  )
+  if (cat === 'ruido') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <path d="M4 20C6 16 10 14 12 17C14 20 18 16 20 13C22 10 26 10 28 14"
+        stroke="#5ec9e8" strokeWidth="3" strokeLinecap="round" fill="none" />
+      <path d="M4 25C6 21 10 19 12 22C14 25 18 21 20 18C22 15 26 15 28 19"
+        stroke="#5ec9e8" strokeWidth="3" strokeLinecap="round" fill="none" opacity=".5" />
+    </svg>
+  )
+  if (cat === 'meditacion') return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <circle cx="16" cy="7" r="4" fill="#a78bfa" stroke={C.stroke} strokeWidth="2.5" />
+      <path d="M8 28C8 22 11 18 16 18C21 18 24 22 24 28"
+        fill="#a78bfa" stroke={C.stroke} strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M10 20L6 24M22 20L26 24" stroke="#a78bfa" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
+  // respiracion
+  return (
+    <svg width={size} height={size} viewBox="0 0 32 32" fill="none">
+      <ellipse cx="16" cy="16" rx="10" ry="12" fill="#5ae891" opacity=".2" stroke="#5ae891" strokeWidth="2.5" />
+      <ellipse cx="16" cy="16" rx="5" ry="7" fill="#5ae891" opacity=".4" stroke={C.stroke} strokeWidth="2" />
+      <path d="M16 8V6M16 26V24M8 16H6M26 16H24" stroke="#5ae891" strokeWidth="2.5" strokeLinecap="round" />
+    </svg>
+  )
 }
 
-const PARTICLE_ANIM: Record<ActiveRegion, string> = {
-  costa:  'sami-wave',
-  sierra: 'sami-twinkle',
-  selva:  'sami-firefly',
-}
+// ── CartoonCard ──────────────────────────────────────────────────────────────
 
-interface ContentCardProps {
+interface CardProps {
   item: SamiContent
   accent: string
+  accentD: string
 }
 
-function ContentCard({ item, accent }: ContentCardProps) {
+function CartoonCard({ item, accent, accentD }: CardProps) {
+  const [hov, setHov] = useState(false)
   const regionBadge = item.region !== 'universal'
     ? REGION_BADGE_LABELS[item.region as Exclude<SamiRegion, 'universal'>]
     : null
@@ -68,60 +82,66 @@ function ContentCard({ item, accent }: ContentCardProps) {
   return (
     <Link
       href={`/sami/${item.slug}`}
-      className="group flex flex-col gap-3 overflow-hidden rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+      onMouseEnter={() => setHov(true)}
+      onMouseLeave={() => setHov(false)}
       style={{
-        backgroundColor: `${accent}06`,
-        borderColor: `${accent}28`,
-        borderLeftWidth: '3px',
-        borderLeftColor: accent,
-      }}
-      onMouseEnter={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = `0 8px 32px ${accent}38, 0 0 0 1px ${accent}30`
-        el.style.borderColor = `${accent}55`
-        el.style.borderLeftColor = accent
-      }}
-      onMouseLeave={e => {
-        const el = e.currentTarget as HTMLElement
-        el.style.boxShadow = ''
-        el.style.borderColor = `${accent}28`
-        el.style.borderLeftColor = accent
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+        background: hov ? `${accent}15` : C.bg2,
+        border: `3px solid ${hov ? accent : C.stroke}`,
+        borderRadius: 20,
+        padding: '14px 12px',
+        textDecoration: 'none',
+        cursor: 'pointer',
+        transform: hov ? 'translateY(-3px) rotate(-0.5deg)' : 'none',
+        boxShadow: hov
+          ? `0 8px 20px ${accent}30, 4px 4px 0 ${C.stroke}`
+          : `3px 3px 0 ${C.stroke}`,
+        transition: 'all 0.2s cubic-bezier(0.22,1,0.36,1)',
+        overflow: 'hidden',
       }}
     >
-      <div className="flex items-start justify-between gap-2">
-        <span className="text-3xl leading-none">{categoryIcon(item.category)}</span>
-        <span
-          className="rounded-full px-2 py-0.5 text-xs font-medium"
-          style={{ backgroundColor: `${accent}18`, color: accent }}
-        >
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+        <CatIcon cat={item.category} size={26} />
+        <span style={{
+          fontSize: 11, fontWeight: 800, fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+          background: accent, color: 'white',
+          border: `2px solid ${accentD}`,
+          borderRadius: 99, padding: '2px 8px',
+          boxShadow: `2px 2px 0 ${accentD}`,
+        }}>
           {formatDuration(item.duration_seconds)}
         </span>
       </div>
-      <p className="line-clamp-2 text-sm font-medium leading-snug" style={{ color: '#f3f0ff' }}>
+      <p style={{
+        fontSize: 12, fontWeight: 700, color: C.text, lineHeight: 1.3,
+        fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+        display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden',
+      }}>
         {item.title}
       </p>
-      {regionBadge && (
-        <span
-          className="self-start rounded-full px-2 py-0.5 text-[10px] font-medium"
-          style={{ backgroundColor: `${accent}14`, color: `${accent}cc` }}
-        >
-          {regionBadge}
-        </span>
-      )}
+      <div style={{ fontSize: 11, color: C.textD, fontWeight: 600 }}>
+        {categoryLabel(item.category)}
+        {regionBadge && <span style={{ marginLeft: 4 }}>{regionBadge}</span>}
+      </div>
     </Link>
   )
 }
 
-export default function HomeClient({ content, lastSlug, lastCategory: _lastCategory, greeting }: Props) {
+// ── Main component ────────────────────────────────────────────────────────────
+
+export default function HomeClient({ content, lastSlug, greeting }: Props) {
   const [activeRegion, setActiveRegion] = useState<ActiveRegion>('sierra')
-  const [arrivingSami, setArrivingSami] = useState(false)
+  const [arriving, setArriving] = useState(false)
+
   const theme = REGION_THEMES[activeRegion]
 
   function handleRegionChange(region: ActiveRegion) {
     if (region === activeRegion) return
-    setArrivingSami(true)
+    setArriving(true)
     setActiveRegion(region)
-    setTimeout(() => setArrivingSami(false), 650)
+    setTimeout(() => setArriving(false), 700)
   }
 
   const regionContent = content
@@ -132,212 +152,165 @@ export default function HomeClient({ content, lastSlug, lastCategory: _lastCateg
 
   return (
     <>
-      <style>{`
-        @keyframes sami-twinkle {
-          0%, 100% { opacity: 0.07; transform: scale(0.4); }
-          50%       { opacity: 1;    transform: scale(1.9); }
-        }
-        @keyframes sami-wave {
-          0%, 100% { opacity: 0.25; transform: translate(0, 0); }
-          30%      { opacity: 0.95; transform: translate(7px, -13px); }
-          70%      { opacity: 0.5;  transform: translate(-5px, -8px); }
-        }
-        @keyframes sami-firefly {
-          0%   { opacity: 0;    transform: translate(0, 0); }
-          18%  { opacity: 0.9; }
-          55%  { opacity: 0.4;  transform: translate(10px, -30px); }
-          88%  { opacity: 0.75; }
-          100% { opacity: 0;    transform: translate(-4px, -56px); }
-        }
-        @keyframes sami-shoot {
-          0%   { opacity: 0;   transform: translate(0, 0); }
-          7%   { opacity: 1; }
-          93%  { opacity: 0.8; }
-          100% { opacity: 0;   transform: translate(440px, 95px); }
-        }
-        @keyframes sami-glow {
-          0%, 100% { opacity: 0.08; }
-          50%      { opacity: 0.28; }
-        }
-        @keyframes sami-float {
-          0%, 100% { transform: translateY(0px); }
-          50%      { transform: translateY(-11px); }
-        }
-        @keyframes sami-stars-pulse {
-          0%, 100% { opacity: 0.65; }
-          50%      { opacity: 1; }
-        }
-        .sami-star-bg { animation: sami-stars-pulse 9s ease-in-out infinite; }
-      `}</style>
+      <style>{CARTOON_KEYFRAMES}</style>
 
-      {/* Atmospheric nebula */}
-      <div
-        aria-hidden
-        className="pointer-events-none fixed inset-0 z-0 transition-all duration-1000"
-        style={{
-          background: `
-            radial-gradient(ellipse 130% 60% at 50% -8%, ${theme.accent}38 0%, transparent 58%),
-            radial-gradient(ellipse 65% 45% at 88% 108%, ${theme.accent}1a 0%, transparent 52%)
-          `,
-        }}
-      />
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* Animated particle layers */}
-      <div aria-hidden className="pointer-events-none fixed inset-0 z-[1]">
-        {(['costa', 'sierra', 'selva'] as const).map(region => {
-          const t = REGION_THEMES[region]
-          const isActive = region === activeRegion
-          return (
-            <div
-              key={region}
-              className="absolute inset-0 transition-opacity duration-800"
-              style={{ opacity: isActive ? 1 : 0 }}
-            >
-              {PARTICLES[region].map((p, i) => (
-                <div
-                  key={i}
-                  className="absolute rounded-full"
-                  style={{
-                    left: `${p.x}%`,
-                    top: `${p.y}%`,
-                    width: `${p.s}px`,
-                    height: `${p.s}px`,
-                    backgroundColor: t.accent,
-                    boxShadow: `0 0 ${p.s * 4}px ${p.s * 1.5}px ${t.accent}65`,
-                    animation: `${PARTICLE_ANIM[region]} ${p.d}s ${p.dl}s infinite ease-in-out`,
-                  }}
-                />
-              ))}
-              {region === 'sierra' && (
-                <div
-                  className="absolute"
-                  style={{
-                    top: '10%', left: '6%',
-                    width: '90px', height: '1.5px',
-                    borderRadius: '99px',
-                    background: `linear-gradient(90deg, transparent 0%, ${t.accent}70 25%, white 55%, transparent 100%)`,
-                    animation: 'sami-shoot 11s 6s infinite ease-out',
-                    transformOrigin: 'left center',
-                  }}
-                />
-              )}
-            </div>
-          )
-        })}
-      </div>
-
-      {/* Page */}
-      <div className="relative z-10 flex flex-col gap-10">
-
-        {/* Greeting */}
-        <div className="pt-2">
-          <h1 className="text-4xl font-bold tracking-tight" style={{ color: '#f3f0ff' }}>
-            {greeting}
-          </h1>
-          <p className="mt-1 text-base font-medium" style={{ color: '#c4b5fd', opacity: 0.7 }}>
-            ¿A dónde viajamos esta noche?
-          </p>
-          <p
-            className="mt-1 text-sm font-semibold transition-all duration-700"
-            style={{ color: theme.accent }}
-          >
-            {REGION_TRAVEL_SUBTITLES[activeRegion]}
-          </p>
+        {/* Greeting + mascot */}
+        <div
+          style={{
+            display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 8,
+            animation: 'sami-slide-up 0.48s cubic-bezier(0.22,1,0.36,1) both',
+          }}
+        >
+          <div>
+            <h1 style={{
+              fontSize: 28, fontWeight: 900, color: C.text, letterSpacing: '-0.02em',
+              fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+            }}>
+              {greeting}
+            </h1>
+            <p style={{
+              marginTop: 3, fontSize: 13, fontWeight: 700,
+              color: theme.accent, transition: 'color 0.5s',
+            }}>
+              {theme.subtitle}
+            </p>
+          </div>
+          <SamiMascot
+            pose={theme.mascotPose}
+            size={82}
+            anim={arriving ? 'arrive' : 'float'}
+            style={{ marginBottom: -2 }}
+          />
         </div>
 
-        {/* Region landscape + Sami spirit */}
-        <div className="relative pt-8">
-          <RegionLandscape
-            activeRegion={activeRegion}
-            onRegionChange={handleRegionChange}
-            accent={theme.accent}
-          />
-          {/* Sami orb floats above active panel */}
-          <div
-            className="pointer-events-none absolute"
-            style={{
-              left: activeRegion === 'costa'  ? 'calc(16.66% - 20px)'
-                  : activeRegion === 'sierra' ? 'calc(50% - 20px)'
-                  : 'calc(83.33% - 20px)',
-              top: '-8px',
-              transition: 'left 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
-              zIndex: 10,
-            }}
-          >
-            <SamiSpirit region={activeRegion} arriving={arrivingSami} />
+        {/* Region selector */}
+        <div>
+          <p style={{
+            fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: C.textD, marginBottom: 8,
+            fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+          }}>
+            ELIGE TU REGIÓN
+          </p>
+          <div style={{
+            display: 'flex', borderRadius: 20, overflow: 'hidden',
+            border: `3px solid ${C.stroke}`, height: 140, background: C.bg0,
+            boxShadow: `4px 4px 0 ${C.stroke}`,
+          }}>
+            {(REGIONS as { id: ActiveRegion; icon: string }[]).map((reg, idx) => {
+              const t = REGION_THEMES[reg.id]
+              const isA = reg.id === activeRegion
+              return (
+                <button
+                  key={reg.id}
+                  onClick={() => handleRegionChange(reg.id)}
+                  style={{
+                    flex: 1, position: 'relative', overflow: 'hidden',
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                    borderRight: idx < 2 ? `2px solid ${C.stroke}` : 'none',
+                    filter: isA ? 'brightness(1.25)' : 'brightness(0.55)',
+                    transform: isA ? 'scale(1.03)' : 'scale(1)',
+                    transition: 'filter 0.4s, transform 0.4s',
+                    zIndex: isA ? 2 : 1,
+                  }}
+                >
+                  <div style={{ position: 'absolute', inset: 0 }}>
+                    {reg.id === 'costa'  && <CartoonCostaScene  isNight={true} compact />}
+                    {reg.id === 'sierra' && <CartoonSierraScene isNight={true} compact />}
+                    {reg.id === 'selva'  && <CartoonSelvaScene  isNight={true} compact />}
+                  </div>
+                  {isA && (
+                    <div style={{
+                      position: 'absolute', inset: 0,
+                      background: `radial-gradient(ellipse 90% 70% at 50% 30%,${t.accent}25 0%,transparent 70%)`,
+                      animation: 'sami-breathe 3s ease-in-out infinite',
+                    }} />
+                  )}
+                  {/* Label pill */}
+                  <div style={{
+                    position: 'absolute', bottom: 6, left: '50%', transform: 'translateX(-50%)',
+                    background: isA ? t.accent : C.bg2,
+                    border: `2px solid ${isA ? t.accentD : C.stroke}`,
+                    borderRadius: 99, padding: '2px 10px',
+                    boxShadow: isA ? `2px 2px 0 ${t.accentD}` : `2px 2px 0 ${C.stroke}`,
+                  }}>
+                    <span style={{
+                      fontSize: 10, fontWeight: 800,
+                      fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+                      letterSpacing: '0.08em', textTransform: 'uppercase',
+                      color: isA ? 'white' : C.textD,
+                      textShadow: isA ? `0 1px 0 ${t.accentD}` : 'none',
+                      whiteSpace: 'nowrap',
+                    }}>
+                      {t.name}
+                    </span>
+                  </div>
+                </button>
+              )
+            })}
           </div>
         </div>
 
         {/* Section header */}
-        <div>
-          <div className="mb-1 flex items-center gap-2">
-            <span className="text-base">{REGIONS.find(r => r.id === activeRegion)?.icon}</span>
-            <h2
-              className="text-xs font-semibold uppercase tracking-widest transition-colors duration-700"
-              style={{ color: theme.accent, opacity: 0.85 }}
-            >
-              Desde la {theme.name}
-            </h2>
-            <span
-              className="flex-1 border-t transition-colors duration-700"
-              style={{ borderColor: `${theme.accent}25` }}
-            />
-          </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 14 }}>
+            {activeRegion === 'costa' ? '🌊' : activeRegion === 'sierra' ? '⛰️' : '🌿'}
+          </span>
+          <span style={{
+            fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase',
+            color: theme.accent, fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+            transition: 'color 0.5s',
+          }}>
+            Desde la {theme.name}
+          </span>
+          <div style={{ flex: 1, height: 3, background: theme.accent, borderRadius: 99, opacity: 0.3 }} />
         </div>
 
         {/* Content grid */}
         {regionContent.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
             {regionContent.map(item => (
-              <ContentCard key={item.id} item={item} accent={theme.accent} />
+              <CartoonCard key={item.id} item={item} accent={theme.accent} accentD={theme.accentD} />
             ))}
           </div>
         ) : (
-          <div
-            className="flex flex-col items-center gap-5 rounded-2xl border px-8 py-16 text-center transition-all duration-700"
-            style={{
-              borderColor: `${theme.accent}18`,
-              backgroundColor: `${theme.accent}07`,
-            }}
-          >
-            <div
-              className="flex h-16 w-16 items-center justify-center rounded-full text-3xl"
-              style={{
-                backgroundColor: `${theme.accent}14`,
-                boxShadow: `0 0 50px ${theme.accent}28`,
-                animation: 'sami-float 4s ease-in-out infinite',
-              }}
-            >
-              {REGIONS.find(r => r.id === activeRegion)?.icon}
-            </div>
-            <div>
-              <p className="text-sm font-medium" style={{ color: '#f3f0ff' }}>
-                El cielo de la {theme.name.toLowerCase()} se está preparando
-              </p>
-              <p className="mt-1.5 text-xs" style={{ color: '#4b5563' }}>
-                Las primeras meditaciones llegarán pronto
-              </p>
-            </div>
+          <div style={{
+            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16,
+            border: `3px solid ${C.stroke}`, borderRadius: 20, padding: '40px 20px',
+            background: C.bg2, boxShadow: `3px 3px 0 ${C.stroke}`, textAlign: 'center',
+          }}>
+            <SamiMascot pose="sentado" size={80} anim="float" />
+            <p style={{ fontSize: 14, fontWeight: 700, color: C.text, fontFamily: 'var(--font-nunito), Nunito, sans-serif' }}>
+              El cielo de la {theme.name.toLowerCase()} se está preparando
+            </p>
+            <p style={{ fontSize: 12, color: C.textD }}>
+              Las primeras meditaciones llegarán pronto 🐾
+            </p>
           </div>
         )}
 
         {/* Continue */}
         {lastItem && (
           <div>
-            <div className="mb-4 flex items-center gap-2">
-              <h2
-                className="text-xs font-semibold uppercase tracking-widest"
-                style={{ color: '#4b5563' }}
-              >
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: 8, marginBottom: 12,
+            }}>
+              <span style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase',
+                color: C.textD, fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+              }}>
                 Continuar
-              </h2>
-              <span className="flex-1 border-t" style={{ borderColor: 'rgba(255,255,255,0.06)' }} />
+              </span>
+              <div style={{ flex: 1, height: 2, background: C.stroke, borderRadius: 99, opacity: 0.5 }} />
             </div>
-            <div className="max-w-[180px]">
-              <ContentCard item={lastItem} accent={theme.accent} />
+            <div style={{ maxWidth: 180 }}>
+              <CartoonCard item={lastItem} accent={theme.accent} accentD={theme.accentD} />
             </div>
           </div>
         )}
+
       </div>
     </>
   )

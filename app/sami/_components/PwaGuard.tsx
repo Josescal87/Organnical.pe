@@ -1,13 +1,6 @@
 "use client"
+import Image from "next/image"
 import { useEffect, useState } from "react"
-import { Playfair_Display } from "next/font/google"
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  style: ["italic"],
-  weight: ["400"],
-  display: "swap",
-})
 
 export default function PwaGuard({ children }: { children: React.ReactNode }) {
   const [ready, setReady] = useState(false)
@@ -21,7 +14,7 @@ export default function PwaGuard({ children }: { children: React.ReactNode }) {
     setReady(true)
   }, [])
 
-  if (!ready) return <div style={{ position: "fixed", inset: 0, backgroundColor: "#0b0818" }} />
+  if (!ready) return <div style={{ position: "fixed", inset: 0, backgroundColor: "#0c0920" }} />
   if (!standalone) return <InstallPrompt />
   return <>{children}</>
 }
@@ -34,7 +27,7 @@ function InstallPrompt() {
   return (
     <div
       className="fixed inset-0 flex flex-col items-center justify-center px-8 text-center"
-      style={{ backgroundColor: "#0b0818" }}
+      style={{ backgroundColor: "#0c0920" }}
     >
       {/* Subtle stars */}
       <div
@@ -56,17 +49,14 @@ function InstallPrompt() {
 
       <div className="relative z-10 flex flex-col items-center gap-5 max-w-xs">
         {/* Logo */}
-        <div className="flex flex-col items-center gap-1">
-          <span
-            className={`${playfair.className} text-5xl`}
-            style={{ color: "#c4b5fd", letterSpacing: "0.02em" }}
-          >
-            sami
-          </span>
-          <span className="text-xs" style={{ color: "rgba(167,139,250,0.4)" }}>
-            by organnical
-          </span>
-        </div>
+        <Image
+          src="/sami/logo.png"
+          alt="Sami by Organnical"
+          width={72}
+          height={72}
+          className="object-contain"
+          priority
+        />
 
         <div style={{ width: "32px", height: "1px", backgroundColor: "rgba(167,139,250,0.2)" }} />
 

@@ -68,3 +68,26 @@ export const REGIONS: { id: Exclude<SamiRegion, 'universal'>; icon: string }[] =
   { id: 'sierra', icon: '⛰️' },
   { id: 'selva',  icon: '🌿' },
 ]
+
+export const REGION_BADGE_LABELS: Record<Exclude<SamiRegion, 'universal'>, string> = {
+  costa:  '🌊 Costa',
+  sierra: '⛰️ Sierra',
+  selva:  '🌿 Selva',
+}
+
+export const REGION_TRAVEL_SUBTITLES: Record<Exclude<SamiRegion, 'universal'>, string> = {
+  costa:  'Las leyendas del Pacífico te esperan',
+  sierra: 'El cielo andino abre sus puertas',
+  selva:  'La Amazonía te llama en la oscuridad',
+}
+
+export const REGION_PLAYER_STYLES: Record<SamiRegion, {
+  gradient: string
+  progressColor: string
+  glowColor: string
+}> = {
+  costa:     { gradient: 'radial-gradient(ellipse at 50% 0%, rgba(74,158,187,0.20) 0%, transparent 65%)',   progressColor: '#4a9ebb', glowColor: 'rgba(74,158,187,0.35)'   },
+  sierra:    { gradient: 'radial-gradient(ellipse at 50% 0%, rgba(167,139,250,0.20) 0%, transparent 65%)',  progressColor: '#a78bfa', glowColor: 'rgba(167,139,250,0.35)'  },
+  selva:     { gradient: 'radial-gradient(ellipse at 50% 0%, rgba(74,222,128,0.20) 0%, transparent 65%)',   progressColor: '#4ade80', glowColor: 'rgba(74,222,128,0.35)'   },
+  universal: { gradient: 'radial-gradient(ellipse at 50% 0%, rgba(167,139,250,0.20) 0%, transparent 65%)',  progressColor: '#a78bfa', glowColor: 'rgba(167,139,250,0.35)'  },
+}

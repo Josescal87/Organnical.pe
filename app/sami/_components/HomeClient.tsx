@@ -3,7 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { SamiContent, SamiCategory, SamiRegion } from '@/lib/supabase/database.types'
-import { categoryIcon, formatDuration, REGION_THEMES, REGIONS } from './content-helpers'
+import {
+  categoryIcon, formatDuration, REGION_THEMES, REGIONS,
+  REGION_BADGE_LABELS, REGION_TRAVEL_SUBTITLES,
+} from './content-helpers'
+import SamiSpirit from './SamiSpirit'
+import RegionLandscape from './RegionLandscape'
 
 type ActiveRegion = Exclude<SamiRegion, 'universal'>
 
@@ -50,35 +55,37 @@ const PARTICLE_ANIM: Record<ActiveRegion, string> = {
   selva:  'sami-firefly',
 }
 
-const REGION_SUBTITLES: Record<ActiveRegion, string> = {
-  costa:  'Bioluminiscencia del Pacífico',
-  sierra: 'Vía Láctea desde la puna',
-  selva:  'Luciérnagas del Amazonas',
-}
-
 interface ContentCardProps {
   item: SamiContent
   accent: string
 }
 
 function ContentCard({ item, accent }: ContentCardProps) {
+  const regionBadge = item.region !== 'universal'
+    ? REGION_BADGE_LABELS[item.region as Exclude<SamiRegion, 'universal'>]
+    : null
+
   return (
     <Link
       href={`/sami/${item.slug}`}
-      className="group flex flex-col gap-3 rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
+      className="group flex flex-col gap-3 overflow-hidden rounded-2xl border p-4 transition-all duration-300 hover:-translate-y-1 hover:scale-[1.02]"
       style={{
-        backgroundColor: 'rgba(255,255,255,0.04)',
+        backgroundColor: `${accent}06`,
         borderColor: `${accent}28`,
-        // @ts-ignore
-        '--hover-shadow': `0 8px 32px ${accent}30`,
+        borderLeftWidth: '3px',
+        borderLeftColor: accent,
       }}
       onMouseEnter={e => {
-        (e.currentTarget as HTMLElement).style.boxShadow = `0 8px 32px ${accent}30`
-        ;(e.currentTarget as HTMLElement).style.borderColor = `${accent}55`
+        const el = e.currentTarget as HTMLElement
+        el.style.boxShadow = `0 8px 32px ${accent}38, 0 0 0 1px ${accent}30`
+        el.style.borderColor = `${accent}55`
+        el.style.borderLeftColor = accent
       }}
       onMouseLeave={e => {
-        (e.currentTarget as HTMLElement).style.boxShadow = ''
-        ;(e.currentTarget as HTMLElement).style.borderColor = `${accent}28`
+        const el = e.currentTarget as HTMLElement
+        el.style.boxShadow = ''
+        el.style.borderColor = `${accent}28`
+        el.style.borderLeftColor = accent
       }}
     >
       <div className="flex items-start justify-between gap-2">
@@ -93,13 +100,29 @@ function ContentCard({ item, accent }: ContentCardProps) {
       <p className="line-clamp-2 text-sm font-medium leading-snug" style={{ color: '#f3f0ff' }}>
         {item.title}
       </p>
+      {regionBadge && (
+        <span
+          className="self-start rounded-full px-2 py-0.5 text-[10px] font-medium"
+          style={{ backgroundColor: `${accent}14`, color: `${accent}cc` }}
+        >
+          {regionBadge}
+        </span>
+      )}
     </Link>
   )
 }
 
-export default function HomeClient({ content, lastSlug, lastCategory, greeting }: Props) {
+export default function HomeClient({ content, lastSlug, lastCategory: _lastCategory, greeting }: Props) {
   const [activeRegion, setActiveRegion] = useState<ActiveRegion>('sierra')
+  const [arrivingSami, setArrivingSami] = useState(false)
   const theme = REGION_THEMES[activeRegion]
+
+  function handleRegionChange(region: ActiveRegion) {
+    if (region === activeRegion) return
+    setArrivingSami(true)
+    setActiveRegion(region)
+    setTimeout(() => setArrivingSami(false), 650)
+  }
 
   const regionContent = content
     .filter(item => item.region === activeRegion || item.region === 'universal')
@@ -144,12 +167,10 @@ export default function HomeClient({ content, lastSlug, lastCategory, greeting }
           0%, 100% { opacity: 0.65; }
           50%      { opacity: 1; }
         }
-        .sami-star-bg {
-          animation: sami-stars-pulse 9s ease-in-out infinite;
-        }
+        .sami-star-bg { animation: sami-stars-pulse 9s ease-in-out infinite; }
       `}</style>
 
-      {/* Two-layer atmospheric nebula */}
+      {/* Atmospheric nebula */}
       <div
         aria-hidden
         className="pointer-events-none fixed inset-0 z-0 transition-all duration-1000"
@@ -161,7 +182,7 @@ export default function HomeClient({ content, lastSlug, lastCategory, greeting }
         }}
       />
 
-      {/* Animated particle layers — all three regions pre-rendered, cross-fade */}
+      {/* Animated particle layers */}
       <div aria-hidden className="pointer-events-none fixed inset-0 z-[1]">
         {(['costa', 'sierra', 'selva'] as const).map(region => {
           const t = REGION_THEMES[region]
@@ -187,16 +208,12 @@ export default function HomeClient({ content, lastSlug, lastCategory, greeting }
                   }}
                 />
               ))}
-
-              {/* Shooting star — Sierra only */}
               {region === 'sierra' && (
                 <div
                   className="absolute"
                   style={{
-                    top: '10%',
-                    left: '6%',
-                    width: '90px',
-                    height: '1.5px',
+                    top: '10%', left: '6%',
+                    width: '90px', height: '1.5px',
                     borderRadius: '99px',
                     background: `linear-gradient(90deg, transparent 0%, ${t.accent}70 25%, white 55%, transparent 100%)`,
                     animation: 'sami-shoot 11s 6s infinite ease-out',
@@ -217,79 +234,55 @@ export default function HomeClient({ content, lastSlug, lastCategory, greeting }
           <h1 className="text-4xl font-bold tracking-tight" style={{ color: '#f3f0ff' }}>
             {greeting}
           </h1>
+          <p className="mt-1 text-base font-medium" style={{ color: '#c4b5fd', opacity: 0.7 }}>
+            ¿A dónde viajamos esta noche?
+          </p>
           <p
-            className="mt-2 text-sm font-semibold transition-colors duration-700"
+            className="mt-1 text-sm font-semibold transition-all duration-700"
             style={{ color: theme.accent }}
           >
-            {REGION_SUBTITLES[activeRegion]}
+            {REGION_TRAVEL_SUBTITLES[activeRegion]}
           </p>
         </div>
 
-        {/* Region tabs */}
-        <div className="grid grid-cols-3 gap-3">
-          {REGIONS.map(({ id, icon }) => {
-            const isActive = activeRegion === id
-            const t = REGION_THEMES[id]
-            return (
-              <button
-                key={id}
-                onClick={() => setActiveRegion(id)}
-                className="relative flex flex-col items-center gap-2.5 overflow-hidden rounded-2xl border px-3 py-6 text-center transition-all duration-500"
-                style={{
-                  backgroundColor: isActive ? `${t.accent}14` : 'rgba(255,255,255,0.03)',
-                  borderColor: isActive ? `${t.accent}60` : 'rgba(255,255,255,0.07)',
-                  boxShadow: isActive
-                    ? `0 0 30px ${t.accent}2a, inset 0 0 28px ${t.accent}08`
-                    : 'none',
-                  transform: isActive ? 'scale(1.04)' : 'scale(1)',
-                }}
-              >
-                {isActive && (
-                  <div
-                    className="pointer-events-none absolute inset-0"
-                    style={{
-                      background: `radial-gradient(ellipse 75% 75% at 50% 50%, ${t.accent}16 0%, transparent 70%)`,
-                      animation: 'sami-glow 3s ease-in-out infinite',
-                    }}
-                  />
-                )}
-                <span className="relative text-2xl leading-none">{icon}</span>
-                <div className="relative">
-                  <p
-                    className="text-sm font-semibold leading-none"
-                    style={{ color: isActive ? t.accent : '#9ca3af' }}
-                  >
-                    {t.name}
-                  </p>
-                  <p
-                    className="mt-1 text-[11px] leading-tight"
-                    style={{ color: isActive ? `${t.accent}80` : '#4b5563' }}
-                  >
-                    {t.description}
-                  </p>
-                </div>
-              </button>
-            )
-          })}
+        {/* Region landscape + Sami spirit */}
+        <div className="relative pt-8">
+          <RegionLandscape
+            activeRegion={activeRegion}
+            onRegionChange={handleRegionChange}
+            accent={theme.accent}
+          />
+          {/* Sami orb floats above active panel */}
+          <div
+            className="pointer-events-none absolute"
+            style={{
+              left: activeRegion === 'costa'  ? 'calc(16.66% - 20px)'
+                  : activeRegion === 'sierra' ? 'calc(50% - 20px)'
+                  : 'calc(83.33% - 20px)',
+              top: '-8px',
+              transition: 'left 600ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+              zIndex: 10,
+            }}
+          >
+            <SamiSpirit region={activeRegion} arriving={arrivingSami} />
+          </div>
         </div>
 
         {/* Section header */}
         <div>
           <div className="mb-1 flex items-center gap-2">
+            <span className="text-base">{REGIONS.find(r => r.id === activeRegion)?.icon}</span>
             <h2
               className="text-xs font-semibold uppercase tracking-widest transition-colors duration-700"
-              style={{ color: theme.accent, opacity: 0.7 }}
+              style={{ color: theme.accent, opacity: 0.85 }}
             >
-              Esta noche · {theme.name}
+              Desde la {theme.name}
             </h2>
             <span
               className="flex-1 border-t transition-colors duration-700"
               style={{ borderColor: `${theme.accent}25` }}
             />
           </div>
-          <p className="text-xs" style={{ color: '#4b5563' }}>
-            {REGION_SUBTITLES[activeRegion]}
-          </p>
         </div>
 
         {/* Content grid */}

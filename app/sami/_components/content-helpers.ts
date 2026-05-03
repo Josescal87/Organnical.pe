@@ -123,6 +123,17 @@ export const REGION_TRAVEL_SUBTITLES: Record<Exclude<SamiRegion, 'universal'>, s
   selva:  'La selva respira contigo',
 }
 
+export const NARRATORS: Record<string, { nombre: string; icono: string }> = {
+  'pescador':    { nombre: 'Rodrigo',    icono: '🎣' },
+  'abuelo':      { nombre: 'Don Rufino', icono: '⛰️' },
+  'mujer-selva': { nombre: 'Luz',        icono: '🌿' },
+}
+
+export function narratorLabel(id: string | null | undefined): { nombre: string; icono: string } | null {
+  if (!id) return null
+  return NARRATORS[id] ?? null
+}
+
 export const REGION_PLAYER_STYLES: Record<SamiRegion, {
   gradient: string
   progressColor: string

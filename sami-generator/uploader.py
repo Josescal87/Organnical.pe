@@ -22,11 +22,11 @@ def upload_audio(slug: str, audio_path: Path) -> str:
 
     file_name = f"{slug}.mp3"
 
-    # Upsert — si ya existe, lo reemplaza
+    # Upsert — si ya existe, lo reemplaza. Header values must be strings (httpx).
     supabase.storage.from_("sami-audio").upload(
         file_name,
         audio_bytes,
-        {"content-type": "audio/mpeg", "upsert": True},
+        {"content-type": "audio/mpeg", "upsert": "true"},
     )
 
     # Construir URL pública
@@ -49,6 +49,7 @@ def insert_content(draft: dict, audio_url: str, published: bool = False) -> dict
         "tags": draft.get("tags", []),
         "script_text": draft["guion"],
         "tts_voice": draft.get("voz", "es-PE-Neural2-A"),
+        "narrator": draft.get("narrador"),
         "is_published": published,
     }
 

@@ -710,6 +710,7 @@ export interface Database {
           tags:             string[] | null
           script_text:      string | null
           tts_voice:        string | null
+          narrator:         string | null
           is_published:     boolean
           created_at:       string
           updated_at:       string
@@ -727,6 +728,7 @@ export interface Database {
           tags?:             string[] | null
           script_text?:      string | null
           tts_voice?:        string | null
+          narrator?:         string | null
           is_published?:     boolean
           created_at?:       string
           updated_at?:       string
@@ -743,6 +745,7 @@ export interface Database {
           tags?:             string[] | null
           script_text?:      string | null
           tts_voice?:        string | null
+          narrator?:         string | null
           is_published?:     boolean
           updated_at?:       string
         }

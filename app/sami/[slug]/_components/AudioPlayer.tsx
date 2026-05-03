@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from 'react'
 import Link from 'next/link'
 import type { SamiContent } from '@/lib/supabase/database.types'
 import { createClient as createBrowserClient } from '@/lib/supabase/client'
-import { C, categoryLabel, REGION_THEMES, REGION_PLAYER_STYLES } from '@/app/sami/_components/content-helpers'
+import { C, categoryLabel, narratorLabel, REGION_THEMES, REGION_PLAYER_STYLES } from '@/app/sami/_components/content-helpers'
 import SamiMascot from '@/app/sami/_components/SamiMascot'
 import { CartoonCostaScene, CartoonSierraScene, CartoonSelvaScene, CARTOON_KEYFRAMES } from '@/app/sami/_components/CartoonScenes'
 import type { SamiCategory } from '@/lib/supabase/database.types'
@@ -235,6 +235,17 @@ export default function AudioPlayer({ content }: Props) {
                 {categoryLabel(content.category)}
               </span>
             </div>
+            {(() => {
+              const n = narratorLabel(content.narrator)
+              return n ? (
+                <p style={{
+                  marginTop: 6, fontSize: 11, color: C.textD, fontWeight: 600,
+                  fontFamily: 'var(--font-nunito), Nunito, sans-serif',
+                }}>
+                  narrado por {n.icono} {n.nombre}
+                </p>
+              ) : null
+            })()}
           </div>
         </div>
 

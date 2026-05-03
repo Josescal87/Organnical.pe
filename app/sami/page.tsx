@@ -23,7 +23,7 @@ export default async function SamiHomePage() {
   const { data: content } = await supabase
     .schema('sami')
     .from('content')
-    .select('id, slug, title, description, category, region, duration_seconds, thumbnail_url, tags, audio_url, script_text, tts_voice, is_published, created_at, updated_at')
+    .select('id, slug, title, description, category, region, duration_seconds, thumbnail_url, tags, audio_url, script_text, tts_voice, narrator, is_published, created_at, updated_at')
     .eq('is_published', true)
     .order('created_at', { ascending: false })
 

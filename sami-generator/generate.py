@@ -4,6 +4,7 @@ CLI de generacion de contenido para Sami by Organnical.
 
 Uso:
   python generate.py --type meditacion --tema "ansiedad nocturna" --duracion 10
+  python generate.py --type cuento --tema "la llama del cielo" --region sierra
   python generate.py --publish meditacion-ansiedad-nocturna
 """
 import argparse
@@ -19,6 +20,63 @@ load_dotenv(Path(__file__).parent.parent / ".env.local")
 
 OUTPUTS_DIR = Path(__file__).parent / "outputs"
 DRAFTS_DIR = OUTPUTS_DIR / "drafts"
+
+# Volumen del ambient por región (dBFS). La voz va a -18 dBFS.
+# Valores más altos = más fuerte (ej. -24 suena ~6 dB más que -30).
+AMBIENT_DBFS: dict[str, float] = {
+    "costa":     -24.0,
+    "sierra":    -30.0,
+    "selva":     -30.0,
+    "universal": -30.0,
+}
+
+# TTS defaults cuando no hay narrador ni flag CLI explícito
+DEFAULT_TTS: dict[str, float] = {
+    "stability":        0.60,
+    "similarity_boost": 0.80,
+    "style":            0.15,
+    "speaking_rate":    0.80,
+}
+
+# Narrador canónico por región (auto-selección)
+REGION_TO_NARRATOR: dict[str, str] = {
+    "costa":  "pescador",
+    "sierra": "abuelo",
+    "selva":  "mujer-selva",
+}
+
+
+def load_narrators() -> dict:
+    """Carga el registro de narradores desde narrators.json."""
+    p = Path(__file__).parent / "narrators.json"
+    if not p.exists():
+        return {}
+    return json.loads(p.read_text(encoding="utf-8"))
+
+
+def resolve_tts_params(
+    args: argparse.Namespace,
+    narrador_config: dict | None,
+) -> tuple[str, float, float, float, float]:
+    """Resuelve parámetros TTS en orden: CLI flag > narrator config > DEFAULT_TTS."""
+    voice_id = args.voz or (narrador_config["voz_id"] if narrador_config else "")
+    stability = (
+        args.stability if args.stability is not None
+        else (narrador_config.get("stability", DEFAULT_TTS["stability"]) if narrador_config else DEFAULT_TTS["stability"])
+    )
+    similarity_boost = (
+        args.similarity_boost if args.similarity_boost is not None
+        else (narrador_config.get("similarity_boost", DEFAULT_TTS["similarity_boost"]) if narrador_config else DEFAULT_TTS["similarity_boost"])
+    )
+    style = (
+        args.style if args.style is not None
+        else (narrador_config.get("style", DEFAULT_TTS["style"]) if narrador_config else DEFAULT_TTS["style"])
+    )
+    speaking_rate = (
+        args.speaking_rate if args.speaking_rate is not None
+        else (narrador_config.get("speaking_rate", DEFAULT_TTS["speaking_rate"]) if narrador_config else DEFAULT_TTS["speaking_rate"])
+    )
+    return voice_id, stability, similarity_boost, style, speaking_rate
 
 
 def slugify(text: str) -> str:
@@ -36,8 +94,6 @@ def slugify(text: str) -> str:
 
 # Direcciones escénicas que el LLM podría dejar y que el TTS leería literalmente.
 # Mapean a un total de silencio en segundos (se distribuye en tags <break> de hasta 3s).
-# Orden importante: patrones más específicos primero (corchetes/paréntesis) antes que
-# el "Pausa" simple, para que `[pausa de 5s]` se consuma entero, no solo la palabra.
 _STAGE_DIRECTIONS = [
     (r'\(\s*silencio[^)]*\)',              3.0),
     (r'\[\s*silencio[^\]]*\]',             3.0),
@@ -63,10 +119,7 @@ def _seconds_to_breaks(total_seconds: float) -> str:
 
 
 def normalize_script_pauses(text: str) -> tuple[str, int]:
-    """Convierte direcciones escénicas residuales en tags SSML.
-
-    Retorna (texto_normalizado, total_de_reemplazos).
-    """
+    """Convierte direcciones escénicas residuales en tags SSML."""
     replacements = 0
     for pattern, seconds in _STAGE_DIRECTIONS:
         breaks = _seconds_to_breaks(seconds)
@@ -85,19 +138,27 @@ def load_prompt(name: str) -> str:
     return prompt_path.read_text(encoding="utf-8")
 
 
-def generate_script(tipo: str, tema: str, duracion_min: int, region: str = "universal") -> dict:
+def generate_script(
+    tipo: str,
+    tema: str,
+    duracion_min: int,
+    region: str = "universal",
+    narrador_id: str | None = None,
+) -> dict:
     """Llama a Claude para generar el guion."""
     client = anthropic.Anthropic()
     script_prompt = load_prompt("script_writer")
     quality_prompt = load_prompt("quality_checker")
 
-    print(f"  Generando guion ({tipo}, {duracion_min} min, region: {region}, tema: {tema})...")
+    narrador_linea = f"\nNarrador: {narrador_id}" if narrador_id else ""
+    narrador_log = f", narrador: {narrador_id}" if narrador_id else ""
+    print(f"  Generando guion ({tipo}, {duracion_min} min, region: {region}{narrador_log}, tema: {tema})...")
 
     user_message = f"""
 Genera contenido de tipo: {tipo}
 Tema/titulo sugerido: {tema}
 Duracion objetivo: {duracion_min} minutos
-Region cultural: {region}
+Region cultural: {region}{narrador_linea}
 
 Recuerda devolver UNICAMENTE el JSON especificado, sin markdown ni texto adicional.
 """
@@ -111,7 +172,6 @@ Recuerda devolver UNICAMENTE el JSON especificado, sin markdown ni texto adicion
     )
 
     raw = response.content[0].text
-    # Extrae JSON robusto a posible markdown fence
     start = raw.find("{")
     end = raw.rfind("}") + 1
     if start == -1:
@@ -159,11 +219,32 @@ def cmd_generate(args: argparse.Namespace) -> None:
     """Genera guion + audio y guarda draft localmente."""
     from tts.elevenlabs_tts import text_to_speech
 
-    draft = generate_script(args.type, args.tema, args.duracion, args.region)
+    # Determinar narrador
+    narrators = load_narrators()
+    narrador_id = args.narrador
+
+    if not narrador_id and args.region in REGION_TO_NARRATOR:
+        narrador_id = REGION_TO_NARRATOR[args.region]
+        print(f"  Narrador auto-seleccionado: {narrador_id} (región {args.region})")
+
+    narrador_config = narrators.get(narrador_id) if narrador_id else None
+
+    # Resolver parámetros TTS
+    voice_id, stability, similarity_boost, style, speaking_rate = resolve_tts_params(args, narrador_config)
+
+    # Validar voice_id
+    if voice_id and voice_id.startswith("PENDIENTE"):
+        print(f"\n  ⚠ El Voice ID del narrador '{narrador_id}' no está configurado.")
+        print(f"    Edita sami-generator/narrators.json y asigna el Voice ID de ElevenLabs.")
+        print(f"    O pasa --voz VOICE_ID para usar una voz diferente.\n")
+        sys.exit(1)
+
+    draft = generate_script(args.type, args.tema, args.duracion, args.region, narrador_id)
     slug = slugify(f"{args.type}-{draft['titulo']}")
     draft["slug"] = slug
-    draft["voz"] = args.voz
+    draft["voz"] = voice_id
     draft["region"] = args.region
+    draft["narrador"] = narrador_id
 
     # Guardar draft JSON
     DRAFTS_DIR.mkdir(parents=True, exist_ok=True)
@@ -171,8 +252,7 @@ def cmd_generate(args: argparse.Namespace) -> None:
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"  Draft guardado: {draft_path}")
 
-    # Normalizar pausas: convierte cualquier dirección escénica residual ("Pausa larga", etc.)
-    # en tags <break> SSML para que el TTS las trate como silencio en lugar de leerlas.
+    # Normalizar pausas residuales
     normalized_guion, n_fixed = normalize_script_pauses(draft["guion"])
     if n_fixed > 0:
         print(f"  ⚠ Normalizadas {n_fixed} direccion(es) escénica(s) → tags <break> SSML")
@@ -186,11 +266,16 @@ def cmd_generate(args: argparse.Namespace) -> None:
         print(f"  ⚠ No hay ambient para región '{args.region}' (esperado: {ambient_path})")
         ambient_path = None
 
-    print(f"  Generando audio con ElevenLabs ({args.voz or 'default'})...")
-    text_to_speech(draft["guion"], audio_path, voice_id=args.voz,
-                   stability=args.stability, similarity_boost=args.similarity_boost,
-                   style=args.style, speaking_rate=args.speaking_rate,
-                   ambient_path=ambient_path)
+    narrador_label = (
+        f"{narrador_id} ({narrador_config['nombre']})" if narrador_config
+        else (voice_id or "default")
+    )
+    print(f"  Generando audio con ElevenLabs — narrador: {narrador_label}...")
+    ambient_dbfs = AMBIENT_DBFS.get(args.region, -30.0)
+    text_to_speech(draft["guion"], audio_path, voice_id=voice_id,
+                   stability=stability, similarity_boost=similarity_boost,
+                   style=style, speaking_rate=speaking_rate,
+                   ambient_path=ambient_path, ambient_dbfs=ambient_dbfs)
     draft["audio_path"] = str(audio_path)
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
 
@@ -201,10 +286,7 @@ def cmd_generate(args: argparse.Namespace) -> None:
 
 
 def cmd_retts(args: argparse.Namespace) -> None:
-    """Re-genera SOLO el audio de un draft existente (sin re-llamar a Claude).
-
-    Útil cuando editas el guión a mano o cambias parámetros del TTS/ambient.
-    """
+    """Re-genera SOLO el audio de un draft existente (sin re-llamar a Claude)."""
     from tts.elevenlabs_tts import text_to_speech
 
     slug = args.retts
@@ -217,17 +299,28 @@ def cmd_retts(args: argparse.Namespace) -> None:
     draft = json.loads(draft_path.read_text(encoding="utf-8"))
     region = draft.get("region", "universal")
 
+    # Cargar narrador del draft si no se sobreescribe por CLI
+    narrators = load_narrators()
+    narrador_id = args.narrador or draft.get("narrador")
+    narrador_config = narrators.get(narrador_id) if narrador_id else None
+
+    voice_id, stability, similarity_boost, style, speaking_rate = resolve_tts_params(args, narrador_config)
+    if not voice_id:
+        voice_id = draft.get("voz", "")
+
     audio_path = OUTPUTS_DIR / "audio" / f"{slug}.mp3"
     ambient_path = Path(__file__).parent / "ambient" / f"{region}.mp3"
     if not ambient_path.exists():
         print(f"  ⚠ No hay ambient para región '{region}' (esperado: {ambient_path})")
         ambient_path = None
 
-    print(f"  Re-generando audio (slug={slug}, región={region})...")
-    text_to_speech(draft["guion"], audio_path, voice_id=draft.get("voz", ""),
-                   stability=args.stability, similarity_boost=args.similarity_boost,
-                   style=args.style, speaking_rate=args.speaking_rate,
-                   ambient_path=ambient_path)
+    narrador_log = f", narrador={narrador_id}" if narrador_id else ""
+    print(f"  Re-generando audio (slug={slug}, región={region}{narrador_log})...")
+    ambient_dbfs = AMBIENT_DBFS.get(region, -30.0)
+    text_to_speech(draft["guion"], audio_path, voice_id=voice_id,
+                   stability=stability, similarity_boost=similarity_boost,
+                   style=style, speaking_rate=speaking_rate,
+                   ambient_path=ambient_path, ambient_dbfs=ambient_dbfs)
     draft["audio_path"] = str(audio_path)
     draft_path.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n  Listo: {audio_path}")
@@ -235,7 +328,7 @@ def cmd_retts(args: argparse.Namespace) -> None:
 
 def cmd_publish(args: argparse.Namespace) -> None:
     """Sube el draft aprobado a Supabase."""
-    from uploader import upload_audio, insert_content, publish_content
+    from uploader import upload_audio, insert_content
 
     slug = args.publish
     draft_path = DRAFTS_DIR / f"{slug}.json"
@@ -286,11 +379,13 @@ def main() -> None:
     parser.add_argument("--duracion", type=int, default=10, help="Duracion en minutos")
     parser.add_argument("--region", choices=["costa", "sierra", "selva", "universal"], default="universal",
                         help="Region cultural del contenido")
-    parser.add_argument("--voz", default="", help="ElevenLabs Voice ID (default: usa ELEVENLABS_VOICE_ID del .env.local)")
-    parser.add_argument("--stability", type=float, default=0.60, help="Consistencia de la voz 0-1 (default: 0.60)")
-    parser.add_argument("--similarity-boost", type=float, default=0.80, dest="similarity_boost", help="Fidelidad a la voz original 0-1 (default: 0.80)")
-    parser.add_argument("--style", type=float, default=0.15, help="Expresividad 0-1 (default: 0.15)")
-    parser.add_argument("--speaking-rate", type=float, default=0.80, dest="speaking_rate", help="Velocidad de habla 0.7-1.0 (default: 0.80)")
+    parser.add_argument("--narrador", type=str, default=None,
+                        help="ID del narrador (pescador|abuelo|mujer-selva). Auto-seleccionado por región si no se especifica.")
+    parser.add_argument("--voz", default="", help="ElevenLabs Voice ID — anula el voice_id del narrador")
+    parser.add_argument("--stability", type=float, default=None, help="Consistencia de la voz 0-1 — anula el del narrador")
+    parser.add_argument("--similarity-boost", type=float, default=None, dest="similarity_boost", help="Fidelidad a la voz original 0-1")
+    parser.add_argument("--style", type=float, default=None, help="Expresividad 0-1")
+    parser.add_argument("--speaking-rate", type=float, default=None, dest="speaking_rate", help="Velocidad de habla 0.7-1.0")
     parser.add_argument("--publish", type=str, help="Slug del draft a publicar")
     parser.add_argument("--retts", type=str, help="Slug del draft a re-renderizar (audio only, no re-genera guion)")
 

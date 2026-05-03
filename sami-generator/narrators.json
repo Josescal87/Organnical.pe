@@ -1,0 +1,54 @@
+{
+  "pescador": {
+    "id": "pescador",
+    "nombre": "El Pescador",
+    "nombre_corto": "Rodrigo",
+    "region": "costa",
+    "icono": "🎣",
+    "descripcion": "Pescador de Paracas. La paciencia del mar, hecha voz.",
+    "voz_id": "t3eeeqhBjrUqcrPvDqUn",
+    "stability": 0.72,
+    "similarity_boost": 0.82,
+    "style": 0.10,
+    "speaking_rate": 0.75
+  },
+  "abuelo": {
+    "id": "abuelo",
+    "nombre": "El Abuelo",
+    "nombre_corto": "Don Rufino",
+    "region": "sierra",
+    "icono": "⛰️",
+    "descripcion": "Elder quechua de los Andes. Las estrellas y los Apus hablan por él.",
+    "voz_id": "6yXdJiDseQt6BOet0rXz",
+    "stability": 0.65,
+    "similarity_boost": 0.80,
+    "style": 0.20,
+    "speaking_rate": 0.78
+  },
+  "mujer-selva": {
+    "id": "mujer-selva",
+    "nombre": "Luz",
+    "nombre_corto": "Luz",
+    "region": "selva",
+    "icono": "🌿",
+    "descripcion": "Curandera de la Amazonía. El río y las plantas hablan a través de ella.",
+    "voz_id": "wvLjO30m1EKxxecVo059",
+    "stability": 0.60,
+    "similarity_boost": 0.78,
+    "style": 0.25,
+    "speaking_rate": 0.82
+  },
+  "sami": {
+    "id": "sami",
+    "nombre": "Sami",
+    "nombre_corto": "Sami",
+    "region": "universal",
+    "icono": "✨",
+    "descripcion": "La voz de Sami — guía principal de la app.",
+    "voz_id": "qWWAqFomnJ99VwQLREfT",
+    "stability": 0.70,
+    "similarity_boost": 0.80,
+    "style": 0.15,
+    "speaking_rate": 0.80
+  }
+}

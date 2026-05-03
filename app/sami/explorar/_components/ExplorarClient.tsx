@@ -7,6 +7,7 @@ import {
   C,
   categoryLabel,
   formatDuration,
+  narratorLabel,
   REGION_THEMES,
   REGIONS,
 } from '../../_components/content-helpers'
@@ -14,7 +15,7 @@ import SamiMascot from '../../_components/SamiMascot'
 import { CARTOON_KEYFRAMES } from '../../_components/CartoonScenes'
 
 interface Props {
-  content: Pick<SamiContent, 'id' | 'slug' | 'title' | 'category' | 'region' | 'duration_seconds' | 'tags'>[]
+  content: Pick<SamiContent, 'id' | 'slug' | 'title' | 'category' | 'region' | 'duration_seconds' | 'tags' | 'narrator'>[]
 }
 
 type TabValue = 'todas' | SamiCategory
@@ -211,6 +212,14 @@ export default function ExplorarClient({ content }: Props) {
                     }}>
                       {categoryLabel(item.category)}
                     </span>
+                    {(() => {
+                      const n = narratorLabel(item.narrator)
+                      return n ? (
+                        <span style={{ fontSize: 10, color: C.textD, fontWeight: 600 }}>
+                          {n.icono} {n.nombre}
+                        </span>
+                      ) : null
+                    })()}
                   </div>
                 </Link>
               )

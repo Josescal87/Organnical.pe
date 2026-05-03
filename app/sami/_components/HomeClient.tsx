@@ -7,6 +7,7 @@ import {
   C,
   categoryLabel,
   formatDuration,
+  narratorLabel,
   REGION_THEMES,
   REGIONS,
   REGION_BADGE_LABELS,
@@ -124,6 +125,10 @@ function CartoonCard({ item, accent, accentD }: CardProps) {
       <div style={{ fontSize: 11, color: C.textD, fontWeight: 600 }}>
         {categoryLabel(item.category)}
         {regionBadge && <span style={{ marginLeft: 4 }}>{regionBadge}</span>}
+        {(() => {
+          const n = narratorLabel(item.narrator)
+          return n ? <span style={{ marginLeft: 4, opacity: 0.7 }}>{n.icono} {n.nombre}</span> : null
+        })()}
       </div>
     </Link>
   )

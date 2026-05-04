@@ -11,7 +11,7 @@
  *   - medical schema:          supabase.schema("medical").from("profiles").select(...)
  *   - sami schema:             supabase.schema("sami").from("content").select(...)
  *
- * REQUISITO: "medical" y "sami" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
+ * REQUISITO: "medical", "sami" y "hercu" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
  *
  * Para regenerar desde Supabase CLI:
  *   npx supabase gen types typescript --project-id jeomfjulczuimrmonmom > lib/supabase/database.types.ts
@@ -28,6 +28,12 @@ export type AppointmentVertical  = "sleep" | "pain" | "anxiety" | "womens_health
 
 /** Reemplaza AppointmentVertical en el schema medical */
 export type AppointmentSpecialty = "sleep" | "pain" | "anxiety" | "womens_health"
+
+/** Hercu fitness levels */
+export type HercuFitnessLevel = 'principiante' | 'intermedio' | 'avanzado'
+
+/** Hercu chat message roles */
+export type HercuMessageRole  = 'user' | 'assistant'
 
 
 // ─── Interfaz principal de base de datos ─────────────────────────────────────
@@ -780,6 +786,106 @@ export interface Database {
     Functions:      { [_ in never]: never }
     Enums:          { [_ in never]: never }
     CompositeTypes: { [_ in never]: never }
+  }
+
+
+  // ════════════════════════════════════════════════════════════════════════════
+  // HERCU SCHEMA — AI-powered fitness training plans for personalized workouts
+  // Usar: supabase.schema("hercu").from("tabla")
+  // ════════════════════════════════════════════════════════════════════════════
+  hercu: {
+    Tables: {
+
+      // ── hercu.hercu_profiles ──────────────────────────────────────────────
+      hercu_profiles: {
+        Row: {
+          user_id: string
+          fitness_level: HercuFitnessLevel
+          goals: string[]
+          equipment: string[]
+          days_per_week: number
+          available_days: string[]
+          session_minutes: number
+          onboarding_done: boolean
+          created_at: string
+        }
+        Insert: {
+          user_id: string
+          fitness_level?: HercuFitnessLevel
+          goals?: string[]
+          equipment?: string[]
+          days_per_week?: number
+          available_days?: string[]
+          session_minutes?: number
+          onboarding_done?: boolean
+          created_at?: string
+        }
+        Update: {
+          fitness_level?: HercuFitnessLevel
+          goals?: string[]
+          equipment?: string[]
+          days_per_week?: number
+          available_days?: string[]
+          session_minutes?: number
+          onboarding_done?: boolean
+        }
+      }
+
+      // ── hercu.hercu_plans ─────────────────────────────────────────────────
+      hercu_plans: {
+        Row: {
+          id: string
+          user_id: string
+          name: string
+          plan_data: Record<string, unknown>
+          is_active: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          user_id: string
+          name: string
+          plan_data: Record<string, unknown>
+          is_active?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          name?: string
+          plan_data?: Record<string, unknown>
+          is_active?: boolean
+        }
+      }
+
+      // ── hercu.hercu_messages ──────────────────────────────────────────────
+      hercu_messages: {
+        Row: {
+          id: string
+          plan_id: string
+          user_id: string
+          role: HercuMessageRole
+          content: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          plan_id: string
+          user_id: string
+          role: HercuMessageRole
+          content: string
+          created_at?: string
+        }
+        Update: never
+      }
+    }
+
+    Views: Record<string, never>
+    Functions: Record<string, never>
+    Enums: {
+      fitness_level_enum: HercuFitnessLevel
+      message_role_enum: HercuMessageRole
+    }
   }
 }
 

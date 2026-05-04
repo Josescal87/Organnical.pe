@@ -33,9 +33,11 @@ export async function POST(req: Request) {
   }
 
   // Desactivar planes anteriores
-  await supabase.schema('hercu').from('hercu_plans')
+  const { error: deactivateErr } = await supabase.schema('hercu').from('hercu_plans')
     .update({ is_active: false })
     .eq('user_id', user.id)
+    .eq('is_active', true)
+  if (deactivateErr) return NextResponse.json({ error: deactivateErr.message }, { status: 500 })
 
   // Crear nuevo plan
   const planName = `Mi plan de ${body.data.goals[0] ?? 'entrenamiento'}`
@@ -48,9 +50,10 @@ export async function POST(req: Request) {
   if (planErr) return NextResponse.json({ error: planErr.message }, { status: 500 })
 
   // Marcar onboarding completo
-  await supabase.schema('hercu').from('hercu_profiles')
+  const { error: doneErr } = await supabase.schema('hercu').from('hercu_profiles')
     .update({ onboarding_done: true })
     .eq('user_id', user.id)
+  if (doneErr) return NextResponse.json({ error: doneErr.message }, { status: 500 })
 
   return NextResponse.json({ plan })
 }

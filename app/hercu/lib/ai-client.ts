@@ -12,8 +12,11 @@ export async function generatePlan(systemPrompt: string): Promise<PlanData> {
     system: systemPrompt,
     messages: [{ role: 'user', content: 'Crea mi plan de entrenamiento.' }],
   })
-  const text = res.content[0].type === 'text' ? res.content[0].text.trim() : ''
-  return PlanDataSchema.parse(JSON.parse(text))
+  const block = res.content[0]
+  if (block.type !== 'text' || !block.text.trim()) {
+    throw new Error('Model returned no text content')
+  }
+  return PlanDataSchema.parse(JSON.parse(block.text.trim()))
 }
 
 export async function chatWithHercu(

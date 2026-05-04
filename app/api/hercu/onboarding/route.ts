@@ -25,22 +25,16 @@ export async function POST(req: Request) {
   if (profileErr) return NextResponse.json({ error: profileErr.message }, { status: 500 })
 
   // Generar plan con Claude
-  let planData
+  let planData: import('@/app/hercu/lib/plan-schema').PlanData
   try {
     planData = await generatePlan(buildGeneratePlanPrompt(profile))
   } catch (e) {
+    console.error('[hercu/onboarding] generatePlan failed:', e)
     return NextResponse.json({ error: 'Error generando el plan' }, { status: 500 })
   }
 
-  // Desactivar planes anteriores
-  const { error: deactivateErr } = await supabase.schema('hercu').from('hercu_plans')
-    .update({ is_active: false })
-    .eq('user_id', user.id)
-    .eq('is_active', true)
-  if (deactivateErr) return NextResponse.json({ error: deactivateErr.message }, { status: 500 })
-
   // Crear nuevo plan
-  const planName = `Mi plan de ${body.data.goals[0] ?? 'entrenamiento'}`
+  const planName = `Mi plan de ${profile.goals[0] ?? 'entrenamiento'}`
   const { data: plan, error: planErr } = await supabase
     .schema('hercu')
     .from('hercu_plans')
@@ -48,6 +42,14 @@ export async function POST(req: Request) {
     .select()
     .single()
   if (planErr) return NextResponse.json({ error: planErr.message }, { status: 500 })
+
+  // Desactivar planes anteriores (después de crear el nuevo, para no dejar al usuario sin plan activo)
+  const { error: deactivateErr } = await supabase.schema('hercu').from('hercu_plans')
+    .update({ is_active: false })
+    .eq('user_id', user.id)
+    .eq('is_active', true)
+    .neq('id', plan.id)
+  if (deactivateErr) return NextResponse.json({ error: deactivateErr.message }, { status: 500 })
 
   // Marcar onboarding completo
   const { error: doneErr } = await supabase.schema('hercu').from('hercu_profiles')

@@ -7,7 +7,11 @@ import { generatePlan } from '@/app/hercu/lib/ai-client'
 
 export async function POST(req: Request) {
   const supabase = await createClient()
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user }, error: authErr } = await supabase.auth.getUser()
+  if (authErr) {
+    console.error('[hercu/onboarding] auth error:', authErr)
+    return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+  }
   if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
 
   const body = OnboardingBodySchema.safeParse(await req.json())

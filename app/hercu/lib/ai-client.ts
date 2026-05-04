@@ -29,7 +29,12 @@ export async function chatWithHercu(
     system: systemPrompt,
     messages,
   })
-  const text = res.content[0].type === 'text' ? res.content[0].text.trim() : ''
+  const block = res.content[0]
+  if (block.type !== 'text' || !block.text.trim()) {
+    console.error('[hercu/chat] Model returned no text content', res.stop_reason)
+    return { message: 'Lo siento, hubo un error procesando tu mensaje.', updated_plan: null }
+  }
+  const text = block.text.trim()
   try {
     return HercuAIResponseSchema.parse(JSON.parse(text))
   } catch {

@@ -1,7 +1,6 @@
 // app/hercu/auth/signup/page.tsx
 'use client'
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import HercuMascot from '../../_components/HercuMascot'
@@ -15,7 +14,6 @@ const S = {
 
 export default function HercuSignup() {
   const supabase = createClient()
-  const router   = useRouter()
   const [email,    setEmail]    = useState('')
   const [password, setPassword] = useState('')
   const [error,    setError]    = useState<string | null>(null)

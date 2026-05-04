@@ -11,7 +11,7 @@
  *   - medical schema:          supabase.schema("medical").from("profiles").select(...)
  *   - sami schema:             supabase.schema("sami").from("content").select(...)
  *
- * REQUISITO: "medical" y "sami" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
+ * REQUISITO: "medical", "sami" y "hercu" deben estar en Supabase Dashboard → Settings → API → Exposed schemas
  *
  * Para regenerar desde Supabase CLI:
  *   npx supabase gen types typescript --project-id jeomfjulczuimrmonmom > lib/supabase/database.types.ts

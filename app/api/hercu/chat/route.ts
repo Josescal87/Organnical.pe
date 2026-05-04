@@ -27,6 +27,7 @@ export async function POST(req: Request) {
     .eq('user_id', user.id)
     .eq('is_active', true)
     .single()
+  if (planErr) console.error('[hercu/chat] plan fetch error:', planErr)
   if (planErr || !plan) return NextResponse.json({ error: 'Sin plan activo' }, { status: 404 })
 
   // Obtener historial (últimos 20 mensajes)
@@ -46,20 +47,23 @@ export async function POST(req: Request) {
   const aiResponse = await chatWithHercu(buildChatSystemPrompt(plan.plan_data as PlanData), messages)
 
   // Guardar mensaje del usuario
-  await supabase.schema('hercu').from('hercu_messages').insert({
+  const { error: userMsgErr } = await supabase.schema('hercu').from('hercu_messages').insert({
     plan_id: plan.id, user_id: user.id, role: 'user', content: body.data.message,
   })
+  if (userMsgErr) console.error('[hercu/chat] failed to insert user message:', userMsgErr)
 
   // Guardar respuesta de Hercu
-  await supabase.schema('hercu').from('hercu_messages').insert({
+  const { error: assistantMsgErr } = await supabase.schema('hercu').from('hercu_messages').insert({
     plan_id: plan.id, user_id: user.id, role: 'assistant', content: aiResponse.message,
   })
+  if (assistantMsgErr) console.error('[hercu/chat] failed to insert assistant message:', assistantMsgErr)
 
   // Actualizar plan si hubo cambios
-  if (aiResponse.updated_plan) {
-    await supabase.schema('hercu').from('hercu_plans')
+  if (aiResponse.updated_plan !== null) {
+    const { error: planUpdateErr } = await supabase.schema('hercu').from('hercu_plans')
       .update({ plan_data: aiResponse.updated_plan })
       .eq('id', plan.id)
+    if (planUpdateErr) console.error('[hercu/chat] failed to update plan:', planUpdateErr)
   }
 
   return NextResponse.json(aiResponse)

@@ -1,13 +1,13 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
-import { notFound } from "next/navigation"
+import { notFound, redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { ArrowLeft, ArrowRight, ShieldAlert, FileText, Download } from "lucide-react"
 import TrackEvent from "@/components/TrackEvent"
 import ProductCTA from "@/components/ProductCTA"
 
-export const revalidate = 3600
+export const dynamic = "force-dynamic"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 
@@ -39,6 +39,15 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { sku } = await params
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return {
+      title: "Catálogo de Productos — Organnical",
+      robots: { index: false, follow: false },
+    }
+  }
+
   const { data } = await supabase
     .from("productos")
     .select("descripcion, descripcion_corta, imagen_url")
@@ -52,11 +61,11 @@ export async function generateMetadata({
   return {
     title: `${meta.descripcion} — Organnical`,
     description:
-      meta.descripcion_corta ??
-      `${meta.descripcion} disponible en Organnical. Producto certificado bajo Ley 30681.`,
+      meta.descripcion_corta ?? `${meta.descripcion} disponible en Organnical.`,
     openGraph: {
       images: meta.imagen_url ? [{ url: meta.imagen_url }] : [],
     },
+    robots: { index: false, follow: false },
   }
 }
 
@@ -67,6 +76,9 @@ export default async function ProductoDetallePage({
 }) {
   const { sku } = await params
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect("/registro?ref=catalogo")
 
   const { data } = await supabase
     .from("productos")

@@ -1,16 +1,15 @@
 import type { Metadata } from "next"
 import Image from "next/image"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import { ArrowRight, ShieldAlert } from "lucide-react"
 
-export const revalidate = 3600
+export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Catálogo de Productos — Organnical | Suplementos y Bienestar",
-  description:
-    "Productos certificados para sueño, dolor, ansiedad y salud femenina. Bajo supervisión médica especializada.",
-  alternates: { canonical: "https://organnical.pe/catalogo" },
+  title: "Catálogo de Productos — Organnical",
+  robots: { index: false, follow: false },
 }
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
@@ -30,6 +29,9 @@ type Producto = {
 
 export default async function CatalogoPublicoPage() {
   const supabase = await createClient()
+
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect("/registro?ref=catalogo")
 
   const { data } = await supabase
     .from("productos")

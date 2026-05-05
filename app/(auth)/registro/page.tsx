@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useState, useEffect } from "react";
 
 declare global {
   interface Window {
@@ -10,7 +10,7 @@ declare global {
 }
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, ArrowRight, Loader2, CheckCircle } from "lucide-react";
 
@@ -24,8 +24,17 @@ const BENEFITS = [
   "Primera cita disponible en menos de 48 horas",
 ];
 
-export default function RegistroPage() {
+const BENEFITS_CATALOGO = [
+  "Acceso inmediato al catálogo completo de suplementos",
+  "Consultas con médicos especializados en bienestar",
+  "Historial médico y recetas guardadas de forma segura",
+  "Primera cita disponible en menos de 48 horas",
+];
+
+function RegistroContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isCatalog = searchParams.get("ref") === "catalogo";
 
   useEffect(() => {
     window.gtag?.("event", "begin_checkout")
@@ -74,6 +83,8 @@ export default function RegistroPage() {
     router.push("/dashboard/paciente");
   }
 
+  const benefits = isCatalog ? BENEFITS_CATALOGO : BENEFITS;
+
   return (
     <div className="min-h-screen flex" style={{ background: NAVY }}>
       {/* ── Left panel — brand ── */}
@@ -89,14 +100,23 @@ export default function RegistroPage() {
           </Link>
         </div>
         <div className="relative z-10 space-y-5">
-          <h2 className="font-display text-3xl font-black text-white leading-tight">
-            Tu salud, en manos de{" "}
-            <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>
-              especialistas
-            </span>
-          </h2>
+          {isCatalog ? (
+            <h2 className="font-display text-3xl font-black text-white leading-tight">
+              Accede al catálogo de{" "}
+              <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>
+                suplementos
+              </span>
+            </h2>
+          ) : (
+            <h2 className="font-display text-3xl font-black text-white leading-tight">
+              Tu salud, en manos de{" "}
+              <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>
+                especialistas
+              </span>
+            </h2>
+          )}
           <ul className="space-y-3 pt-2">
-            {BENEFITS.map((b) => (
+            {benefits.map((b) => (
               <li key={b} className="flex items-start gap-3 text-sm text-white/60">
                 <CheckCircle className="w-4 h-4 text-[#38BDF8] flex-shrink-0 mt-0.5" />
                 {b}
@@ -119,7 +139,11 @@ export default function RegistroPage() {
 
           <div className="mb-8">
             <h1 className="font-display text-3xl font-black text-[#0B1D35] mb-2">Crea tu cuenta</h1>
-            <p className="text-zinc-500 text-sm">Regístrate para agendar tu primera consulta.</p>
+            <p className="text-zinc-500 text-sm">
+              {isCatalog
+                ? "Regístrate para acceder al catálogo completo de suplementos."
+                : "Regístrate para agendar tu primera consulta."}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -228,5 +252,13 @@ export default function RegistroPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function RegistroPage() {
+  return (
+    <Suspense>
+      <RegistroContent />
+    </Suspense>
   );
 }

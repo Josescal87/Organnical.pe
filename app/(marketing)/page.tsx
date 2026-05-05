@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import {
-  Star, Shield, Clock, Heart, Phone,
+  Star, Clock, Heart, Phone, Leaf,
   Zap, ChevronRight, Calendar, Users, MessageSquare, ArrowRight,
 } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
@@ -62,12 +62,6 @@ const steps = [
   { number: "03", icon: MessageSquare, title: "Recibe tu tratamiento", detail: "Plan de tratamiento documentado", photo: "1631217868264-e5b90bb7e133", description: "Tu médico elabora un plan personalizado documentado. Acompañamiento continuo hasta tu recuperación." },
 ];
 
-const trustItems = [
-  { icon: Shield,  text: "Médicos con CMP activo" },
-  { icon: Clock,   text: "Primera cita en < 48h" },
-  { icon: Heart,   text: "+3,000 pacientes" },
-];
-
 export default async function LandingPage() {
   let doctors: DoctorCard[] = FALLBACK_DOCTORS;
   try {
@@ -100,19 +94,34 @@ export default async function LandingPage() {
         {/* ══════════ HERO ══════════ */}
         <HeroSection specialties={specialties} />
 
-        {/* ══════════ TRUST BAR ══════════ */}
-        <section className="bg-white border-b border-zinc-100 px-6 py-5">
-          <div className="reveal mx-auto max-w-5xl flex flex-wrap items-center justify-center gap-6 md:gap-12">
-            {trustItems.map(({ icon: Icon, text }) => (
-              <div key={text} className="group flex items-center gap-2.5 text-sm text-zinc-400 hover:text-zinc-700 transition-colors cursor-default">
-                <div className="w-7 h-7 rounded-full bg-violet-50 group-hover:bg-violet-100 flex items-center justify-center transition-colors">
-                  <Icon className="w-3.5 h-3.5 text-[#A78BFA]" />
-                </div>
-                {text}
+        {/* ══════════ CATÁLOGO BANNER ══════════ */}
+        <div className="relative overflow-hidden px-6 py-5" style={{ background: "#0A1829" }}>
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 120% at 0% 50%, rgba(167,139,250,0.14) 0%, transparent 65%)" }} />
+          <div className="relative mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3 text-center sm:text-left">
+              <div className="hidden sm:flex h-10 w-10 flex-shrink-0 rounded-full items-center justify-center border border-white/10" style={{ background: "rgba(167,139,250,0.12)" }}>
+                <Leaf className="w-5 h-5 text-[#A78BFA]" />
               </div>
-            ))}
+              <div>
+                <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
+                  <span className="h-1.5 w-1.5 rounded-full bg-[#34d399] animate-pulse" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#34d399]">Disponible ahora</span>
+                </div>
+                <p className="text-sm text-white/70">
+                  <span className="font-semibold text-white">Suplementos de bienestar</span>
+                  {" "}— Crea tu cuenta gratis para acceder al catálogo completo de productos.
+                </p>
+              </div>
+            </div>
+            <Link
+              href="/registro?ref=catalogo"
+              className="flex-shrink-0 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
+              style={{ background: G, boxShadow: "0 8px 24px rgba(167,139,250,0.35)" }}
+            >
+              Ver catálogo <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
           </div>
-        </section>
+        </div>
 
         {/* ══════════ ESPECIALIDADES ══════════ */}
         <section id="especialidades" className="px-6 py-28 bg-[#F8FAFC]">
@@ -327,29 +336,6 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ══════════ SAMI BANNER ══════════ */}
-        <section className="py-16 px-6" style={{ background: "linear-gradient(135deg, #1a0533 0%, #2d1060 50%, #1a0533 100%)" }}>
-          <div className="reveal mx-auto max-w-4xl flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-            <div className="flex-1">
-              <p className="text-xs font-bold uppercase tracking-widest text-violet-300 mb-3">Bienestar mental</p>
-              <h2 className="font-display text-3xl font-black text-white md:text-4xl mb-3">Sami by Organnical</h2>
-              <p className="text-white/60 text-lg leading-relaxed">
-                Tu espacio de bienestar. Meditación, cuentos para dormir y respiración guiada.
-              </p>
-            </div>
-            <div className="flex-shrink-0">
-              <a
-                href="https://sami.organnical.pe"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 rounded-full px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #7c3aed 0%, #a78bfa 100%)", boxShadow: "0 12px 32px rgba(124,58,237,0.4)" }}
-              >
-                Probar Sami →
-              </a>
-            </div>
-          </div>
-        </section>
 
         {/* ══════════ FINAL CTA ══════════ */}
         <section className="relative py-36 overflow-hidden">

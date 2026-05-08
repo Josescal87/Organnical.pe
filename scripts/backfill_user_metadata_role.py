@@ -14,6 +14,9 @@ Uso (one-shot):
     python scripts/backfill_user_metadata_role.py [--dry-run]
 
 Requiere SUPABASE_SECRET_KEY en .env.local.
+
+Histórico de ejecuciones:
+- 2026-05-08: 10 pacientes corregidos; 3 cuentas internas saltadas.
 """
 
 import argparse

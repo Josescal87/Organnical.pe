@@ -13,6 +13,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
+import { recordConsent } from "@/app/dashboard/paciente/consentimiento/actions";
+import type { ConsentType } from "@/app/dashboard/paciente/consentimiento/constants";
 import {
   ArrowLeft, ArrowRight, CheckCircle, Calendar,
   Clock, Video, Loader2, ChevronLeft, ChevronRight,
@@ -333,16 +335,14 @@ function AgendarWizard() {
     }
     setSubmitting(true);
     setError(null);
-    const supabase = createClient();
-    const records = pendingConsents.map((consent_type) => ({
-      patient_id: authedUserId,
-      consent_type,
-      accepted: true,
-      accepted_at: new Date().toISOString(),
-      version: "1.0",
-    }));
-    const { error } = await supabase.schema("medical").from("consent_records").insert(records);
-    if (error) { setError(error.message); setSubmitting(false); return; }
+    // Usamos el server action recordConsent que ya maneja consent_text_hash,
+    // consent_version, IP y device correctamente. Antes el insert directo
+    // usaba la columna 'version' (que no existe; la real es 'consent_version')
+    // y omitía consent_text_hash (NOT NULL) — fallaba con error de schema cache.
+    for (const consentType of pendingConsents) {
+      const result = await recordConsent(consentType as ConsentType, true);
+      if (result.error) { setError(result.error); setSubmitting(false); return; }
+    }
     setSubmitting(false);
     setStep("payment");
   }

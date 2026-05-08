@@ -85,14 +85,21 @@ export async function middleware(request: NextRequest) {
   for (const route of ROLE_ROUTES) {
     if (!pathname.startsWith(route.prefix)) continue
 
-    if (!role || !route.allowed.includes(role)) {
-      // Redirigir al dashboard correcto según su rol real
+    // Si el rol no viene en el JWT (trigger no ejecutado o backfill pendiente),
+    // dejamos pasar: la página leerá medical.profiles.role como fallback.
+    // Sin esta excepción se produce un redirect-loop en /dashboard/paciente.
+    if (!role) break
+
+    if (!route.allowed.includes(role)) {
+      const target =
+        role === "doctor" || role === "admin"
+          ? "/dashboard/medico"
+          : "/dashboard/paciente"
+      // No redirigir si ya estamos en el destino (evita loops si el target
+      // matchea el prefijo actual).
+      if (pathname.startsWith(target)) break
       const url = request.nextUrl.clone()
-      if (role === "doctor" || role === "admin") {
-        url.pathname = "/dashboard/medico"
-      } else {
-        url.pathname = "/dashboard/paciente"
-      }
+      url.pathname = target
       return NextResponse.redirect(url)
     }
 

@@ -944,6 +944,13 @@ function AgendarWizard() {
                         const data = await res.json();
                         if (!res.ok) { alert(data.error ?? "Error"); return; }
                         setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                        // GA4 → Google Ads (key event marcado en GA4 = conversión en Ads)
+                        window.gtag?.("event", "cita_solicitada", {
+                          value: comboPrice,
+                          currency: "PEN",
+                          transaction_id: data.appointmentIds?.[0],
+                          specialty: vertical,
+                        });
                         setStep("done");
                       }}
                       className="w-full rounded-xl px-6 py-3 text-sm font-semibold text-white"
@@ -985,6 +992,13 @@ function AgendarWizard() {
                           if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
                           if (data.status !== "approved") throw new Error("Pago no aprobado");
                           setPaymentResult({ appointmentIds: data.appointmentIds, meetLinks: data.meetLinks });
+                          // GA4 → Google Ads (key event marcado en GA4 = conversión en Ads)
+                          window.gtag?.("event", "cita_solicitada", {
+                            value: comboPrice,
+                            currency: "PEN",
+                            transaction_id: data.appointmentIds?.[0],
+                            specialty: vertical,
+                          });
                           setStep("done");
                         }}
                         onError={(err) => console.error("MP Brick error:", err)}

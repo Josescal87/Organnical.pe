@@ -155,6 +155,7 @@ function AgendarWizard() {
   }, []);
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
     if (step === "done") {
       window.gtag?.("event", "generate_lead", { vertical, sessions, value: comboPrice, currency: "PEN" })
       window.fbq?.("track", "Lead", { currency: "PEN", value: comboPrice })
@@ -162,6 +163,10 @@ function AgendarWizard() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [step]);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [confirmSubStep]);
 
   // Load user session + doctors + pricing from DB
   useEffect(() => {
@@ -385,7 +390,7 @@ function AgendarWizard() {
         {/* ── STEP: vertical ── */}
         {step === "vertical" && (
           <div>
-            <p className="text-sm text-zinc-400 mb-1">Paso 1 de 4</p>
+            <p className="text-sm text-zinc-400 mb-1">Paso 1 de 5</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">¿Cuál es tu motivo de consulta?</h1>
             <p className="text-zinc-500 text-sm mb-8">Selecciona el área de tu salud que quieres trabajar.</p>
             <div className="grid sm:grid-cols-2 gap-3">
@@ -410,7 +415,7 @@ function AgendarWizard() {
             <button onClick={() => setStep("vertical")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" /> Atrás
             </button>
-            <p className="text-sm text-zinc-400 mb-1">Paso 2 de 4</p>
+            <p className="text-sm text-zinc-400 mb-1">Paso 2 de 5</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Elige tu médico</h1>
             <p className="text-zinc-500 text-sm mb-8">Especialistas en {selectedVertical?.label}.</p>
 
@@ -473,7 +478,7 @@ function AgendarWizard() {
             <button onClick={() => setStep("doctor")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" /> Atrás
             </button>
-            <p className="text-sm text-zinc-400 mb-1">Paso 3 de 4</p>
+            <p className="text-sm text-zinc-400 mb-1">Paso 3 de 5</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Elige fecha y hora</h1>
             <p className="text-zinc-500 text-sm mb-6">Horario de atención: lunes a viernes (Lima).</p>
 
@@ -581,7 +586,7 @@ function AgendarWizard() {
             <button onClick={() => setStep("datetime")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" /> Atrás
             </button>
-            <p className="text-sm text-zinc-400 mb-1">Paso 4 de 4</p>
+            <p className="text-sm text-zinc-400 mb-1">Paso 4 de 5</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-2">Confirma tu cita</h1>
             <p className="text-zinc-500 text-sm mb-8">Revisa los detalles antes de confirmar.</p>
 
@@ -877,6 +882,7 @@ function AgendarWizard() {
             <button onClick={() => setStep("confirm")} className="inline-flex items-center gap-1.5 text-sm text-zinc-400 hover:text-zinc-600 mb-6 transition-colors">
               <ArrowLeft className="w-3.5 h-3.5" /> Atrás
             </button>
+            <p className="text-sm text-zinc-400 mb-1">Paso 5 de 5</p>
             <h1 className="font-display text-2xl font-black text-[#0B1D35] mb-8">Finalizar compra</h1>
 
             <div className="grid gap-8 lg:grid-cols-[1fr_420px]">

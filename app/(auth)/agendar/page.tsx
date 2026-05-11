@@ -382,27 +382,6 @@ function AgendarWizard() {
 
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-6 sm:py-10">
 
-        {/* ── GA4 test button (solo visible con ?ga_test=1) ── */}
-        {searchParams.get("ga_test") === "1" && (
-          <div className="mb-6 p-4 bg-amber-50 border-2 border-dashed border-amber-300 rounded-xl">
-            <p className="text-xs font-bold text-amber-700 mb-2">[TEST GA4 — quitar después]</p>
-            <button
-              onClick={() => {
-                window.gtag?.("event", "cita_solicitada", {
-                  value: 60,
-                  currency: "PEN",
-                  transaction_id: `test_${Date.now()}`,
-                  specialty: "test",
-                });
-                alert("Evento cita_solicitada disparado. Verifica en GA4 → Informes → Tiempo real.");
-              }}
-              className="rounded-xl px-5 py-2 text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700"
-            >
-              Disparar evento cita_solicitada (test)
-            </button>
-          </div>
-        )}
-
         {/* ── STEP: vertical ── */}
         {step === "vertical" && (
           <div>

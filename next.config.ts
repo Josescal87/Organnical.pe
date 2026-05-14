@@ -30,16 +30,16 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       // Old WordPress product pages → current catalog
-      { source: "/producto/:path*",          destination: "/catalogo",  permanent: true },
-      { source: "/tienda/:path*",            destination: "/catalogo",  permanent: true },
-      { source: "/product-tag/:path*",       destination: "/catalogo",  permanent: true },
-      { source: "/product-category/:path*",  destination: "/catalogo",  permanent: true },
-      { source: "/c/:path*",                 destination: "/catalogo",  permanent: true },
+      { source: "/producto/:path*",          destination: "/",          permanent: true },
+      { source: "/tienda/:path*",            destination: "/",          permanent: true },
+      { source: "/product-tag/:path*",       destination: "/",          permanent: true },
+      { source: "/product-category/:path*",  destination: "/",          permanent: true },
+      { source: "/c/:path*",                 destination: "/",          permanent: true },
       // Old WordPress checkout
-      { source: "/checkout",                 destination: "/catalogo",  permanent: true },
+      { source: "/checkout",                 destination: "/",          permanent: true },
       // Old WordPress-specific pages
       { source: "/cita-medica",              destination: "/",          permanent: true },
-      { source: "/prescripciones-antiguas",  destination: "/catalogo",  permanent: true },
+      { source: "/prescripciones-antiguas",  destination: "/",          permanent: true },
       { source: "/sisven-2-0",               destination: "/",          permanent: true },
       { source: "/themencode-pdf-viewer-sc", destination: "/",          permanent: true },
       { source: "/suscripcion-al-erp",       destination: "/",          permanent: true },
@@ -51,8 +51,8 @@ const nextConfig: NextConfig = {
       { source: "/wp-login.php",             destination: "/",          permanent: true },
       { source: "/wp-cron.php",              destination: "/",          permanent: true },
       // Old WooCommerce taxonomy pages → catalog
-      { source: "/marca/:path*",             destination: "/catalogo",  permanent: true },
-      { source: "/catalogos-post/:path*",    destination: "/catalogo",  permanent: true },
+      { source: "/marca/:path*",             destination: "/",          permanent: true },
+      { source: "/catalogos-post/:path*",    destination: "/",          permanent: true },
       // Old WordPress blog taxonomy → blog
       { source: "/tag/:path*",               destination: "/blog",      permanent: true },
       { source: "/category/:path*",          destination: "/blog",      permanent: true },
@@ -63,7 +63,7 @@ const nextConfig: NextConfig = {
       { source: "/citas-medicas",            destination: "/",          permanent: true },
       { source: "/citas-medicas/:path*",     destination: "/",          permanent: true },
       // Old URL pattern with /p suffix (e.g. /producto-nombre-8337/p)
-      { source: "/:slug/p",                  destination: "/catalogo",  permanent: true },
+      { source: "/:slug/p",                  destination: "/",          permanent: true },
       // Old WordPress misc pages
       { source: "/embed",                    destination: "/",          permanent: true },
       { source: "/sysven",                   destination: "/",          permanent: true },

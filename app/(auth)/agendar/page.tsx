@@ -195,15 +195,15 @@ function AgendarWizard() {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) setUser({ email: data.user.email! });
     });
-    supabase
-      .schema("medical")
-      .from("profiles")
-      .select("id, full_name, cmp, photo_url, specialty_label, verticals, rating, reviews_count, weekly_schedule")
-      .eq("role", "doctor")
-      .then(({ data }) => {
-        if (data) setDoctors(data as DoctorRow[]);
+    // Doctores vienen del endpoint público (bypass RLS) — la query directa
+    // fallaba para usuarios anónimos llegando del ad y caía a "No hay médicos disponibles".
+    fetch("/api/public/doctors")
+      .then((r) => r.json())
+      .then((d: { doctors?: DoctorRow[] }) => {
+        if (d.doctors?.length) setDoctors(d.doctors);
         setLoadingDoctors(false);
-      });
+      })
+      .catch(() => setLoadingDoctors(false));
     fetch("/api/consulta-config")
       .then((r) => r.json())
       .then((d) => setPricing(d))

@@ -39,5 +39,8 @@ export async function GET() {
     return NextResponse.json({ doctors: [], error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ doctors: (data ?? []) as PublicDoctor[] });
+  return NextResponse.json(
+    { doctors: (data ?? []) as PublicDoctor[] },
+    { headers: { "Content-Type": "application/json; charset=utf-8" } }
+  );
 }

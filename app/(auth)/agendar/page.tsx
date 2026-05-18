@@ -156,6 +156,8 @@ function AgendarWizard() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    // Funnel tracking: dispara evento por cada paso visto para poder medir abandono en GA4
+    window.gtag?.("event", "agendar_step_view", { step_name: step, vertical });
     if (step === "done") {
       window.gtag?.("event", "generate_lead", { vertical, sessions, value: comboPrice, currency: "PEN" })
       window.fbq?.("track", "Lead", { currency: "PEN", value: comboPrice })
@@ -166,6 +168,11 @@ function AgendarWizard() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+    // Sub-pasos dentro de confirm (auth/profile/consents) también cuentan como pantallas separadas
+    if (step === "confirm") {
+      window.gtag?.("event", "agendar_substep_view", { substep_name: confirmSubStep, vertical });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [confirmSubStep]);
 
   // Load user session + doctors + pricing from DB
@@ -230,6 +237,15 @@ function AgendarWizard() {
   const filteredDoctors = doctors.filter((d) =>
     !vertical || d.verticals.includes(vertical)
   );
+
+  // Auto-skip "doctor" step when there's only one option for the chosen vertical.
+  // Removes a wasted tap on mobile (96.7% of traffic) and a known drop-off point.
+  useEffect(() => {
+    if (step === "doctor" && !loadingDoctors && filteredDoctors.length === 1 && !doctorId) {
+      setDoctorId(filteredDoctors[0].id);
+      setStep("datetime");
+    }
+  }, [step, loadingDoctors, filteredDoctors, doctorId]);
 
   const selectedDoctor = doctors.find((d) => d.id === doctorId);
   const selectedVertical = VERTICALS.find((v) => v.id === vertical);
@@ -715,10 +731,13 @@ function AgendarWizard() {
                       <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                       <input
                         type="text"
+                        inputMode="text"
+                        autoComplete="name"
+                        autoCapitalize="words"
                         placeholder="Nombre completo"
                         value={guestName}
                         onChange={(e) => setGuestName(e.target.value)}
-                        className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-2.5 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                        className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-3 text-base text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
                       />
                     </div>
                   )}
@@ -726,20 +745,26 @@ function AgendarWizard() {
                     <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                     <input
                       type="email"
+                      inputMode="email"
+                      autoComplete="email"
+                      autoCapitalize="none"
+                      autoCorrect="off"
+                      spellCheck={false}
                       placeholder="Correo electrónico"
                       value={guestEmail}
                       onChange={(e) => setGuestEmail(e.target.value)}
-                      className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-2.5 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                      className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-3 text-base text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
                     />
                   </div>
                   <div className="relative">
                     <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
                     <input
                       type="password"
+                      autoComplete={showLogin ? "current-password" : "new-password"}
                       placeholder={showLogin ? "Contraseña" : "Crea una contraseña"}
                       value={guestPassword}
                       onChange={(e) => setGuestPassword(e.target.value)}
-                      className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-2.5 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                      className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-3 text-base text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
                     />
                   </div>
                 </div>
@@ -774,19 +799,25 @@ function AgendarWizard() {
                     <label className="text-xs font-semibold text-zinc-500 mb-1 block">DNI / Documento de identidad</label>
                     <input
                       type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete="off"
+                      maxLength={12}
                       placeholder="Ej. 12345678"
                       value={docId}
-                      onChange={(e) => setDocId(e.target.value)}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                      onChange={(e) => setDocId(e.target.value.replace(/\D/g, ""))}
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-base text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
                     />
                   </div>
                   <div>
                     <label className="text-xs font-semibold text-zinc-500 mb-1 block">Fecha de nacimiento</label>
                     <input
                       type="date"
+                      autoComplete="bday"
+                      max={new Date().toISOString().split("T")[0]}
                       value={birthDate}
                       onChange={(e) => setBirthDate(e.target.value)}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-2.5 text-sm text-zinc-800 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-base text-zinc-800 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
                     />
                   </div>
                 </div>

@@ -33,6 +33,20 @@ const VERTICALS = [
   { id: "womens_health", label: "Salud Femenina",  icon: "🌸", desc: "SPM, menopausia y equilibrio hormonal" },
 ];
 
+// Histórico de la DB: algunos perfiles tienen `verticals` con códigos ("sleep") y
+// otros con labels en español ("Sueño"). Este matcher acepta ambos para no perder traffic.
+function doctorMatchesVertical(doctorVerticals: string[] | null | undefined, verticalId: string): boolean {
+  if (!verticalId) return true;
+  if (!doctorVerticals || doctorVerticals.length === 0) return false;
+  const vert = VERTICALS.find((v) => v.id === verticalId);
+  const label = vert?.label;
+  return doctorVerticals.some((v) =>
+    v === verticalId ||
+    (label && v === label) ||
+    v.toLowerCase() === verticalId.toLowerCase()
+  );
+}
+
 const DEFAULT_HOURS = [9, 9.5, 10, 10.5, 11, 14, 14.5, 15, 15.5, 16, 16.5, 17];
 
 type WeeklySchedule = Record<string, number[]>;
@@ -234,9 +248,7 @@ function AgendarWizard() {
     if (vertical && step === "vertical") setStep("doctor");
   }, []);
 
-  const filteredDoctors = doctors.filter((d) =>
-    !vertical || d.verticals.includes(vertical)
-  );
+  const filteredDoctors = doctors.filter((d) => doctorMatchesVertical(d.verticals, vertical));
 
   // Auto-skip "doctor" step when there's only one option for the chosen vertical.
   // Removes a wasted tap on mobile (96.7% of traffic) and a known drop-off point.

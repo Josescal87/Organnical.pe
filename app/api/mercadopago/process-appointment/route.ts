@@ -112,8 +112,9 @@ export async function POST(req: NextRequest) {
 
     // Datos del paciente
     const { data: patientProfile } = await supabase
-      .schema("medical").from("profiles").select("full_name").eq("id", user.id).single();
-    const patientName = patientProfile?.full_name ?? "Paciente";
+      .schema("medical").from("profiles").select("full_name, phone").eq("id", user.id).single();
+    const patientName  = (patientProfile as { full_name: string | null; phone: string | null } | null)?.full_name ?? "Paciente";
+    const patientPhone = (patientProfile as { full_name: string | null; phone: string | null } | null)?.phone ?? "";
 
     // Datos del médico
     const { data: doctorProfile } = await supabase
@@ -220,7 +221,13 @@ export async function POST(req: NextRequest) {
         nombre,
         apellido,
         fecha_compra:    fecha,
-        comentarios:     `MP:${paymentId} | Cita ID: ${appt.id} | Médico: ${doctorName}`,
+        comentarios:     [
+          `Paciente: ${patientName}`,
+          patientPhone ? `Tel: ${patientPhone}` : null,
+          `Cita: ${startDate.toLocaleDateString("es-PE", { weekday: "short", day: "2-digit", month: "short", year: "numeric", timeZone: "America/Lima" })} ${startDate.toLocaleTimeString("es-PE", { hour: "2-digit", minute: "2-digit", timeZone: "America/Lima" })}`,
+          `Médico: ${doctorName}`,
+          `MP:${paymentId}`,
+        ].filter(Boolean).join(" | "),
       });
 
       // Email confirmación al paciente

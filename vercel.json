@@ -7,6 +7,14 @@
     {
       "path": "/api/cron/reminders?secret=$CRON_SECRET",
       "schedule": "0 14 * * *"
+    },
+    {
+      "path": "/api/admin/cron/cleanup-pendientes",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/admin/cron/retry-boletas",
+      "schedule": "0 3 * * *"
     }
   ]
 }

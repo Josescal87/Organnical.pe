@@ -10,19 +10,22 @@ const ROLE_ROUTES: Array<{ prefix: string; allowed: UserRole[] }> = [
   { prefix: "/dashboard/medico",   allowed: ["doctor", "admin"] },
   { prefix: "/dashboard/paciente", allowed: ["patient", "admin"] },
   { prefix: "/dashboard",          allowed: ["patient", "doctor", "admin"] },
+  { prefix: "/medicos",            allowed: ["doctor", "admin"] },
 ]
 
 /** Prefijos que requieren autenticación (sin importar rol) */
-const AUTH_REQUIRED_PREFIXES = ["/dashboard"]
+const AUTH_REQUIRED_PREFIXES = ["/dashboard", "/medicos"]
 
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
-  // ── Detección de subdominio Sami ────────────────────────────────────────────
-  // sami.organnical.pe → rewrite interno a /sami/* para separar rutas sin
-  // conflicto con app/(marketing)/. Las rutas /api/* no se reescriben.
+  // ── Detección de subdominios ─────────────────────────────────────────────────
+  // sami.organnical.pe   → rewrite interno a /sami/*
+  // medicos.organnical.pe → rewrite interno a /medicos/*
+  // Las rutas /api/* nunca se reescriben.
   const hostname = request.headers.get("host") ?? ""
   const isSami = hostname.startsWith("sami.")
+  const isMedicos = hostname.startsWith("medicos.")
 
   // ── Paso obligatorio de Supabase SSR ────────────────────────────────────────
   // createServerClient + getUser() refresca el cookie de sesión en cada request.
@@ -40,8 +43,14 @@ export async function middleware(request: NextRequest) {
             request.cookies.set(name, value)
           )
           supabaseResponse = NextResponse.next({ request })
+          // En producción, compartir cookies entre organnical.pe y sus subdominios.
+          const cookieDomain =
+            process.env.NODE_ENV === "production" ? ".organnical.pe" : undefined
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              ...(cookieDomain ? { domain: cookieDomain } : {}),
+            })
           )
         },
       },
@@ -73,6 +82,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = `/sami${pathname === "/" ? "" : pathname}`
       return NextResponse.rewrite(url)
     }
+    // medicos subdomain sin sesión: el guard de autenticación ya redirige a /login
     return supabaseResponse
   }
 
@@ -113,7 +123,19 @@ export async function middleware(request: NextRequest) {
     const url = request.nextUrl.clone()
     url.pathname = `/sami${pathname === "/" ? "" : pathname}`
     const rewriteResponse = NextResponse.rewrite(url)
-    // Propagar cookies de sesión al response de rewrite
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      rewriteResponse.cookies.set(name, value)
+    })
+    return rewriteResponse
+  }
+
+  // ── Rewrite de subdominio Médicos ────────────────────────────────────────────
+  // medicos.organnical.pe: /foo → /medicos/foo (interno).
+  // / → /medicos (sin trailing slash para que Next.js resuelva app/medicos/page.tsx)
+  if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login") {
+    const url = request.nextUrl.clone()
+    url.pathname = `/medicos${pathname === "/" ? "" : pathname}`
+    const rewriteResponse = NextResponse.rewrite(url)
     supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
       rewriteResponse.cookies.set(name, value)
     })

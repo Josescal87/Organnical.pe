@@ -19,6 +19,9 @@ export async function POST(req: NextRequest) {
 
   const { slug, url } = await req.json() as { slug: string; url: string };
   if (!slug || !url) return NextResponse.json({ error: "Faltan campos" }, { status: 400 });
+  if (!/^[a-z0-9-]{1,100}$/.test(slug)) {
+    return NextResponse.json({ error: "Slug inválido" }, { status: 400 });
+  }
 
   const admin = adminClient();
   const { error } = await admin.schema("medical").from("system_config").upsert(

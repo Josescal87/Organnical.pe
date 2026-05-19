@@ -23,14 +23,18 @@ const PLAN_JSON_SCHEMA = `{
   ]
 }`
 
+function sanitize(values: string[]): string {
+  return values.map(v => v.replace(/[\n\r]/g, ' ').trim()).join(', ')
+}
+
 export function buildGeneratePlanPrompt(profile: OnboardingBody & { days_per_week: number }): string {
   return `${HERCU_PERSONA}
 
 El usuario tiene este perfil:
-- Metas: ${profile.goals.join(', ')}
-- Equipo disponible: ${profile.equipment.join(', ')}
+- Metas: ${sanitize(profile.goals)}
+- Equipo disponible: ${sanitize(profile.equipment)}
 - Nivel: ${profile.fitness_level}
-- Días disponibles: ${profile.available_days.join(', ')} (${profile.days_per_week} días/semana)
+- Días disponibles: ${sanitize(profile.available_days)} (${profile.days_per_week} días/semana)
 - Duración por sesión: ${profile.session_minutes} minutos
 
 Crea un plan de entrenamiento personalizado con ejercicios adaptados al equipo disponible.

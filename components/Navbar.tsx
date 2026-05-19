@@ -4,15 +4,16 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight } from "lucide-react";
+import { Menu, X, ArrowRight, ShoppingCart } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { useCart, CART_ADDED_EVENT } from "@/contexts/CartContext";
+import CartDrawer from "@/components/CartDrawer";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
 const navLinks = [
-  { href: "/#especialidades", label: "Especialidades" },
-  { href: "/#medicos", label: "Médicos" },
-  { href: "/#como-funciona", label: "Cómo funciona" },
+  { href: "/tienda", label: "Tienda" },
+  { href: "/agendar", label: "Consultas" },
   { href: "/blog", label: "Blog" },
 ];
 
@@ -22,6 +23,8 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const supabase = createClient();
@@ -44,10 +47,16 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", fn);
   }, [menuOpen]);
 
-  // On landing: transparent until scroll. On all other pages: always solid.
+  useEffect(() => {
+    const handler = () => setCartOpen(true);
+    window.addEventListener(CART_ADDED_EVENT, handler);
+    return () => window.removeEventListener(CART_ADDED_EVENT, handler);
+  }, []);
+
   const solid = !isLanding || scrolled;
 
   return (
+    <>
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         solid
@@ -77,7 +86,7 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               className={`hover:text-[#A78BFA] transition-colors ${
-                pathname === l.href ? "text-[#A78BFA]" : ""
+                pathname.startsWith(l.href) ? "text-[#A78BFA]" : ""
               }`}
             >
               {l.label}
@@ -86,13 +95,30 @@ export default function Navbar() {
         </nav>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={() => setCartOpen(true)}
+            aria-label={`Carrito${totalItems > 0 ? ` (${totalItems})` : ""}`}
+            className={`hidden sm:flex items-center justify-center w-9 h-9 rounded-full relative transition-colors ${
+              solid
+                ? "text-zinc-500 hover:text-[#A78BFA] hover:bg-violet-50"
+                : "text-white/75 hover:text-white"
+            }`}
+          >
+            <ShoppingCart className="w-5 h-5" />
+            {totalItems > 0 && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#A78BFA] text-white text-[10px] font-bold flex items-center justify-center leading-none">
+                {totalItems > 9 ? "9+" : totalItems}
+              </span>
+            )}
+          </button>
+
           {isLoggedIn ? (
             <Link
-              href="/dashboard"
+              href="/cuenta"
               className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 hidden sm:inline-flex items-center gap-2"
               style={{ background: G }}
             >
-              Ir a mi panel <ArrowRight className="w-4 h-4" />
+              Mi cuenta <ArrowRight className="w-4 h-4" />
             </Link>
           ) : (
             <>
@@ -105,11 +131,11 @@ export default function Navbar() {
                 Iniciar sesión
               </Link>
               <Link
-                href="/registro"
+                href="/agendar"
                 className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90"
                 style={{ background: G }}
               >
-                Agendar consulta
+                Agendar
               </Link>
             </>
           )}
@@ -142,12 +168,12 @@ export default function Navbar() {
           ))}
           {isLoggedIn ? (
             <Link
-              href="/dashboard"
+              href="/cuenta"
               onClick={() => setMenuOpen(false)}
               className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
               style={{ background: G }}
             >
-              Ir a mi panel <ArrowRight className="w-4 h-4" />
+              Mi cuenta <ArrowRight className="w-4 h-4" />
             </Link>
           ) : (
             <>
@@ -159,7 +185,7 @@ export default function Navbar() {
                 Iniciar sesión
               </Link>
               <Link
-                href="/registro"
+                href="/agendar"
                 onClick={() => setMenuOpen(false)}
                 className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
                 style={{ background: G }}
@@ -171,5 +197,8 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+
+    <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
   );
 }

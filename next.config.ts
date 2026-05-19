@@ -31,12 +31,9 @@ const nextConfig: NextConfig = {
     return [
       // Old WordPress product pages → current catalog
       { source: "/producto/:path*",          destination: "/",          permanent: true },
-      { source: "/tienda/:path*",            destination: "/",          permanent: true },
       { source: "/product-tag/:path*",       destination: "/",          permanent: true },
       { source: "/product-category/:path*",  destination: "/",          permanent: true },
       { source: "/c/:path*",                 destination: "/",          permanent: true },
-      // Old WordPress checkout
-      { source: "/checkout",                 destination: "/",          permanent: true },
       // Old WordPress-specific pages
       { source: "/cita-medica",              destination: "/",          permanent: true },
       { source: "/prescripciones-antiguas",  destination: "/",          permanent: true },
@@ -59,7 +56,6 @@ const nextConfig: NextConfig = {
       { source: "/author/:path*",            destination: "/",          permanent: true },
       // Old WordPress patient/doctor profile pages → home
       { source: "/pacientes/:path*",         destination: "/",          permanent: true },
-      { source: "/medicos/:path*",           destination: "/",          permanent: true },
       { source: "/citas-medicas",            destination: "/",          permanent: true },
       { source: "/citas-medicas/:path*",     destination: "/",          permanent: true },
       // Old URL pattern with /p suffix (e.g. /producto-nombre-8337/p)
@@ -75,6 +71,10 @@ const nextConfig: NextConfig = {
       { source: "/inteligencia-artificial-en-la-medicina-del-peru-una-nueva-era-de-salud-personalizada",    destination: "/blog",      permanent: true },
       // Old privacy policy URL → current
       { source: "/politicas-privacidad",     destination: "/privacidad", permanent: true },
+      // Dashboard médico/paciente → nueva ruta unificada /cuenta
+      { source: "/dashboard",                destination: "/cuenta",     permanent: true },
+      { source: "/dashboard/paciente",       destination: "/cuenta",     permanent: true },
+      { source: "/dashboard/paciente/:path*", destination: "/cuenta",    permanent: true },
     ];
   },
   async headers() {
@@ -94,6 +94,10 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "jeomfjulczuimrmonmom.supabase.co",
+      },
+      {
+        protocol: "https",
+        hostname: "organnical.pe",
       },
     ],
   },

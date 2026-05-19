@@ -16,7 +16,7 @@ export const ScheduleDaySchema = z.object({
 
 export const PlanDataSchema = z.object({
   weeks:    z.number().int().positive().nullable(),
-  schedule: z.array(ScheduleDaySchema),
+  schedule: z.array(ScheduleDaySchema).max(14),
 })
 
 export const HercuAIResponseSchema = z.object({
@@ -25,10 +25,10 @@ export const HercuAIResponseSchema = z.object({
 })
 
 export const OnboardingBodySchema = z.object({
-  goals:           z.array(z.string()).min(1),
-  equipment:       z.array(z.string()).min(1),
+  goals:           z.array(z.string().max(100)).min(1).max(10),
+  equipment:       z.array(z.string().max(100)).min(1).max(10),
   fitness_level:   z.enum(['principiante', 'intermedio', 'avanzado']),
-  available_days:  z.array(z.string()).min(1),
+  available_days:  z.array(z.string().max(20)).min(1).max(7),
   session_minutes: z.number().int().min(10).max(120),
 })
 

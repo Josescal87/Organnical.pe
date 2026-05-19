@@ -9,12 +9,24 @@ import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
   ClipboardList, Users, ShieldCheck, Building2, BookOpen,
-  ScrollText, Award, MessageSquare, Bot,
+  ScrollText, Award, MessageSquare, Bot, Star, Receipt,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
+
+function getDoctorLinks(base: string) {
+  const home = base || "/"
+  return [
+    { href: home,                          label: "Inicio",      icon: LayoutDashboard },
+    { href: `${base}/consultas`,           label: "Consultas",   icon: Stethoscope },
+    { href: `${base}/pacientes`,           label: "Pacientes",   icon: Users },
+    { href: `${base}/recetas`,             label: "Recetas",     icon: FileText },
+    { href: `${base}/horario`,             label: "Mi horario",  icon: CalendarClock },
+    { href: `${base}/perfil`,              label: "Mi perfil",   icon: User },
+  ]
+}
 
 const PATIENT_LINKS = [
   { href: "/dashboard/paciente",              label: "Inicio",      icon: LayoutDashboard },
@@ -26,44 +38,45 @@ const PATIENT_LINKS = [
   { href: "/dashboard/paciente/perfil",       label: "Mi perfil",   icon: User },
 ];
 
-const DOCTOR_LINKS = [
-  { href: "/dashboard/medico",             label: "Inicio",        icon: LayoutDashboard },
-  { href: "/dashboard/medico/consultas",   label: "Consultas",     icon: Stethoscope },
-  { href: "/dashboard/medico/pacientes",   label: "Pacientes",     icon: Users },
-  { href: "/dashboard/medico/recetas",     label: "Recetas",       icon: FileText },
-  { href: "/dashboard/medico/horario",     label: "Mi horario",    icon: CalendarClock },
-  { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
-];
+const DOCTOR_LINKS_DEFAULT = getDoctorLinks("/dashboard/medico");
 
 const ADMIN_LINKS = [
-  { href: "/dashboard/medico",             label: "Inicio",        icon: LayoutDashboard },
-  { href: "/dashboard/medico/consultas",   label: "Consultas",     icon: Stethoscope },
-  { href: "/dashboard/admin/ipress",       label: "IPRESS",        icon: Building2 },
-  { href: "/dashboard/admin/personal",     label: "Personal",      icon: Users },
-  { href: "/dashboard/admin/protocolos",   label: "Protocolos",    icon: BookOpen },
-  { href: "/dashboard/admin/auditoria",    label: "Auditoría",     icon: ScrollText },
-  { href: "/dashboard/admin/legitscript",  label: "LegitScript",   icon: Award },
-  { href: "/dashboard/admin/whatsapp",     label: "WhatsApp IA",   icon: MessageSquare },
-  { href: "/dashboard/admin/whatsapp/simulator", label: "Simulador WA", icon: Bot },
-  { href: "/dashboard/medico/perfil",      label: "Mi perfil",     icon: User },
+  { href: "/dashboard/medico",                   label: "Inicio",        icon: LayoutDashboard },
+  { href: "/dashboard/medico/consultas",         label: "Consultas",     icon: Stethoscope },
+  { href: "/dashboard/admin/ipress",             label: "IPRESS",        icon: Building2 },
+  { href: "/dashboard/admin/personal",           label: "Personal",      icon: Users },
+  { href: "/dashboard/admin/protocolos",         label: "Protocolos",    icon: BookOpen },
+  { href: "/dashboard/admin/auditoria",          label: "Auditoría",     icon: ScrollText },
+  { href: "/dashboard/admin/legitscript",        label: "LegitScript",   icon: Award },
+  { href: "/dashboard/admin/reviews",            label: "Reseñas",       icon: Star },
+  { href: "/dashboard/admin/boletas",            label: "Boletas",       icon: Receipt },
+  { href: "/dashboard/admin/whatsapp",           label: "WhatsApp IA",   icon: MessageSquare },
+  { href: "/dashboard/admin/whatsapp/simulator", label: "Simulador WA",  icon: Bot },
+  { href: "/dashboard/medico/perfil",            label: "Mi perfil",     icon: User },
 ];
 
 interface Props {
   role: UserRole;
   fullName: string;
   email: string;
+  /** En medicos.organnical.pe pasar "" para que los links sean relativos al subdomain root */
+  basePath?: string;
 }
 
-export default function DashboardSidebar({ role, fullName, email }: Props) {
+export default function DashboardSidebar({ role, fullName, email, basePath }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
 
-  const links = role === "admin" ? ADMIN_LINKS : role === "doctor" ? DOCTOR_LINKS : PATIENT_LINKS;
-  const activeLabel = links.find(({ href }) =>
-    href === pathname ||
-    (href !== "/dashboard/paciente" && href !== "/dashboard/medico" && pathname.startsWith(href))
-  )?.label ?? null;
+  const doctorLinks = basePath !== undefined ? getDoctorLinks(basePath) : DOCTOR_LINKS_DEFAULT;
+  const links = role === "admin" ? ADMIN_LINKS : role === "doctor" ? doctorLinks : PATIENT_LINKS;
+
+  // Home hrefs that should not use startsWith for active detection
+  const homeHrefs = new Set(["/", "/dashboard/medico", "/dashboard/paciente"]);
+  const isActive = (href: string) =>
+    pathname === href || (!homeHrefs.has(href) && href !== "" && pathname.startsWith(href));
+
+  const activeLabel = links.find(({ href }) => isActive(href))?.label ?? null;
   const initials = fullName
     ? fullName.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase()
     : email[0]?.toUpperCase() ?? "U";
@@ -86,7 +99,7 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
       {/* Nav */}
       <nav className="flex-1 p-4 space-y-1">
         {links.map(({ href, label, icon: Icon }) => {
-          const active = pathname === href || (href !== "/dashboard/paciente" && href !== "/dashboard/medico" && pathname.startsWith(href));
+          const active = isActive(href);
           return (
             <Link
               key={href}
@@ -150,7 +163,7 @@ export default function DashboardSidebar({ role, fullName, email }: Props) {
           <Image src="/logo-white.png" alt="Organnical" width={110} height={28} />
         </Link>
         {activeLabel && (
-          <span className="absolute left-1/2 -translate-x-1/2 text-xs font-semibold text-white/60 tracking-wide uppercase pointer-events-none">
+          <span className="absolute left-1/2 -translate-x-1/2 text-xs font-semibold text-white/60 tracking-wide uppercase pointer-events-none truncate max-w-[120px]">
             {activeLabel}
           </span>
         )}

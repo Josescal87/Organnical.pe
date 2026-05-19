@@ -1,6 +1,7 @@
 // app/api/hercu/chat/route.ts
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
+import { checkRateLimit } from '@/lib/rate-limit'
 import { buildChatSystemPrompt } from '@/app/hercu/lib/prompts'
 import { chatWithHercu } from '@/app/hercu/lib/ai-client'
 import type { PlanData } from '@/app/hercu/lib/plan-schema'
@@ -16,6 +17,11 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
   }
   if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
+
+  const allowed = await checkRateLimit(`hercu-chat:${user.id}`, 20, 600_000)
+  if (!allowed) {
+    return NextResponse.json({ error: 'Demasiados mensajes, intenta en unos minutos' }, { status: 429 })
+  }
 
   const body = BodySchema.safeParse(await req.json())
   if (!body.success) return NextResponse.json({ error: 'Mensaje inválido' }, { status: 400 })

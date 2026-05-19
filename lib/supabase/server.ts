@@ -1,11 +1,9 @@
-/**
- * Cliente Supabase para uso en Server Components, Server Actions y Route Handlers.
- * Lee las cookies de la sesión de forma segura en el servidor.
- */
 import { createServerClient } from "@supabase/ssr"
+import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import { cookies } from "next/headers"
 import type { Database } from "@/lib/supabase/database.types"
 
+/** Cliente para Server Components / Route Handlers — usa cookies de sesión. */
 export async function createClient() {
   const cookieStore = await cookies()
 
@@ -29,5 +27,14 @@ export async function createClient() {
         },
       },
     }
+  )
+}
+
+/** Cliente admin con service role — bypasa RLS. Usar solo en route handlers y server actions. */
+export function createAdminClient() {
+  return createSupabaseClient<Database>(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SECRET_KEY!,
+    { auth: { autoRefreshToken: false, persistSession: false } }
   )
 }

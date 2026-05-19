@@ -13,9 +13,15 @@ def get_supabase() -> Client:
     return create_client(url, key)
 
 
+MAX_AUDIO_BYTES = 50 * 1024 * 1024  # 50 MB
+
 def upload_audio(slug: str, audio_path: Path) -> str:
     """Sube MP3 al bucket sami-audio y devuelve la URL pública."""
     supabase = get_supabase()
+
+    file_size = audio_path.stat().st_size
+    if file_size > MAX_AUDIO_BYTES:
+        raise ValueError(f"Archivo demasiado grande: {file_size / 1024 / 1024:.1f} MB (máx 50 MB)")
 
     with open(audio_path, "rb") as f:
         audio_bytes = f.read()

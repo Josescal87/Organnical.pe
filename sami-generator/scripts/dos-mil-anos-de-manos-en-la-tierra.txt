@@ -1,0 +1,70 @@
+[VOZ: SAMI]
+Hola.<break time="2.0s"/>
+
+Esta noche hay alguien que quiere contarte algo.<break time="2.0s"/>
+
+Se llama Don Rufino.<break time="1.5s"/> Viene de los Andes.<break time="1.5s"/> De las alturas donde el cielo toca la tierra.<break time="2.5s"/>
+
+Cierra los ojos.<break time="1.5s"/>
+
+Y escúchalo.
+
+[VOZ: DON RUFINO]
+Wawita...<break time="2.5s"/>
+
+Déjame llevarte a los Andes.<break time="2.0s"/> No a los Andes de ahora, no.<break time="1.5s"/> Sino a los de hace dos mil años.<break time="3.0s"/>
+
+Imagínate una ladera.<break time="2.0s"/> Alta, fría.<break time="1.5s"/> Con el viento que silba entre las rocas.<break time="2.0s"/> Y en esa ladera...<break time="1.5s"/> hay un hombre.<break time="1.5s"/> Con las manos en la tierra.<break time="2.5s"/>
+
+No tiene tractor.<break time="1.0s"/> No tiene herramienta de fierro.<break time="1.5s"/> Solo tiene una estaca de madera dura...<break time="1.0s"/> y sus manos.<break time="2.0s"/> Y está abriendo la tierra.<break time="3.0s"/>
+
+Con esa tierra va a alimentar a su familia.<break time="1.5s"/> A sus hijos.<break time="1.0s"/> A los hijos de sus hijos.<break time="2.5s"/>
+
+Ese hombre, wawita...<break time="1.5s"/> fue el primero de una línea muy larga.<break time="2.0s"/> Una línea que llega...<break time="1.5s"/> hasta hoy.<break time="3.5s"/>
+
+Poco a poco, esas manos aprendieron algo extraordinario.<break time="2.0s"/> Aprendieron que la tierra en ladera...<break time="1.5s"/> se puede amansar.<break time="2.0s"/> La cortaron.<break time="1.5s"/> La nivelaron.<break time="1.5s"/> Hicieron escalones en las montañas.<break time="2.0s"/> Los llamaron andenes.<break time="3.0s"/>
+
+Montañas enteras...<break time="1.5s"/> convertidas en jardines.<break time="2.0s"/> Escalón por escalón.<break time="1.5s"/> Generación por generación.<break time="3.0s"/>
+
+Y en esos andenes sembraron la papa.<break time="1.0s"/> La quinua.<break time="1.0s"/> El maíz sagrado.<break time="2.0s"/> Cosas que hoy come el mundo entero...<break time="1.5s"/> nacieron en esas manos andinas.<break time="3.5s"/>
+
+[VOZ: SAMI]
+¿Y no tenían frío, Don Rufino?<break time="1.0s"/> Las noches allá arriba son muy frías...
+
+[VOZ: DON RUFINO]
+Ajá, pues, Sami.<break time="1.5s"/> Muy frías.<break time="2.0s"/> Pero el campesino andino aprendió a vivir con el frío.<break time="2.0s"/> El frío era su amigo.<break time="2.5s"/>
+
+¿Sabes qué hacían con las papas cuando helaba?<break time="2.0s"/> Las dejaban en el suelo...<break time="1.0s"/> toda la noche.<break time="1.5s"/> Se congelaban.<break time="1.0s"/> Y al día siguiente las pisaban.<break time="1.5s"/> Con los pies descalzos.<break time="2.0s"/> Sacaban el agua.<break time="1.0s"/> Las secaban al sol.<break time="2.0s"/> Y tenían chuño.<break time="2.0s"/> Comida que duraba años.<break time="1.5s"/> Décadas.<break time="2.5s"/>
+
+El frío no era enemigo, wawita.<break time="1.5s"/> Era herramienta.<break time="3.5s"/>
+
+Pasaron los años...<break time="2.0s"/> Pasaron los siglos.<break time="2.0s"/> Y llegó el tiempo de los Incas.<break time="3.0s"/>
+
+Los Incas miraron esos andenes y dijeron...<break time="1.5s"/> esto lo vamos a hacer más grande.<break time="2.0s"/> Mandaron a miles de hombres a construir.<break time="2.0s"/> Hicieron acueductos que traían el agua de los nevados hasta las chacras.<break time="2.0s"/> Canales que corrían por la roca viva, tallados a mano, kilómetro a kilómetro.<break time="2.5s"/> Y construyeron depósitos en las cumbres.<break time="1.5s"/> Qollqas, los llamaban.<break time="2.0s"/> Redondos, de piedra, en los puntos más altos donde el frío los conservaba solos.<break time="2.0s"/> Llenos de chuño, de quinua, de charqui.<break time="1.5s"/> Para que nadie pasara hambre.<break time="3.0s"/>
+
+El campesino andino trabajaba duro, wawita.<break time="2.0s"/> Pero su trabajo...<break time="1.5s"/> volvía a él.<break time="2.5s"/> La tierra es así.<break time="1.5s"/> Lo que das...<break time="1.0s"/> vuelve.<break time="3.5s"/>
+
+Luego vinieron tiempos distintos.<break time="2.0s"/> Llegaron hombres de muy lejos, con caballos y armaduras y una lengua que nadie aquí había escuchado antes.<break time="2.5s"/> Muchas cosas cambiaron.<break time="2.0s"/> Algunas se perdieron.<break time="1.5s"/> Otras llegaron nuevas.<break time="2.0s"/> Los andenes se llenaron de otros cultivos.<break time="1.5s"/> El castellano se mezcló con el quechua.<break time="2.0s"/> El mundo andino se fue haciendo distinto, poco a poco, sin dejar de ser andino del todo.<break time="3.0s"/>
+
+Y el campesino...<break time="1.5s"/> siguió.<break time="2.0s"/> Siguió sembrando.<break time="1.5s"/> Siguió cosechando.<break time="2.0s"/> Guardó las semillas.<break time="1.5s"/> Las protegió.<break time="2.5s"/> Porque la semilla, wawita...<break time="1.5s"/> es memoria.<break time="2.0s"/> Mientras haya semilla...<break time="1.5s"/> hay futuro.<break time="4.0s"/>
+
+Pasaron los siglos.<break time="2.5s"/> Y hoy...<break time="2.0s"/> en esas mismas laderas...<break time="1.5s"/> en esos mismos andenes...<break time="1.5s"/> hay un hombre.<break time="1.0s"/> O una mujer.<break time="1.5s"/> Con las manos en la tierra.<break time="2.5s"/>
+
+No muy diferente al primero.<break time="2.0s"/> Las mismas manos.<break time="1.0s"/> La misma pacha.<break time="1.0s"/> La misma semilla.<break time="3.5s"/>
+
+[VOZ: SAMI]
+¿Y todavía...<break time="1.5s"/> todavía hacen el chuño, Don Rufino...?
+
+[VOZ: DON RUFINO]
+Todavía, Sami.<break time="2.0s"/> Todavía.<break time="3.5s"/>
+
+Y esta noche, wawita...<break time="2.0s"/> mientras tú te duermes...<break time="2.0s"/> en algún lugar de los Andes...<break time="1.5s"/> hay papas en el suelo helado.<break time="2.0s"/> Esperando el sol.<break time="3.0s"/>
+
+Igual que tú.<break time="2.0s"/> Esperando el sol de mañana.<break time="3.5s"/>
+
+Duerme, wawita.<break time="2.0s"/> La tierra te cuida.<break time="2.0s"/> Los Apus te cuidan.<break time="2.0s"/> Y Don Rufino...<break time="1.5s"/> también.<break time="3.0s"/>
+
+Sumaq puñuy.<break time="2.0s"/> Buen sueño.<break time="3.0s"/>
+
+[VOZ: SAMI]
+Buenas noches...<break time="3.0s"/>

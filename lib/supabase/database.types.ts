@@ -47,18 +47,341 @@ export interface Database {
     Tables: {
 
       // ── public.productos (catálogo maestro de OrgannicalRuby) ─────────────
-      // Referenciado por medical.prescription_items.producto_sku
+      // Referenciado por medical.prescription_items.producto_sku y tienda
       productos: {
         Row: {
-          sku:         string
-          descripcion: string
-          precio:      number
-          categoria:   string
-          recipe_sku:  string | null
-          farmacia:    string | null
+          id:                 string
+          sku:                string
+          descripcion:        string
+          descripcion_corta:  string | null
+          descripcion_larga:  string | null
+          ingredientes:       string | null
+          modo_uso:           string | null
+          advertencias:       string | null
+          presentacion:       string | null
+          categoria:          string
+          precio_publico:     number
+          precio_oferta:      number | null
+          slug_publico:       string
+          imagen_url:         string | null
+          imagenes_galeria:   string[] | null
+          tags:               string[] | null
+          peso_g:             number | null
+          visible_publico:    boolean
+          activo:             boolean
+          // Store extras
+          requiere_receta:    boolean
+          ficha_url:          string | null
+          coa_url:            string | null
+          // Legacy OrgannicalRuby fields
+          precio:             number
+          recipe_sku:         string | null
+          farmacia:           string | null
+          created_at:         string
+          updated_at:         string
         }
         Insert: never   // Esta app no inserta en el catálogo de OrgannicalRuby
         Update: never
+        Relationships: []
+      }
+
+      // ── public.clientes_tienda ────────────────────────────────────────────
+      clientes_tienda: {
+        Row: {
+          id:         string
+          email:      string
+          nombre:     string
+          apellido:   string
+          celular:    string | null
+          dni:        string | null
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?:        string
+          email:      string
+          nombre:     string
+          apellido:   string
+          celular?:   string | null
+          dni?:       string | null
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          nombre?:    string
+          apellido?:  string
+          celular?:   string | null
+          dni?:       string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+
+      // ── public.ordenes_tienda ─────────────────────────────────────────────
+      ordenes_tienda: {
+        Row: {
+          id:                 string
+          cliente_id:         string | null
+          cliente_snapshot:   Record<string, unknown> | null
+          items:              Record<string, unknown>[]
+          subtotal:           number
+          delivery:           number
+          total:              number
+          estado:             string
+          email_lower:        string | null
+          mp_preference_id:   string | null
+          mp_payment_id:      string | null
+          mp_status:          string | null
+          direccion:          Record<string, unknown> | null
+          id_venta_ruby:      string | null
+          boleta_id:          string | null
+          boleta_link:        string | null
+          boleta_hash:        string | null
+          boleta_emitida_at:  string | null
+          boleta_error:       string | null
+          created_at:         string
+          updated_at:         string
+        }
+        Insert: {
+          id?:                string
+          cliente_id?:        string | null
+          cliente_snapshot?:  Record<string, unknown> | null
+          items?:             Record<string, unknown>[]
+          subtotal:           number
+          delivery:           number
+          total:              number
+          estado?:            string
+          mp_preference_id?:  string | null
+          mp_payment_id?:     string | null
+          mp_status?:         string | null
+          direccion?:         Record<string, unknown> | null
+          id_venta_ruby?:     string | null
+          boleta_id?:         string | null
+          boleta_link?:       string | null
+          boleta_hash?:       string | null
+          boleta_emitida_at?: string | null
+          boleta_error?:      string | null
+          created_at?:        string
+          updated_at?:        string
+        }
+        Update: {
+          cliente_id?:        string | null
+          cliente_snapshot?:  Record<string, unknown> | null
+          items?:             Record<string, unknown>[]
+          subtotal?:          number
+          delivery?:          number
+          total?:             number
+          estado?:            string
+          mp_preference_id?:  string | null
+          mp_payment_id?:     string | null
+          mp_status?:         string | null
+          direccion?:         Record<string, unknown> | null
+          id_venta_ruby?:     string | null
+          boleta_id?:         string | null
+          boleta_link?:       string | null
+          boleta_hash?:       string | null
+          boleta_emitida_at?: string | null
+          boleta_error?:      string | null
+          updated_at?:        string
+        }
+        Relationships: []
+      }
+
+      // ── public.boletas ────────────────────────────────────────────────────
+      boletas: {
+        Row: {
+          id:                    string
+          tipo:                  string
+          serie:                 string
+          numero:                number | null
+          orden_id:              string | null
+          venta_id:              string | null
+          anula_a_boleta_id:     string | null
+          motivo_anulacion:      string | null
+          cliente_nombre:        string
+          cliente_doc_tipo:      string | null
+          cliente_doc_numero:    string | null
+          cliente_email:         string | null
+          cliente_direccion:     string | null
+          subtotal:              number
+          igv:                   number
+          total:                 number
+          moneda:                string
+          items:                 unknown[]
+          estado:                string
+          proveedor:             string
+          proveedor_documento_id: string | null
+          link_pdf:              string | null
+          link_xml:              string | null
+          link_cdr:              string | null
+          hash:                  string | null
+          intentos:              number
+          ultimo_error:          string | null
+          ultimo_error_at:       string | null
+          proximo_reintento_at:  string | null
+          created_at:            string
+          updated_at:            string
+          emitida_at:            string | null
+          aceptada_sunat_at:     string | null
+        }
+        Insert: {
+          id?:                    string
+          tipo:                   string
+          serie:                  string
+          numero?:                number | null
+          orden_id?:              string | null
+          venta_id?:              string | null
+          anula_a_boleta_id?:     string | null
+          motivo_anulacion?:      string | null
+          cliente_nombre:         string
+          cliente_doc_tipo?:      string | null
+          cliente_doc_numero?:    string | null
+          cliente_email?:         string | null
+          cliente_direccion?:     string | null
+          subtotal:               number
+          igv:                    number
+          total:                  number
+          moneda?:                string
+          items:                  unknown[]
+          estado?:                string
+          proveedor:              string
+          proveedor_documento_id?: string | null
+          link_pdf?:              string | null
+          link_xml?:              string | null
+          link_cdr?:              string | null
+          hash?:                  string | null
+          intentos?:              number
+          ultimo_error?:          string | null
+          ultimo_error_at?:       string | null
+          proximo_reintento_at?:  string | null
+          created_at?:            string
+          updated_at?:            string
+          emitida_at?:            string | null
+          aceptada_sunat_at?:     string | null
+        }
+        Update: {
+          numero?:                number | null
+          estado?:                string
+          proveedor_documento_id?: string | null
+          link_pdf?:              string | null
+          link_xml?:              string | null
+          link_cdr?:              string | null
+          hash?:                  string | null
+          intentos?:              number
+          ultimo_error?:          string | null
+          ultimo_error_at?:       string | null
+          proximo_reintento_at?:  string | null
+          motivo_anulacion?:      string | null
+          updated_at?:            string
+          emitida_at?:            string | null
+          aceptada_sunat_at?:     string | null
+        }
+        Relationships: []
+      }
+
+      // ── public.delivery_precios ───────────────────────────────────────────
+      delivery_precios: {
+        Row: {
+          id:         string
+          distrito:   string
+          tarifa:     number
+          activo:     boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?:        string
+          distrito:   string
+          tarifa:     number
+          activo?:    boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          distrito?:  string
+          tarifa?:    number
+          activo?:    boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+
+      // ── public.addresses ──────────────────────────────────────────────────
+      addresses: {
+        Row: {
+          id:         string
+          user_id:    string
+          distrito:   string
+          direccion:  string
+          referencia: string | null
+          es_default: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?:        string
+          user_id:    string
+          distrito:   string
+          direccion:  string
+          referencia?: string | null
+          es_default?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          distrito?:  string
+          direccion?: string
+          referencia?: string | null
+          es_default?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
+
+      // ── public.ventas (legacy OrgannicalRuby — best-effort sync) ─────────
+      ventas: {
+        Row: {
+          id:                 string
+          num_orden:          string | null
+          link_comprobante:   string | null
+          hash_comprobante:   string | null
+          created_at:         string
+          [key: string]:      unknown
+        }
+        Insert: {
+          id?:                string
+          num_orden?:         string | null
+          link_comprobante?:  string | null
+          hash_comprobante?:  string | null
+          [key: string]:      unknown
+        }
+        Update: {
+          link_comprobante?:  string | null
+          hash_comprobante?:  string | null
+          [key: string]:      unknown
+        }
+        Relationships: []
+      }
+
+      // ── public.productos_stock ────────────────────────────────────────────
+      productos_stock: {
+        Row: {
+          id:         string
+          sku:        string
+          quantity:   number
+          updated_at: string
+        }
+        Insert: {
+          id?:        string
+          sku:        string
+          quantity?:  number
+          updated_at?: string
+        }
+        Update: {
+          quantity?:  number
+          updated_at?: string
+        }
+        Relationships: []
       }
 
       // ── public.profiles (LEGACY — usar medical.profiles) ─────────────────
@@ -91,6 +414,7 @@ export interface Database {
           cmp?:         string | null
           updated_at?:  string
         }
+        Relationships: []
       }
 
       // ── public.products (LEGACY — usar public.productos) ─────────────────
@@ -107,6 +431,7 @@ export interface Database {
         }
         Insert: never
         Update: never
+        Relationships: []
       }
 
       // ── public.appointments (LEGACY — usar medical.appointments) ─────────
@@ -125,6 +450,7 @@ export interface Database {
         }
         Insert: never
         Update: never
+        Relationships: []
       }
 
       // ── public.prescriptions (LEGACY — usar medical.prescriptions) ───────
@@ -142,6 +468,7 @@ export interface Database {
         }
         Insert: never
         Update: never
+        Relationships: []
       }
 
       // ── public.prescription_items (LEGACY — usar medical.prescription_items)
@@ -156,15 +483,96 @@ export interface Database {
         }
         Insert: never
         Update: never
+        Relationships: []
+      }
+
+      // ── public.v_boletas (read-only view) ────────────────────────────────────
+      v_boletas: {
+        Row: {
+          id:                      string
+          tipo:                    string
+          estado:                  string
+          serie:                   string
+          numero:                  number | null
+          numero_documento:        string | null
+          orden_id:                string | null
+          venta_id:                string | null
+          anula_a_boleta_id:       string | null
+          motivo_anulacion:        string | null
+          cliente_nombre:          string | null
+          cliente_doc_tipo:        string | null
+          cliente_doc_numero:      string | null
+          cliente_email:           string | null
+          proveedor:               string | null
+          proveedor_documento_id:  string | null
+          link_pdf:                string | null
+          total:                   number | null
+          intentos:                number
+          created_at:              string
+          updated_at:              string | null
+          [key: string]:           unknown
+        }
+        Insert: never
+        Update: never
+        Relationships: []
+      }
+
+      // ── public.reviews ────────────────────────────────────────────────────────
+      reviews: {
+        Row: {
+          id:                   string
+          producto_id:          string
+          user_id:              string
+          rating:               number
+          estado:               string
+          is_verified_purchase: boolean
+          approved_at:          string | null
+          approved_by:          string | null
+          rejected_reason:      string | null
+          created_at:           string
+          updated_at:           string
+        }
+        Insert: {
+          id?:                  string
+          producto_id:          string
+          user_id:              string
+          rating:               number
+          estado?:              string
+          is_verified_purchase?: boolean
+          approved_at?:         string | null
+          approved_by?:         string | null
+          rejected_reason?:     string | null
+          created_at?:          string
+          updated_at?:          string
+        }
+        Update: {
+          estado?:              string
+          approved_at?:         string | null
+          approved_by?:         string | null
+          rejected_reason?:     string | null
+          updated_at?:          string
+        }
+        Relationships: []
       }
     }
 
-    Views: Record<never, never>
+    Views: { [k: string]: never }
 
     Functions: {
       get_my_role: {
         Args:    Record<string, never>
         Returns: UserRole
+      }
+      crear_venta_y_despacho: {
+        Args: {
+          p_orden_id:     string
+          p_items:        Record<string, unknown>[]
+          p_direccion:    Record<string, unknown>
+          p_payment_id:   string
+          p_total:        number
+          p_delivery:     number
+        }
+        Returns: string
       }
     }
 

@@ -1,19 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  Star, Clock, Heart, Phone, Leaf,
-  Zap, ChevronRight, Calendar, Users, MessageSquare, ArrowRight,
-} from "lucide-react";
+import { Star, ArrowRight, Phone } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
-import HeroSection from "./_components/HeroSection";
+import { posts } from "@/lib/blog";
 import ScrollReveal from "./_components/ScrollReveal";
 import AuthRedirect from "./_components/AuthRedirect";
+import ProductTeaserSection from "./_components/ProductTeaserSection";
 
 export const metadata: Metadata = {
-  title: "Organnical — Medicina Integrativa Online · Perú",
-  description: "Consultas médicas especializadas en sueño, dolor crónico, ansiedad y salud femenina. Médicos certificados MINSA. Agenda tu teleconsulta en menos de 48 horas.",
+  title: "Organnical — Suplementos naturales y telemedicina · Perú",
+  description: "Suplementos de bienestar respaldados por médicos especializados. Tienda online con envío gratis desde S/150 y consultas médicas online en menos de 48h.",
   alternates: { canonical: "https://organnical.pe" },
 };
 
@@ -21,69 +18,42 @@ const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
 const NAVY2 = "#0E2545";
 
-const u = (id: string, w = 1200, h = 800) =>
-  `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&h=${h}&q=85`;
-
 const specialties = [
-  { icon: "🌙", title: "Sueño",          desc: "Insomnio, apnea y ritmo circadiano",              photo: "1541480601022-2308c0f02487", count: "180+ atendidos", slug: "sueno" },
-  { icon: "🦴", title: "Dolor Crónico",  desc: "Fibromialgia, neuropático y musculoesquelético",  photo: "1571019613454-1cb2f99b2d8b", count: "210+ atendidos", slug: "dolor-cronico" },
-  { icon: "🧠", title: "Ansiedad",       desc: "Estrés crónico y bienestar emocional",            photo: "1506126613408-eca07ce68773", count: "390+ atendidos", slug: "ansiedad" },
-  { icon: "🌸", title: "Salud Femenina", desc: "SPM, menopausia y equilibrio hormonal",           photo: "1554151228-14d9def656e4", count: "320+ atendidos", slug: "salud-femenina" },
-];
-
-type DoctorCard = {
-  name: string; specialty: string; cmp: string;
-  photo: string; rating: number; reviews: number; tags: string[];
-};
-
-const FALLBACK_DOCTORS: DoctorCard[] = [
-  { name: "Dra. Estefanía Poma",  specialty: "Médico General · Medicina Integrativa", cmp: "CMP 059636", photo: "/dra-poma-300x300.png",  rating: 4.9, reviews: 142, tags: ["Sueño", "Salud Femenina"] },
-  { name: "Dr. Robert Goodman",   specialty: "Médico General · Medicina Integrativa", cmp: "CMP 095719", photo: "/drgodman-300x300.png",   rating: 4.8, reviews: 118, tags: ["Dolor Crónico", "Ansiedad"] },
+  { icon: "🌙", label: "Sueño", slug: "sueno" },
+  { icon: "🦴", label: "Dolor crónico", slug: "dolor-cronico" },
+  { icon: "🧠", label: "Ansiedad", slug: "ansiedad" },
+  { icon: "🌸", label: "Salud femenina", slug: "salud-femenina" },
 ];
 
 const testimonials = [
   {
-    name: "Raúl I.", headline: "Recuperando la calidad del sueño", specialty: "Paciente · Sueño", rating: 5,
-    text: "Mi mente era como una computadora que no se apagaba. Dormía en 'modo suspensión' y al día siguiente arrastraba el cansancio. En Organnical me explicaron cómo el tratamiento funcionaba en mi caso. Por fin apago el ruido y duermo profundo. Me despierto entero.",
+    name: "Raúl I.", type: "Paciente · Sueño", rating: 5,
+    text: "En Organnical me explicaron cómo el tratamiento funcionaba en mi caso. Por fin apago el ruido y duermo profundo.",
   },
   {
-    name: "Patricia C.", headline: "La importancia de la asesoría personalizada", specialty: "Paciente · Sueño", rating: 5,
-    text: "Dormía 2 o 3 horas cortadas cada noche. Probé tratamientos por mi cuenta y no pasó nada. La doctora de Organnical revisó mi caso completo y me explicó exactamente qué necesitaba y en qué dosis. Ahora descanso más de 8 horas seguidas. La diferencia fue la asesoría.",
+    name: "Patricia C.", type: "Paciente · Sueño", rating: 5,
+    text: "Dormía 2 o 3 horas cortadas cada noche. La doctora revisó mi caso completo y ahora descanso más de 8 horas seguidas.",
   },
   {
-    name: "Juan Carlos M.", headline: "Recuperando la movilidad y la pasión", specialty: "Paciente · Dolor Crónico", rating: 5,
-    text: "El dolor crónico de espalda me había quitado lo que más amo: cabalgar. Probé de todo sin resultados reales. En Organnical me armaron un tratamiento personalizado y la mejoría fue progresiva hasta recuperar mi movilidad. Hoy ya estoy de vuelta en el caballo.",
+    name: "Carlos M.", type: "Comprador · Gummies", rating: 5,
+    text: "Los gummies llegaron rápido y la calidad es increíble. El empaque es hermoso y el efecto se nota desde la primera semana.",
   },
 ];
 
-const steps = [
-  { number: "01", icon: Calendar,    title: "Elige tu especialidad", detail: "Búsqueda inteligente",          photo: "1486312338219-ce68d2c6f44d", description: "Selecciona el área de salud que necesitas atender. Filtra por síntomas o especialidad médica." },
-  { number: "02", icon: Users,       title: "Agenda con tu médico",  detail: "Agenda en tiempo real",         photo: "1556742049-0cfed4f6a45d", description: "Elige el horario que más te convenga. Consulta disponibilidad en tiempo real y recibe confirmación inmediata." },
-  { number: "03", icon: MessageSquare, title: "Recibe tu tratamiento", detail: "Plan de tratamiento documentado", photo: "1631217868264-e5b90bb7e133", description: "Tu médico elabora un plan personalizado documentado. Acompañamiento continuo hasta tu recuperación." },
-];
+export default async function HomePage() {
+  const recentPosts = posts.slice(0, 3);
 
-export default async function LandingPage() {
-  let doctors: DoctorCard[] = FALLBACK_DOCTORS;
+  let doctorCount = 2;
   try {
     const supabase = await createClient();
-    const { data } = await supabase
+    const { count } = await supabase
       .schema("medical")
       .from("profiles")
-      .select("full_name, cmp, specialty_label, photo_url, verticals")
+      .select("*", { count: "exact", head: true })
       .eq("role", "doctor");
-    if (data?.length) {
-      doctors = data.map((d) => ({
-        name:      d.full_name ?? "Médico",
-        specialty: d.specialty_label ?? "Medicina Integrativa",
-        cmp:       d.cmp ? `CMP ${d.cmp}` : "",
-        photo:     d.photo_url ?? "/dra-poma-300x300.png",
-        rating:    4.9,
-        reviews:   0,
-        tags:      ((d.verticals ?? []) as string[]).map((v) => SPECIALTY_LABELS[v] ?? v),
-      }));
-    }
+    if (count && count > 0) doctorCount = count;
   } catch {
-    // fall back to static data
+    // use default
   }
 
   return (
@@ -91,83 +61,138 @@ export default async function LandingPage() {
       <AuthRedirect />
       <ScrollReveal />
       <main>
-        {/* ══════════ HERO ══════════ */}
-        <HeroSection specialties={specialties} />
 
-        {/* ══════════ CATÁLOGO BANNER ══════════ */}
-        <div className="relative overflow-hidden px-6 py-5" style={{ background: "#0A1829" }}>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 120% at 0% 50%, rgba(167,139,250,0.14) 0%, transparent 65%)" }} />
-          <div className="relative mx-auto max-w-5xl flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-3 text-center sm:text-left">
-              <div className="hidden sm:flex h-10 w-10 flex-shrink-0 rounded-full items-center justify-center border border-white/10" style={{ background: "rgba(167,139,250,0.12)" }}>
-                <Leaf className="w-5 h-5 text-[#A78BFA]" />
-              </div>
-              <div>
-                <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
-                  <span className="h-1.5 w-1.5 rounded-full bg-[#34d399] animate-pulse" />
-                  <span className="text-[10px] font-bold uppercase tracking-widest text-[#34d399]">Disponible ahora</span>
-                </div>
-                <p className="text-sm text-white/70">
-                  <span className="font-semibold text-white">Suplementos de bienestar</span>
-                  {" "}— Crea tu cuenta gratis para acceder al catálogo completo de productos.
-                </p>
-              </div>
+        {/* ══════════ HERO ══════════ */}
+        <section
+          className="relative overflow-hidden pt-28 pb-20 px-6 text-center"
+          style={{ background: `linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)` }}
+        >
+          <div className="absolute inset-0 pointer-events-none opacity-10"
+            style={{ backgroundImage: "url('/noise.png')", backgroundRepeat: "repeat" }} />
+          <div className="relative mx-auto max-w-3xl">
+            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-1.5 mb-8">
+              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+              <span className="text-xs font-semibold text-white">Bienestar natural desde la raíz</span>
             </div>
-            <Link
-              href="/registro?ref=catalogo"
-              className="flex-shrink-0 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
-              style={{ background: G, boxShadow: "0 8px 24px rgba(167,139,250,0.35)" }}
-            >
-              Ver catálogo <ArrowRight className="w-3.5 h-3.5" />
-            </Link>
+            <h1 className="font-display text-4xl font-black text-white leading-tight mb-4 md:text-6xl">
+              Productos que <em>sí funcionan</em>,<br className="hidden md:block" />
+              respaldados por médicos
+            </h1>
+            <p className="text-white/85 text-lg mb-10 max-w-xl mx-auto">
+              Suplementos, gummies y wellness certificados. Envío gratis desde S/150.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/tienda"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-[#A78BFA] shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]"
+              >
+                Ver tienda <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/agendar"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/15 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/25"
+              >
+                Agendar consulta médica
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════ TRUST BAR ══════════ */}
+        <div className="bg-white border-b border-zinc-100 py-3 px-6">
+          <div className="mx-auto max-w-5xl flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs font-medium text-zinc-500">
+            <span>✅ Envío gratis desde S/150</span>
+            <span>🩺 Avalado por médicos</span>
+            <span>🔒 Pago seguro</span>
+            <span>💬 Soporte WhatsApp</span>
           </div>
         </div>
 
-        {/* ══════════ ESPECIALIDADES ══════════ */}
-        <section id="especialidades" className="px-6 py-28 bg-[#F8FAFC]">
+        {/* ══════════ PRODUCTOS DESTACADOS ══════════ */}
+        <ProductTeaserSection />
+
+        {/* ══════════ BRIDGE TELEMEDICINA ══════════ */}
+        <section style={{ background: `linear-gradient(135deg, ${NAVY}, #1a3a6e)` }} className="py-20 px-6">
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-4">
+              🩺 ¿No sabes qué necesitas?
+            </p>
+            <h2 className="font-display text-3xl font-black text-white mb-4 md:text-4xl">
+              Habla con un médico especialista
+            </h2>
+            <p className="text-white/70 text-base mb-8 max-w-xl mx-auto">
+              Consultas online con médicos certificados CMP. Resultados en menos de 48h. Desde S/60.
+            </p>
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+              {specialties.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/especialidades/${s.slug}`}
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-80"
+                  style={{ background: "rgba(167,139,250,0.25)", border: "1px solid rgba(167,139,250,0.5)" }}
+                >
+                  <span>{s.icon}</span> {s.label}
+                </Link>
+              ))}
+            </div>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link
+                href="/agendar"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
+              >
+                Agendar consulta <ArrowRight className="w-4 h-4" />
+              </Link>
+              <Link
+                href="/servicios"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#A78BFA] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+              >
+                Ver especialidades ({doctorCount} médicos)
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ══════════ BLOG PREVIEW ══════════ */}
+        <section className="py-20 px-6 bg-[#F8FAFC]">
           <div className="mx-auto max-w-6xl">
-            <div className="reveal mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div className="reveal mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
-                <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Especialidades</p>
-                <h2 className="font-display text-4xl font-black text-[#0B1D35] md:text-5xl">
-                  Tratamos lo que más{" "}
-                  <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>importa</span>
+                <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Blog</p>
+                <h2 className="font-display text-3xl font-black text-[#0B1D35] md:text-4xl">
+                  Aprende sobre bienestar
                 </h2>
               </div>
-              <Link href="/servicios" className="hidden md:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all">
-                Todos los servicios <ArrowRight className="w-4 h-4" />
+              <Link
+                href="/blog"
+                className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#A78BFA] hover:gap-3 transition-all"
+              >
+                Ver todo <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
 
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {specialties.map((s, i) => (
+            <div className="reveal grid gap-5 sm:grid-cols-3">
+              {recentPosts.map((post) => (
                 <Link
-                  key={s.title}
-                  href={`/especialidades/${s.slug}`}
-                  className="reveal group bg-white rounded-2xl overflow-hidden border border-zinc-100 hover:border-violet-200 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer"
-                  style={{ transitionDelay: `${i * 60}ms`, textDecoration: "none", color: "inherit" }}
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="group bg-white rounded-2xl overflow-hidden border border-zinc-100 hover:border-violet-200 hover:shadow-lg transition-all duration-200"
                 >
-                  <div className="relative overflow-hidden" style={{ aspectRatio: "16/9" }}>
+                  <div className="relative h-40 overflow-hidden bg-zinc-50">
                     <Image
-                      src={u(s.photo, 500, 280)}
-                      alt={s.title}
+                      src={post.image}
+                      alt={post.title}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                      style={s.slug === "salud-femenina" ? { objectPosition: "center 15%" } : undefined}
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, 33vw"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-                    <span className="absolute bottom-3 left-3 text-2xl">{s.icon}</span>
                   </div>
                   <div className="p-5">
-                    <h3 className="font-display font-bold text-[#0B1D35] text-lg mb-1">{s.title}</h3>
-                    <p className="text-xs text-zinc-500 leading-relaxed mb-4">{s.desc}</p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-[#A78BFA]">{s.count}</span>
-                      <div className="w-7 h-7 rounded-full flex items-center justify-center bg-violet-50 group-hover:bg-violet-100 transition-colors">
-                        <ChevronRight className="w-3.5 h-3.5 text-[#A78BFA]" />
-                      </div>
-                    </div>
+                    <p className="text-[10px] font-bold uppercase tracking-widest text-[#A78BFA] mb-2">
+                      {post.category} · {post.readTime} min
+                    </p>
+                    <h3 className="font-bold text-sm text-[#0B1D35] leading-snug line-clamp-3 group-hover:text-[#A78BFA] transition-colors">
+                      {post.title}
+                    </h3>
                   </div>
                 </Link>
               ))}
@@ -175,129 +200,16 @@ export default async function LandingPage() {
           </div>
         </section>
 
-        {/* ══════════ MÉDICOS ══════════ */}
-        <section id="medicos" className="py-28 bg-white">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="reveal mb-14 text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Nuestro equipo</p>
-              <h2 className="font-display text-4xl font-black text-[#0B1D35] md:text-5xl mb-4">
-                Conoce a tus médicos
-              </h2>
-              <p className="text-zinc-500 max-w-xl mx-auto">
-                Profesionales certificados por el Colegio Médico del Perú, especializados en medicina integrativa y funcional.
-              </p>
-            </div>
-
-            <div className="grid gap-6 sm:grid-cols-2 max-w-2xl mx-auto">
-              {doctors.map((d, i) => (
-                <div
-                  key={d.name}
-                  className="reveal group bg-white rounded-3xl overflow-hidden border border-zinc-100 hover:border-violet-200 hover:shadow-2xl transition-all duration-300 hover:-translate-y-1"
-                  style={{ transitionDelay: `${i * 100}ms` }}
-                >
-                  <div className="h-1" style={{ background: G }} />
-                  <div className="relative h-64 overflow-hidden bg-zinc-50">
-                    <Image
-                      src={d.photo}
-                      alt={d.name}
-                      fill
-                      className="object-cover object-top transition-transform duration-500 group-hover:scale-105"
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                    />
-                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 flex items-center gap-1.5 shadow-sm">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                      <span className="text-xs font-semibold text-zinc-700">Disponible</span>
-                    </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="flex items-start justify-between mb-3">
-                      <div>
-                        <h3 className="font-display font-bold text-[#0B1D35] text-lg">{d.name}</h3>
-                        <p className="text-xs text-[#A78BFA] font-medium mt-0.5">{d.specialty}</p>
-                      </div>
-                      {d.reviews > 0 && (
-                        <div className="text-right flex-shrink-0 ml-3">
-                          <div className="flex items-center gap-1 justify-end">
-                            <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                            <span className="text-sm font-bold text-zinc-800">{d.rating}</span>
-                          </div>
-                          <p className="text-[10px] text-zinc-400">{d.reviews} reseñas</p>
-                        </div>
-                      )}
-                    </div>
-                    <p className="text-xs text-zinc-400 mb-4">{d.cmp}</p>
-                    <div className="flex flex-wrap gap-1.5 mb-5">
-                      {d.tags.map((tag) => (
-                        <span key={tag} className="px-2.5 py-1 rounded-full text-xs font-medium bg-violet-50 text-[#7c6fed]">{tag}</span>
-                      ))}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-zinc-400 mb-5">
-                      <Clock className="w-3.5 h-3.5 flex-shrink-0" />
-                      Disponible esta semana
-                    </div>
-                    <Link
-                      href="/registro"
-                      className="block w-full text-center rounded-full text-sm font-semibold py-2.5 text-white transition-all hover:opacity-90"
-                      style={{ background: G }}
-                    >
-                      Agendar consulta
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* ══════════ CÓMO FUNCIONA ══════════ */}
-        <section id="como-funciona" className="py-28 bg-[#F8FAFC]">
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="reveal mb-20 text-center">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Proceso</p>
-              <h2 className="font-display text-4xl font-black text-[#0B1D35] md:text-5xl">
-                Tres pasos hacia{" "}
-                <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>tu bienestar</span>
-              </h2>
-            </div>
-
-            <div className="space-y-20">
-              {steps.map((step, i) => (
-                <div
-                  key={step.number}
-                  className={`reveal flex flex-col gap-10 items-center lg:flex-row ${i % 2 === 1 ? "lg:flex-row-reverse" : ""}`}
-                >
-                  <div className="relative w-full lg:w-1/2 overflow-hidden rounded-3xl shadow-lg" style={{ aspectRatio: "16/9" }}>
-                    <Image src={u(step.photo, 800, 450)} alt={step.title} fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#0B1D35]/30 to-transparent" />
-                    <div className="absolute top-5 left-5 w-12 h-12 rounded-2xl flex items-center justify-center shadow-lg" style={{ background: G }}>
-                      <step.icon className="w-5 h-5 text-white" />
-                    </div>
-                  </div>
-                  <div className="lg:w-1/2">
-                    <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-violet-50 mb-5">
-                      <span className="font-display text-xl font-black text-[#A78BFA]">{step.number}</span>
-                    </div>
-                    <h3 className="font-display text-3xl font-black text-[#0B1D35] mb-4">{step.title}</h3>
-                    <p className="text-zinc-500 leading-relaxed mb-6 text-lg">{step.description}</p>
-                    <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold text-white" style={{ background: G }}>
-                      <Zap className="w-4 h-4" />
-                      {step.detail}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ══════════ TESTIMONIOS ══════════ */}
-        <section className="py-28" style={{ background: NAVY2 }}>
-          <div className="mx-auto max-w-6xl px-6">
-            <div className="reveal mb-14 text-center">
+        <section className="py-20 px-6" style={{ background: NAVY2 }}>
+          <div className="mx-auto max-w-5xl">
+            <div className="reveal mb-12 text-center">
               <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Testimonios</p>
-              <h2 className="font-display text-4xl font-black text-white md:text-5xl">
+              <h2 className="font-display text-3xl font-black text-white md:text-4xl">
                 Lo que dicen nuestros{" "}
-                <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>pacientes</span>
+                <span style={{ WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent", backgroundImage: G }}>
+                  pacientes y clientes
+                </span>
               </h2>
             </div>
 
@@ -305,73 +217,55 @@ export default async function LandingPage() {
               {testimonials.map((t, i) => (
                 <div
                   key={t.name}
-                  className="reveal flex flex-col rounded-2xl border border-white/8 bg-white/5 p-7 hover:bg-white/[0.08] transition-colors"
+                  className="reveal flex flex-col rounded-2xl border border-white/8 bg-white/5 p-6 hover:bg-white/[0.08] transition-colors"
                   style={{ transitionDelay: `${i * 80}ms` }}
                 >
-                  <div className="mb-5">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">{t.headline}</p>
-                    <div className="flex gap-1">
-                      {[...Array(t.rating)].map((_, j) => (
-                        <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
+                  <div className="flex gap-1 mb-4">
+                    {[...Array(t.rating)].map((_, j) => (
+                      <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    ))}
                   </div>
-                  <p className="text-white/70 leading-relaxed text-sm mb-8 flex-1">&ldquo;{t.text}&rdquo;</p>
-                  <div className="flex items-center gap-3 pt-5 border-t border-white/8">
-                    <div className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0" style={{ background: G }}>
+                  <p className="text-white/70 leading-relaxed text-sm mb-6 flex-1">&ldquo;{t.text}&rdquo;</p>
+                  <div className="flex items-center gap-3 pt-4 border-t border-white/8">
+                    <div
+                      className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold text-xs flex-shrink-0"
+                      style={{ background: G }}
+                    >
                       {t.name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <p className="text-white font-semibold text-sm">{t.name}</p>
-                      <p className="text-white/35 text-xs">{t.specialty}</p>
+                      <p className="text-white/35 text-xs">{t.type}</p>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
-
-            <p className="text-center text-xs text-white/20 mt-10">
-              Testimonios de pacientes reales. Los resultados individuales pueden variar. Basado en 2,400+ consultas verificadas.
-            </p>
           </div>
         </section>
 
-
         {/* ══════════ FINAL CTA ══════════ */}
-        <section className="relative py-36 overflow-hidden">
-          <div className="absolute inset-0">
-            <Image
-              src={u("1576091160550-2173dba999ef", 1800, 900)}
-              alt="Consulta online"
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
-            <div className="absolute inset-0" style={{ background: `${NAVY}DD` }} />
-          </div>
-          <div className="reveal relative z-10 mx-auto max-w-2xl px-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.08] px-4 py-2 mb-8">
-              <Heart className="w-3.5 h-3.5 text-[#F472B6]" />
-              <span className="text-sm text-white/70">Sin filas · Sin esperas · 100% online</span>
-            </div>
-            <h2 className="font-display text-4xl font-black text-white md:text-5xl mb-5">
-              Tu primera consulta a un click de distancia
+        <section
+          className="py-24 px-6 text-center"
+          style={{ background: G }}
+        >
+          <div className="mx-auto max-w-xl">
+            <h2 className="font-display text-3xl font-black text-white mb-4 md:text-4xl">
+              Empieza tu bienestar hoy
             </h2>
-            <p className="text-white/50 text-lg mb-10">
-              Agenda hoy y recibe atención en menos de 48 horas. Primera consulta sin compromiso.
+            <p className="text-white/85 text-base mb-10">
+              Crea tu cuenta gratis y accede a la tienda, consultas médicas y tu historial en un solo lugar.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/registro"
-                className="group inline-flex items-center gap-2 justify-center rounded-full px-10 py-4 text-base font-semibold text-white shadow-2xl transition-all hover:opacity-90"
-                style={{ background: G, boxShadow: "0 20px 40px rgba(167,139,250,0.4)" }}
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-10 py-4 text-sm font-bold text-[#A78BFA] shadow-xl transition-all hover:scale-[1.02]"
               >
-                Crear cuenta
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                Crear cuenta gratis <ArrowRight className="w-4 h-4" />
               </Link>
               <a
                 href="https://wa.me/51952476574"
-                className="inline-flex items-center gap-2 justify-center rounded-full border border-white/20 bg-white/[0.08] px-10 py-4 text-base font-semibold text-white hover:bg-white/15 transition-all"
+                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/15 px-10 py-4 text-sm font-semibold text-white transition-all hover:bg-white/25"
               >
                 <Phone className="w-4 h-4" />
                 Hablar con un asesor
@@ -379,6 +273,7 @@ export default async function LandingPage() {
             </div>
           </div>
         </section>
+
       </main>
     </>
   );

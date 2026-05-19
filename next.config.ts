@@ -75,6 +75,9 @@ const nextConfig: NextConfig = {
       { source: "/dashboard",                destination: "/cuenta",     permanent: true },
       { source: "/dashboard/paciente",       destination: "/cuenta",     permanent: true },
       { source: "/dashboard/paciente/:path*", destination: "/cuenta",    permanent: true },
+      // Catálogo antiguo → tienda
+      { source: "/catalogo",                 destination: "/tienda",     permanent: true },
+      { source: "/catalogo/:path*",          destination: "/tienda",     permanent: true },
     ];
   },
   async headers() {

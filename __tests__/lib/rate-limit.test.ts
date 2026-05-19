@@ -27,6 +27,8 @@ vi.mock("@upstash/ratelimit", () => {
 let checkRateLimit: (key: string, limit: number, windowMs: number) => Promise<boolean>;
 
 beforeEach(async () => {
+  process.env.UPSTASH_REDIS_REST_URL = "https://mock-redis.upstash.io";
+  process.env.UPSTASH_REDIS_REST_TOKEN = "mock-token";
   counters.clear();
   vi.resetModules();
   const mod = await import("@/lib/rate-limit");

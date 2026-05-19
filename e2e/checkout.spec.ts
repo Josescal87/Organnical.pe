@@ -38,6 +38,9 @@ const CART_ITEM = {
 
 test.describe("Checkout E2E — happy path con MP stubbed", () => {
   test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("organnical_cookie_consent", "accepted")
+    })
     await page.route("**/api/mp/create-preference", async (route) => {
       await route.fulfill({
         status: 200,
@@ -85,6 +88,12 @@ test.describe("Checkout E2E — happy path con MP stubbed", () => {
 })
 
 test.describe("Checkout E2E — error de create-preference", () => {
+  test.beforeEach(async ({ page }) => {
+    await page.addInitScript(() => {
+      localStorage.setItem("organnical_cookie_consent", "accepted")
+    })
+  })
+
   test("muestra error inline cuando create-preference falla", async ({ page }) => {
     await page.route("**/api/mp/create-preference", async (route) => {
       await route.fulfill({

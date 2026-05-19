@@ -21,7 +21,7 @@ test.describe("Agendar — flujo de citas (smoke)", () => {
     await primerOpcion.click()
     // Después de seleccionar, aparece el siguiente paso (selección de médico o fecha)
     await expect(
-      page.locator("h2, h3").filter({ hasText: /médico|doctor|fecha|horario|paso/i }).first()
+      page.locator("h1, h2, h3").filter({ hasText: /médico|doctor|fecha|horario|paso/i }).first()
     ).toBeVisible({ timeout: 8_000 })
   })
 

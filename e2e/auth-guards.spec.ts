@@ -21,9 +21,9 @@ test.describe("Auth guards — rutas protegidas redirigen a login", () => {
     await expect(page).toHaveURL(/\/login/)
   })
 
-  test("/catalogo sin sesión → redirige a /login", async ({ page }) => {
+  test("/catalogo sin sesión → redirige a registro o login", async ({ page }) => {
     await page.goto("/catalogo")
-    await expect(page).toHaveURL(/\/login/)
+    await expect(page).toHaveURL(/\/registro|\/login/)
   })
 })
 

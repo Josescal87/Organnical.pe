@@ -1,7 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
-import { headers } from "next/headers"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/server"
 import ProductGallery from "@/components/ProductGallery"
@@ -17,23 +16,7 @@ const RELATED_LIMIT = 4
 const PRODUCT_FIELDS =
   "id, sku, descripcion, descripcion_corta, descripcion_larga, ingredientes, modo_uso, advertencias, presentacion, categoria, precio_publico, precio_oferta, slug_publico, imagen_url, imagenes_galeria, tags, peso_g"
 
-export const revalidate = 300
-
-export async function generateStaticParams(): Promise<Array<{ slug: string }>> {
-  try {
-    const supabase = await createClient()
-    const { data } = await supabase
-      .from("productos")
-      .select("slug_publico")
-      .eq("visible_publico", true)
-      .eq("activo", true)
-    return (data ?? [])
-      .filter((p: { slug_publico?: string }) => p.slug_publico)
-      .map((p: { slug_publico: string }) => ({ slug: p.slug_publico }))
-  } catch {
-    return []
-  }
-}
+export const dynamic = "force-dynamic"
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -131,7 +114,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductoPage({ params }: Props) {
   const { slug } = await params
-  const nonce = (await headers()).get("x-nonce") ?? ""
   const producto = await getProducto(slug)
   if (!producto) notFound()
 
@@ -160,7 +142,6 @@ export default async function ProductoPage({ params }: Props) {
     <>
       <script
         type="application/ld+json"
-        nonce={nonce}
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <TrackViewItem producto={producto} />

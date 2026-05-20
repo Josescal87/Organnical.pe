@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
     }
 
     const body = await req.json();
-    const { cart, ...formData } = body as { cart: CartItem[] } & Record<string, unknown>;
+    const { cart, receta_id, ...formData } = body as { cart: CartItem[]; receta_id?: string } & Record<string, unknown>;
 
     // Validate product prices server-side — never trust client amounts
     const adminClient = createAdminClient();
@@ -99,7 +99,7 @@ export async function POST(req: NextRequest) {
           nombre,
           apellido,
           fecha_compra:    fecha,
-          comentarios:     `MP:${paymentId}`,
+          comentarios:     `MP:${paymentId}${receta_id ? ` RECETA:${receta_id}` : ""}`,
         });
         if (ventaError) console.error("Venta insert error:", sanitizeError(ventaError));
       }

@@ -7,11 +7,12 @@ interface Props {
   required?: boolean
   id?: string
   name?: string
+  dark?: boolean
 }
 
 const LIST_ID = "distritos-list"
 
-export default function DistritoCombobox({ value, onChange, required, id, name = "distrito" }: Props) {
+export default function DistritoCombobox({ value, onChange, required, id, name = "distrito", dark = false }: Props) {
   return (
     <>
       <input
@@ -24,7 +25,11 @@ export default function DistritoCombobox({ value, onChange, required, id, name =
         autoComplete="off"
         required={required}
         placeholder="Empieza a escribir el distrito..."
-        className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+        className={`w-full rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 ${
+          dark
+            ? "bg-white/[0.08] border border-white/15 text-white placeholder:text-white/25 focus:ring-violet-400 focus:border-transparent"
+            : "border border-gray-200 focus:ring-purple-500"
+        }`}
       />
       <datalist id={LIST_ID}>
         {DISTRITOS.map((d) => (

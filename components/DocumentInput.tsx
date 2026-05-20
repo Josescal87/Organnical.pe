@@ -39,6 +39,7 @@ interface Props {
   error?: string | null;
   className?: string;
   inputClassName?: string;
+  dark?: boolean;
 }
 
 export default function DocumentInput({
@@ -50,6 +51,7 @@ export default function DocumentInput({
   error,
   className = "",
   inputClassName = "",
+  dark = false,
 }: Props) {
   const isNumeric = docType === "DNI";
 
@@ -62,7 +64,7 @@ export default function DocumentInput({
 
   return (
     <div className={`space-y-2 ${className}`}>
-      <label className="block text-xs font-semibold text-zinc-600 uppercase tracking-wide mb-1.5">
+      <label className={`block text-xs font-semibold uppercase tracking-wide mb-1.5 ${dark ? "text-white/50" : "text-zinc-600"}`}>
         Documento de identidad{required && <span className="text-rose-400 ml-1">*</span>}
       </label>
       <div className="flex gap-2">
@@ -72,14 +74,18 @@ export default function DocumentInput({
             onDocTypeChange(e.target.value as DocType);
             onDocIdChange("");
           }}
-          className="rounded-xl border border-zinc-200 bg-white px-3 py-3 text-sm text-zinc-800 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all w-32 shrink-0"
+          className={`rounded-xl border px-3 py-3 text-sm outline-none focus:ring-2 transition-all w-32 shrink-0 ${
+            dark
+              ? "border-white/15 bg-white/[0.08] text-white focus:border-[#A78BFA] focus:ring-[#A78BFA]/30"
+              : "border-zinc-200 bg-white text-zinc-800 focus:border-[#A78BFA] focus:ring-[#A78BFA]/20"
+          }`}
         >
           {DOC_TYPES.map((t) => (
-            <option key={t} value={t}>{t}</option>
+            <option key={t} value={t} className="bg-[#0B1D35] text-white">{t}</option>
           ))}
         </select>
         <div className="relative flex-1">
-          <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300 pointer-events-none" />
+          <CreditCard className={`absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none ${dark ? "text-white/25" : "text-zinc-300"}`} />
           <input
             type="text"
             inputMode={isNumeric ? "numeric" : "text"}
@@ -89,11 +95,15 @@ export default function DocumentInput({
             placeholder={DOC_PLACEHOLDERS[docType]}
             value={docId}
             onChange={handleIdChange}
-            className={`w-full rounded-xl border ${error ? "border-rose-400" : "border-zinc-200"} bg-white pl-9 pr-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all ${inputClassName}`}
+            className={`w-full rounded-xl border pl-9 pr-4 py-3 text-sm outline-none focus:ring-2 transition-all ${inputClassName} ${
+              dark
+                ? `${error ? "border-red-400/50" : "border-white/15"} bg-white/[0.08] text-white placeholder:text-white/25 focus:border-[#A78BFA] focus:ring-[#A78BFA]/30`
+                : `${error ? "border-rose-400" : "border-zinc-200"} bg-white text-zinc-800 placeholder-zinc-400 focus:border-[#A78BFA] focus:ring-[#A78BFA]/20`
+            }`}
           />
         </div>
       </div>
-      {error && <p className="text-xs text-rose-500 mt-1">{error}</p>}
+      {error && <p className={`text-xs mt-1 ${dark ? "text-red-400" : "text-rose-500"}`}>{error}</p>}
     </div>
   );
 }

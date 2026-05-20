@@ -7,6 +7,7 @@ import { posts } from "@/lib/blog";
 import ScrollReveal from "./_components/ScrollReveal";
 import AuthRedirect from "./_components/AuthRedirect";
 import ProductTeaserSection from "./_components/ProductTeaserSection";
+import HeroAnimated from "./_components/HeroAnimated";
 
 export const metadata: Metadata = {
   title: "Organnical — Suplementos naturales y telemedicina · Perú",
@@ -63,46 +64,7 @@ export default async function HomePage() {
       <main>
 
         {/* ══════════ HERO ══════════ */}
-        <section
-          className="relative overflow-hidden pt-28 pb-20 px-6 text-center"
-          style={{ background: `linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)` }}
-        >
-          <div className="absolute inset-0 pointer-events-none opacity-10"
-            style={{ backgroundImage: "url('/noise.png')", backgroundRepeat: "repeat" }} />
-          <div className="relative mx-auto max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-4 py-1.5 mb-8">
-              <span className="h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-              <span className="text-xs font-semibold text-white">Bienestar natural desde la raíz</span>
-            </div>
-            <h1 className="font-display text-4xl font-black text-white leading-tight mb-4 md:text-6xl">
-              Productos que <em>sí funcionan</em>,<br className="hidden md:block" />
-              respaldados por médicos
-            </h1>
-            <p className="text-white/85 text-lg mb-10 max-w-xl mx-auto">
-              Suplementos, gummies y wellness certificados. Envío gratis desde S/300.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/tienda"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-8 py-4 text-sm font-bold text-[#A78BFA] shadow-xl transition-all hover:shadow-2xl hover:scale-[1.02]"
-              >
-                Ver tienda <ArrowRight className="w-4 h-4" />
-              </Link>
-              <Link
-                href="/agendar"
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/15 px-8 py-4 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/25"
-              >
-                Agendar consulta médica
-              </Link>
-            </div>
-            <p className="text-white/75 text-sm mt-5">
-              ¿Necesitas orientación hoy mismo?{" "}
-              <Link href="/consulta-express" className="font-bold text-white underline underline-offset-2 hover:no-underline transition-all">
-                Consulta Express S/30 →
-              </Link>
-            </p>
-          </div>
-        </section>
+        <HeroAnimated />
 
         {/* ══════════ TRUST BAR ══════════ */}
         <div className="bg-white border-b border-zinc-100 py-3 px-6">
@@ -273,7 +235,9 @@ export default async function HomePage() {
                 Crear cuenta gratis <ArrowRight className="w-4 h-4" />
               </Link>
               <a
-                href="https://wa.me/51952476574"
+                href="https://wa.me/51952476574?text=Hola%2C%20quisiera%20saber%20m%C3%A1s%20sobre%20sus%20servicios%20de%20bienestar%20y%20consultas%20m%C3%A9dicas.%20%C2%BFPueden%20orientarme%3F"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/40 bg-white/15 px-10 py-4 text-sm font-semibold text-white transition-all hover:bg-white/25"
               >
                 <Phone className="w-4 h-4" />

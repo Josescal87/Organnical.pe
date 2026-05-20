@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
   ClipboardList, Users, ShieldCheck, Building2, BookOpen,
-  ScrollText, Award, MessageSquare, Bot, Star, Receipt, Zap,
+  ScrollText, Award, MessageSquare, Bot, Star, Receipt, Zap, ShoppingBag,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 

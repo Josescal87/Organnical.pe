@@ -2,6 +2,7 @@ export const WA_NUMBER = "51952476574"
 
 // Sub-path matches — checked first (most specific wins). Order matters.
 const PATH_MESSAGES: [string, string][] = [
+  ["/dashboard/paciente/botica",     "Hola, soy paciente de Organnical y quiero hacer un pedido de mi botica, ¿me pueden ayudar?"],
   ["/dashboard/paciente/recetas",    "Hola, soy paciente de Organnical y tengo una pregunta sobre mi receta médica"],
   ["/dashboard/paciente/citas",      "Hola, soy paciente de Organnical y tengo una consulta sobre mi cita agendada"],
   ["/dashboard/paciente/catalogo",   "Hola, soy paciente de Organnical y quiero consultar sobre los productos de mi tratamiento, ¿me pueden guiar?"],

@@ -59,7 +59,7 @@ export default function HeroSection({ specialties }: { specialties: Specialty[] 
       <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse 70% 80% at 70% 50%, #1a3a6e 0%, transparent 70%)" }} />
 
       <div className="relative z-10 mx-auto max-w-7xl px-6 w-full">
-        <div className="grid lg:grid-cols-2 gap-12 items-center pt-28 pb-16 lg:pt-32 lg:pb-20 min-h-screen">
+        <div className="grid lg:grid-cols-2 gap-12 items-center pt-24 pb-16 lg:pt-28 lg:pb-20 min-h-screen">
 
           {/* Left — text */}
           <div className="max-w-xl">

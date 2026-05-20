@@ -4,6 +4,7 @@ import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, User } from "lucide-react"
 import { getPost, getAllSlugs, posts, type ContentBlock } from "@/lib/blog"
 import TrackEvent from "@/components/TrackEvent"
+import BlogPostHeader from "./BlogPostHeader"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 const NAVY = "#0B1D35"
@@ -69,19 +70,13 @@ function renderBlock(block: ContentBlock, index: number) {
   switch (block.type) {
     case "h2":
       return (
-        <h2
-          key={index}
-          className="font-display text-2xl font-black text-[#0B1D35] mt-10 mb-4 leading-tight"
-        >
+        <h2 key={index} className="font-display text-2xl font-black text-[#0B1D35] mt-10 mb-4 leading-tight">
           {block.text}
         </h2>
       )
     case "h3":
       return (
-        <h3
-          key={index}
-          className="font-display text-xl font-bold text-[#0B1D35] mt-8 mb-3"
-        >
+        <h3 key={index} className="font-display text-xl font-bold text-[#0B1D35] mt-8 mb-3">
           {block.text}
         </h3>
       )
@@ -96,10 +91,7 @@ function renderBlock(block: ContentBlock, index: number) {
         <ul key={index} className="mb-5 space-y-2 ml-1">
           {block.items.map((item, i) => (
             <li key={i} className="flex items-start gap-3 text-zinc-600 text-[17px]">
-              <span
-                className="mt-1.5 h-2 w-2 rounded-full flex-shrink-0"
-                style={{ background: G }}
-              />
+              <span className="mt-1.5 h-2 w-2 rounded-full flex-shrink-0" style={{ background: G }} />
               {item}
             </li>
           ))}
@@ -167,7 +159,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
   }
 
-  // Same-category posts first
   const related = posts
     .filter((p) => p.slug !== post.slug)
     .sort((a) => (a.category === post.category ? -1 : 1))
@@ -185,8 +176,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         metaEvent="ViewContent"
         metaParams={{ content_ids: [post.slug], content_name: post.title, content_type: "article" }}
       />
+
+      <BlogPostHeader title={post.title} category={post.category} />
+
       {/* ── Hero ── */}
-      <section className="relative pt-28 pb-0 overflow-hidden" style={{ background: NAVY }}>
+      <section className="relative pt-10 pb-0 overflow-hidden" style={{ background: NAVY }}>
         <div className="absolute inset-0 dot-grid opacity-20" />
         <div
           className="absolute inset-0"
@@ -229,13 +223,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
       {/* ── Featured image ── */}
       <div className="relative -mt-1 mx-auto max-w-4xl px-6">
         <div className="relative rounded-3xl overflow-hidden shadow-2xl" style={{ aspectRatio: "16/7" }}>
-          <Image
-            src={post.image}
-            alt={post.title}
-            fill
-            priority
-            className="object-cover"
-          />
+          <Image src={post.image} alt={post.title} fill priority className="object-cover" />
         </div>
       </div>
 
@@ -275,7 +263,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 ]
               })}
 
-              {/* Tags */}
               <div className="mt-10 pt-8 border-t border-zinc-100">
                 <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Etiquetas</p>
                 <div className="flex flex-wrap gap-2">
@@ -294,7 +281,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
 
             {/* Sidebar */}
             <aside className="space-y-6">
-              {/* CTA Card */}
               <div
                 className="rounded-2xl p-6 text-white"
                 style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3a6e 100%)` }}
@@ -320,7 +306,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 )}
               </div>
 
-              {/* Author card */}
               <div className="bg-white rounded-2xl p-6 border border-zinc-100">
                 <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">Autor</p>
                 <div className="flex items-center gap-3">
@@ -337,7 +322,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 </div>
               </div>
 
-              {/* Related posts */}
               {related.length > 0 && (
                 <div className="bg-white rounded-2xl p-6 border border-zinc-100">
                   <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-4">
@@ -345,11 +329,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   </p>
                   <div className="space-y-4">
                     {related.map((r) => (
-                      <Link
-                        key={r.slug}
-                        href={`/blog/${r.slug}`}
-                        className="group flex gap-3 items-start"
-                      >
+                      <Link key={r.slug} href={`/blog/${r.slug}`} className="group flex gap-3 items-start">
                         <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0">
                           <Image src={r.image} alt={r.title} fill className="object-cover" />
                         </div>
@@ -367,7 +347,6 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
             </aside>
           </div>
 
-          {/* ── Bottom nav ── */}
           <div className="mt-10 flex justify-between items-center">
             <Link
               href="/blog"

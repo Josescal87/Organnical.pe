@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { Package, Plus, Minus, ShoppingCart, Sparkles } from "lucide-react"
-import type { RxItem } from "@/lib/prescriptions"
+import Link from "next/link"
+import Image from "next/image"
+import { Package, Plus, Minus, MessageCircle, Lock, Zap } from "lucide-react"
+import { WA_NUMBER } from "@/lib/whatsapp-messages"
 
-type UpsellProduct = {
+type Product = {
   sku: string
   descripcion: string
   precio: number
@@ -16,36 +17,24 @@ type UpsellProduct = {
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 
-export default function BoticaCart({
-  recetaId,
-  rxItems,
-  upsellProducts,
+export default function BoticaCatalog({
+  allProducts,
+  prescribedSkus,
 }: {
-  recetaId: string
-  rxItems: RxItem[]
-  upsellProducts: UpsellProduct[]
+  allProducts: Product[]
+  prescribedSkus: string[]
 }) {
-  const router = useRouter()
-  const [upsellCart, setUpsellCart] = useState<Record<string, number>>({})
+  const [cart, setCart] = useState<Record<string, number>>({})
+  const [showLockedModal, setShowLockedModal] = useState(false)
 
-  const rxTotal = rxItems.reduce((s, i) => {
-    const precio = i.producto?.precio_oferta ?? i.producto?.precio ?? 0
-    return s + precio * i.quantity
-  }, 0)
+  const prescribedSet = new Set(prescribedSkus)
 
-  const upsellTotal = Object.entries(upsellCart).reduce((s, [sku, qty]) => {
-    const p = upsellProducts.find((u) => u.sku === sku)
-    return s + (p?.precio_oferta ?? p?.precio ?? 0) * qty
-  }, 0)
-
-  const total = rxTotal + upsellTotal
-
-  function handleAddUpsell(sku: string) {
-    setUpsellCart((prev) => ({ ...prev, [sku]: (prev[sku] ?? 0) + 1 }))
+  function addToCart(sku: string) {
+    setCart((prev) => ({ ...prev, [sku]: (prev[sku] ?? 0) + 1 }))
   }
 
-  function handleRemoveUpsell(sku: string) {
-    setUpsellCart((prev) => {
+  function removeFromCart(sku: string) {
+    setCart((prev) => {
       const next = { ...prev }
       if ((next[sku] ?? 0) <= 1) delete next[sku]
       else next[sku]--
@@ -53,148 +42,202 @@ export default function BoticaCart({
     })
   }
 
-  function handlePagar() {
-    const cart = [
-      ...rxItems
-        .filter((i) => i.producto)
-        .map((i) => ({
-          sku: i.producto!.sku,
-          descripcion: i.producto!.descripcion,
-          precio: i.producto!.precio_oferta ?? i.producto!.precio,
-          qty: i.quantity,
-        })),
-      ...Object.entries(upsellCart).map(([sku, qty]) => {
-        const p = upsellProducts.find((u) => u.sku === sku)!
-        return {
-          sku,
-          descripcion: p.descripcion,
-          precio: p.precio_oferta ?? p.precio,
-          qty,
-        }
-      }),
-    ]
-    sessionStorage.setItem("mp_cart", JSON.stringify(cart))
-    sessionStorage.setItem("botica_receta_id", recetaId)
-    router.push("/dashboard/paciente/catalogo/checkout")
+  const cartItems = Object.entries(cart)
+    .filter(([, qty]) => qty > 0)
+    .map(([sku, qty]) => ({
+      sku,
+      qty,
+      product: allProducts.find((p) => p.sku === sku)!,
+    }))
+    .filter((item) => item.product)
+
+  const total = cartItems.reduce(
+    (sum, { qty, product }) => sum + (product.precio_oferta ?? product.precio) * qty,
+    0
+  )
+
+  function handleWhatsApp() {
+    const lines = cartItems
+      .map(
+        ({ qty, product }) =>
+          `• ${product.descripcion} x${qty} — S/ ${((product.precio_oferta ?? product.precio) * qty).toFixed(2)}`
+      )
+      .join("\n")
+
+    const message = [
+      "Hola, soy paciente de Organnical y quiero hacer un pedido de mi botica:",
+      "",
+      lines,
+      "",
+      `*Total: S/ ${total.toFixed(2)}*`,
+      "",
+      "Por favor confirmar disponibilidad y coordinar el envío. ¡Gracias!",
+    ].join("\n")
+
+    window.open(`https://wa.me/${WA_NUMBER}?text=${encodeURIComponent(message)}`, "_blank")
+  }
+
+  if (allProducts.length === 0) {
+    return (
+      <div className="text-center py-16 text-zinc-400 text-sm">
+        No hay productos disponibles en este momento.
+      </div>
+    )
   }
 
   return (
-    <div className="space-y-6">
-      {/* Prescription items (read-only) */}
-      <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-        <div className="p-5 border-b border-zinc-50">
-          <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-            Productos de tu receta ({rxItems.length})
-          </p>
-        </div>
-        <div className="p-5 space-y-3">
-          {rxItems.map((item) => {
-            const precio = item.producto?.precio_oferta ?? item.producto?.precio
-            return (
-              <div key={item.id} className="flex items-center gap-3">
-                <div
-                  className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                  style={{ background: "rgba(167,139,250,0.12)" }}
-                >
-                  <Package className="w-4 h-4 text-[#A78BFA]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-[#0B1D35]">
-                    {item.producto?.descripcion ?? item.producto_sku}
-                    <span className="ml-2 text-xs font-normal text-zinc-400">×{item.quantity}</span>
-                  </p>
-                  {item.dosage_instructions && (
-                    <p className="text-xs text-zinc-400 mt-0.5">{item.dosage_instructions}</p>
-                  )}
-                </div>
-                {precio != null && (
-                  <p className="text-sm font-bold text-[#0B1D35] flex-shrink-0">
-                    S/ {(precio * item.quantity).toFixed(2)}
-                  </p>
+    <>
+      {/* Product grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 pb-28">
+        {allProducts.map((product) => {
+          const hasRx = prescribedSet.has(product.sku)
+          const qty = cart[product.sku] ?? 0
+          const precio = product.precio_oferta ?? product.precio
+
+          return (
+            <div
+              key={product.sku}
+              className={`bg-white rounded-2xl border border-zinc-100 overflow-hidden flex flex-col transition-all ${
+                !hasRx ? "grayscale opacity-50" : ""
+              }`}
+            >
+              {/* Image */}
+              <div className="aspect-square bg-zinc-50 flex items-center justify-center relative overflow-hidden">
+                {product.imagen_url ? (
+                  <Image
+                    src={product.imagen_url}
+                    alt={product.descripcion}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <Package className="w-10 h-10 text-zinc-200" />
+                )}
+                {!hasRx && (
+                  <div className="absolute inset-0 bg-white/30 flex items-center justify-center">
+                    <Lock className="w-5 h-5 text-zinc-400" />
+                  </div>
                 )}
               </div>
-            )
-          })}
-        </div>
-      </div>
 
-      {/* Upsell */}
-      {upsellProducts.length > 0 && (
-        <div className="bg-white rounded-2xl border border-zinc-100 overflow-hidden">
-          <div className="p-5 border-b border-zinc-50 flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#F472B6]" />
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-400">
-              Complementa tu tratamiento
-            </p>
-          </div>
-          <div className="p-5 space-y-3">
-            {upsellProducts.map((p) => {
-              const qty = upsellCart[p.sku] ?? 0
-              const precio = p.precio_oferta ?? p.precio
-              return (
-                <div key={p.sku} className="flex items-center gap-3">
-                  <div
-                    className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0"
-                    style={{ background: "rgba(244,114,182,0.10)" }}
-                  >
-                    <Package className="w-4 h-4 text-[#F472B6]" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-[#0B1D35]">{p.descripcion}</p>
-                    <p className="text-xs text-zinc-400">S/ {precio.toFixed(2)}</p>
-                  </div>
-                  {qty === 0 ? (
+              {/* Info */}
+              <div className="p-3 flex-1 flex flex-col gap-2">
+                <p className="text-xs font-semibold text-[#0B1D35] leading-tight line-clamp-2">
+                  {product.descripcion}
+                </p>
+                <div className="flex items-baseline gap-1.5 mt-auto">
+                  <span className="text-sm font-black text-[#0B1D35]">
+                    S/ {precio.toFixed(2)}
+                  </span>
+                  {product.precio_oferta != null && (
+                    <span className="text-xs text-zinc-400 line-through">
+                      S/ {product.precio.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                {hasRx ? (
+                  qty === 0 ? (
                     <button
-                      onClick={() => handleAddUpsell(p.sku)}
-                      className="flex items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-semibold border border-zinc-200 text-zinc-600 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors flex-shrink-0"
+                      onClick={() => addToCart(product.sku)}
+                      className="w-full rounded-xl py-2 text-xs font-bold text-white transition-opacity hover:opacity-90"
+                      style={{ background: G }}
                     >
-                      <Plus className="w-3 h-3" /> Agregar
+                      Agregar
                     </button>
                   ) : (
-                    <div className="flex items-center gap-2 flex-shrink-0">
+                    <div className="flex items-center justify-between gap-1">
                       <button
-                        onClick={() => handleRemoveUpsell(p.sku)}
-                        className="w-7 h-7 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-red-300 hover:text-red-500 transition-colors"
+                        onClick={() => removeFromCart(product.sku)}
+                        className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-red-300 hover:text-red-500 transition-colors"
                       >
                         <Minus className="w-3 h-3" />
                       </button>
-                      <span className="text-sm font-bold text-[#0B1D35] w-4 text-center">{qty}</span>
+                      <span className="text-sm font-bold text-[#0B1D35]">{qty}</span>
                       <button
-                        onClick={() => handleAddUpsell(p.sku)}
-                        className="w-7 h-7 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors"
+                        onClick={() => addToCart(product.sku)}
+                        className="w-8 h-8 rounded-lg border border-zinc-200 flex items-center justify-center text-zinc-500 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-colors"
                       >
                         <Plus className="w-3 h-3" />
                       </button>
                     </div>
-                  )}
-                </div>
-              )
-            })}
+                  )
+                ) : (
+                  <button
+                    onClick={() => setShowLockedModal(true)}
+                    className="w-full rounded-xl py-2 text-xs font-semibold text-zinc-400 border border-zinc-200 hover:border-zinc-300 transition-colors"
+                  >
+                    Necesito receta
+                  </button>
+                )}
+              </div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Floating cart bar */}
+      {cartItems.length > 0 && (
+        <div className="fixed bottom-0 inset-x-0 p-4 bg-white/95 backdrop-blur-sm border-t border-zinc-100 z-20">
+          <div className="max-w-5xl mx-auto flex items-center gap-4">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-zinc-500">
+                {cartItems.length} producto{cartItems.length !== 1 ? "s" : ""} seleccionado{cartItems.length !== 1 ? "s" : ""}
+              </p>
+              <p className="text-base font-black text-[#0B1D35]">Total: S/ {total.toFixed(2)}</p>
+            </div>
+            <button
+              onClick={handleWhatsApp}
+              className="flex items-center gap-2 rounded-2xl px-5 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90 flex-shrink-0"
+              style={{ background: G }}
+            >
+              <MessageCircle className="w-4 h-4" />
+              Pedir por WhatsApp
+            </button>
           </div>
         </div>
       )}
 
-      {/* Total + CTA */}
-      <div className="bg-white rounded-2xl border border-zinc-100 p-5">
-        <div className="flex justify-between items-center mb-4">
-          <span className="text-sm text-zinc-500">Total</span>
-          <span className="font-black text-xl text-[#0B1D35]">S/ {total.toFixed(2)}</span>
-        </div>
-        <button
-          onClick={handlePagar}
-          disabled={rxItems.filter((i) => i.producto).length === 0}
-          className="w-full rounded-2xl py-3.5 text-sm font-bold text-white disabled:opacity-50 transition-opacity"
-          style={{ background: G }}
+      {/* Modal: producto sin receta */}
+      {showLockedModal && (
+        <div
+          className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowLockedModal(false)}
         >
-          <span className="flex items-center justify-center gap-2">
-            <ShoppingCart className="w-4 h-4" />
-            Pagar S/ {total.toFixed(2)}
-          </span>
-        </button>
-        <p className="text-xs text-zinc-400 text-center mt-3">
-          Pago seguro · Delivery incluido en tu plan de tratamiento
-        </p>
-      </div>
-    </div>
+          <div
+            className="bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
+              style={{ background: "rgba(167,139,250,0.12)" }}
+            >
+              <Lock className="w-6 h-6 text-[#A78BFA]" />
+            </div>
+            <h2 className="font-display text-xl font-black text-[#0B1D35] mb-2">
+              Necesitas una receta
+            </h2>
+            <p className="text-sm text-zinc-500 mb-6">
+              Este producto requiere prescripción médica. Agenda una Consulta Express por{" "}
+              <span className="font-bold text-[#0B1D35]">S/ 30</span> y recibe tu receta hoy.
+            </p>
+            <Link
+              href="/consulta-express"
+              className="flex items-center justify-center gap-2 w-full rounded-2xl py-3.5 text-sm font-bold text-white mb-3 transition-opacity hover:opacity-90"
+              style={{ background: G }}
+            >
+              <Zap className="w-4 h-4" />
+              Consulta Express S/ 30
+            </Link>
+            <button
+              onClick={() => setShowLockedModal(false)}
+              className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   )
 }

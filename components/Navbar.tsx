@@ -60,61 +60,59 @@ export default function Navbar() {
     <>
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
-        solid
-          ? "bg-white/95 backdrop-blur-xl shadow-sm border-b border-zinc-100"
-          : "bg-transparent"
+        solid ? "shadow-lg" : "bg-transparent"
       }`}
+      style={solid ? { background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" } : undefined}
     >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 h-[70px]">
-        <Link href="/">
+      <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 h-[60px]">
+
+        {/* Logo — flex-shrink-0, igual que tienda/blog/botica */}
+        <Link href="/" className="flex-shrink-0">
           <Image
-            src={solid ? "/logo-color.png" : "/logo-white.png"}
+            src="/logo-white.png"
             alt="organnical.pe"
-            width={170}
-            height={40}
+            width={100}
+            height={24}
             priority
+            className="opacity-75 hover:opacity-100 transition-opacity"
           />
         </Link>
 
-        {/* Desktop nav */}
-        <nav
-          className={`hidden gap-8 text-sm font-medium md:flex items-center transition-colors ${
-            solid ? "text-zinc-500" : "text-white/75"
-          }`}
-        >
+        {/* Nav central — flex-1 justify-center, idéntico a tienda/blog/botica */}
+        <nav className="hidden sm:flex items-center gap-5 flex-1 justify-center">
           {navLinks.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className={`hover:text-[#A78BFA] transition-colors ${
-                pathname.startsWith(l.href) ? "text-[#A78BFA]" : ""
+              className={`text-xs font-medium transition-colors ${
+                pathname.startsWith(l.href)
+                  ? "font-semibold"
+                  : "text-white/40 hover:text-white/70"
               }`}
+              style={pathname.startsWith(l.href) ? { color: "#A78BFA" } : undefined}
             >
               {l.label}
             </Link>
           ))}
           <Link
             href={EXPRESS_HREF}
-            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold text-white transition-all hover:opacity-80"
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-bold text-white transition-all hover:opacity-80"
             style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 100%)" }}
           >
             <Zap className="w-3 h-3" /> Express S/30
           </Link>
         </nav>
 
-        <div className="flex items-center gap-3">
+        {/* Derecha — mismo peso visual que LogoutButton */}
+        <div className="flex items-center gap-3 flex-shrink-0">
           <button
             onClick={() => setCartOpen(true)}
             aria-label={`Carrito${totalItems > 0 ? ` (${totalItems})` : ""}`}
-            className={`hidden sm:flex items-center justify-center w-9 h-9 rounded-full relative transition-colors ${
-              solid
-                ? "text-zinc-500 hover:text-[#A78BFA] hover:bg-violet-50"
-                : "text-white/75 hover:text-white"
-            }`}
+            className="hidden sm:flex items-center justify-center relative text-white/35 hover:text-white/70 transition-colors"
           >
-            <ShoppingCart className="w-5 h-5" />
+            <ShoppingCart className="w-4 h-4" />
             {totalItems > 0 && (
-              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-[#A78BFA] text-white text-[10px] font-bold flex items-center justify-center leading-none">
+              <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#A78BFA] text-white text-[9px] font-bold flex items-center justify-center leading-none">
                 {totalItems > 9 ? "9+" : totalItems}
               </span>
             )}
@@ -123,33 +121,32 @@ export default function Navbar() {
           {isLoggedIn ? (
             <Link
               href="/cuenta"
-              className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90 hidden sm:inline-flex items-center gap-2"
-              style={{ background: G }}
+              className="flex items-center gap-1.5 text-white/35 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
             >
-              Mi cuenta <ArrowRight className="w-4 h-4" />
+              <ArrowRight size={13} />
+              <span className="hidden sm:inline">Mi cuenta</span>
             </Link>
           ) : (
             <>
               <Link
                 href="/login"
-                className={`text-sm font-medium hidden sm:block transition-colors ${
-                  solid ? "text-zinc-500 hover:text-zinc-900" : "text-white/75 hover:text-white"
-                }`}
+                className="text-xs font-medium text-white/35 hover:text-white/70 hidden sm:block transition-colors"
               >
                 Iniciar sesión
               </Link>
               <Link
                 href="/agendar"
-                className="rounded-full px-5 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:opacity-90"
-                style={{ background: G }}
+                className="flex items-center gap-1.5 text-white/35 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
               >
-                Agendar
+                <ArrowRight size={13} />
+                <span className="hidden sm:inline">Agendar</span>
               </Link>
             </>
           )}
+
           <button
             onClick={() => setMenuOpen((o) => !o)}
-            className={`md:hidden p-2 rounded-lg ${solid ? "text-zinc-600" : "text-white"}`}
+            className="sm:hidden p-2 rounded-lg text-white/75 hover:text-white transition-colors"
             aria-label="Menú"
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -161,7 +158,8 @@ export default function Navbar() {
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ${
           menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-        } bg-white border-b border-zinc-100`}
+        }`}
+        style={{ background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)", borderBottom: "1px solid rgba(255,255,255,0.08)" }}
       >
         <div className="px-6 py-3 flex flex-col">
           {navLinks.map((l) => (
@@ -169,7 +167,7 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setMenuOpen(false)}
-              className="py-3 text-sm font-medium text-zinc-700 border-b border-zinc-50 hover:text-[#A78BFA] transition-colors"
+              className="py-3 text-sm font-medium text-white/60 border-b border-white/[0.06] hover:text-white/90 transition-colors"
             >
               {l.label}
             </Link>
@@ -177,7 +175,7 @@ export default function Navbar() {
           <Link
             href={EXPRESS_HREF}
             onClick={() => setMenuOpen(false)}
-            className="py-3 text-sm font-bold text-[#F472B6] border-b border-zinc-50 flex items-center gap-2 hover:text-[#A78BFA] transition-colors"
+            className="py-3 text-sm font-bold text-[#F472B6] border-b border-white/[0.06] flex items-center gap-2 hover:text-[#A78BFA] transition-colors"
           >
             <Zap className="w-4 h-4" /> Express S/30 — orientación hoy
           </Link>
@@ -195,7 +193,7 @@ export default function Navbar() {
               <Link
                 href="/login"
                 onClick={() => setMenuOpen(false)}
-                className="py-3 text-sm font-medium text-zinc-700 hover:text-[#A78BFA] transition-colors"
+                className="py-3 text-sm font-medium text-white/60 hover:text-white transition-colors"
               >
                 Iniciar sesión
               </Link>

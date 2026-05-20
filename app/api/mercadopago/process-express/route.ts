@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { MercadoPagoConfig, Payment } from "mercadopago";
 import { sendExpressDoctorAlert, sendExpressPatientConfirm } from "@/lib/emails";
+import { getAdminEmails } from "@/lib/get-admin-emails";
 import { checkRateLimit, getClientIp } from "@/lib/rate-limit";
 
 function createAdminClient() {
@@ -158,9 +159,18 @@ export async function POST(req: NextRequest) {
     };
     const preferredTimeLabel = preferredTimeLabels[preferredTime] ?? preferredTime;
 
-    if (doctorEmail) {
+    // Notificar a la Dra + admins + reservas@ (deduplicado)
+    const adminEmails = await getAdminEmails().catch(() => []);
+    const allAlertEmails = [
+      ...new Set([
+        doctorEmail,
+        ...adminEmails,
+        "reservas@organnical.com",
+      ].filter(Boolean) as string[]),
+    ];
+    for (const email of allAlertEmails) {
       sendExpressDoctorAlert({
-        toEmail: doctorEmail,
+        toEmail: email,
         doctorName,
         patientName,
         patientPhone,
@@ -171,7 +181,7 @@ export async function POST(req: NextRequest) {
         preferredTimeLabel,
         consultationId,
         paymentId,
-      }).catch((e) => console.error("process-express: doctor email error:", e));
+      }).catch((e) => console.error(`process-express: alert email error (${email}):`, e));
     }
 
     const payerEmail = (mpFormData as { payer?: { email?: string } }).payer?.email;

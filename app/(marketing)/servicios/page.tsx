@@ -1,6 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { CheckCircle, ArrowRight, Video, Clock, Shield, Star } from "lucide-react"
+import { CheckCircle, ArrowRight, Video, Clock, Shield, Star, Zap } from "lucide-react"
 
 export const metadata: Metadata = {
   title: "Servicios y Precios — Organnical | Teleconsulta Médica Integrativa",
@@ -64,6 +64,24 @@ export default function ServiciosPage() {
           <div className="text-center mb-12">
             <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">Tarifas</p>
             <h2 className="font-display text-4xl font-black text-[#0B1D35]">Lo que pagas es lo que ves</h2>
+          </div>
+
+          {/* Express banner */}
+          <div className="mb-8 rounded-3xl border border-[#F472B6]/30 bg-gradient-to-r from-[#FDF2F8] to-[#F5F3FF] p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="w-10 h-10 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 100%)" }}>
+              <Zap className="w-5 h-5 text-white" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-[#0B1D35] text-sm">¿Necesitas orientación médica hoy mismo?</p>
+              <p className="text-sm text-zinc-500 mt-0.5">Consulta Express por WhatsApp · La Dra. te responde en menos de 2 horas · <strong className="text-[#0B1D35]">S/ 30</strong></p>
+            </div>
+            <Link
+              href="/consulta-express"
+              className="flex-shrink-0 inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
+              style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 100%)" }}
+            >
+              <Zap className="w-3.5 h-3.5" /> Consulta Express
+            </Link>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6">
@@ -284,6 +302,8 @@ export default function ServiciosPage() {
           <p className="text-white/30 text-xs mt-4">
             ¿Prefieres hablar primero?{" "}
             <a href="https://wa.me/51952476574" className="text-white/50 hover:text-white transition-colors">Escríbenos por WhatsApp</a>
+            {" · "}
+            <Link href="/consulta-express" className="text-[#F472B6]/60 hover:text-[#F472B6] transition-colors">Consulta Express S/30</Link>
           </p>
         </div>
       </section>

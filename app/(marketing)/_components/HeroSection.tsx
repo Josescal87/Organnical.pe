@@ -120,7 +120,10 @@ export default function HeroSection({ specialties }: { specialties: Specialty[] 
             </div>
 
             <p className="mt-5 text-xs text-white/35">
-              Consultas desde <span className="text-white/60 font-semibold">S/ 60</span> · Primera cita disponible en menos de 48 h
+              Consultas desde <span className="text-white/60 font-semibold">S/ 60</span> · Primera cita disponible en menos de 48 h ·{" "}
+              <Link href="/consulta-express" className="text-[#F472B6]/70 hover:text-[#F472B6] transition-colors font-semibold underline underline-offset-2">
+                Express S/30 →
+              </Link>
             </p>
 
             <div className="hero-trust mt-4 flex flex-wrap gap-x-6 gap-y-2 text-xs text-white/40">

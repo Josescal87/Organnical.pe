@@ -4,15 +4,13 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
 type EHRData = {
-  birth_date:    string;
-  gender:        string;
-  blood_type:    string;
-  document_type: string;
+  birth_date: string;
+  gender:     string;
+  blood_type: string;
 };
 
 const BLOOD_TYPES = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"];
 const GENDERS     = [{ value: "M", label: "Masculino" }, { value: "F", label: "Femenino" }, { value: "otro", label: "Otro" }];
-const DOC_TYPES   = ["DNI", "CE", "Pasaporte"];
 
 const inputCls = "rounded-xl border border-zinc-200 px-3 py-2 text-sm text-[#0B1D35] focus:outline-none focus:ring-2 focus:ring-violet-400 w-full bg-white";
 const labelCls = "text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1 block";
@@ -34,11 +32,10 @@ export default function EHRProfileForm({ userId, initialData }: { userId: string
       .schema("medical")
       .from("profiles")
       .update({
-        birth_date:    form.birth_date    || null,
-        gender:        form.gender        || null,
-        blood_type:    form.blood_type    || null,
-        document_type: form.document_type || null,
-        updated_at:    new Date().toISOString(),
+        birth_date: form.birth_date || null,
+        gender:     form.gender     || null,
+        blood_type: form.blood_type || null,
+        updated_at: new Date().toISOString(),
       })
       .eq("id", userId);
 
@@ -62,12 +59,6 @@ export default function EHRProfileForm({ userId, initialData }: { userId: string
           <select value={form.gender} onChange={e => set("gender", e.target.value)} className={inputCls}>
             <option value="">Seleccionar…</option>
             {GENDERS.map(g => <option key={g.value} value={g.value}>{g.label}</option>)}
-          </select>
-        </div>
-        <div>
-          <label className={labelCls}>Tipo de documento</label>
-          <select value={form.document_type} onChange={e => set("document_type", e.target.value)} className={inputCls}>
-            {DOC_TYPES.map(t => <option key={t} value={t}>{t}</option>)}
           </select>
         </div>
         <div>

@@ -10,7 +10,7 @@ import ProductTeaserSection from "./_components/ProductTeaserSection";
 
 export const metadata: Metadata = {
   title: "Organnical — Suplementos naturales y telemedicina · Perú",
-  description: "Suplementos de bienestar respaldados por médicos especializados. Tienda online con envío gratis desde S/150 y consultas médicas online en menos de 48h.",
+  description: "Suplementos de bienestar respaldados por médicos especializados. Tienda online con envío gratis desde S/300 y consultas médicas online en menos de 48h.",
   alternates: { canonical: "https://organnical.pe" },
 };
 
@@ -79,7 +79,7 @@ export default async function HomePage() {
               respaldados por médicos
             </h1>
             <p className="text-white/85 text-lg mb-10 max-w-xl mx-auto">
-              Suplementos, gummies y wellness certificados. Envío gratis desde S/150.
+              Suplementos, gummies y wellness certificados. Envío gratis desde S/300.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -101,7 +101,7 @@ export default async function HomePage() {
         {/* ══════════ TRUST BAR ══════════ */}
         <div className="bg-white border-b border-zinc-100 py-3 px-6">
           <div className="mx-auto max-w-5xl flex flex-wrap justify-center gap-x-8 gap-y-2 text-xs font-medium text-zinc-500">
-            <span>✅ Envío gratis desde S/150</span>
+            <span>✅ Envío gratis desde S/300</span>
             <span>🩺 Avalado por médicos</span>
             <span>🔒 Pago seguro</span>
             <span>💬 Soporte WhatsApp</span>

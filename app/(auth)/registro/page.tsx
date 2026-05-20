@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Eye, EyeOff, ArrowRight, Loader2, CheckCircle } from "lucide-react";
+import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
@@ -42,6 +43,8 @@ function RegistroContent() {
   }, [])
 
   const [fullName, setFullName] = useState("");
+  const [docType, setDocType] = useState<DocType>("DNI");
+  const [docId, setDocId] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -57,10 +60,15 @@ function RegistroContent() {
       return;
     }
 
+    if (docId.trim()) {
+      const docErr = validateDocId(docType, docId.trim());
+      if (docErr) { setError(docErr); return; }
+    }
+
     setLoading(true);
     const supabase = createClient();
 
-    const { error: authError } = await supabase.auth.signUp({
+    const { data: signUpData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -80,6 +88,12 @@ function RegistroContent() {
 
     window.gtag?.("event", "sign_up", { method: "email" })
     window.fbq?.("track", "CompleteRegistration")
+
+    if (docId.trim() && signUpData.user) {
+      await supabase.schema("medical").from("profiles")
+        .upsert({ id: signUpData.user.id, document_type: docType, document_id: docId.trim() }, { onConflict: "id" });
+    }
+
     router.push("/dashboard/paciente");
   }
 
@@ -160,6 +174,16 @@ function RegistroContent() {
                 placeholder="Juan Pérez"
                 className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
               />
+            </div>
+
+            <div>
+              <DocumentInput
+                docType={docType}
+                docId={docId}
+                onDocTypeChange={setDocType}
+                onDocIdChange={setDocId}
+              />
+              <p className="text-xs text-zinc-400 mt-1">Opcional — requerido para que tu médico emita recetas.</p>
             </div>
 
             <div>

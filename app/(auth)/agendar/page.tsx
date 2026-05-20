@@ -21,6 +21,7 @@ import {
   User, Mail, Lock, CreditCard,
 } from "lucide-react";
 import CalendarButtons from "@/components/CalendarButtons";
+import DocumentInput from "@/components/DocumentInput";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -148,6 +149,7 @@ function AgendarWizard() {
   // Inline profile + consent gate state
   const [authedUserId, setAuthedUserId] = useState<string | null>(null);
   const [confirmSubStep, setConfirmSubStep] = useState<"auth" | "profile" | "consents">("auth");
+  const [docType, setDocType] = useState<"DNI" | "CE" | "Pasaporte">("DNI");
   const [docId, setDocId] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [pendingConsents, setPendingConsents] = useState<string[]>([]);
@@ -349,14 +351,14 @@ function AgendarWizard() {
 
   async function handleSaveProfile() {
     if (!docId.trim() || !birthDate) {
-      setError("Completa tu DNI y fecha de nacimiento para continuar.");
+      setError("Completa tu documento de identidad y fecha de nacimiento para continuar.");
       return;
     }
     setSubmitting(true);
     setError(null);
     const supabase = createClient();
     const { error } = await supabase.schema("medical").from("profiles")
-      .upsert({ id: authedUserId, document_id: docId.trim(), birth_date: birthDate }, { onConflict: "id" });
+      .upsert({ id: authedUserId, document_type: docType, document_id: docId.trim(), birth_date: birthDate }, { onConflict: "id" });
     if (error) { setError(error.message); setSubmitting(false); return; }
     await checkAndAdvance(authedUserId!);
   }
@@ -808,17 +810,12 @@ function AgendarWizard() {
                 </div>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-xs font-semibold text-zinc-500 mb-1 block">DNI / Documento de identidad</label>
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      autoComplete="off"
-                      maxLength={12}
-                      placeholder="Ej. 12345678"
-                      value={docId}
-                      onChange={(e) => setDocId(e.target.value.replace(/\D/g, ""))}
-                      className="w-full rounded-xl border border-zinc-200 bg-white px-4 py-3 text-base text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
+                    <DocumentInput
+                      docType={docType}
+                      docId={docId}
+                      onDocTypeChange={setDocType}
+                      onDocIdChange={setDocId}
+                      required
                     />
                   </div>
                   <div>

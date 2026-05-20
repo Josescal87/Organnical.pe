@@ -29,6 +29,7 @@ export interface DireccionEntrega {
   apellido: string
   celular: string
   email: string
+  doc_type: string
   dni: string
   distrito: string
   direccion: string

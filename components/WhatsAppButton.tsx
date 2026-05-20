@@ -1,9 +1,15 @@
 "use client";
 
+import { usePathname } from "next/navigation";
+import { getWaMessage, buildWaUrl } from "@/lib/whatsapp-messages";
+
 export default function WhatsAppButton() {
+  const pathname = usePathname();
+  const href = buildWaUrl(getWaMessage(pathname));
+
   return (
     <a
-      href="https://wa.me/51952476574?text=Hola%2C%20quiero%20agendar%20una%20consulta"
+      href={href}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Contactar por WhatsApp"

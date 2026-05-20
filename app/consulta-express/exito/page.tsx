@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -21,7 +21,7 @@ type ConfirmState =
   | { phase: "pending" }
   | { phase: "error"; message: string };
 
-export default function ExitoPage() {
+function ExitoContent() {
   const searchParams = useSearchParams();
   const [state, setState] = useState<ConfirmState>({ phase: "loading" });
 
@@ -210,6 +210,20 @@ export default function ExitoPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function ExitoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <Loader2 className="w-8 h-8 animate-spin text-teal-600" />
+        </div>
+      }
+    >
+      <ExitoContent />
+    </Suspense>
   );
 }
 

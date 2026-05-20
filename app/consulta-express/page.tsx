@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput";
 import { CONSENT_TEXTS } from "@/app/dashboard/paciente/consentimiento/constants";
 import {
   ArrowLeft, ArrowRight, Loader2, CheckCircle, MessageCircle,
-  Clock, Calendar, ChevronDown, ChevronUp, Zap,
+  ChevronDown, ChevronUp, Zap, ShieldCheck, AlertCircle,
 } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
@@ -54,9 +54,15 @@ export default function ConsultaExpressPage() {
   const [phone, setPhone] = useState("");
   const [docType, setDocType] = useState<DocType>("DNI");
   const [docId, setDocId] = useState("");
-  const [birthDate, setBirthDate] = useState("");
+  const [isAdult, setIsAdult] = useState(false);
   const [motivo, setMotivo] = useState("");
   const [dataErrors, setDataErrors] = useState<Record<string, string>>({});
+
+  // Reniec validation
+  type ReniecStatus = null | "loading" | "valid" | "invalid";
+  const [reniecStatus, setReniecStatus] = useState<ReniecStatus>(null);
+  const [reniecName, setReniecName] = useState<string | null>(null);
+  const reniecTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Step 2 — cuando
   const [preferredTime, setPreferredTime] = useState<PreferredTime | null>(null);
@@ -70,6 +76,31 @@ export default function ConsultaExpressPage() {
   // Done
   const [consultationId, setConsultationId] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (docType !== "DNI" || !/^\d{8}$/.test(docId)) {
+      setReniecStatus(null);
+      setReniecName(null);
+      return;
+    }
+    if (reniecTimer.current) clearTimeout(reniecTimer.current);
+    setReniecStatus("loading");
+    reniecTimer.current = setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/reniec/validate?dni=${docId}`);
+        const data = await res.json() as { valid: boolean; nombres?: string | null; error?: string };
+        if (data.valid) {
+          setReniecStatus("valid");
+          setReniecName(data.nombres ?? null);
+        } else {
+          setReniecStatus("invalid");
+          setReniecName(null);
+        }
+      } catch {
+        setReniecStatus(null);
+      }
+    }, 600);
+  }, [docId, docType]);
+
   function validateStep1() {
     const errs: Record<string, string> = {};
     if (!name.trim()) errs.name = "Ingresa tu nombre completo.";
@@ -77,7 +108,8 @@ export default function ConsultaExpressPage() {
     else if (!/^9\d{8}$/.test(phone.replace(/\D/g, "").replace(/^51/, ""))) errs.phone = "El celular debe empezar con 9 y tener 9 dígitos.";
     const docErr = validateDocId(docType, docId);
     if (docErr) errs.docId = docErr;
-    if (!birthDate) errs.birthDate = "Ingresa tu fecha de nacimiento.";
+    if (reniecStatus === "invalid") errs.docId = "DNI no encontrado en RENIEC. Verifica el número.";
+    if (!isAdult) errs.isAdult = "Debes confirmar que eres mayor de edad para continuar.";
     setDataErrors(errs);
     return Object.keys(errs).length === 0;
   }
@@ -155,27 +187,42 @@ export default function ConsultaExpressPage() {
 
               {/* DNI/CE/Pasaporte */}
               <div>
-                <label className="text-xs font-semibold text-zinc-600 block mb-1.5 uppercase tracking-wide">Documento de identidad *</label>
                 <DocumentInput
+                  required
                   docType={docType}
                   docId={docId}
-                  onDocTypeChange={setDocType}
+                  onDocTypeChange={(t) => { setDocType(t); setDocId(""); setReniecStatus(null); setReniecName(null); }}
                   onDocIdChange={setDocId}
                   error={dataErrors.docId}
                 />
+                {/* Reniec status badge */}
+                {docType === "DNI" && docId.length === 8 && (
+                  <div className="mt-1.5 flex items-center gap-1.5 text-xs">
+                    {reniecStatus === "loading" && (
+                      <><Loader2 className="w-3.5 h-3.5 animate-spin text-zinc-400" /><span className="text-zinc-400">Verificando en RENIEC…</span></>
+                    )}
+                    {reniecStatus === "valid" && (
+                      <><ShieldCheck className="w-3.5 h-3.5 text-emerald-500" /><span className="text-emerald-600 font-medium">{reniecName ? `Verificado: ${reniecName}` : "DNI verificado"}</span></>
+                    )}
+                    {reniecStatus === "invalid" && (
+                      <><AlertCircle className="w-3.5 h-3.5 text-rose-500" /><span className="text-rose-600">DNI no encontrado en RENIEC</span></>
+                    )}
+                  </div>
+                )}
               </div>
 
-              {/* Fecha de nacimiento */}
+              {/* Mayor de edad */}
               <div>
-                <label className="text-xs font-semibold text-zinc-600 block mb-1.5 uppercase tracking-wide">Fecha de nacimiento *</label>
-                <input
-                  type="date"
-                  value={birthDate}
-                  onChange={(e) => setBirthDate(e.target.value)}
-                  max={new Date().toISOString().split("T")[0]}
-                  className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
-                />
-                {dataErrors.birthDate && <p className="text-xs text-rose-500 mt-1">{dataErrors.birthDate}</p>}
+                <label className="flex items-start gap-3 cursor-pointer select-none">
+                  <input
+                    type="checkbox"
+                    checked={isAdult}
+                    onChange={(e) => setIsAdult(e.target.checked)}
+                    className="mt-0.5 w-4 h-4 rounded accent-teal-600 flex-shrink-0"
+                  />
+                  <span className="text-sm text-zinc-700">Confirmo que soy mayor de 18 años</span>
+                </label>
+                {dataErrors.isAdult && <p className="text-xs text-rose-500 mt-1 ml-7">{dataErrors.isAdult}</p>}
               </div>
 
               {/* Motivo */}
@@ -368,7 +415,6 @@ export default function ConsultaExpressPage() {
                           patientPhone: normalizePhone(phone),
                           patientDocumentType: docType,
                           patientDocumentNumber: docId,
-                          birthDate,
                           motivo,
                           preferredTime,
                           consentsAcceptedAt: new Date().toISOString(),

@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
       preferredTime,
       consentsAcceptedAt,
       consentsSnapshot,
+      couponCode,
       ...mpFormData
     } = body as {
       patientName: string;

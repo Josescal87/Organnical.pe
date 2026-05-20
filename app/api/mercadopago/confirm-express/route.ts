@@ -123,13 +123,15 @@ export async function GET(req: NextRequest) {
 
     // Register venta (non-fatal)
     try {
-      const { data: maxOrden } = await adminClient
+      const { data: recentVentas } = await adminClient
         .from("ventas")
         .select("num_orden")
-        .order("num_orden", { ascending: false })
-        .limit(1)
-        .single() as { data: { num_orden: number } | null };
-      const nextOrden = (maxOrden?.num_orden ?? 0) + 1;
+        .order("created_at", { ascending: false })
+        .limit(100) as { data: Array<{ num_orden: number | string }> | null };
+      const maxNum = recentVentas
+        ? Math.max(0, ...recentVentas.map(r => parseInt(String(r.num_orden), 10) || 0))
+        : 0;
+      const nextOrden = maxNum + 1;
       const parts = patientName.trim().split(" ");
       await adminClient.from("ventas").insert({
         num_orden:       nextOrden,
@@ -140,6 +142,7 @@ export async function GET(req: NextRequest) {
         total:           amount,
         metodo_pago:     "Online - Mercado Pago",
         vendedor:        "Organnical Express",
+        dni:             patientDocumentNumber,
         nombre:          parts[0],
         apellido:        parts.slice(1).join(" ") || "-",
         fecha_compra:    new Date().toISOString().split("T")[0],

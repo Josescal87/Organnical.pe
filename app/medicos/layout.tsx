@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import { redirect } from "next/navigation"
 import { createClient } from "@/lib/supabase/server"
 import DashboardSidebar from "@/components/DashboardSidebar"
+import WhatsAppButton from "@/components/WhatsAppButton"
 import type { UserRole } from "@/lib/supabase/database.types"
 
 export const metadata: Metadata = {
@@ -12,7 +13,7 @@ export default async function MedicosLayout({ children }: { children: React.Reac
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
-  if (!user) redirect("/login?next=/")
+  if (!user) redirect("/login-medicos?next=/medicos")
 
   const role = (user.user_metadata?.role ?? "patient") as UserRole
   if (role !== "doctor" && role !== "admin") {
@@ -32,6 +33,7 @@ export default async function MedicosLayout({ children }: { children: React.Reac
       <main className="flex-1 min-w-0 overflow-auto pt-14 md:pt-0">
         {children}
       </main>
+      <WhatsAppButton />
     </div>
   )
 }

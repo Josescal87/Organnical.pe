@@ -8,7 +8,8 @@ import { createClient } from "@/lib/supabase/client"
 import { formatPrice } from "@/lib/utils"
 import { isPickup, MP_MIN_AMOUNT, FREE_DELIVERY_THRESHOLD, DELIVERY_FALLBACK } from "@/lib/pricing"
 import { trackBeginCheckout, trackAddPaymentInfo } from "@/lib/analytics"
-import { isValidDni, isValidCelular, sanitizeDigits } from "@/lib/validators"
+import { isValidCelular, sanitizeDigits } from "@/lib/validators"
+import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput"
 import { ShoppingCart, Lock, CreditCard, Store } from "lucide-react"
 import Link from "next/link"
 import DistritoCombobox from "@/components/DistritoCombobox"
@@ -22,12 +23,11 @@ const MercadoPagoBrick = dynamic(
 type FormData = DireccionEntrega
 
 const empty: FormData = {
-  nombre: "", apellido: "", celular: "", email: "", dni: "",
+  nombre: "", apellido: "", celular: "", email: "", doc_type: "DNI", dni: "",
   distrito: "", direccion: "", referencia: "",
 }
 
 const ERR_CELULAR = "El celular debe empezar con 9 y tener 9 dígitos en total."
-const ERR_DNI = "El DNI debe tener 8 dígitos."
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
@@ -140,7 +140,7 @@ export default function CheckoutPage() {
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     const { name, value } = e.target
-    const cleaned = name === "celular" || name === "dni" ? sanitizeDigits(value) : value
+    const cleaned = name === "celular" ? sanitizeDigits(value) : value
     setForm((f) => ({ ...f, [name]: cleaned }))
     if (fieldErrors[name as "celular" | "dni"]) {
       setFieldErrors((errs) => ({ ...errs, [name]: undefined }))
@@ -151,8 +151,9 @@ export default function CheckoutPage() {
     const { name, value } = e.target
     if (name === "celular" && value && !isValidCelular(value)) {
       setFieldErrors((errs) => ({ ...errs, celular: ERR_CELULAR }))
-    } else if (name === "dni" && value && !isValidDni(value)) {
-      setFieldErrors((errs) => ({ ...errs, dni: ERR_DNI }))
+    } else if (name === "dni" && value) {
+      const docErr = validateDocId(form.doc_type as DocType, value)
+      if (docErr) setFieldErrors((errs) => ({ ...errs, dni: docErr }))
     }
   }
 
@@ -177,11 +178,14 @@ export default function CheckoutPage() {
       setLoading(false)
       return
     }
-    if (form.dni && !isValidDni(form.dni)) {
-      setFieldErrors((errs) => ({ ...errs, dni: ERR_DNI }))
-      setError(ERR_DNI)
-      setLoading(false)
-      return
+    if (form.dni) {
+      const docErr = validateDocId((form.doc_type as DocType) || "DNI", form.dni)
+      if (docErr) {
+        setFieldErrors((errs) => ({ ...errs, dni: docErr }))
+        setError(docErr)
+        setLoading(false)
+        return
+      }
     }
     if (total < MP_MIN_AMOUNT) {
       setError(`El monto mínimo para procesar el pago es S/ ${MP_MIN_AMOUNT.toFixed(2)}.`)
@@ -241,9 +245,16 @@ export default function CheckoutPage() {
                   <Input label="Apellido *" name="apellido" value={form.apellido} onChange={handleChange} />
                 </div>
                 <Input label="Email *" name="email" type="email" value={form.email} onChange={handleChange} />
-                <div className="grid grid-cols-2 gap-4">
-                  <Input label="Celular *" name="celular" type="tel" value={form.celular} onChange={handleChange} onBlur={handleBlur} error={fieldErrors.celular} placeholder="9XXXXXXXX" inputMode="numeric" maxLength={9} />
-                  <Input label="DNI" name="dni" value={form.dni} onChange={handleChange} onBlur={handleBlur} error={fieldErrors.dni} placeholder="Opcional — 8 dígitos" inputMode="numeric" maxLength={8} />
+                <Input label="Celular *" name="celular" type="tel" value={form.celular} onChange={handleChange} onBlur={handleBlur} error={fieldErrors.celular} placeholder="9XXXXXXXX" inputMode="numeric" maxLength={9} />
+                <div>
+                  <DocumentInput
+                    docType={(form.doc_type as DocType) || "DNI"}
+                    docId={form.dni}
+                    onDocTypeChange={(t) => setForm((f) => ({ ...f, doc_type: t, dni: "" }))}
+                    onDocIdChange={(v) => setForm((f) => ({ ...f, dni: v }))}
+                    error={fieldErrors.dni}
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Opcional — para incluir en tu boleta.</p>
                 </div>
               </section>
 

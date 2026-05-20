@@ -8,7 +8,7 @@ const FAKE_PREFERENCE = {
 
 const DELIVERY_STUB = {
   rates: [{ distrito: "Miraflores", costo: 10, min_dias: 1, max_dias: 2 }],
-  freeThreshold: 150,
+  freeThreshold: 300,
   pickupDistrito: "Recojo en tienda",
   fallback: 15,
 }

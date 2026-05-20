@@ -8,7 +8,7 @@ export const revalidate = 300
 
 export const metadata: Metadata = {
   title: "Tienda Organnical — Suplementos naturales y bienestar",
-  description: "Explora nuestros suplementos naturales: gomitas de melatonina, vitaminas, green juice y más. Avalados por médicos especializados. Envío gratis desde S/150.",
+  description: "Explora nuestros suplementos naturales: gomitas de melatonina, vitaminas, green juice y más. Avalados por médicos especializados. Envío gratis desde S/300.",
   alternates: { canonical: "https://organnical.pe/tienda" },
 }
 
@@ -75,7 +75,7 @@ export default async function TiendaPage({ searchParams }: Props) {
           <h1 className="text-3xl font-black text-[#0B1D35] mb-1">Tienda</h1>
           <p className="text-zinc-500 text-sm">
             {productos.length} {productos.length === 1 ? "producto" : "productos"} disponibles
-            · Envío gratis desde S/150
+            · Envío gratis desde S/300
           </p>
         </div>
 

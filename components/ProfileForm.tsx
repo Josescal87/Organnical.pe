@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Loader2, User, Phone, CreditCard, Mail } from "lucide-react";
+import { Loader2, User, Phone, Mail } from "lucide-react";
 import { toast } from "sonner";
+import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -13,27 +14,40 @@ interface Props {
   initialData: {
     full_name: string;
     document_id: string;
+    document_type: string;
     phone: string;
   };
 }
 
 export default function ProfileForm({ userId, email, initialData }: Props) {
   const [fullName, setFullName] = useState(initialData.full_name);
-  const [documentId, setDocumentId] = useState(initialData.document_id);
+  const [docType, setDocType] = useState<DocType>(
+    (initialData.document_type as DocType) || "DNI"
+  );
+  const [docId, setDocId] = useState(initialData.document_id);
   const [phone, setPhone] = useState(initialData.phone);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setLoading(true);
 
+    if (docId.trim()) {
+      const docError = validateDocId(docType, docId.trim());
+      if (docError) {
+        toast.error(docError);
+        return;
+      }
+    }
+
+    setLoading(true);
     const supabase = createClient();
     const { error: updateError } = await supabase
       .schema("medical")
       .from("profiles")
       .update({
         full_name: fullName.trim(),
-        document_id: documentId.trim() || null,
+        document_type: docType,
+        document_id: docId.trim() || null,
         phone: phone.trim() || null,
       })
       .eq("id", userId);
@@ -83,24 +97,14 @@ export default function ProfileForm({ userId, email, initialData }: Props) {
         </div>
       </div>
 
-      {/* DNI */}
-      <div>
-        <label className="block text-xs font-semibold text-zinc-600 uppercase tracking-wide mb-1.5">
-          DNI / Documento de identidad
-        </label>
-        <div className="relative">
-          <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-300" />
-          <input
-            type="text"
-            value={documentId}
-            onChange={(e) => setDocumentId(e.target.value)}
-            placeholder="12345678"
-            maxLength={12}
-            className="w-full rounded-xl border border-zinc-200 bg-white pl-9 pr-4 py-3 text-sm text-zinc-800 placeholder-zinc-400 outline-none focus:border-[#A78BFA] focus:ring-2 focus:ring-[#A78BFA]/20 transition-all"
-          />
-        </div>
-        <p className="text-xs text-zinc-400 mt-1">Requerido para que tu médico emita recetas oficiales.</p>
-      </div>
+      {/* Document */}
+      <DocumentInput
+        docType={docType}
+        docId={docId}
+        onDocTypeChange={setDocType}
+        onDocIdChange={setDocId}
+      />
+      <p className="text-xs text-zinc-400 -mt-3">Requerido para que tu médico emita recetas oficiales.</p>
 
       {/* Phone */}
       <div>

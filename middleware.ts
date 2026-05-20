@@ -68,6 +68,14 @@ export async function middleware(request: NextRequest) {
   // La sesión se usa en los Server Components para personalización, pero no es obligatoria.
   const requiresAuth = AUTH_REQUIRED_PREFIXES.some((p) => pathname.startsWith(p))
 
+  // medicos subdomain sin sesión → login dedicado para médicos
+  if (isMedicos && !user && pathname !== "/login-medicos") {
+    const url = request.nextUrl.clone()
+    url.pathname = "/login-medicos"
+    url.searchParams.set("next", "/medicos")
+    return NextResponse.redirect(url)
+  }
+
   if (requiresAuth && !user) {
     const url = request.nextUrl.clone()
     url.pathname = "/login"
@@ -82,7 +90,6 @@ export async function middleware(request: NextRequest) {
       url.pathname = `/sami${pathname === "/" ? "" : pathname}`
       return NextResponse.rewrite(url)
     }
-    // medicos subdomain sin sesión: el guard de autenticación ya redirige a /login
     return supabaseResponse
   }
 
@@ -132,7 +139,7 @@ export async function middleware(request: NextRequest) {
   // ── Rewrite de subdominio Médicos ────────────────────────────────────────────
   // medicos.organnical.pe: /foo → /medicos/foo (interno).
   // / → /medicos (sin trailing slash para que Next.js resuelva app/medicos/page.tsx)
-  if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login") {
+  if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos") {
     const url = request.nextUrl.clone()
     url.pathname = `/medicos${pathname === "/" ? "" : pathname}`
     const rewriteResponse = NextResponse.rewrite(url)

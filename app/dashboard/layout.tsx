@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import DashboardSidebar from "@/components/DashboardSidebar";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import type { UserRole } from "@/lib/supabase/database.types";
 
 export const metadata: Metadata = {
@@ -25,6 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       <main className="flex-1 min-w-0 overflow-auto pt-14 md:pt-0">
         {children}
       </main>
+      <WhatsAppButton />
     </div>
   );
 }

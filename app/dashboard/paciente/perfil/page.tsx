@@ -6,6 +6,7 @@ import { BackLink } from "@/components/BackLink";
 import ProfileForm from "@/components/ProfileForm";
 import EHRProfileForm from "./EHRProfileForm";
 import WhatsAppOptIn from "./WhatsAppOptIn";
+import ProfileQuickActions from "@/components/ProfileQuickActions";
 
 export default async function PerfilPacientePage() {
   const supabase = await createClient();
@@ -31,23 +32,24 @@ export default async function PerfilPacientePage() {
         userId={user.id}
         email={user.email ?? ""}
         initialData={{
-          full_name:   data?.full_name   ?? "",
-          document_id: data?.document_id ?? "",
-          phone:       data?.phone       ?? "",
+          full_name:     data?.full_name     ?? "",
+          document_id:   data?.document_id   ?? "",
+          document_type: data?.document_type ?? "DNI",
+          phone:         data?.phone         ?? "",
         }}
       />
 
       <EHRProfileForm
         userId={user.id}
         initialData={{
-          birth_date:    data?.birth_date    ?? "",
-          gender:        data?.gender        ?? "",
-          blood_type:    data?.blood_type    ?? "",
-          document_type: data?.document_type ?? "DNI",
+          birth_date: data?.birth_date ?? "",
+          gender:     data?.gender     ?? "",
+          blood_type: data?.blood_type ?? "",
         }}
       />
 
       <WhatsAppOptIn userId={user.id} initial={data?.whatsapp_opt_in ?? false} />
+      <ProfileQuickActions />
     </div>
   );
 }

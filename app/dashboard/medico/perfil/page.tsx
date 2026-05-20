@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { BackLink } from "@/components/BackLink";
 import ProfileForm from "@/components/ProfileForm";
 import DoctorEHRForm from "./DoctorEHRForm";
+import ProfileQuickActions from "@/components/ProfileQuickActions";
 import { CheckCircle2, Circle, AlertTriangle } from "lucide-react";
 import Link from "next/link";
 
@@ -16,7 +17,7 @@ export default async function PerfilMedicoPage() {
   const { data } = await supabase
     .schema("medical")
     .from("profiles")
-    .select("full_name, document_id, phone, cmp, rne, specialty_label, photo_url, weekly_schedule")
+    .select("full_name, document_id, document_type, phone, cmp, rne, specialty_label, photo_url, weekly_schedule")
     .eq("id", user.id)
     .single();
 
@@ -66,9 +67,10 @@ export default async function PerfilMedicoPage() {
         userId={user.id}
         email={user.email ?? ""}
         initialData={{
-          full_name:   data?.full_name   ?? "",
-          document_id: data?.document_id ?? "",
-          phone:       data?.phone       ?? "",
+          full_name:     data?.full_name     ?? "",
+          document_id:   data?.document_id   ?? "",
+          document_type: data?.document_type ?? "DNI",
+          phone:         data?.phone         ?? "",
         }}
       />
 
@@ -80,6 +82,7 @@ export default async function PerfilMedicoPage() {
           specialty_label: data?.specialty_label ?? "",
         }}
       />
+      <ProfileQuickActions />
     </div>
   );
 }

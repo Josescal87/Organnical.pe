@@ -1,6 +1,6 @@
 // Constantes comerciales y lista de distritos para checkout.
 
-export const FREE_DELIVERY_THRESHOLD = 150
+export const FREE_DELIVERY_THRESHOLD = 300
 export const PICKUP_DISTRITO = "Recojo en tienda"
 export const DELIVERY_FALLBACK = 15
 export const MP_MIN_AMOUNT = 5

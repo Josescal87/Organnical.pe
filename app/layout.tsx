@@ -6,6 +6,7 @@ import { Toaster } from "sonner";
 import CookieBanner from "@/components/CookieBanner";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 import { CartProvider } from "@/contexts/CartContext";
+import WhatsAppButton from "@/components/WhatsAppButton";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -119,6 +120,7 @@ export default function RootLayout({
         <CartProvider>
           <ErrorBoundary>{children}</ErrorBoundary>
         </CartProvider>
+        <WhatsAppButton />
         <Toaster position="top-right" richColors closeButton />
         <CookieBanner />
         <AnalyticsScripts />

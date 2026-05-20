@@ -67,6 +67,13 @@ export default function ConsultaExpressPage() {
   // Step 2 — cuando
   const [preferredTime, setPreferredTime] = useState<PreferredTime | null>(null);
 
+  // Step 3 — cupón
+  const [couponInput, setCouponInput] = useState("");
+  const [couponApplied, setCouponApplied] = useState(false);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponLoading, setCouponLoading] = useState(false);
+  const [couponError, setCouponError] = useState<string | null>(null);
+
   // Step 3 — consentimientos + pago
   const [consentsAccepted, setConsentsAccepted] = useState(true);
   const [expandedConsent, setExpandedConsent] = useState<string | null>(null);
@@ -112,6 +119,29 @@ export default function ConsultaExpressPage() {
     if (!isAdult) errs.isAdult = "Debes confirmar que eres mayor de edad para continuar.";
     setDataErrors(errs);
     return Object.keys(errs).length === 0;
+  }
+
+  const finalPrice = Math.max(1, EXPRESS_PRICE - couponDiscount);
+
+  async function applyCoupon() {
+    if (!couponInput.trim()) return;
+    setCouponLoading(true);
+    setCouponError(null);
+    try {
+      const res = await fetch(`/api/coupons/validate?code=${encodeURIComponent(couponInput.trim())}`);
+      const data = await res.json() as { valid: boolean; discount?: number; error?: string };
+      if (data.valid && data.discount) {
+        setCouponDiscount(data.discount);
+        setCouponApplied(true);
+        setCouponError(null);
+      } else {
+        setCouponError(data.error ?? "Código no válido");
+      }
+    } catch {
+      setCouponError("Error al validar el código. Intenta de nuevo.");
+    } finally {
+      setCouponLoading(false);
+    }
   }
 
   const stepIndex = { datos: 0, cuando: 1, pago: 2, done: 3 };
@@ -329,11 +359,61 @@ export default function ConsultaExpressPage() {
                   {TIME_OPTIONS.find((t) => t.id === preferredTime)?.label}
                 </span>
               </div>
+              {couponApplied && (
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-500">Descuento</span>
+                  <span className="font-semibold text-emerald-600">− S/ {couponDiscount}</span>
+                </div>
+              )}
               <div className="border-t border-zinc-100 pt-3 flex justify-between">
                 <span className="text-sm font-semibold text-zinc-600">Total</span>
-                <span className="font-black text-lg text-[#0B1D35]">S/ {EXPRESS_PRICE}</span>
+                <div className="text-right">
+                  {couponApplied && (
+                    <span className="text-sm text-zinc-400 line-through mr-2">S/ {EXPRESS_PRICE}</span>
+                  )}
+                  <span className="font-black text-lg text-[#0B1D35]">S/ {finalPrice}</span>
+                </div>
               </div>
             </div>
+
+            {/* Cupón de descuento */}
+            {!couponApplied ? (
+              <div className="bg-white rounded-2xl border border-zinc-100 p-5 shadow-sm">
+                <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-3">¿Tienes un código de descuento?</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponInput}
+                    onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(null); }}
+                    onKeyDown={(e) => { if (e.key === "Enter") applyCoupon(); }}
+                    placeholder="Ej: EXPRESSVIP"
+                    className="flex-1 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
+                  />
+                  <button
+                    onClick={applyCoupon}
+                    disabled={couponLoading || !couponInput.trim()}
+                    className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white transition-all disabled:opacity-40"
+                    style={{ background: TEAL }}
+                  >
+                    {couponLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Aplicar"}
+                  </button>
+                </div>
+                {couponError && <p className="text-xs text-rose-500 mt-2">{couponError}</p>}
+              </div>
+            ) : (
+              <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-2xl px-5 py-3.5">
+                <div className="flex items-center gap-2 text-sm text-emerald-700 font-semibold">
+                  <CheckCircle className="w-4 h-4" />
+                  Código <span className="font-mono">{couponInput}</span> aplicado — S/ {couponDiscount} de descuento
+                </div>
+                <button
+                  onClick={() => { setCouponApplied(false); setCouponDiscount(0); setCouponInput(""); }}
+                  className="text-xs text-emerald-600 hover:text-emerald-800 underline"
+                >
+                  Quitar
+                </button>
+              </div>
+            )}
 
             {/* Consentimientos */}
             <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 space-y-3">
@@ -370,7 +450,7 @@ export default function ConsultaExpressPage() {
                   className="mt-0.5 w-4 h-4 rounded accent-teal-600"
                 />
                 <span className="text-xs text-amber-800">
-                  He leído y acepto los consentimientos informados. Entiendo que la Dra me contactará por WhatsApp y que el pago de S/ {EXPRESS_PRICE} es por la consulta de orientación.
+                  He leído y acepto los consentimientos informados. Entiendo que la Dra me contactará por WhatsApp y que el pago de S/ {finalPrice} es por la consulta de orientación.
                 </span>
               </label>
             </div>
@@ -385,9 +465,10 @@ export default function ConsultaExpressPage() {
             {!paying ? (
               <div className={!consentsAccepted ? "opacity-50 pointer-events-none" : ""}>
                 <Payment
-                  initialization={{ amount: EXPRESS_PRICE }}
+                  key={finalPrice}
+                  initialization={{ amount: finalPrice }}
                   customization={{
-                    paymentMethods: { creditCard: "all", debitCard: "all" },
+                    paymentMethods: { creditCard: "all", debitCard: "all", maxInstallments: 1 },
                     visual: {
                       style: {
                         customVariables: {
@@ -419,6 +500,7 @@ export default function ConsultaExpressPage() {
                           preferredTime,
                           consentsAcceptedAt: new Date().toISOString(),
                           consentsSnapshot: CONSENT_TEXTS,
+                          couponCode: couponApplied ? couponInput : undefined,
                         }),
                       });
                       const data = await res.json();
@@ -426,7 +508,7 @@ export default function ConsultaExpressPage() {
                       if (data.status !== "approved") throw new Error("Pago no aprobado");
                       setConsultationId(data.consultationId);
                       window.gtag?.("event", "consulta_express_pagada", {
-                        value: EXPRESS_PRICE,
+                        value: finalPrice,
                         currency: "PEN",
                         transaction_id: data.consultationId,
                       });

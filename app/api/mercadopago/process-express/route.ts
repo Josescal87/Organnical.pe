@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       preferredTime: "asap" | "today" | "tomorrow";
       consentsAcceptedAt: string;
       consentsSnapshot: Record<string, string>;
+      couponCode?: string;
     } & Record<string, unknown>;
 
     if (!patientName || !patientPhone || !patientDocumentNumber || !preferredTime) {
@@ -48,7 +49,18 @@ export async function POST(req: NextRequest) {
     }
 
     // Price always from env — never trust client
-    const amount = Number(process.env.EXPRESS_PRICE ?? 30);
+    const basePrice = Number(process.env.EXPRESS_PRICE ?? 30);
+    let amount = basePrice;
+    let appliedCoupon: string | null = null;
+
+    if (couponCode) {
+      const validCode = process.env.EXPRESS_COUPON_CODE?.toUpperCase().trim();
+      const discount = Number(process.env.EXPRESS_COUPON_DISCOUNT ?? 0);
+      if (couponCode.toUpperCase().trim() === validCode && discount > 0) {
+        amount = Math.max(1, basePrice - discount);
+        appliedCoupon = couponCode.toUpperCase().trim();
+      }
+    }
     const doctorId = process.env.EXPRESS_DOCTOR_ID ?? null;
 
     const mp = new MercadoPagoConfig({ accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!.trim() });
@@ -110,6 +122,7 @@ export async function POST(req: NextRequest) {
         consents_snapshot:       consentsSnapshot,
         mp_payment_id:           paymentId,
         amount_paid:             amount,
+        coupon_code:             appliedCoupon,
         status:                  "paid",
       })
       .select("id")

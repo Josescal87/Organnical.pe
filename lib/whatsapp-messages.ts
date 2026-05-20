@@ -4,7 +4,7 @@ export const WA_NUMBER = "51952476574"
 const PATH_MESSAGES: [string, string][] = [
   ["/dashboard/paciente/recetas",    "Hola, soy paciente de Organnical y tengo una pregunta sobre mi receta médica"],
   ["/dashboard/paciente/citas",      "Hola, soy paciente de Organnical y tengo una consulta sobre mi cita agendada"],
-  ["/dashboard/paciente/catalogo",   "Hola, soy paciente de Organnical y quiero comprar los productos de mi receta, ¿me pueden guiar?"],
+  ["/dashboard/paciente/catalogo",   "Hola, soy paciente de Organnical y quiero consultar sobre los productos de mi tratamiento, ¿me pueden guiar?"],
   ["/dashboard/paciente/historial",  "Hola, soy paciente de Organnical y quiero revisar mi historial médico"],
   ["/dashboard/paciente/perfil",     "Hola, necesito ayuda con mi perfil de paciente en Organnical"],
   ["/dashboard/paciente/consentimiento", "Hola, tengo una duda sobre los consentimientos médicos de Organnical"],
@@ -24,7 +24,7 @@ const PATH_MESSAGES: [string, string][] = [
 ]
 
 // Home / fallback
-const DEFAULT_MESSAGE = "Hola, vi la web de Organnical y me gustaría saber más sobre sus tratamientos con cannabis medicinal"
+const DEFAULT_MESSAGE = "Hola, vi la web de Organnical y me gustaría saber más sobre sus servicios de salud"
 
 export function getWaMessage(pathname: string): string {
   for (const [prefix, msg] of PATH_MESSAGES) {

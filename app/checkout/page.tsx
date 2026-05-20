@@ -1,7 +1,5 @@
 "use client"
 import { useState, useEffect, useRef } from "react"
-import { useRouter } from "next/navigation"
-import dynamic from "next/dynamic"
 import { toast } from "sonner"
 import { useCart } from "@/contexts/CartContext"
 import { createClient } from "@/lib/supabase/client"
@@ -15,11 +13,6 @@ import Link from "next/link"
 import DistritoCombobox from "@/components/DistritoCombobox"
 import type { DireccionEntrega } from "@/lib/types"
 
-const MercadoPagoBrick = dynamic(
-  () => import("@/components/MercadoPagoBrick"),
-  { ssr: false, loading: () => <BrickSkeleton /> }
-)
-
 type FormData = DireccionEntrega
 
 const empty: FormData = {
@@ -31,12 +24,16 @@ const ERR_CELULAR = "El celular debe empezar con 9 y tener 9 dígitos en total."
 
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
-  const router = useRouter()
   const [form, setForm] = useState<FormData>(empty)
-  const [step, setStep] = useState<"form" | "payment">("form")
-  const [preference, setPreference] = useState<{ ordenId: string; preferenceId: string } | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get("error") === "pago_fallido") {
+      setError("Tu pago fue rechazado o cancelado. Por favor intenta de nuevo.")
+    }
+  }, [])
   const [fieldErrors, setFieldErrors] = useState<{ celular?: string; dni?: string }>({})
   const [rates, setRates] = useState<Record<string, number> | null>(null)
   const [ratesError, setRatesError] = useState(false)
@@ -206,7 +203,6 @@ export default function CheckoutPage() {
         setLoading(false)
         return
       }
-      setPreference({ ordenId: data.orden_id, preferenceId: data.preference_id })
       trackAddPaymentInfo(items, typeof data.total === "number" ? data.total : total)
 
       const saved = defaultAddressRef.current
@@ -221,115 +217,96 @@ export default function CheckoutPage() {
           duration: 8000,
         })
       }
-      setStep("payment")
+
+      // Redirigir a Checkout Pro (página hosteada por MercadoPago)
+      window.location.href = data.init_point
     } catch {
       setError("Error de conexión. Inténtalo de nuevo.")
-    } finally {
       setLoading(false)
     }
   }
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-10">
-      <h1 className="text-2xl font-bold text-gray-900 mb-8">
-        {step === "form" ? "Finalizar compra" : "Pago seguro"}
-      </h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-8">Finalizar compra</h1>
       <div className="flex flex-col lg:flex-row gap-8">
         <div className="flex-1">
-          {step === "form" ? (
-            <form onSubmit={handleFormSubmit} className="space-y-6">
-              <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
-                <h2 className="font-semibold text-gray-800">Datos personales</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <Input label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} />
-                  <Input label="Apellido *" name="apellido" value={form.apellido} onChange={handleChange} />
-                </div>
-                <Input label="Email *" name="email" type="email" value={form.email} onChange={handleChange} />
-                <Input label="Celular *" name="celular" type="tel" value={form.celular} onChange={handleChange} onBlur={handleBlur} error={fieldErrors.celular} placeholder="9XXXXXXXX" inputMode="numeric" maxLength={9} />
-                <div>
-                  <DocumentInput
-                    docType={(form.doc_type as DocType) || "DNI"}
-                    docId={form.dni}
-                    onDocTypeChange={(t) => setForm((f) => ({ ...f, doc_type: t, dni: "" }))}
-                    onDocIdChange={(v) => setForm((f) => ({ ...f, dni: v }))}
-                    error={fieldErrors.dni}
-                  />
-                  <p className="text-xs text-gray-400 mt-1">Opcional — para incluir en tu boleta.</p>
-                </div>
-              </section>
-
-              <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
-                <h2 className="font-semibold text-gray-800">Modalidad de entrega</h2>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, distrito: PICKUP_DISTRITO }))}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
-                      pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
-                    }`}
-                  >
-                    <Store size={15} />
-                    Recojo en tienda
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { if (pickup) setForm((f) => ({ ...f, distrito: "" })) }}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
-                      !pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
-                    }`}
-                  >
-                    Envío a domicilio
-                  </button>
-                </div>
-                {!pickup && (
-                <div>
-                  <label className="text-xs font-medium text-gray-500 block mb-1" htmlFor="distrito">Distrito *</label>
-                  <DistritoCombobox id="distrito" value={form.distrito} onChange={(next) => setForm((f) => ({ ...f, distrito: next }))} required />
-                </div>
-                )}
-                {pickup ? (
-                  <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-100 rounded-xl">
-                    <Store size={18} className="text-purple-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-semibold text-purple-800">Recojo en tienda — Sin costo de envío</p>
-                      <p className="text-purple-700 text-xs mt-1">Te contactamos por WhatsApp con la dirección y horarios de recojo después del pago.</p>
-                    </div>
-                  </div>
-                ) : (
-                  <>
-                    <div>
-                      <label className="text-xs font-medium text-gray-500 block mb-1">Dirección *</label>
-                      <textarea name="direccion" value={form.direccion} onChange={handleChange} rows={2} placeholder="Av. / Jr. / Calle, número, piso/dpto" className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" required />
-                    </div>
-                    <Input label="Referencia" name="referencia" value={form.referencia} onChange={handleChange} placeholder="Ej. Frente al parque" />
-                  </>
-                )}
-              </section>
-
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{error}</div>
-              )}
-              <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 text-white py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
-                {loading ? "Preparando pago..." : <><CreditCard size={16} /> Continuar al pago {formatPrice(total)}</>}
-              </button>
-            </form>
-          ) : (
-            <div className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
-              {error && <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{error}</div>}
-              {preference && (
-                <MercadoPagoBrick
-                  amount={total}
-                  preferenceId={preference.preferenceId}
-                  ordenId={preference.ordenId}
-                  payer={{ firstName: form.nombre, lastName: form.apellido, email: form.email }}
-                  onApproved={() => router.push(`/checkout/success?orden_id=${preference.ordenId}`)}
-                  onPending={() => router.push(`/checkout/success?orden_id=${preference.ordenId}&pending=1`)}
-                  onBack={() => { setStep("form"); setPreference(null); setError(null) }}
-                  onErrorMessage={(msg) => setError(msg)}
+          <form onSubmit={handleFormSubmit} className="space-y-6">
+            <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="font-semibold text-gray-800">Datos personales</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <Input label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} />
+                <Input label="Apellido *" name="apellido" value={form.apellido} onChange={handleChange} />
+              </div>
+              <Input label="Email *" name="email" type="email" value={form.email} onChange={handleChange} />
+              <Input label="Celular *" name="celular" type="tel" value={form.celular} onChange={handleChange} onBlur={handleBlur} error={fieldErrors.celular} placeholder="9XXXXXXXX" inputMode="numeric" maxLength={9} />
+              <div>
+                <DocumentInput
+                  docType={(form.doc_type as DocType) || "DNI"}
+                  docId={form.dni}
+                  onDocTypeChange={(t) => setForm((f) => ({ ...f, doc_type: t, dni: "" }))}
+                  onDocIdChange={(v) => setForm((f) => ({ ...f, dni: v }))}
+                  error={fieldErrors.dni}
                 />
+                <p className="text-xs text-gray-400 mt-1">Opcional — para incluir en tu boleta.</p>
+              </div>
+            </section>
+
+            <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="font-semibold text-gray-800">Modalidad de entrega</h2>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={() => setForm((f) => ({ ...f, distrito: PICKUP_DISTRITO }))}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                    pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
+                >
+                  <Store size={15} />
+                  Recojo en tienda
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { if (pickup) setForm((f) => ({ ...f, distrito: "" })) }}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                    !pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
+                  }`}
+                >
+                  Envío a domicilio
+                </button>
+              </div>
+              {!pickup && (
+              <div>
+                <label className="text-xs font-medium text-gray-500 block mb-1" htmlFor="distrito">Distrito *</label>
+                <DistritoCombobox id="distrito" value={form.distrito} onChange={(next) => setForm((f) => ({ ...f, distrito: next }))} required />
+              </div>
               )}
-            </div>
-          )}
+              {pickup ? (
+                <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-100 rounded-xl">
+                  <Store size={18} className="text-purple-600 flex-shrink-0 mt-0.5" />
+                  <div className="text-sm">
+                    <p className="font-semibold text-purple-800">Recojo en tienda — Sin costo de envío</p>
+                    <p className="text-purple-700 text-xs mt-1">Te contactamos por WhatsApp con la dirección y horarios de recojo después del pago.</p>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <label className="text-xs font-medium text-gray-500 block mb-1">Dirección *</label>
+                    <textarea name="direccion" value={form.direccion} onChange={handleChange} rows={2} placeholder="Av. / Jr. / Calle, número, piso/dpto" className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 resize-none" required />
+                  </div>
+                  <Input label="Referencia" name="referencia" value={form.referencia} onChange={handleChange} placeholder="Ej. Frente al parque" />
+                </>
+              )}
+            </section>
+
+            {error && (
+              <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{error}</div>
+            )}
+            <button type="submit" disabled={loading} className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:opacity-50 text-white py-3 rounded-xl font-semibold transition-all flex items-center justify-center gap-2">
+              {loading ? "Preparando pago..." : <><CreditCard size={16} /> Ir a pagar {formatPrice(total)}</>}
+            </button>
+          </form>
         </div>
 
         <aside className="lg:w-80 h-fit space-y-4 bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
@@ -357,34 +334,12 @@ export default function CheckoutPage() {
               </div>
             </div>
           </div>
-          {step === "form" && (
-            <>
-              <p className="text-xs text-gray-400 text-center">Yape · Plin · Visa · Mastercard · Amex</p>
-              <p className="text-xs text-center text-gray-400 flex items-center justify-center gap-1">
-                <Lock size={11} /> Pago procesado de forma segura
-              </p>
-            </>
-          )}
-          {step === "payment" && form.nombre && (
-            <div className="text-xs text-gray-500 space-y-1 border-t border-gray-100 pt-3">
-              <p className="font-medium text-gray-700">{form.nombre} {form.apellido}</p>
-              <p>{form.distrito}</p>
-              <p className="truncate">{form.direccion}</p>
-            </div>
-          )}
+          <p className="text-xs text-gray-400 text-center">Yape · Plin · Visa · Mastercard · Amex</p>
+          <p className="text-xs text-center text-gray-400 flex items-center justify-center gap-1">
+            <Lock size={11} /> Pago procesado de forma segura
+          </p>
         </aside>
       </div>
-    </div>
-  )
-}
-
-function BrickSkeleton() {
-  return (
-    <div className="space-y-3 animate-pulse">
-      <div className="h-10 bg-gray-100 rounded-lg" />
-      <div className="h-10 bg-gray-100 rounded-lg" />
-      <div className="h-10 bg-gray-100 rounded-lg" />
-      <div className="h-12 bg-gray-200 rounded-xl" />
     </div>
   )
 }

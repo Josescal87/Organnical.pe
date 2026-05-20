@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import {
   Package, Calendar, FileText, MapPin, Settings,
   ShoppingBag, CalendarPlus, FileDown, Clock, CheckCircle, AlertCircle,
-  ChevronRight,
+  ChevronRight, LogOut,
 } from "lucide-react"
 import { toast } from "sonner"
 import { createClient } from "@/lib/supabase/client"
@@ -59,8 +59,15 @@ interface Props {
 
 export default function CuentaDashboard({ nombre, email, ordenes, citas, recetas, direccionGuardada }: Props) {
   const [tab, setTab] = useState<Tab>("resumen")
+  const router = useRouter()
 
   const firstName = nombre.split(" ")[0] || nombre
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/")
+  }
   const recetasVigentes = recetas.filter((r) => new Date(r.valid_until) > new Date())
 
   const TABS: { id: Tab; label: string; icon: typeof Package }[] = [
@@ -95,6 +102,13 @@ export default function CuentaDashboard({ nombre, email, ordenes, citas, recetas
               >
                 <CalendarPlus size={15} /> Agendar consulta
               </Link>
+              <button
+                onClick={handleLogout}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl border border-red-200 text-red-600 text-sm font-semibold hover:bg-red-50 transition-colors"
+                title="Cerrar sesión"
+              >
+                <LogOut size={15} /> Salir
+              </button>
             </div>
           </div>
 

@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { initMercadoPago, Payment } from "@mercadopago/sdk-react";
 import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput";
 import { CONSENT_TEXTS } from "@/app/dashboard/paciente/consentimiento/constants";
 import {
@@ -15,8 +13,6 @@ import Image from "next/image";
 declare global {
   interface Window { gtag?: (...args: unknown[]) => void }
 }
-
-initMercadoPago(process.env.NEXT_PUBLIC_MERCADOPAGO_PUBLIC_KEY!, { locale: "es-PE" });
 
 type Step = "datos" | "cuando" | "pago" | "done";
 type PreferredTime = "asap" | "today" | "tomorrow";
@@ -46,7 +42,6 @@ function normalizePhone(raw: string): string {
 }
 
 export default function ConsultaExpressPage() {
-  const router = useRouter();
   const [step, setStep] = useState<Step>("datos");
 
   // Step 1 — datos
@@ -80,7 +75,7 @@ export default function ConsultaExpressPage() {
   const [payError, setPayError] = useState<string | null>(null);
   const [paying, setPaying] = useState(false);
 
-  // Done
+  // Done (kept for WhatsApp fallback in done step)
   const [consultationId, setConsultationId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -461,76 +456,53 @@ export default function ConsultaExpressPage() {
               </div>
             )}
 
-            {/* MercadoPago Brick */}
-            {!paying ? (
-              <div className={!consentsAccepted ? "opacity-50 pointer-events-none" : ""}>
-                <Payment
-                  key={finalPrice}
-                  initialization={{ amount: finalPrice }}
-                  customization={{
-                    paymentMethods: { creditCard: "all", debitCard: "all", maxInstallments: 1 },
-                    visual: {
-                      style: {
-                        customVariables: {
-                          baseColor: "#0B5C5E",
-                          baseColorFirstVariant: "#0E9F7E",
-                          baseColorSecondVariant: "#38BDF8",
-                        },
-                      },
-                    },
-                  }}
-                  onSubmit={async ({ formData }) => {
-                    if (!consentsAccepted) {
-                      setPayError("Debes aceptar los consentimientos para continuar.");
-                      return;
-                    }
-                    setPaying(true);
-                    setPayError(null);
-                    try {
-                      const res = await fetch("/api/mercadopago/process-express", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          ...formData,
-                          patientName: name,
-                          patientPhone: normalizePhone(phone),
-                          patientDocumentType: docType,
-                          patientDocumentNumber: docId,
-                          motivo,
-                          preferredTime,
-                          consentsAcceptedAt: new Date().toISOString(),
-                          consentsSnapshot: CONSENT_TEXTS,
-                          couponCode: couponApplied ? couponInput : undefined,
-                        }),
-                      });
-                      const data = await res.json();
-                      if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
-                      if (data.status !== "approved") throw new Error("Pago no aprobado");
-                      setConsultationId(data.consultationId);
-                      window.gtag?.("event", "consulta_express_pagada", {
-                        value: finalPrice,
-                        currency: "PEN",
-                        transaction_id: data.consultationId,
-                      });
-                      setStep("done");
-                    } catch (err) {
-                      setPayError(err instanceof Error ? err.message : "Error al procesar el pago.");
-                      setPaying(false);
-                    }
-                  }}
-                  onError={(err) => {
-                    console.error("MP Express brick error:", err);
-                    setPayError("Error en el formulario de pago. Intenta de nuevo.");
-                    setPaying(false);
-                  }}
-                />
-              </div>
-            ) : (
-              <div className="flex items-center justify-center gap-3 py-8 text-zinc-500">
-                <Loader2 className="w-5 h-5 animate-spin" />
-                <span className="text-sm">Procesando tu pago...</span>
-              </div>
-            )}
+            <button
+              disabled={paying || !consentsAccepted}
+              onClick={async () => {
+                if (!consentsAccepted) {
+                  setPayError("Debes aceptar los consentimientos para continuar.");
+                  return;
+                }
+                setPaying(true);
+                setPayError(null);
+                try {
+                  const res = await fetch("/api/mercadopago/create-express-preference", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                      patientName: name,
+                      patientPhone: normalizePhone(phone),
+                      patientDocumentType: docType,
+                      patientDocumentNumber: docId,
+                      motivo,
+                      preferredTime,
+                      consentsAcceptedAt: new Date().toISOString(),
+                      consentsSnapshot: CONSENT_TEXTS,
+                      couponCode: couponApplied ? couponInput : undefined,
+                    }),
+                  });
+                  const data = await res.json() as { init_point?: string; error?: string };
+                  if (!res.ok || !data.init_point) {
+                    throw new Error(data.error ?? "Error al iniciar el pago");
+                  }
+                  window.location.href = data.init_point;
+                } catch (err) {
+                  setPayError(err instanceof Error ? err.message : "Error al iniciar el pago.");
+                  setPaying(false);
+                }
+              }}
+              className="w-full flex items-center justify-center gap-2 rounded-xl py-4 text-sm font-bold text-white transition-all hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+              style={{ background: paying ? "#9CA3AF" : G }}
+            >
+              {paying ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Iniciando pago…</>
+              ) : (
+                <>Pagar S/ {finalPrice} con MercadoPago</>
+              )}
+            </button>
+            <p className="text-center text-xs text-zinc-400">
+              Serás redirigido a MercadoPago para completar el pago de forma segura.
+            </p>
           </div>
         )}
 

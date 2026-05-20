@@ -108,7 +108,7 @@ export default function Navbar() {
           <button
             onClick={() => setCartOpen(true)}
             aria-label={`Carrito${totalItems > 0 ? ` (${totalItems})` : ""}`}
-            className="hidden sm:flex items-center justify-center relative text-white/35 hover:text-white/70 transition-colors"
+            className="flex items-center justify-center relative text-white/35 hover:text-white/70 transition-colors"
           >
             <ShoppingCart className="w-4 h-4" />
             {totalItems > 0 && (
@@ -179,6 +179,13 @@ export default function Navbar() {
           >
             <Zap className="w-4 h-4" /> Express S/30 — orientación hoy
           </Link>
+          <button
+            onClick={() => { setMenuOpen(false); setCartOpen(true); }}
+            className="py-3 text-sm font-medium text-white/60 border-b border-white/[0.06] flex items-center gap-2 hover:text-white/90 transition-colors w-full text-left"
+          >
+            <ShoppingCart className="w-4 h-4" />
+            Carrito{totalItems > 0 && <span className="ml-1 rounded-full bg-[#A78BFA] px-1.5 py-0.5 text-[10px] font-bold text-white leading-none">{totalItems}</span>}
+          </button>
           {isLoggedIn ? (
             <Link
               href="/cuenta"

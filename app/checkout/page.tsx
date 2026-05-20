@@ -8,7 +8,7 @@ import { isPickup, MP_MIN_AMOUNT, FREE_DELIVERY_THRESHOLD, DELIVERY_FALLBACK, PI
 import { trackBeginCheckout, trackAddPaymentInfo } from "@/lib/analytics"
 import { isValidCelular, sanitizeDigits } from "@/lib/validators"
 import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput"
-import { ShoppingCart, Lock, CreditCard, Store } from "lucide-react"
+import { ShoppingCart, Lock, CreditCard, Store, Tag, CheckCircle2, X } from "lucide-react"
 import Link from "next/link"
 import DistritoCombobox from "@/components/DistritoCombobox"
 import type { DireccionEntrega } from "@/lib/types"
@@ -22,6 +22,12 @@ const empty: FormData = {
 
 const ERR_CELULAR = "El celular debe empezar con 9 y tener 9 dígitos en total."
 
+type CuponState =
+  | { status: "idle" }
+  | { status: "loading" }
+  | { status: "applied"; descuento: number; descripcion: string; code: string }
+  | { status: "error"; message: string }
+
 export default function CheckoutPage() {
   const { items, subtotal } = useCart()
   const [form, setForm] = useState<FormData>(empty)
@@ -34,11 +40,15 @@ export default function CheckoutPage() {
       setError("Tu pago fue rechazado o cancelado. Por favor intenta de nuevo.")
     }
   }, [])
+
   const [fieldErrors, setFieldErrors] = useState<{ celular?: string; dni?: string }>({})
   const [rates, setRates] = useState<Record<string, number> | null>(null)
   const [ratesError, setRatesError] = useState(false)
   const defaultAddressRef = useRef<{ distrito: string; direccion: string; referencia: string } | null>(null)
   const toastOfferedRef = useRef(false)
+
+  const [couponInput, setCouponInput] = useState("")
+  const [cupon, setCupon] = useState<CuponState>({ status: "idle" })
 
   useEffect(() => {
     let cancelled = false
@@ -122,8 +132,32 @@ export default function CheckoutPage() {
   } else {
     deliveryCost = DELIVERY_FALLBACK
   }
-  const total = subtotal + deliveryCost
+
+  const descuento = cupon.status === "applied" ? cupon.descuento : 0
+  const total = Math.max(MP_MIN_AMOUNT, subtotal + deliveryCost - descuento)
   const showCalculando = !pickup && Boolean(form.distrito) && !ratesLoaded && subtotal < FREE_DELIVERY_THRESHOLD
+
+  async function handleCouponApply() {
+    const code = couponInput.trim()
+    if (!code) return
+    setCupon({ status: "loading" })
+    try {
+      const params = new URLSearchParams({ code, subtotal: String(subtotal) })
+      const res = await fetch(`/api/cupones/validate?${params.toString()}`)
+      const data = await res.json() as { valid: boolean; error?: string; descuento?: number; descripcion?: string }
+      if (data.valid) {
+        setCupon({ status: "applied", descuento: data.descuento!, descripcion: data.descripcion!, code: code.toUpperCase() })
+      } else {
+        setCupon({ status: "error", message: data.error ?? "Código no válido" })
+      }
+    } catch {
+      setCupon({ status: "error", message: "Error al validar el cupón. Inténtalo de nuevo." })
+    }
+  }
+
+  function handleRemoveCoupon() {
+    setCupon({ status: "idle" })
+  }
 
   if (items.length === 0) {
     return (
@@ -184,7 +218,7 @@ export default function CheckoutPage() {
         return
       }
     }
-    if (total < MP_MIN_AMOUNT) {
+    if (subtotal + deliveryCost < MP_MIN_AMOUNT) {
       setError(`El monto mínimo para procesar el pago es S/ ${MP_MIN_AMOUNT.toFixed(2)}.`)
       setLoading(false)
       return
@@ -195,7 +229,11 @@ export default function CheckoutPage() {
       const res = await fetch("/api/mp/create-preference", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ items: itemsPayload, direccion: form }),
+        body: JSON.stringify({
+          items: itemsPayload,
+          direccion: form,
+          couponCode: cupon.status === "applied" ? cupon.code : undefined,
+        }),
       })
       const data = await res.json()
       if (!res.ok) {
@@ -218,7 +256,6 @@ export default function CheckoutPage() {
         })
       }
 
-      // Redirigir a Checkout Pro (página hosteada por MercadoPago)
       window.location.href = data.init_point
     } catch {
       setError("Error de conexión. Inténtalo de nuevo.")
@@ -318,6 +355,61 @@ export default function CheckoutPage() {
                 <span className="font-medium">{formatPrice((item.producto.precio_oferta ?? item.producto.precio_publico) * item.cantidad)}</span>
               </div>
             ))}
+
+            {/* Cupón de descuento */}
+            <div className="border-t border-gray-100 pt-3 space-y-2">
+              <p className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                <Tag className="w-3.5 h-3.5" /> Código de descuento
+              </p>
+              {cupon.status === "applied" ? (
+                <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                  <div className="flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                    <div>
+                      <p className="text-xs font-bold text-emerald-700">{cupon.code}</p>
+                      <p className="text-[11px] text-emerald-600">{cupon.descripcion}</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveCoupon}
+                    className="text-emerald-400 hover:text-emerald-600 transition-colors ml-2 flex-shrink-0"
+                    aria-label="Quitar cupón"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-1.5">
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={couponInput}
+                      onChange={(e) => {
+                        setCouponInput(e.target.value.toUpperCase())
+                        if (cupon.status === "error") setCupon({ status: "idle" })
+                      }}
+                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleCouponApply() } }}
+                      placeholder="CODIGO10"
+                      maxLength={30}
+                      className="flex-1 min-w-0 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 uppercase placeholder:normal-case"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => void handleCouponApply()}
+                      disabled={cupon.status === "loading" || !couponInput.trim()}
+                      className="px-3 py-2 rounded-xl bg-purple-100 text-purple-700 text-sm font-semibold hover:bg-purple-200 disabled:opacity-50 transition-all whitespace-nowrap"
+                    >
+                      {cupon.status === "loading" ? "..." : "Aplicar"}
+                    </button>
+                  </div>
+                  {cupon.status === "error" && (
+                    <p className="text-[11px] text-red-600">{cupon.message}</p>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="border-t border-gray-100 pt-2 space-y-1.5">
               <div className="flex justify-between text-gray-600">
                 <span>Envío</span>
@@ -327,10 +419,16 @@ export default function CheckoutPage() {
                   <span>{deliveryCost === 0 ? (pickup ? "Gratis (recojo)" : "Gratis") : formatPrice(deliveryCost)}</span>
                 )}
               </div>
+              {cupon.status === "applied" && (
+                <div className="flex justify-between text-emerald-600 font-medium">
+                  <span>Descuento</span>
+                  <span>−{formatPrice(cupon.descuento)}</span>
+                </div>
+              )}
               {ratesError && <p className="text-[11px] text-amber-600">Tarifa estimada — el total final se confirma al pagar.</p>}
               <div className="flex justify-between font-bold text-gray-900 text-base">
                 <span>Total</span>
-                <span>{showCalculando ? formatPrice(subtotal) + " + envío" : formatPrice(total)}</span>
+                <span>{showCalculando ? formatPrice(subtotal - descuento) + " + envío" : formatPrice(total)}</span>
               </div>
             </div>
           </div>

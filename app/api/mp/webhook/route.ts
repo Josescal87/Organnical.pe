@@ -70,7 +70,7 @@ export async function POST(request: Request) {
 
     const { data: orden, error: ordenError } = await supabase
       .from("ordenes_tienda")
-      .select("id, estado, total, items, cliente_snapshot, delivery")
+      .select("id, estado, total, items, cliente_snapshot, delivery, cupon_codigo")
       .eq("id", ordenId)
       .single()
 
@@ -108,6 +108,12 @@ export async function POST(request: Request) {
 
     if (!updated) {
       return NextResponse.json({ ok: true, msg: "Ya procesado" })
+    }
+
+    // Incrementar uso del cupón (non-fatal, fire-and-forget)
+    if (orden.cupon_codigo) {
+      void supabase.rpc("increment_cupon_uso", { p_code: orden.cupon_codigo })
+        .then(({ error }) => { if (error) console.error("webhook: increment cupon error:", error) })
     }
 
     try {

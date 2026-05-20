@@ -6,6 +6,7 @@ import { calculateDeliveryCostAsync } from "@/lib/delivery-rates"
 import { rateLimit, getClientIp, tooManyRequestsResponse } from "@/lib/rate-limit"
 import { getStockBySkus, validateStock } from "@/lib/inventory"
 import { isValidCelular, isValidDni } from "@/lib/validators"
+import { validarCupon } from "@/lib/cupones"
 import type { CartItem, DireccionEntrega, PublicProduct } from "@/lib/types"
 
 interface CartItemInput {
@@ -22,9 +23,10 @@ export async function POST(request: Request) {
     if (!rl.ok) return tooManyRequestsResponse(rl.reset)
 
     const body = await request.json()
-    const { items, direccion } = body as {
+    const { items, direccion, couponCode } = body as {
       items: CartItemInput[]
       direccion: DireccionEntrega
+      couponCode?: string
     }
 
     if (!Array.isArray(items) || items.length === 0) {
@@ -125,9 +127,21 @@ export async function POST(request: Request) {
       return acc + unitPrice * item.cantidad
     }, 0)
     const deliveryCost = await calculateDeliveryCostAsync(subtotal, direccion.distrito)
-    const total = subtotal + deliveryCost
 
-    if (total < MP_MIN_AMOUNT) {
+    // Validar cupón server-side (nunca confiar en el cliente)
+    let descuento = 0
+    let cuponCodigo: string | null = null
+    if (couponCode?.trim()) {
+      const cuponResult = await validarCupon(supabase, couponCode, subtotal)
+      if (cuponResult.valid) {
+        descuento = cuponResult.descuento
+        cuponCodigo = couponCode.trim().toUpperCase()
+      }
+    }
+
+    const total = Math.max(MP_MIN_AMOUNT, subtotal + deliveryCost - descuento)
+
+    if (subtotal + deliveryCost < MP_MIN_AMOUNT) {
       return NextResponse.json(
         { error: `Monto total (S/ ${total.toFixed(2)}) es menor al mínimo aceptado por la pasarela (S/ ${MP_MIN_AMOUNT.toFixed(2)}).` },
         { status: 400 }
@@ -157,7 +171,9 @@ export async function POST(request: Request) {
         items: cartItems as unknown as Record<string, unknown>[],
         subtotal,
         delivery: deliveryCost,
+        descuento,
         total,
+        cupon_codigo: cuponCodigo,
         estado: "pendiente",
         direccion: direccion as unknown as Record<string, unknown>,
       })
@@ -169,7 +185,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Error al crear la orden" }, { status: 500 })
     }
 
-    const preference = await createPreference(cartItems, direccion, orden.id, deliveryCost)
+    const preference = await createPreference(cartItems, direccion, orden.id, deliveryCost, descuento)
 
     await supabase
       .from("ordenes_tienda")
@@ -182,6 +198,7 @@ export async function POST(request: Request) {
       init_point: preference.init_point,
       subtotal,
       delivery: deliveryCost,
+      descuento,
       total,
     })
     response.cookies.set({

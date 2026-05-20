@@ -9,13 +9,14 @@ export async function createPreference(
   items: CartItem[],
   direccion: DireccionEntrega,
   ordenId: string,
-  deliveryCost: number
+  deliveryCost: number,
+  discountAmount = 0
 ) {
   const siteUrl = (process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe").trim()
   const isLocalhost = siteUrl.includes("localhost")
   const preference = new Preference(mp)
 
-  const mpItems = items.map((item) => ({
+  let mpItems = items.map((item) => ({
     id: item.producto.sku,
     title: item.producto.descripcion,
     quantity: item.cantidad,
@@ -26,6 +27,13 @@ export async function createPreference(
 
   if (deliveryCost > 0) {
     mpItems.push({ id: "delivery", title: "Costo de envío", quantity: 1, unit_price: deliveryCost, currency_id: "PEN", picture_url: undefined })
+  }
+
+  // Con descuento: colapsar a un ítem agregado para que los totales coincidan
+  if (discountAmount > 0) {
+    const subtotal = items.reduce((acc, i) => acc + (i.producto.precio_oferta ?? i.producto.precio_publico) * i.cantidad, 0)
+    const totalFinal = Math.max(1, subtotal + deliveryCost - discountAmount)
+    mpItems = [{ id: "pedido", title: "Pedido Organnical", quantity: 1, unit_price: totalFinal, currency_id: "PEN", picture_url: undefined }]
   }
 
   const result = await preference.create({

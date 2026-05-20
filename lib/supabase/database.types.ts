@@ -126,7 +126,9 @@ export interface Database {
           items:              Record<string, unknown>[]
           subtotal:           number
           delivery:           number
+          descuento:          number
           total:              number
+          cupon_codigo:       string | null
           estado:             string
           email_lower:        string | null
           mp_preference_id:   string | null
@@ -149,7 +151,9 @@ export interface Database {
           items?:             Record<string, unknown>[]
           subtotal:           number
           delivery:           number
+          descuento?:         number
           total:              number
+          cupon_codigo?:      string | null
           estado?:            string
           mp_preference_id?:  string | null
           mp_payment_id?:     string | null
@@ -170,7 +174,9 @@ export interface Database {
           items?:             Record<string, unknown>[]
           subtotal?:          number
           delivery?:          number
+          descuento?:         number
           total?:             number
+          cupon_codigo?:      string | null
           estado?:            string
           mp_preference_id?:  string | null
           mp_payment_id?:     string | null
@@ -554,6 +560,51 @@ export interface Database {
         }
         Relationships: []
       }
+
+      // ── public.cupones ────────────────────────────────────────────────────
+      cupones: {
+        Row: {
+          id:             string
+          code:           string
+          descripcion:    string | null
+          tipo:           "porcentaje" | "monto_fijo"
+          valor:          number
+          monto_minimo:   number
+          activo:         boolean
+          fecha_inicio:   string | null
+          fecha_fin:      string | null
+          uso_maximo:     number | null
+          usos_actuales:  number
+          created_at:     string
+        }
+        Insert: {
+          id?:            string
+          code:           string
+          descripcion?:   string | null
+          tipo:           "porcentaje" | "monto_fijo"
+          valor:          number
+          monto_minimo?:  number
+          activo?:        boolean
+          fecha_inicio?:  string | null
+          fecha_fin?:     string | null
+          uso_maximo?:    number | null
+          usos_actuales?: number
+          created_at?:    string
+        }
+        Update: {
+          code?:          string
+          descripcion?:   string | null
+          tipo?:          "porcentaje" | "monto_fijo"
+          valor?:         number
+          monto_minimo?:  number
+          activo?:        boolean
+          fecha_inicio?:  string | null
+          fecha_fin?:     string | null
+          uso_maximo?:    number | null
+          usos_actuales?: number
+        }
+        Relationships: []
+      }
     }
 
     Views: { [k: string]: never }
@@ -573,6 +624,10 @@ export interface Database {
           p_delivery:     number
         }
         Returns: string
+      }
+      increment_cupon_uso: {
+        Args:    { p_code: string }
+        Returns: void
       }
     }
 

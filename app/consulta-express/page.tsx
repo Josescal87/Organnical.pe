@@ -386,7 +386,7 @@ export default function ConsultaExpressPage() {
                     value={couponInput}
                     onChange={(e) => { setCouponInput(e.target.value.toUpperCase()); setCouponError(null); }}
                     onKeyDown={(e) => { if (e.key === "Enter") applyCoupon(); }}
-                    placeholder="Ej: EXPRESSVIP"
+                    placeholder=""
                     className="flex-1 rounded-xl border border-zinc-200 px-4 py-2.5 text-sm font-mono uppercase focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 transition-all"
                   />
                   <button

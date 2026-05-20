@@ -144,13 +144,21 @@ function RecetaCard({
             </a>
           )}
           {isActive && (
-            <Link
-              href="/dashboard/paciente/catalogo"
-              className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-white"
-              style={{ background: G }}
-            >
-              <Package className="w-3.5 h-3.5" /> Ver productos
-            </Link>
+            <>
+              <Link
+                href={`/dashboard/paciente/botica?receta=${rx.id}`}
+                className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-white"
+                style={{ background: G }}
+              >
+                <Package className="w-3.5 h-3.5" /> Comprar receta
+              </Link>
+              <Link
+                href="/dashboard/paciente/catalogo"
+                className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-600 border border-zinc-200 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-all"
+              >
+                Ver catálogo
+              </Link>
+            </>
           )}
         </div>
       </div>

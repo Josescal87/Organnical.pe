@@ -29,10 +29,12 @@ export default function CheckoutPage() {
     setCart(items);
     setAmount(items.reduce((s, i) => s + i.precio * i.qty, 0));
 
+    const recetaId = sessionStorage.getItem("botica_receta_id");
+
     fetch("/api/mercadopago/create-preference", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items }),
+      body: JSON.stringify({ items, ...(recetaId ? { receta_id: recetaId } : {}) }),
     })
       .then((r) => r.json())
       .then((data) => {
@@ -125,16 +127,22 @@ export default function CheckoutPage() {
                 },
               }}
               onSubmit={async ({ formData }) => {
+                const boticaRecetaId = sessionStorage.getItem("botica_receta_id");
                 const res = await fetch("/api/mercadopago/process-payment", {
                   method: "POST",
                   headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ ...formData, cart }),
+                  body: JSON.stringify({
+                    ...formData,
+                    cart,
+                    ...(boticaRecetaId ? { receta_id: boticaRecetaId } : {}),
+                  }),
                 });
                 const data = await res.json();
 
                 if (!res.ok) throw new Error(data.error ?? "Error al procesar el pago");
 
                 sessionStorage.removeItem("mp_cart");
+                sessionStorage.removeItem("botica_receta_id");
 
                 if (data.status === "approved") {
                   window.location.href = "/dashboard/paciente/catalogo/pago/exito";

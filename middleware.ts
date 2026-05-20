@@ -139,6 +139,20 @@ export async function middleware(request: NextRequest) {
   // ── Rewrite de subdominio Médicos ────────────────────────────────────────────
   // medicos.organnical.pe: /foo → /medicos/foo (interno).
   // / → /medicos (sin trailing slash para que Next.js resuelva app/medicos/page.tsx)
+  //
+  // Guard: si el usuario autenticado no es doctor/admin, redirigirlo al sitio
+  // principal en lugar de entrar al layout de médicos (que haría redirect("/") y
+  // causaría un loop porque "/" en el subdomain se reescribe a /medicos de nuevo).
+  if (isMedicos && user) {
+    const userRole = (user.user_metadata?.role ?? "patient") as UserRole
+    if (userRole !== "doctor" && userRole !== "admin") {
+      const url = request.nextUrl.clone()
+      url.hostname = hostname.replace("medicos.", "")
+      url.pathname = "/dashboard/paciente"
+      return NextResponse.redirect(url)
+    }
+  }
+
   if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos") {
     const url = request.nextUrl.clone()
     url.pathname = `/medicos${pathname === "/" ? "" : pathname}`

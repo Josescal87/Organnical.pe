@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { useCart } from "@/contexts/CartContext"
 import { createClient } from "@/lib/supabase/client"
 import { formatPrice } from "@/lib/utils"
-import { isPickup, MP_MIN_AMOUNT, FREE_DELIVERY_THRESHOLD, DELIVERY_FALLBACK } from "@/lib/pricing"
+import { isPickup, MP_MIN_AMOUNT, FREE_DELIVERY_THRESHOLD, DELIVERY_FALLBACK, PICKUP_DISTRITO } from "@/lib/pricing"
 import { trackBeginCheckout, trackAddPaymentInfo } from "@/lib/analytics"
 import { isValidCelular, sanitizeDigits } from "@/lib/validators"
 import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput"
@@ -260,10 +260,33 @@ export default function CheckoutPage() {
 
               <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
                 <h2 className="font-semibold text-gray-800">Modalidad de entrega</h2>
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, distrito: PICKUP_DISTRITO }))}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                      pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
+                    }`}
+                  >
+                    <Store size={15} />
+                    Recojo en tienda
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { if (pickup) setForm((f) => ({ ...f, distrito: "" })) }}
+                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                      !pickup ? "bg-purple-50 border-purple-400 text-purple-700" : "border-gray-200 text-gray-500 hover:border-gray-300"
+                    }`}
+                  >
+                    Envío a domicilio
+                  </button>
+                </div>
+                {!pickup && (
                 <div>
                   <label className="text-xs font-medium text-gray-500 block mb-1" htmlFor="distrito">Distrito *</label>
                   <DistritoCombobox id="distrito" value={form.distrito} onChange={(next) => setForm((f) => ({ ...f, distrito: next }))} required />
                 </div>
+                )}
                 {pickup ? (
                   <div className="flex items-start gap-3 p-4 bg-purple-50 border border-purple-100 rounded-xl">
                     <Store size={18} className="text-purple-600 flex-shrink-0 mt-0.5" />

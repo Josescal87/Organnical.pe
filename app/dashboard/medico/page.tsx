@@ -2,8 +2,9 @@ export const dynamic = "force-dynamic";
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { createClient as createSupabaseAdmin } from "@supabase/supabase-js";
 import Link from "next/link";
-import { Calendar, FileText, ArrowRight, Clock, CheckCircle, CalendarClock } from "lucide-react";
+import { Calendar, FileText, ArrowRight, Clock, CalendarClock, Zap, Phone } from "lucide-react";
 import type { UserRole, AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
 
@@ -15,6 +16,21 @@ type AppointmentRow = {
   patient_id: string;
 };
 type PrescriptionRow = { id: string; issued_at: string; patient_id: string };
+type ExpressRow = {
+  id: string;
+  patient_name: string;
+  patient_phone: string;
+  motivo: string | null;
+  preferred_time: "asap" | "today" | "tomorrow";
+  status: string;
+  created_at: string;
+};
+
+const EXPRESS_TIME_LABELS: Record<string, string> = {
+  asap: "Lo antes posible",
+  today: "Hoy",
+  tomorrow: "Mañana",
+};
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -60,6 +76,23 @@ export default async function MedicoDashboard() {
     .limit(5);
 
   const prescriptions = (rxData ?? []) as PrescriptionRow[];
+
+  // Express consultations (service-role para bypassear RLS)
+  let expressPending: ExpressRow[] = [];
+  try {
+    const adminSupa = createSupabaseAdmin(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SECRET_KEY!,
+    );
+    const { data: expressData } = await adminSupa
+      .schema("medical")
+      .from("express_consultations")
+      .select("id, patient_name, patient_phone, motivo, preferred_time, status, created_at")
+      .in("status", ["paid", "contacted"])
+      .order("created_at", { ascending: false })
+      .limit(5);
+    expressPending = (expressData ?? []) as ExpressRow[];
+  } catch { /* non-fatal */ }
 
   const firstName = profileData?.full_name?.split(" ")[0] ?? "Dr.";
   const upcoming = appointments.filter((a) => ["pending", "confirmed"].includes(a.status));
@@ -108,6 +141,72 @@ export default async function MedicoDashboard() {
           </Link>
         ))}
       </div>
+
+      {/* Express card */}
+      <Link
+        href="/medicos/express"
+        className="flex items-center justify-between gap-4 rounded-2xl p-5 mb-8 border border-amber-200 bg-amber-50 hover:bg-amber-100 transition-all group"
+      >
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-amber-100">
+            <Zap className="w-5 h-5 text-amber-600" />
+          </div>
+          <div>
+            <p className="font-bold text-sm text-[#0B1D35]">Consultas Express</p>
+            <p className="text-xs text-amber-700 mt-0.5">
+              {expressPending.filter(e => e.status === "paid").length > 0
+                ? `${expressPending.filter(e => e.status === "paid").length} pendiente${expressPending.filter(e => e.status === "paid").length !== 1 ? "s" : ""} de contactar`
+                : "Sin pendientes · todo al día"}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          {expressPending.filter(e => e.status === "paid").length > 0 && (
+            <span className="w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center">
+              {expressPending.filter(e => e.status === "paid").length}
+            </span>
+          )}
+          <ArrowRight className="w-4 h-4 text-amber-400 group-hover:text-amber-600 transition-colors" />
+        </div>
+      </Link>
+
+      {/* Express pendientes — listado rápido */}
+      {expressPending.length > 0 && (
+        <section className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-bold text-[#0B1D35] text-lg flex items-center gap-2">
+              <Zap className="w-4 h-4 text-amber-500" /> Express pendientes
+            </h2>
+            <Link href="/medicos/express" className="text-xs text-amber-600 hover:underline font-semibold flex items-center gap-1">
+              Ver todas <ArrowRight className="w-3 h-3" />
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {expressPending.map((e) => {
+              const waUrl = `https://wa.me/${e.patient_phone.replace(/\D/g, "")}?text=${encodeURIComponent(
+                `Hola ${e.patient_name}, soy la Dra. de Organnical. Te contacto por tu consulta express. ¿En qué puedo ayudarte?`
+              )}`;
+              return (
+                <div key={e.id} className="bg-white rounded-2xl p-4 border border-zinc-100 flex items-center gap-4">
+                  <div className="flex-1 min-w-0">
+                    <p className="font-semibold text-sm text-[#0B1D35] truncate">{e.patient_name}</p>
+                    <p className="text-xs text-zinc-400">{EXPRESS_TIME_LABELS[e.preferred_time] ?? e.preferred_time}</p>
+                    {e.motivo && <p className="text-xs text-zinc-500 truncate mt-0.5">{e.motivo}</p>}
+                  </div>
+                  <a
+                    href={waUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-600 transition-all"
+                  >
+                    <Phone className="w-3 h-3" /> WhatsApp
+                  </a>
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      )}
 
       {/* Próximas consultas */}
       <section className="mb-8">

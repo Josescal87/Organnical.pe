@@ -397,3 +397,151 @@ export async function sendNewAppointmentToDoctor({
     html,
   });
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Express Consultations
+   ───────────────────────────────────────────────────────────────────────────── */
+
+export async function sendExpressDoctorAlert({
+  toEmail,
+  doctorName,
+  patientName,
+  patientPhone,
+  patientDocumentType,
+  patientDocumentNumber,
+  birthDate,
+  motivo,
+  preferredTimeLabel,
+  consultationId,
+  paymentId,
+}: {
+  toEmail: string;
+  doctorName: string;
+  patientName: string;
+  patientPhone: string;
+  patientDocumentType: string;
+  patientDocumentNumber: string;
+  birthDate?: string;
+  motivo?: string;
+  preferredTimeLabel: string;
+  consultationId: string;
+  paymentId: string;
+}) {
+  const waUrl = `https://wa.me/${patientPhone.replace(/\D/g, "")}?text=${encodeURIComponent(
+    `Hola ${patientName}, soy la Dra. de Organnical. Te contacto por tu consulta express. ¿En qué puedo ayudarte?`
+  )}`;
+
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">⚡ Nueva Consulta Express</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${doctorName}, tienes una nueva consulta express pagada. Contacta al paciente por WhatsApp.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Paciente</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${patientName}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">WhatsApp</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${patientPhone}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Documento</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px">${patientDocumentType} ${patientDocumentNumber}</p>
+      </td></tr>
+      ${birthDate ? `<tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Fecha de nacimiento</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px">${birthDate}</p>
+      </td></tr>` : ""}
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Cuándo contactar</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${preferredTimeLabel}</p>
+      </td></tr>
+      ${motivo ? `<tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Motivo</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px">${motivo}</p>
+      </td></tr>` : ""}
+      <tr><td style="padding:8px 0">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">ID Pago MP</p>
+        <p style="margin:4px 0 0;color:#A1A1AA;font-size:12px;font-family:monospace">${paymentId}</p>
+      </td></tr>
+    </table>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:12px">
+      <tr><td align="center">
+        <a href="${waUrl}" style="display:inline-block;background:#25D366;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
+          📱 Abrir WhatsApp del paciente
+        </a>
+      </td></tr>
+    </table>
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="${BASE_URL}/medicos/express" style="display:inline-block;background:#1A1A1A;color:white;text-decoration:none;padding:12px 28px;border-radius:100px;font-weight:600;font-size:13px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
+          Ver panel Express
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return sendWithRetry({
+    from: FROM,
+    to: toEmail,
+    subject: `⚡ Consulta Express nueva — ${patientName} · ${preferredTimeLabel}`,
+    html,
+  });
+}
+
+export async function sendExpressPatientConfirm({
+  toEmail,
+  patientName,
+  patientPhone,
+  preferredTimeLabel,
+  amount,
+  consultationId,
+}: {
+  toEmail: string;
+  patientName: string;
+  patientPhone: string;
+  preferredTimeLabel: string;
+  amount: number;
+  consultationId: string;
+}) {
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">⚡ Tu consulta express está confirmada</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Hola ${patientName}, recibimos tu pago. Una Dra. de Organnical te contactará por WhatsApp pronto.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F0FDF4;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #22C55E">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #D1FAE5">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">WhatsApp de contacto</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${patientPhone}</p>
+        <p style="margin:4px 0 0;color:#71717A;font-size:12px">La Dra te escribirá a este número.</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #D1FAE5">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Cuándo</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${preferredTimeLabel}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Total pagado</p>
+        <p style="margin:4px 0 0;color:#16A34A;font-size:18px;font-weight:900">S/ ${amount.toFixed(2)}</p>
+      </td></tr>
+    </table>
+
+    <p style="margin:0 0 20px;color:#71717A;font-size:13px;text-align:center">
+      ¿Tienes alguna duda mientras esperas? Escríbenos:
+    </p>
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="https://wa.me/51952476574?text=${encodeURIComponent("Hola, tengo una pregunta sobre mi consulta express. ID: " + consultationId)}" style="display:inline-block;background:#25D366;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
+          Soporte por WhatsApp
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return sendWithRetry({
+    from: FROM,
+    to: toEmail,
+    subject: "⚡ Consulta Express confirmada — Organnical",
+    html,
+  });
+}

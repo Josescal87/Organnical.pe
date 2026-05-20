@@ -9,7 +9,7 @@ import {
   LayoutDashboard, Calendar, FileText, Package,
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
   ClipboardList, Users, ShieldCheck, Building2, BookOpen,
-  ScrollText, Award, MessageSquare, Bot, Star, Receipt,
+  ScrollText, Award, MessageSquare, Bot, Star, Receipt, Zap,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
 
@@ -21,6 +21,7 @@ function getDoctorLinks(base: string) {
   return [
     { href: home,                          label: "Inicio",      icon: LayoutDashboard },
     { href: `${base}/consultas`,           label: "Consultas",   icon: Stethoscope },
+    { href: `${base}/express`,             label: "Express",     icon: Zap },
     { href: `${base}/pacientes`,           label: "Pacientes",   icon: Users },
     { href: `${base}/recetas`,             label: "Recetas",     icon: FileText },
     { href: `${base}/horario`,             label: "Mi horario",  icon: CalendarClock },

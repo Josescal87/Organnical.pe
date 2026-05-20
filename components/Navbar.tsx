@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight, ShoppingCart } from "lucide-react";
+import { Menu, X, ArrowRight, ShoppingCart, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { useCart, CART_ADDED_EVENT } from "@/contexts/CartContext";
 import CartDrawer from "@/components/CartDrawer";
@@ -16,6 +16,7 @@ const navLinks = [
   { href: "/agendar", label: "Consultas" },
   { href: "/blog", label: "Blog" },
 ];
+const EXPRESS_HREF = "/consulta-express";
 
 export default function Navbar() {
   const pathname = usePathname();
@@ -77,7 +78,7 @@ export default function Navbar() {
 
         {/* Desktop nav */}
         <nav
-          className={`hidden gap-8 text-sm font-medium md:flex transition-colors ${
+          className={`hidden gap-8 text-sm font-medium md:flex items-center transition-colors ${
             solid ? "text-zinc-500" : "text-white/75"
           }`}
         >
@@ -92,6 +93,13 @@ export default function Navbar() {
               {l.label}
             </Link>
           ))}
+          <Link
+            href={EXPRESS_HREF}
+            className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-1 text-xs font-bold text-white transition-all hover:opacity-80"
+            style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 100%)" }}
+          >
+            <Zap className="w-3 h-3" /> Express S/30
+          </Link>
         </nav>
 
         <div className="flex items-center gap-3">
@@ -161,11 +169,18 @@ export default function Navbar() {
               key={l.href}
               href={l.href}
               onClick={() => setMenuOpen(false)}
-              className="py-3 text-sm font-medium text-zinc-700 border-b border-zinc-50 last:border-0 hover:text-[#A78BFA] transition-colors"
+              className="py-3 text-sm font-medium text-zinc-700 border-b border-zinc-50 hover:text-[#A78BFA] transition-colors"
             >
               {l.label}
             </Link>
           ))}
+          <Link
+            href={EXPRESS_HREF}
+            onClick={() => setMenuOpen(false)}
+            className="py-3 text-sm font-bold text-[#F472B6] border-b border-zinc-50 flex items-center gap-2 hover:text-[#A78BFA] transition-colors"
+          >
+            <Zap className="w-4 h-4" /> Express S/30 — orientación hoy
+          </Link>
           {isLoggedIn ? (
             <Link
               href="/cuenta"

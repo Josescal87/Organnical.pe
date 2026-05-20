@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
-import { Star, ArrowRight, Phone } from "lucide-react";
+import { Star, ArrowRight, Phone, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { posts } from "@/lib/blog";
 import ScrollReveal from "./_components/ScrollReveal";
@@ -95,6 +95,12 @@ export default async function HomePage() {
                 Agendar consulta médica
               </Link>
             </div>
+            <p className="text-white/75 text-sm mt-5">
+              ¿Necesitas orientación hoy mismo?{" "}
+              <Link href="/consulta-express" className="font-bold text-white underline underline-offset-2 hover:no-underline transition-all">
+                Consulta Express S/30 →
+              </Link>
+            </p>
           </div>
         </section>
 
@@ -137,18 +143,21 @@ export default async function HomePage() {
             </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
+                href="/consulta-express"
+                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#F472B6] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90 shadow-lg"
+              >
+                <Zap className="w-4 h-4" /> Express S/30 — hoy mismo
+              </Link>
+              <Link
                 href="/agendar"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
               >
                 Agendar consulta <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link
-                href="/servicios"
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#A78BFA] px-8 py-3.5 text-sm font-semibold text-white transition-all hover:opacity-90"
-              >
-                Ver especialidades ({doctorCount} médicos)
-              </Link>
             </div>
+            <p className="text-white/40 text-xs mt-4">
+              Express: orientación por WhatsApp · Consulta formal: cita agendada · <Link href="/servicios" className="hover:text-white/60 transition-colors underline underline-offset-2">{doctorCount} especialistas disponibles</Link>
+            </p>
           </div>
         </section>
 

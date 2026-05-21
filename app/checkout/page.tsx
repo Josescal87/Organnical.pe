@@ -9,6 +9,7 @@ import { trackBeginCheckout, trackAddPaymentInfo } from "@/lib/analytics"
 import { isValidCelular, sanitizeDigits } from "@/lib/validators"
 import DocumentInput, { type DocType, validateDocId } from "@/components/DocumentInput"
 import { ShoppingCart, Lock, CreditCard, Store, Tag, CheckCircle2, X } from "lucide-react"
+import Image from "next/image"
 import Link from "next/link"
 import DistritoCombobox from "@/components/DistritoCombobox"
 import type { DireccionEntrega } from "@/lib/types"
@@ -167,8 +168,10 @@ export default function CheckoutPage() {
       <>
         <div className="py-12 px-4" style={{ background: NAVY }}>
           <div className="max-w-5xl mx-auto">
-            <p className="text-[11px] font-semibold tracking-widest text-[#A78BFA]/60 uppercase mb-1.5">Organnical</p>
-            <h1 className="text-3xl font-bold text-white">Finalizar compra</h1>
+            <Link href="/" className="inline-block mb-6 opacity-80 hover:opacity-100 transition-opacity">
+              <Image src="/logo-white.png" alt="Organnical" width={120} height={28} priority />
+            </Link>
+            <h1 className="font-display font-black text-3xl text-white leading-tight">Finalizar compra</h1>
           </div>
         </div>
         <div className="flex items-center justify-center py-24 px-4 bg-gray-50 min-h-[50vh]">
@@ -281,9 +284,11 @@ export default function CheckoutPage() {
       {/* Branded header */}
       <div className="px-4 py-10" style={{ background: NAVY }}>
         <div className="max-w-5xl mx-auto">
-          <p className="text-[11px] font-semibold tracking-widest text-[#A78BFA]/60 uppercase mb-1.5">Organnical</p>
-          <h1 className="text-3xl font-bold text-white">Finalizar compra</h1>
-          <p className="mt-1.5 text-sm text-white/40">Completa tus datos para continuar al pago seguro</p>
+          <Link href="/" className="inline-block mb-6 opacity-80 hover:opacity-100 transition-opacity">
+            <Image src="/logo-white.png" alt="Organnical" width={120} height={28} priority />
+          </Link>
+          <h1 className="font-display font-black text-3xl text-white leading-tight">Finalizar compra</h1>
+          <p className="mt-2 text-sm text-white/40">Completa tus datos para continuar al pago seguro</p>
         </div>
       </div>
 

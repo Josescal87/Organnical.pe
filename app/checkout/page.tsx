@@ -164,15 +164,21 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: NAVY }}>
-        <div className="text-center px-4">
-          <ShoppingCart size={56} className="mx-auto mb-4" style={{ color: "rgba(255,255,255,0.12)" }} />
-          <h1 className="text-xl font-bold text-white/70 mb-4">Tu carrito está vacío</h1>
-          <Link href="/tienda" className="text-[#A78BFA] font-medium hover:opacity-80 transition-opacity">
-            Ir a la tienda →
-          </Link>
+      <>
+        <div className="py-12 px-4" style={{ background: NAVY }}>
+          <div className="max-w-5xl mx-auto">
+            <p className="text-[11px] font-semibold tracking-widest text-[#A78BFA]/60 uppercase mb-1.5">Organnical</p>
+            <h1 className="text-3xl font-bold text-white">Finalizar compra</h1>
+          </div>
         </div>
-      </div>
+        <div className="flex items-center justify-center py-24 px-4 bg-gray-50 min-h-[50vh]">
+          <div className="text-center">
+            <ShoppingCart size={48} className="mx-auto text-gray-200 mb-4" />
+            <p className="text-lg font-semibold text-gray-700 mb-4">Tu carrito está vacío</p>
+            <Link href="/tienda" className="text-[#A78BFA] font-semibold hover:underline">Ir a la tienda →</Link>
+          </div>
+        </div>
+      </>
     )
   }
 
@@ -271,259 +277,258 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen py-10 px-4" style={{ background: NAVY }}>
-      <div className="max-w-5xl mx-auto">
-
-        {/* Header */}
-        <div className="mb-8">
+    <>
+      {/* Branded header */}
+      <div className="px-4 py-10" style={{ background: NAVY }}>
+        <div className="max-w-5xl mx-auto">
           <p className="text-[11px] font-semibold tracking-widest text-[#A78BFA]/60 uppercase mb-1.5">Organnical</p>
-          <h1 className="text-2xl font-bold text-white">Finalizar compra</h1>
+          <h1 className="text-3xl font-bold text-white">Finalizar compra</h1>
+          <p className="mt-1.5 text-sm text-white/40">Completa tus datos para continuar al pago seguro</p>
         </div>
+      </div>
 
-        <div className="flex flex-col lg:flex-row gap-6">
+      {/* Main content — white */}
+      <div className="bg-gray-50 min-h-screen px-4 py-8">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex flex-col lg:flex-row gap-6">
 
-          {/* Form */}
-          <div className="flex-1">
-            <form onSubmit={handleFormSubmit} className="space-y-5">
+            {/* Form */}
+            <div className="flex-1">
+              <form onSubmit={handleFormSubmit} className="space-y-5">
 
-              {/* Datos personales */}
-              <section className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-sm space-y-4">
-                <h2 className="font-semibold text-white">Datos personales</h2>
-                <div className="grid grid-cols-2 gap-4">
-                  <DarkInput label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} />
-                  <DarkInput label="Apellido *" name="apellido" value={form.apellido} onChange={handleChange} />
-                </div>
-                <DarkInput label="Email *" name="email" type="email" value={form.email} onChange={handleChange} />
-                <DarkInput
-                  label="Celular *"
-                  name="celular"
-                  type="tel"
-                  value={form.celular}
-                  onChange={handleChange}
-                  onBlur={handleBlur}
-                  error={fieldErrors.celular}
-                  placeholder="9XXXXXXXX"
-                  inputMode="numeric"
-                  maxLength={9}
-                />
-                <div>
-                  <DocumentInput
-                    docType={(form.doc_type as DocType) || "DNI"}
-                    docId={form.dni}
-                    onDocTypeChange={(t) => setForm((f) => ({ ...f, doc_type: t, dni: "" }))}
-                    onDocIdChange={(v) => setForm((f) => ({ ...f, dni: v }))}
-                    error={fieldErrors.dni}
-                    dark
+                {/* Datos personales */}
+                <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="font-semibold text-gray-800">Datos personales</h2>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Input label="Nombre *" name="nombre" value={form.nombre} onChange={handleChange} />
+                    <Input label="Apellido *" name="apellido" value={form.apellido} onChange={handleChange} />
+                  </div>
+                  <Input label="Email *" name="email" type="email" value={form.email} onChange={handleChange} />
+                  <Input
+                    label="Celular *"
+                    name="celular"
+                    type="tel"
+                    value={form.celular}
+                    onChange={handleChange}
+                    onBlur={handleBlur}
+                    error={fieldErrors.celular}
+                    placeholder="9XXXXXXXX"
+                    inputMode="numeric"
+                    maxLength={9}
                   />
-                  <p className="text-xs text-white/30 mt-1">Opcional — para incluir en tu boleta.</p>
-                </div>
-              </section>
-
-              {/* Modalidad de entrega */}
-              <section className="rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-sm space-y-4">
-                <h2 className="font-semibold text-white">Modalidad de entrega</h2>
-                <div className="flex gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setForm((f) => ({ ...f, distrito: PICKUP_DISTRITO }))}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
-                      pickup
-                        ? "border-[#A78BFA]/50 text-[#A78BFA] bg-[#A78BFA]/10"
-                        : "border-white/12 text-white/45 hover:border-white/25 hover:text-white/70"
-                    }`}
-                  >
-                    <Store size={15} />
-                    Recojo en tienda
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => { if (pickup) setForm((f) => ({ ...f, distrito: "" })) }}
-                    className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
-                      !pickup
-                        ? "border-[#A78BFA]/50 text-[#A78BFA] bg-[#A78BFA]/10"
-                        : "border-white/12 text-white/45 hover:border-white/25 hover:text-white/70"
-                    }`}
-                  >
-                    Envío a domicilio
-                  </button>
-                </div>
-
-                {!pickup && (
                   <div>
-                    <label className="text-xs font-medium text-white/45 block mb-1" htmlFor="distrito">Distrito *</label>
-                    <DistritoCombobox
-                      id="distrito"
-                      value={form.distrito}
-                      onChange={(next) => setForm((f) => ({ ...f, distrito: next }))}
-                      required
-                      dark
+                    <DocumentInput
+                      docType={(form.doc_type as DocType) || "DNI"}
+                      docId={form.dni}
+                      onDocTypeChange={(t) => setForm((f) => ({ ...f, doc_type: t, dni: "" }))}
+                      onDocIdChange={(v) => setForm((f) => ({ ...f, dni: v }))}
+                      error={fieldErrors.dni}
                     />
+                    <p className="text-xs text-gray-400 mt-1">Opcional — para incluir en tu boleta.</p>
                   </div>
-                )}
+                </section>
 
-                {pickup ? (
-                  <div className="flex items-start gap-3 p-4 bg-[#A78BFA]/10 border border-[#A78BFA]/20 rounded-xl">
-                    <Store size={18} className="text-[#A78BFA] flex-shrink-0 mt-0.5" />
-                    <div className="text-sm">
-                      <p className="font-semibold text-white/90">Recojo en tienda — Sin costo de envío</p>
-                      <p className="text-white/45 text-xs mt-1">Te contactamos por WhatsApp con la dirección y horarios de recojo después del pago.</p>
-                    </div>
+                {/* Modalidad de entrega */}
+                <section className="bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+                  <h2 className="font-semibold text-gray-800">Modalidad de entrega</h2>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setForm((f) => ({ ...f, distrito: PICKUP_DISTRITO }))}
+                      className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                        pickup
+                          ? "bg-violet-50 border-violet-400 text-violet-700"
+                          : "border-gray-200 text-gray-500 hover:border-gray-300"
+                      }`}
+                    >
+                      <Store size={15} />
+                      Recojo en tienda
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { if (pickup) setForm((f) => ({ ...f, distrito: "" })) }}
+                      className={`flex-1 flex items-center justify-center gap-2 rounded-xl border py-2.5 text-sm font-semibold transition-all ${
+                        !pickup
+                          ? "bg-violet-50 border-violet-400 text-violet-700"
+                          : "border-gray-200 text-gray-500 hover:border-gray-300"
+                      }`}
+                    >
+                      Envío a domicilio
+                    </button>
                   </div>
-                ) : (
-                  <>
+
+                  {!pickup && (
                     <div>
-                      <label className="text-xs font-medium text-white/45 block mb-1">Dirección *</label>
-                      <textarea
-                        name="direccion"
-                        value={form.direccion}
-                        onChange={handleChange}
-                        rows={2}
-                        placeholder="Av. / Jr. / Calle, número, piso/dpto"
-                        className="w-full bg-white/[0.08] border border-white/15 text-white placeholder:text-white/25 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-none"
+                      <label className="text-xs font-medium text-gray-500 block mb-1" htmlFor="distrito">Distrito *</label>
+                      <DistritoCombobox
+                        id="distrito"
+                        value={form.distrito}
+                        onChange={(next) => setForm((f) => ({ ...f, distrito: next }))}
                         required
                       />
                     </div>
-                    <DarkInput
-                      label="Referencia"
-                      name="referencia"
-                      value={form.referencia}
-                      onChange={handleChange}
-                      placeholder="Ej. Frente al parque"
-                    />
-                  </>
+                  )}
+
+                  {pickup ? (
+                    <div className="flex items-start gap-3 p-4 bg-violet-50 border border-violet-100 rounded-xl">
+                      <Store size={18} className="text-violet-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm">
+                        <p className="font-semibold text-violet-800">Recojo en tienda — Sin costo de envío</p>
+                        <p className="text-violet-600 text-xs mt-1">Te contactamos por WhatsApp con la dirección y horarios de recojo después del pago.</p>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="text-xs font-medium text-gray-500 block mb-1">Dirección *</label>
+                        <textarea
+                          name="direccion"
+                          value={form.direccion}
+                          onChange={handleChange}
+                          rows={2}
+                          placeholder="Av. / Jr. / Calle, número, piso/dpto"
+                          className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 resize-none"
+                          required
+                        />
+                      </div>
+                      <Input
+                        label="Referencia"
+                        name="referencia"
+                        value={form.referencia}
+                        onChange={handleChange}
+                        placeholder="Ej. Frente al parque"
+                      />
+                    </>
+                  )}
+                </section>
+
+                {error && (
+                  <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-xl">{error}</div>
                 )}
-              </section>
 
-              {error && (
-                <div className="bg-red-500/15 border border-red-400/30 text-red-300 text-sm px-4 py-3 rounded-xl">
-                  {error}
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading}
-                className="w-full disabled:opacity-50 text-white py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:opacity-90 active:scale-[0.99]"
-                style={{ background: G, boxShadow: "0 12px 32px rgba(167,139,250,0.25)" }}
-              >
-                {loading
-                  ? "Preparando pago..."
-                  : <><CreditCard size={16} /> Ir a pagar {formatPrice(total)}</>
-                }
-              </button>
-            </form>
-          </div>
-
-          {/* Order summary */}
-          <aside className="lg:w-80 h-fit rounded-2xl border border-white/10 bg-white/[0.05] p-6 backdrop-blur-sm space-y-4">
-            <h2 className="font-semibold text-white">Tu pedido</h2>
-
-            <div className="space-y-2 text-sm">
-              {items.map((item) => (
-                <div key={item.producto.sku} className="flex justify-between gap-2">
-                  <span className="truncate flex-1 text-white/55">{item.producto.descripcion} ×{item.cantidad}</span>
-                  <span className="font-medium text-white/80 shrink-0">
-                    {formatPrice((item.producto.precio_oferta ?? item.producto.precio_publico) * item.cantidad)}
-                  </span>
-                </div>
-              ))}
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="w-full disabled:opacity-50 text-white py-3.5 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 hover:opacity-90"
+                  style={{ background: G, boxShadow: "0 8px 24px rgba(167,139,250,0.3)" }}
+                >
+                  {loading
+                    ? "Preparando pago..."
+                    : <><CreditCard size={16} /> Ir a pagar {formatPrice(total)}</>
+                  }
+                </button>
+              </form>
             </div>
 
-            {/* Cupón */}
-            <div className="border-t border-white/10 pt-3 space-y-2">
-              <p className="text-xs font-medium text-white/40 flex items-center gap-1.5">
-                <Tag className="w-3.5 h-3.5" /> Código de descuento
-              </p>
-              {cupon.status === "applied" ? (
-                <div className="flex items-center justify-between bg-emerald-500/15 border border-emerald-400/25 rounded-xl px-3 py-2">
-                  <div className="flex items-center gap-1.5">
-                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400 flex-shrink-0" />
-                    <div>
-                      <p className="text-xs font-bold text-emerald-300">{cupon.code}</p>
-                      <p className="text-[11px] text-emerald-400/80">{cupon.descripcion}</p>
-                    </div>
+            {/* Order summary */}
+            <aside className="lg:w-80 h-fit bg-white border border-gray-100 rounded-2xl p-6 shadow-sm space-y-4">
+              <h2 className="font-semibold text-gray-800">Tu pedido</h2>
+
+              <div className="space-y-2 text-sm">
+                {items.map((item) => (
+                  <div key={item.producto.sku} className="flex justify-between gap-2 text-gray-600">
+                    <span className="truncate flex-1">{item.producto.descripcion} ×{item.cantidad}</span>
+                    <span className="font-medium shrink-0">
+                      {formatPrice((item.producto.precio_oferta ?? item.producto.precio_publico) * item.cantidad)}
+                    </span>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleRemoveCoupon}
-                    className="text-white/30 hover:text-white/60 transition-colors ml-2 flex-shrink-0"
-                    aria-label="Quitar cupón"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-1.5">
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={couponInput}
-                      onChange={(e) => {
-                        setCouponInput(e.target.value.toUpperCase())
-                        if (cupon.status === "error") setCupon({ status: "idle" })
-                      }}
-                      onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleCouponApply() } }}
-                      placeholder="CODIGO10"
-                      maxLength={30}
-                      className="flex-1 min-w-0 bg-white/[0.08] border border-white/15 text-white placeholder:text-white/25 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent uppercase placeholder:normal-case"
-                    />
+                ))}
+              </div>
+
+              {/* Cupón */}
+              <div className="border-t border-gray-100 pt-3 space-y-2">
+                <p className="text-xs font-medium text-gray-500 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5" /> Código de descuento
+                </p>
+                {cupon.status === "applied" ? (
+                  <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-xl px-3 py-2">
+                    <div className="flex items-center gap-1.5">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+                      <div>
+                        <p className="text-xs font-bold text-emerald-700">{cupon.code}</p>
+                        <p className="text-[11px] text-emerald-600">{cupon.descripcion}</p>
+                      </div>
+                    </div>
                     <button
                       type="button"
-                      onClick={() => void handleCouponApply()}
-                      disabled={cupon.status === "loading" || !couponInput.trim()}
-                      className="px-3 py-2 rounded-xl bg-[#A78BFA]/15 text-[#A78BFA] text-sm font-semibold hover:bg-[#A78BFA]/25 disabled:opacity-50 transition-all whitespace-nowrap border border-[#A78BFA]/25"
+                      onClick={handleRemoveCoupon}
+                      className="text-emerald-400 hover:text-emerald-600 transition-colors ml-2 flex-shrink-0"
+                      aria-label="Quitar cupón"
                     >
-                      {cupon.status === "loading" ? "..." : "Aplicar"}
+                      <X className="w-4 h-4" />
                     </button>
                   </div>
-                  {cupon.status === "error" && (
-                    <p className="text-[11px] text-red-400">{cupon.message}</p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Totales */}
-            <div className="border-t border-white/10 pt-3 space-y-2 text-sm">
-              <div className="flex justify-between text-white/50">
-                <span>Envío</span>
-                {showCalculando ? (
-                  <span className="text-xs text-white/30 italic">Calculando...</span>
                 ) : (
-                  <span className="text-white/70">
-                    {deliveryCost === 0 ? (pickup ? "Gratis (recojo)" : "Gratis") : formatPrice(deliveryCost)}
-                  </span>
+                  <div className="space-y-1.5">
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        value={couponInput}
+                        onChange={(e) => {
+                          setCouponInput(e.target.value.toUpperCase())
+                          if (cupon.status === "error") setCupon({ status: "idle" })
+                        }}
+                        onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); void handleCouponApply() } }}
+                        placeholder="CODIGO10"
+                        maxLength={30}
+                        className="flex-1 min-w-0 border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 uppercase placeholder:normal-case"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => void handleCouponApply()}
+                        disabled={cupon.status === "loading" || !couponInput.trim()}
+                        className="px-3 py-2 rounded-xl bg-violet-100 text-violet-700 text-sm font-semibold hover:bg-violet-200 disabled:opacity-50 transition-all whitespace-nowrap"
+                      >
+                        {cupon.status === "loading" ? "..." : "Aplicar"}
+                      </button>
+                    </div>
+                    {cupon.status === "error" && (
+                      <p className="text-[11px] text-red-600">{cupon.message}</p>
+                    )}
+                  </div>
                 )}
               </div>
-              {cupon.status === "applied" && (
-                <div className="flex justify-between text-emerald-400 font-medium">
-                  <span>Descuento</span>
-                  <span>−{formatPrice(cupon.descuento)}</span>
-                </div>
-              )}
-              {ratesError && (
-                <p className="text-[11px] text-amber-400/80">Tarifa estimada — el total final se confirma al pagar.</p>
-              )}
-              <div className="flex justify-between font-bold text-white text-base pt-2 border-t border-white/10">
-                <span>Total</span>
-                <span>{showCalculando ? formatPrice(subtotal - descuento) + " + envío" : formatPrice(total)}</span>
-              </div>
-            </div>
 
-            <div className="border-t border-white/10 pt-3 space-y-1.5">
-              <p className="text-[11px] text-white/30 text-center">Yape · Plin · Visa · Mastercard · Amex</p>
-              <p className="text-[11px] text-white/25 flex items-center justify-center gap-1">
-                <Lock size={10} /> Pago procesado de forma segura
-              </p>
-            </div>
-          </aside>
+              {/* Totales */}
+              <div className="border-t border-gray-100 pt-2 space-y-1.5 text-sm">
+                <div className="flex justify-between text-gray-600">
+                  <span>Envío</span>
+                  {showCalculando ? (
+                    <span className="text-xs text-gray-400 italic">Calculando...</span>
+                  ) : (
+                    <span>{deliveryCost === 0 ? (pickup ? "Gratis (recojo)" : "Gratis") : formatPrice(deliveryCost)}</span>
+                  )}
+                </div>
+                {cupon.status === "applied" && (
+                  <div className="flex justify-between text-emerald-600 font-medium">
+                    <span>Descuento</span>
+                    <span>−{formatPrice(cupon.descuento)}</span>
+                  </div>
+                )}
+                {ratesError && (
+                  <p className="text-[11px] text-amber-600">Tarifa estimada — el total final se confirma al pagar.</p>
+                )}
+                <div className="flex justify-between font-bold text-gray-900 text-base pt-1 border-t border-gray-100">
+                  <span>Total</span>
+                  <span>{showCalculando ? formatPrice(subtotal - descuento) + " + envío" : formatPrice(total)}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-gray-100 pt-3 space-y-1.5">
+                <p className="text-xs text-gray-400 text-center">Yape · Plin · Visa · Mastercard · Amex</p>
+                <p className="text-xs text-center text-gray-400 flex items-center justify-center gap-1">
+                  <Lock size={11} /> Pago procesado de forma segura
+                </p>
+              </div>
+            </aside>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
-function DarkInput({
+function Input({
   label, name, value, onChange, onBlur, type = "text", placeholder, error, inputMode, maxLength,
 }: {
   label: string
@@ -539,7 +544,7 @@ function DarkInput({
 }) {
   return (
     <div>
-      <label className="text-xs font-medium text-white/45 block mb-1">{label}</label>
+      <label className="text-xs font-medium text-gray-500 block mb-1">{label}</label>
       <input
         type={type}
         name={name}
@@ -550,13 +555,11 @@ function DarkInput({
         inputMode={inputMode}
         maxLength={maxLength}
         aria-invalid={Boolean(error)}
-        className={`w-full bg-white/[0.08] border rounded-xl px-3 py-2.5 text-sm text-white placeholder:text-white/25 focus:outline-none focus:ring-2 ${
-          error
-            ? "border-red-400/50 focus:ring-red-400/40"
-            : "border-white/15 focus:ring-violet-400 focus:border-transparent"
+        className={`w-full border rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 ${
+          error ? "border-red-300 focus:ring-red-400" : "border-gray-200 focus:ring-violet-400"
         }`}
       />
-      {error && <p className="text-[11px] text-red-400 mt-1">{error}</p>}
+      {error && <p className="text-[11px] text-red-600 mt-1">{error}</p>}
     </div>
   )
 }

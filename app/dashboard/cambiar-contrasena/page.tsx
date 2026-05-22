@@ -47,11 +47,13 @@ export default function CambiarContrasenaPage() {
     const role = user?.user_metadata?.role
 
     setDone(true)
+    const isMedicosSubdomain = typeof window !== "undefined" && window.location.hostname.startsWith("medicos.")
     setTimeout(() => {
-      router.push(role === "doctor" || role === "admin"
-        ? "/dashboard/medico"
-        : "/dashboard/paciente"
-      )
+      if (isMedicosSubdomain) {
+        router.push("/")
+      } else {
+        router.push(role === "doctor" || role === "admin" ? "/dashboard/medico" : "/dashboard/paciente")
+      }
     }, 1800)
   }
 

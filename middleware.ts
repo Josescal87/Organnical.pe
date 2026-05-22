@@ -165,7 +165,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos") {
+  if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos" && pathname !== "/dashboard/cambiar-contrasena") {
     const url = request.nextUrl.clone()
     url.pathname = `/medicos${pathname === "/" ? "" : pathname}`
     const rewriteResponse = NextResponse.rewrite(url)

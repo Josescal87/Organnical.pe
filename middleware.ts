@@ -99,7 +99,7 @@ export async function middleware(request: NextRequest) {
   const forceChange = user.user_metadata?.force_password_change === true
   const isChangePasswordRoute = pathname === "/dashboard/cambiar-contrasena"
 
-  if (forceChange && !isChangePasswordRoute) {
+  if (forceChange && !isChangePasswordRoute && !pathname.startsWith("/api/")) {
     const url = request.nextUrl.clone()
     url.pathname = "/dashboard/cambiar-contrasena"
     return NextResponse.redirect(url)

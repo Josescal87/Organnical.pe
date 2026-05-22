@@ -14,6 +14,7 @@ import { createClient } from "@/lib/supabase/client"
 import { formatPrice } from "@/lib/utils"
 import { DISTRITOS, PICKUP_DISTRITO } from "@/lib/pricing"
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels"
+import DownloadPrescriptionButton from "@/components/DownloadPrescriptionButton"
 import type { OrdenTienda } from "@/lib/types"
 import type { AppointmentRow, PrescriptionRow, DireccionData } from "../page"
 
@@ -321,10 +322,10 @@ function ResumenTab({
           </p>
           <div className="flex gap-3 mt-3 flex-wrap">
             {recetaActiva.pdf_url && (
-              <a href={recetaActiva.pdf_url} target="_blank" rel="noopener noreferrer"
+              <DownloadPrescriptionButton prescriptionId={recetaActiva.id}
                 className="inline-flex items-center gap-1.5 text-sm text-[#A78BFA] hover:underline">
                 <FileDown size={14} /> Descargar PDF
-              </a>
+              </DownloadPrescriptionButton>
             )}
             <Link
               href="/cuenta/botica"
@@ -478,10 +479,10 @@ function RecetasTab({ recetas }: { recetas: PrescriptionRow[] }) {
             </div>
             <div className="mt-3 flex items-center gap-4 flex-wrap">
               {rx.pdf_url && (
-                <a href={rx.pdf_url} target="_blank" rel="noopener noreferrer"
+                <DownloadPrescriptionButton prescriptionId={rx.id}
                   className="inline-flex items-center gap-1.5 text-sm text-[#A78BFA] hover:underline">
                   <FileDown size={14} /> Descargar PDF
-                </a>
+                </DownloadPrescriptionButton>
               )}
               {vigente && (
                 <Link

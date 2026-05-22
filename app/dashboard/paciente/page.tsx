@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Calendar, FileText, Package, ArrowRight, Clock, CheckCircle, AlertCircle } from "lucide-react";
 import type { UserRole, AppointmentStatus, AppointmentSpecialty } from "@/lib/supabase/database.types";
 import { SPECIALTY_LABELS } from "@/lib/specialty-labels";
+import DownloadPrescriptionButton from "@/components/DownloadPrescriptionButton";
 
 type AppointmentRow = {
   id: string;
@@ -272,10 +273,10 @@ export default async function PacienteDashboard() {
                   </div>
                   <div className="flex gap-2 flex-shrink-0">
                     {rx.pdf_url && (
-                      <a href={rx.pdf_url} target="_blank" rel="noopener noreferrer"
+                      <DownloadPrescriptionButton prescriptionId={rx.id}
                         className="text-xs font-semibold text-[#A78BFA] hover:underline flex items-center gap-1">
                         Descargar PDF <ArrowRight className="w-3 h-3" />
-                      </a>
+                      </DownloadPrescriptionButton>
                     )}
                     {isActive && (
                       <Link href="/dashboard/paciente/catalogo"

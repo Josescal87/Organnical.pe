@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { FileText, Package, Download } from "lucide-react";
 import { BackLink } from "@/components/BackLink";
+import DownloadPrescriptionButton from "@/components/DownloadPrescriptionButton";
 import type { Producto } from "@/lib/supabase/database.types";
 
 type PrescriptionRow = {
@@ -93,14 +94,12 @@ export default async function RecetasMedicoPage() {
                     </p>
                   </div>
                   {rx.pdf_url && (
-                    <a
-                      href={rx.pdf_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <DownloadPrescriptionButton
+                      prescriptionId={rx.id}
                       className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-600 border border-zinc-200 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-all flex-shrink-0"
                     >
                       <Download className="w-3.5 h-3.5" /> PDF
-                    </a>
+                    </DownloadPrescriptionButton>
                   )}
                 </div>
 

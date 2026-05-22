@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import Link from "next/link";
 import { FileText, Package, Download, CheckCircle, Clock } from "lucide-react";
 import { BackLink } from "@/components/BackLink";
+import DownloadPrescriptionButton from "@/components/DownloadPrescriptionButton";
 import type { Producto } from "@/lib/supabase/database.types";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
@@ -134,14 +135,12 @@ function RecetaCard({
         </div>
         <div className="flex gap-2 flex-shrink-0">
           {rx.pdf_url && (
-            <a
-              href={rx.pdf_url}
-              target="_blank"
-              rel="noopener noreferrer"
+            <DownloadPrescriptionButton
+              prescriptionId={rx.id}
               className="flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-zinc-600 border border-zinc-200 hover:border-[#A78BFA] hover:text-[#A78BFA] transition-all"
             >
               <Download className="w-3.5 h-3.5" /> PDF
-            </a>
+            </DownloadPrescriptionButton>
           )}
           {isActive && (
             <>

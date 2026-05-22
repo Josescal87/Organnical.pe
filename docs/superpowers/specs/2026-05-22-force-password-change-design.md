@@ -18,11 +18,14 @@ Login
         └─ false → flujo normal (guard de roles existente)
 
 /dashboard/cambiar-contrasena
-  └─► Usuario ingresa nueva contraseña (mín. 8 chars, distinta a la temporal)
+  └─► Usuario ingresa nueva contraseña (mín. 8 chars)
         └─► Server action:
               1. supabase.auth.updateUser({ password: nuevaContrasena })
               2. supabase.auth.updateUser({ data: { force_password_change: false } })
-              3. redirect /dashboard/medico  (o /paciente según rol del JWT)
+              3. redirect() → /dashboard/medico o /dashboard/paciente según rol del JWT
+
+  └─► Usuario hace clic en "Cerrar sesión"
+        └─► supabase.auth.signOut() → redirect /login
 ```
 
 ## Activar el flag para un usuario
@@ -75,7 +78,7 @@ Client Component. Contiene:
 - Campo: Nueva contraseña (tipo password, toggle mostrar/ocultar)
 - Campo: Confirmar contraseña
 - Botón primario: "Guardar contraseña"
-- Botón secundario/link: "Cerrar sesión"
+- Botón secundario/link: "Cerrar sesión" → llama `supabase.auth.signOut()` y redirige a `/login`
 - Mensajes de error inline (contraseña corta, no coinciden, error de red)
 - Estado de carga en el botón mientras se procesa
 
@@ -92,9 +95,9 @@ Server action `cambiarContrasena(nuevaContrasena: string)`:
 2. Llamar `supabase.auth.updateUser({ password: nuevaContrasena })`
 3. Si hay error → retornar `{ error: 'mensaje' }`
 4. Llamar `supabase.auth.updateUser({ data: { force_password_change: false } })`
-5. Retornar `{ success: true, role }` — el cliente hace `redirect` según rol
+5. Leer rol del JWT (`user.user_metadata.role`) y llamar `redirect('/dashboard/medico')` o `redirect('/dashboard/paciente')` directamente desde el server action
 
-**No se valida** que la contraseña sea distinta a la anterior (Supabase no expone el hash anterior al cliente). La validación de mínimo 8 chars ocurre en el cliente.
+La validación de mínimo 8 chars ocurre en el cliente antes de llamar al action.
 
 ## Seguridad
 

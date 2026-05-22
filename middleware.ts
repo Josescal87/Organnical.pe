@@ -93,6 +93,18 @@ export async function middleware(request: NextRequest) {
     return supabaseResponse
   }
 
+  // ── Guard de force_password_change ─────────────────────────────────────────
+  // El flag viaja en el JWT — sin DB call adicional.
+  // La ruta /dashboard/cambiar-contrasena está excluida para evitar loop.
+  const forceChange = user.user_metadata?.force_password_change === true
+  const isChangePasswordRoute = pathname === "/dashboard/cambiar-contrasena"
+
+  if (forceChange && !isChangePasswordRoute) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/dashboard/cambiar-contrasena"
+    return NextResponse.redirect(url)
+  }
+
   // ── Guard de rol ────────────────────────────────────────────────────────────
   // El rol se lee de user_metadata (parte del JWT — sin DB call adicional).
   // Es escrito por el trigger medical.handle_new_user() en el signup

@@ -9,7 +9,9 @@ import type { PublicBrand } from "@/lib/types"
  *
  * Copy literal del spec §5.1 — no inventar afirmaciones nutricionales.
  *
- * `pt-36` para clear el navbar dark de Spirusol (`h-[80px]` fixed) + buffer.
+ * El navbar es `sticky` (no `fixed`) → ocupa espacio en el documento por sí mismo,
+ * así que el hero arranca con `pt-12 md:pt-20` (sólo separación visual respecto
+ * a la fila inferior del header).
  *
  * Si `marca.hero_image` existe (subida real a Supabase Storage), la usamos como
  * background con opacity 20. Si no, el fallback decorativo (gradiente radial +
@@ -23,7 +25,7 @@ export default function BrandHero({ marca }: { marca: PublicBrand }) {
 
   return (
     <section
-      className="relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28"
+      className="relative overflow-hidden pt-12 pb-20 md:pt-20 md:pb-28"
       style={{ background: "var(--brand-cream)" }}
     >
       {/* Background photo — solo si está subida a Storage */}

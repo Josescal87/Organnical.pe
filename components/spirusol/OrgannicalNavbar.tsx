@@ -2,42 +2,43 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
-import Link from "next/link"
-import { Menu, X, ArrowRight, ShoppingCart, Zap } from "lucide-react"
+import { LogOut, ArrowRight } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
 /**
- * Navbar para el subdominio Spirusol — copia visual 1:1 de `components/Navbar.tsx`
- * pero con todos los hrefs en absoluto a `https://organnical.pe/...` porque desde
- * `spirusol.organnical.pe` el middleware rewritea cualquier path interno a
- * `/marcas/spirusol/<path>` (rutas que no existen). Decisión 2026-05-22 con
- * usuario: paridad visual con la home + UX coherente para el carrito.
+ * Header para el subdominio Spirusol — replica el patrón visual de `/tienda`
+ * (sticky de 2 filas: logo Organnical arriba + identidad de la página/marca abajo)
+ * porque el usuario pidió "que salga igualito" a esa captura (2026-05-22).
  *
- * Diferencias funcionales del global:
- *   • Hrefs absolutos a organnical.pe + UTMs `utm_source=spirusol_subdomain`.
- *   • Icono carrito NO abre drawer: redirige a `/tienda?marca=spirusol` en el
- *     host principal (los carts viven por hostname en localStorage; añadir
- *     productos en el subdominio significaría perderlos al hacer checkout).
- *   • Sin pathname-active state (acá siempre estamos en home del subdominio).
+ * Decisiones:
+ *   • Sticky (no fixed): el contenido fluye naturalmente debajo sin necesidad
+ *     de pt-* artificial en el hero. Mismo comportamiento que /tienda.
+ *   • Fila 1 = logo `/logo-white.png` + nav Organnical (Mi cuenta · Botica ·
+ *     Tienda · Blog) + Salir/Agendar según sesión. Hrefs absolutos a
+ *     organnical.pe + UTM `utm_source=spirusol_subdomain`.
+ *   • Fila 2 = avatar redondeado con el logo Spirusol blanco + "Spirusol" en
+ *     Fraunces 2xl + tagline corto debajo.
  *
- * Si actualizas el Navbar global, recordá replicar acá las clases/estilos para
- * mantener paridad.
+ * Sin chip Express ni icono carrito — los quita la captura referencia.
  */
+const NOISE =
+  "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E\")"
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
+const SPIRUSOL_AVATAR_BG =
+  "linear-gradient(135deg, #154734 0%, #2c8a4a 55%, #ed9c2b 130%)"
+
 const ORGANNICAL = "https://organnical.pe"
 const UTM = "utm_source=spirusol_subdomain&utm_medium=header"
 
-const navLinks = [
-  { href: `${ORGANNICAL}/tienda?marca=spirusol&${UTM}`, label: "Tienda" },
-  { href: `${ORGANNICAL}/agendar?${UTM}`, label: "Consultas" },
-  { href: `${ORGANNICAL}/blog?${UTM}`, label: "Blog" },
+const NAV = [
+  { label: "Mi cuenta", href: `${ORGANNICAL}/cuenta?${UTM}` },
+  { label: "Botica", href: `${ORGANNICAL}/cuenta/botica?${UTM}` },
+  { label: "Tienda", href: `${ORGANNICAL}/tienda?marca=spirusol&${UTM}` },
+  { label: "Blog", href: `${ORGANNICAL}/blog?${UTM}` },
 ]
-const EXPRESS_HREF = `${ORGANNICAL}/consulta-express?${UTM}`
-const CART_HREF = `${ORGANNICAL}/tienda?marca=spirusol&${UTM}&utm_content=cart_icon`
 
 export default function OrgannicalNavbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean | null>(null)
 
   useEffect(() => {
     const supabase = createClient()
@@ -46,185 +47,130 @@ export default function OrgannicalNavbar() {
     })
   }, [])
 
-  useEffect(() => {
-    if (!menuOpen) return
-    const fn = () => setMenuOpen(false)
-    window.addEventListener("scroll", fn, { once: true, passive: true })
-    return () => window.removeEventListener("scroll", fn)
-  }, [menuOpen])
-
-  // En el subdominio Spirusol el navbar está siempre sólido (sin transición scroll),
-  // igual que tienda/blog/botica del global. No hay landing transparente en marcas.
+  async function handleLogout() {
+    const sb = createClient()
+    await sb.auth.signOut()
+    // En el subdominio el login vive en organnical.pe — navegamos full-page
+    // para mantener el dominio del cookie de sesión consistente.
+    window.location.href = `${ORGANNICAL}/login?${UTM}`
+  }
 
   return (
     <header
-      className="fixed inset-x-0 top-0 z-50 shadow-lg"
+      className="sticky top-0 z-50 relative overflow-hidden shadow-lg"
       style={{ background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" }}
     >
-      <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 h-[80px]">
-        {/* Cobrand Spirusol primario + atribución a Organnical. La marca del
-            subdominio domina visualmente; Organnical aparece como subline para
-            mantener trazabilidad al ecosistema. Decisión 2026-05-22 con usuario. */}
-        <Link
-          href="/"
-          className="flex-shrink-0 flex items-center gap-3 group"
-          aria-label="Spirusol — por organnical.pe"
-        >
-          <Image
-            src="/brands/spirusol/logo-white.png"
-            alt=""
-            aria-hidden="true"
-            width={48}
-            height={48}
-            priority
-            className="w-12 h-12 object-contain"
-          />
-          <span className="flex flex-col leading-none">
-            <span
-              className="text-white font-bold tracking-tight"
-              style={{
-                fontFamily: "var(--font-fraunces)",
-                fontSize: "1.375rem",
-              }}
-            >
-              Spirusol
-            </span>
-            <span className="text-[10px] uppercase tracking-[0.18em] text-white/45 mt-1">
-              por organnical.pe
-            </span>
-          </span>
-        </Link>
+      {/* Noise */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-50"
+        style={{ backgroundImage: NOISE, backgroundRepeat: "repeat", backgroundSize: "180px 180px" }}
+      />
+      {/* Dot grid */}
+      <div
+        className="absolute inset-0 pointer-events-none opacity-10"
+        style={{
+          backgroundImage:
+            "radial-gradient(circle, rgba(167,139,250,0.35) 1px, transparent 1px)",
+          backgroundSize: "28px 28px",
+        }}
+      />
+      {/* Glow blob */}
+      <div
+        className="absolute -bottom-10 -right-10 w-64 h-64 rounded-full opacity-10 blur-3xl pointer-events-none"
+        style={{ background: G }}
+      />
 
-        <nav className="hidden sm:flex items-center gap-5 flex-1 justify-center">
-          {navLinks.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="text-xs font-medium transition-colors text-white/40 hover:text-white/70"
-            >
-              {l.label}
-            </a>
-          ))}
+      <div className="relative max-w-5xl mx-auto px-4 pt-5 pb-5">
+        {/* ── Fila 1: logo Organnical + nav central + auth ─────────────── */}
+        <div className="flex items-center gap-4 mb-4">
           <a
-            href={EXPRESS_HREF}
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-0.5 text-xs font-bold text-white transition-all hover:opacity-80"
-            style={{ background: "linear-gradient(135deg, #F472B6 0%, #A78BFA 100%)" }}
+            href={`${ORGANNICAL}/?${UTM}&utm_content=logo`}
+            className="flex-shrink-0"
+            aria-label="organnical.pe — home"
           >
-            <Zap className="w-3 h-3" /> Express S/30
-          </a>
-        </nav>
-
-        <div className="flex items-center gap-3 flex-shrink-0">
-          {/* Cart icon → redirect a tienda (no abre drawer, ver doc del componente) */}
-          <a
-            href={CART_HREF}
-            aria-label="Ir a la tienda"
-            className="flex items-center justify-center text-white/35 hover:text-white/70 transition-colors"
-          >
-            <ShoppingCart className="w-4 h-4" />
+            <Image
+              src="/logo-white.png"
+              alt="Organnical"
+              width={100}
+              height={24}
+              priority
+              className="opacity-75 hover:opacity-100 transition-opacity"
+            />
           </a>
 
+          <nav className="hidden sm:flex items-center gap-5 flex-1 justify-center">
+            {NAV.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors"
+              >
+                {l.label}
+              </a>
+            ))}
+          </nav>
+
+          {/* Auth slot — Salir cuando logueado, Agendar cuando no. Misma estética
+              que LogoutButton/Navbar para mantener la línea visual. */}
           {isLoggedIn ? (
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-1.5 text-white/35 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
+            >
+              <LogOut size={13} />
+              <span className="hidden sm:inline">Salir</span>
+            </button>
+          ) : (
             <a
-              href={`${ORGANNICAL}/cuenta?${UTM}`}
+              href={`${ORGANNICAL}/agendar?${UTM}`}
               className="flex items-center gap-1.5 text-white/35 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
             >
               <ArrowRight size={13} />
-              <span className="hidden sm:inline">Mi cuenta</span>
+              <span className="hidden sm:inline">Agendar</span>
             </a>
-          ) : (
-            <>
-              <a
-                href={`${ORGANNICAL}/login?${UTM}`}
-                className="text-xs font-medium text-white/35 hover:text-white/70 hidden sm:block transition-colors"
-              >
-                Iniciar sesión
-              </a>
-              <a
-                href={`${ORGANNICAL}/agendar?${UTM}`}
-                className="flex items-center gap-1.5 text-white/35 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
-              >
-                <ArrowRight size={13} />
-                <span className="hidden sm:inline">Agendar</span>
-              </a>
-            </>
           )}
-
-          <button
-            onClick={() => setMenuOpen((o) => !o)}
-            className="sm:hidden p-2 rounded-lg text-white/75 hover:text-white transition-colors"
-            aria-label="Menú"
-          >
-            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
         </div>
-      </div>
 
-      {/* Mobile menu */}
-      <div
-        className={`sm:hidden overflow-hidden transition-all duration-300 ${
-          menuOpen ? "max-h-80 opacity-100" : "max-h-0 opacity-0"
-        }`}
-        style={{
-          background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)",
-          borderBottom: "1px solid rgba(255,255,255,0.08)",
-        }}
-      >
-        <div className="px-6 py-3 flex flex-col">
-          {navLinks.map((l) => (
+        {/* ── Fila 2: avatar logo Spirusol + título + tagline ──────────── */}
+        <div className="flex items-center gap-3">
+          <div
+            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 p-1.5 shadow-md"
+            style={{ background: SPIRUSOL_AVATAR_BG }}
+          >
+            <Image
+              src="/brands/spirusol/logo-white.png"
+              alt=""
+              aria-hidden="true"
+              width={48}
+              height={48}
+              className="w-full h-full object-contain"
+            />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h1
+              className="text-2xl font-black text-white leading-tight tracking-tight"
+              style={{ fontFamily: "var(--font-fraunces)" }}
+            >
+              Spirusol
+            </h1>
+            <p className="text-white/40 text-xs">
+              Espirulina del sol del sur · Arequipa
+            </p>
+          </div>
+        </div>
+
+        {/* Nav mobile — abajo de la fila 2 cuando no hay espacio horizontal */}
+        <nav className="sm:hidden mt-4 -mb-1 flex items-center gap-4 overflow-x-auto pb-1 scrollbar-none">
+          {NAV.map((l) => (
             <a
               key={l.href}
               href={l.href}
-              onClick={() => setMenuOpen(false)}
-              className="py-3 text-sm font-medium text-white/60 border-b border-white/[0.06] hover:text-white/90 transition-colors"
+              className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors flex-shrink-0"
             >
               {l.label}
             </a>
           ))}
-          <a
-            href={EXPRESS_HREF}
-            onClick={() => setMenuOpen(false)}
-            className="py-3 text-sm font-bold text-[#F472B6] border-b border-white/[0.06] flex items-center gap-2 hover:text-[#A78BFA] transition-colors"
-          >
-            <Zap className="w-4 h-4" /> Express S/30 — orientación hoy
-          </a>
-          <a
-            href={CART_HREF}
-            onClick={() => setMenuOpen(false)}
-            className="py-3 text-sm font-medium text-white/60 border-b border-white/[0.06] flex items-center gap-2 hover:text-white/90 transition-colors w-full text-left"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            Ir a la tienda
-          </a>
-          {isLoggedIn ? (
-            <a
-              href={`${ORGANNICAL}/cuenta?${UTM}`}
-              onClick={() => setMenuOpen(false)}
-              className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
-              style={{ background: G }}
-            >
-              Mi cuenta <ArrowRight className="w-4 h-4" />
-            </a>
-          ) : (
-            <>
-              <a
-                href={`${ORGANNICAL}/login?${UTM}`}
-                onClick={() => setMenuOpen(false)}
-                className="py-3 text-sm font-medium text-white/60 hover:text-white transition-colors"
-              >
-                Iniciar sesión
-              </a>
-              <a
-                href={`${ORGANNICAL}/agendar?${UTM}`}
-                onClick={() => setMenuOpen(false)}
-                className="mt-3 mb-2 flex items-center justify-center gap-2 rounded-full py-3 text-sm font-semibold text-white"
-                style={{ background: G }}
-              >
-                Agendar consulta <ArrowRight className="w-4 h-4" />
-              </a>
-            </>
-          )}
-        </div>
+        </nav>
       </div>
     </header>
   )

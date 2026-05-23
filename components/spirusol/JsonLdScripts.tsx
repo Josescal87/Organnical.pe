@@ -1,5 +1,5 @@
 import type { PublicBrand } from "@/lib/types"
-import { FAQ_ITEMS } from "./BrandFAQ"
+import { FAQ_ITEMS } from "./faq-data"
 
 /**
  * Bloques JSON-LD para SEO del landing Spirusol. Server-rendered (Google

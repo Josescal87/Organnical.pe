@@ -20,12 +20,21 @@ export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
   // ── Detección de subdominios ─────────────────────────────────────────────────
-  // sami.organnical.pe   → rewrite interno a /sami/*
-  // medicos.organnical.pe → rewrite interno a /medicos/*
+  // sami.organnical.pe       → rewrite interno a /sami/*
+  // medicos.organnical.pe    → rewrite interno a /medicos/*
+  // spirusol.organnical.pe   → rewrite interno a /marcas/spirusol/*  (landing de marca)
   // Las rutas /api/* nunca se reescriben.
-  const hostname = request.headers.get("host") ?? ""
+  // Dev override: ?host=spirusol.organnical.pe en cualquier URL local para previsualizar
+  // el subdominio sin tocar el hosts file.
+  const realHostname = request.headers.get("host") ?? ""
+  const devHostOverride =
+    process.env.NODE_ENV !== "production"
+      ? request.nextUrl.searchParams.get("host") ?? ""
+      : ""
+  const hostname = devHostOverride || realHostname
   const isSami = hostname.startsWith("sami.")
   const isMedicos = hostname.startsWith("medicos.")
+  const isSpirusol = hostname.startsWith("spirusol.")
 
   // ── Paso obligatorio de Supabase SSR ────────────────────────────────────────
   // createServerClient + getUser() refresca el cookie de sesión en cada request.
@@ -88,6 +97,12 @@ export async function middleware(request: NextRequest) {
     if (isSami && !pathname.startsWith("/sami") && !pathname.startsWith("/api/") && pathname !== "/login") {
       const url = request.nextUrl.clone()
       url.pathname = `/sami${pathname === "/" ? "" : pathname}`
+      return NextResponse.rewrite(url)
+    }
+    // Rewrite spirusol subdomain — la landing es pública, no requiere auth.
+    if (isSpirusol && !pathname.startsWith("/marcas/") && !pathname.startsWith("/api/") && pathname !== "/login") {
+      const url = request.nextUrl.clone()
+      url.pathname = `/marcas/spirusol${pathname === "/" ? "" : pathname}`
       return NextResponse.rewrite(url)
     }
     return supabaseResponse
@@ -168,6 +183,19 @@ export async function middleware(request: NextRequest) {
   if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos" && pathname !== "/dashboard/cambiar-contrasena") {
     const url = request.nextUrl.clone()
     url.pathname = `/medicos${pathname === "/" ? "" : pathname}`
+    const rewriteResponse = NextResponse.rewrite(url)
+    supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
+      rewriteResponse.cookies.set(name, value)
+    })
+    return rewriteResponse
+  }
+
+  // ── Rewrite de subdominio Spirusol (con sesión) ─────────────────────────────
+  // El usuario autenticado en spirusol.organnical.pe ve la landing igual; el carrito
+  // y el header de Organnical comparten sesión vía cookie de dominio .organnical.pe.
+  if (isSpirusol && !pathname.startsWith("/marcas/") && !pathname.startsWith("/api/") && pathname !== "/login") {
+    const url = request.nextUrl.clone()
+    url.pathname = `/marcas/spirusol${pathname === "/" ? "" : pathname}`
     const rewriteResponse = NextResponse.rewrite(url)
     supabaseResponse.cookies.getAll().forEach(({ name, value }) => {
       rewriteResponse.cookies.set(name, value)

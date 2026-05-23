@@ -20,21 +20,36 @@ const NOISE = "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 
 interface Props {
-  searchParams: Promise<{ categoria?: string }>
+  searchParams: Promise<{ categoria?: string; marca?: string }>
 }
 
-async function getProductos(categoria?: string): Promise<PublicProduct[]> {
+interface MarcaChip {
+  id: string
+  slug: string
+  nombre: string
+  logo_url: string | null
+}
+
+async function getProductos(categoria?: string, marcaSlug?: string): Promise<PublicProduct[]> {
   const supabase = await createClient()
   let query = supabase
     .from("productos")
     .select(
-      "id, sku, descripcion, descripcion_corta, descripcion_larga, ingredientes, modo_uso, advertencias, presentacion, categoria, precio_publico, precio_oferta, slug_publico, imagen_url, imagenes_galeria, tags, peso_g"
+      // marca:marcas(...) hace embed via FK productos.marca_id → marcas.id; null si el producto no tiene marca.
+      "id, sku, descripcion, descripcion_corta, descripcion_larga, ingredientes, modo_uso, advertencias, presentacion, categoria, precio_publico, precio_oferta, slug_publico, imagen_url, imagenes_galeria, tags, peso_g, marca_id, marca:marcas(id, slug, nombre, logo_url)"
     )
     .eq("visible_publico", true)
     .eq("activo", true)
     .order("orden", { ascending: true })
 
   if (categoria) query = query.eq("categoria", categoria)
+  // Filtro marca: resolvemos slug→id antes para mantener PostgREST simple.
+  if (marcaSlug) {
+    const { data: m } = await supabase.from("marcas").select("id").eq("slug", marcaSlug).maybeSingle()
+    if (m?.id) query = query.eq("marca_id", m.id)
+    else return []  // marca inexistente → catálogo vacío en vez de fallar silencioso
+  }
+
   const { data } = await query
   const productos = (data as PublicProduct[]) ?? []
 
@@ -61,14 +76,40 @@ async function getCategorias(): Promise<string[]> {
   return cats.sort()
 }
 
+async function getMarcas(): Promise<MarcaChip[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from("marcas")
+    .select("id, slug, nombre, logo_url")
+    .eq("visible", true)
+    .order("nombre", { ascending: true })
+  return (data ?? []) as MarcaChip[]
+}
+
+/** Helper para preservar params al cambiar de filtro (categoria pasa, se cambia solo marca, etc.). */
+function buildHref(params: Record<string, string | undefined>): string {
+  const qs = new URLSearchParams()
+  for (const [k, v] of Object.entries(params)) {
+    if (v) qs.set(k, v)
+  }
+  const s = qs.toString()
+  return s ? `/tienda?${s}` : "/tienda"
+}
+
 export default async function TiendaPage({ searchParams }: Props) {
   const params = await searchParams
   const categoriaActual = params.categoria
+  const marcaActual = params.marca
 
-  const [productos, categorias] = await Promise.all([
-    getProductos(categoriaActual),
+  const [productos, categorias, marcas] = await Promise.all([
+    getProductos(categoriaActual, marcaActual),
     getCategorias(),
+    getMarcas(),
   ])
+
+  // Banner "Mundo Spirusol" cuando se filtra por esa marca — link al subdominio.
+  const marcaActualObj = marcaActual ? marcas.find((m) => m.slug === marcaActual) : null
+  const showSpirusolBanner = marcaActualObj?.slug === "spirusol"
 
   return (
     <main className="min-h-screen" style={{ background: "#F8FAFC" }}>
@@ -142,36 +183,72 @@ export default async function TiendaPage({ searchParams }: Props) {
       <div className="max-w-5xl mx-auto px-4 py-6">
         <div className="flex gap-8">
 
-          {/* Sidebar categorías — desktop */}
-          {categorias.length > 0 && (
-            <aside className="hidden md:block w-44 flex-shrink-0 pt-1">
-              <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">Categorías</p>
-              <ul className="space-y-1">
-                <li>
-                  <a
-                    href="/tienda"
-                    className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
-                    style={!categoriaActual
-                      ? { background: G, color: "#fff" }
-                      : { color: "#71717a" }}
-                  >
-                    Todos
-                  </a>
-                </li>
-                {categorias.map((cat) => (
-                  <li key={cat}>
-                    <a
-                      href={`/tienda?categoria=${encodeURIComponent(cat)}`}
-                      className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
-                      style={categoriaActual === cat
-                        ? { background: G, color: "#fff" }
-                        : { color: "#71717a" }}
-                    >
-                      {cat}
-                    </a>
-                  </li>
-                ))}
-              </ul>
+          {/* Sidebar categorías + marcas — desktop */}
+          {(categorias.length > 0 || marcas.length > 0) && (
+            <aside className="hidden md:block w-44 flex-shrink-0 pt-1 space-y-6">
+              {categorias.length > 0 && (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">Categorías</p>
+                  <ul className="space-y-1">
+                    <li>
+                      <a
+                        href={buildHref({ marca: marcaActual })}
+                        className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
+                        style={!categoriaActual
+                          ? { background: G, color: "#fff" }
+                          : { color: "#71717a" }}
+                      >
+                        Todas
+                      </a>
+                    </li>
+                    {categorias.map((cat) => (
+                      <li key={cat}>
+                        <a
+                          href={buildHref({ categoria: cat, marca: marcaActual })}
+                          className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
+                          style={categoriaActual === cat
+                            ? { background: G, color: "#fff" }
+                            : { color: "#71717a" }}
+                        >
+                          {cat}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {marcas.length > 0 && (
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-3">Marcas</p>
+                  <ul className="space-y-1">
+                    <li>
+                      <a
+                        href={buildHref({ categoria: categoriaActual })}
+                        className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
+                        style={!marcaActual
+                          ? { background: G, color: "#fff" }
+                          : { color: "#71717a" }}
+                      >
+                        Todas
+                      </a>
+                    </li>
+                    {marcas.map((m) => (
+                      <li key={m.slug}>
+                        <a
+                          href={buildHref({ categoria: categoriaActual, marca: m.slug })}
+                          className="block text-sm px-3 py-1.5 rounded-xl font-medium transition-all"
+                          style={marcaActual === m.slug
+                            ? { background: G, color: "#fff" }
+                            : { color: "#71717a" }}
+                        >
+                          {m.nombre}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </aside>
           )}
 
@@ -179,20 +256,20 @@ export default async function TiendaPage({ searchParams }: Props) {
 
             {/* Chips categorías — mobile */}
             {categorias.length > 0 && (
-              <div className="md:hidden flex gap-2 overflow-x-auto pb-3 mb-5 -mx-4 px-4">
+              <div className="md:hidden flex gap-2 overflow-x-auto pb-3 mb-3 -mx-4 px-4">
                 <a
-                  href="/tienda"
+                  href={buildHref({ marca: marcaActual })}
                   className="flex-shrink-0 text-xs px-3.5 py-1.5 rounded-full font-semibold transition-all"
                   style={!categoriaActual
                     ? { background: G, color: "#fff" }
                     : { border: "1px solid #e4e4e7", color: "#71717a", background: "transparent" }}
                 >
-                  Todos
+                  Todas
                 </a>
                 {categorias.map((cat) => (
                   <a
                     key={cat}
-                    href={`/tienda?categoria=${encodeURIComponent(cat)}`}
+                    href={buildHref({ categoria: cat, marca: marcaActual })}
                     className="flex-shrink-0 text-xs px-3.5 py-1.5 rounded-full font-semibold transition-all"
                     style={categoriaActual === cat
                       ? { background: G, color: "#fff" }
@@ -202,6 +279,60 @@ export default async function TiendaPage({ searchParams }: Props) {
                   </a>
                 ))}
               </div>
+            )}
+
+            {/* Chips marcas — mobile */}
+            {marcas.length > 0 && (
+              <div className="md:hidden flex gap-2 overflow-x-auto pb-3 mb-5 -mx-4 px-4">
+                <a
+                  href={buildHref({ categoria: categoriaActual })}
+                  className="flex-shrink-0 text-xs px-3.5 py-1.5 rounded-full font-semibold transition-all"
+                  style={!marcaActual
+                    ? { background: G, color: "#fff" }
+                    : { border: "1px solid #e4e4e7", color: "#71717a", background: "transparent" }}
+                >
+                  Todas las marcas
+                </a>
+                {marcas.map((m) => (
+                  <a
+                    key={m.slug}
+                    href={buildHref({ categoria: categoriaActual, marca: m.slug })}
+                    className="flex-shrink-0 text-xs px-3.5 py-1.5 rounded-full font-semibold transition-all"
+                    style={marcaActual === m.slug
+                      ? { background: G, color: "#fff" }
+                      : { border: "1px solid #e4e4e7", color: "#71717a", background: "transparent" }}
+                  >
+                    {m.nombre}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            {/* Banner "Mundo Spirusol" — link al subdominio cuando se filtra por marca=spirusol */}
+            {showSpirusolBanner && (
+              <a
+                href="https://spirusol.organnical.pe/?utm_source=organnical_tienda&utm_medium=marca_filter&utm_campaign=cross"
+                className="block mb-5 rounded-2xl border border-[#6DA94C]/30 bg-gradient-to-br from-[#94C975]/15 via-white to-[#F2A93B]/10 p-4 hover:shadow-md transition-shadow"
+              >
+                <div className="flex items-center gap-3">
+                  {marcaActualObj.logo_url && (
+                    <Image
+                      src={marcaActualObj.logo_url}
+                      alt="Spirusol"
+                      width={40}
+                      height={40}
+                      className="rounded-lg"
+                    />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-bold text-[#1E5E3D]">Conocé el mundo Spirusol</p>
+                    <p className="text-xs text-[#1E5E3D]/70">
+                      Espirulina del sol del sur · IIN 67% proteína · Vegan Verified
+                    </p>
+                  </div>
+                  <span className="text-[#1E5E3D] font-bold text-lg" aria-hidden="true">→</span>
+                </div>
+              </a>
             )}
 
             {/* Grid de productos */}

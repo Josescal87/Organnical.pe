@@ -1,3 +1,5 @@
+import type { BrandCertificate, BrandThemeTokens, NutritionFacts } from "@/lib/supabase/database.types"
+
 export interface PublicProduct {
   id: string
   sku: string
@@ -17,6 +19,29 @@ export interface PublicProduct {
   tags: string[] | null
   peso_g: number | null
   stock?: number | null
+  // Brand + nutrition (spec Spirusol — opcional, solo poblado para marcas con ficha extendida)
+  marca_id?: string | null
+  marca?: PublicBrand | null
+  nutrition_facts?: NutritionFacts | null
+  registro_sanitario?: string | null
+  vida_util_meses?: number | null
+  laboratorio?: string | null
+  origen?: string | null
+}
+
+/** Datos públicos de una marca (lo que muestra la landing y el bloque "Header de marca" del PDP). */
+export interface PublicBrand {
+  id: string
+  slug: string
+  nombre: string
+  tagline: string | null
+  logo_url: string | null
+  hero_image: string | null
+  descripcion: string | null
+  origen: string | null
+  productor: string | null
+  certificados: BrandCertificate[]
+  theme_tokens: BrandThemeTokens
 }
 
 export interface CartItem {

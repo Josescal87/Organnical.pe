@@ -36,6 +36,43 @@ export type HercuFitnessLevel = 'principiante' | 'intermedio' | 'avanzado'
 export type HercuMessageRole  = 'user' | 'assistant'
 
 
+// ─── Tipos jsonb para tabla marcas y campos nutricionales ────────────────────
+
+/** Un certificado de marca (Vegan Verified, Registro Sanitario, informe de laboratorio…). */
+export interface BrandCertificate {
+  tipo:           string                  // "vegan-verified" | "registro-sanitario" | "informe-laboratorio" | ...
+  id:             string                  // código del certificado
+  emisor:         string                  // entidad emisora
+  valido_hasta?:  string                  // ISO date — opcional para certificados no caducables
+  fecha?:         string                  // ISO date — fecha de emisión (p. ej. informes)
+}
+
+/** Tokens visuales de marca (paleta OKLCH, etc.) que sobreescriben tokens base en `/marcas/[slug]`. */
+export type BrandThemeTokens = Record<string, string>
+
+/** Estructura nutricional de un producto alimenticio (spec Spirusol §3.2). */
+export interface NutritionFacts {
+  porcion:                string                       // "5 g"
+  porciones_por_envase:   number                       // 20
+  por_100g: {
+    proteina_g?:                       number
+    grasa_g?:                          number
+    carbohidratos_g?:                  number
+    energia_kcal?:                     number
+    humedad_g?:                        number
+    ceniza_g?:                         number
+    sodio_mg?:                         number
+    hierro_mg?:                        number
+    calcio_mg?:                        number
+    capacidad_antioxidante_umol_trolox?: number
+    vitamina_b2_mg?:                   number
+    vitamina_b6_mg?:                   number
+    [otro: string]: number | undefined
+  }
+  fuente?:                string                       // cita del laboratorio
+}
+
+
 // ─── Interfaz principal de base de datos ─────────────────────────────────────
 
 export interface Database {
@@ -73,6 +110,13 @@ export interface Database {
           requiere_receta:    boolean
           ficha_url:          string | null
           coa_url:            string | null
+          // Brand + nutrition (multi-marca — ver public.marcas)
+          marca_id:           string | null
+          nutrition_facts:    NutritionFacts | null
+          registro_sanitario: string | null
+          vida_util_meses:    number | null
+          laboratorio:        string | null
+          origen:             string | null
           // Legacy OrgannicalRuby fields
           precio:             number
           recipe_sku:         string | null
@@ -82,6 +126,69 @@ export interface Database {
         }
         Insert: never   // Esta app no inserta en el catálogo de OrgannicalRuby
         Update: never
+        Relationships: [
+          {
+            foreignKeyName: "productos_marca_id_fkey"
+            columns: ["marca_id"]
+            isOneToOne: false
+            referencedRelation: "marcas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+
+      // ── public.marcas (multi-marca: Spirusol, Yumi Gumi, etc.) ────────────
+      // Spec: docs/spirusol-claude-code-spec.md §3.1
+      marcas: {
+        Row: {
+          id:            string
+          slug:          string                 // "spirusol", "yumi-gumi"
+          nombre:        string
+          tagline:       string | null
+          logo_url:      string | null
+          hero_image:    string | null
+          descripcion:   string | null
+          origen:        string | null          // "Arequipa, Perú"
+          productor:     string | null          // "Greenner SAC"
+          certificados:  BrandCertificate[]
+          theme_tokens:  BrandThemeTokens
+          social_links:  Record<string, string>
+          visible:       boolean
+          created_at:    string
+          updated_at:    string
+        }
+        Insert: {
+          id?:           string
+          slug:          string
+          nombre:        string
+          tagline?:      string | null
+          logo_url?:     string | null
+          hero_image?:   string | null
+          descripcion?:  string | null
+          origen?:       string | null
+          productor?:    string | null
+          certificados?: BrandCertificate[]
+          theme_tokens?: BrandThemeTokens
+          social_links?: Record<string, string>
+          visible?:      boolean
+          created_at?:   string
+          updated_at?:   string
+        }
+        Update: {
+          slug?:         string
+          nombre?:       string
+          tagline?:      string | null
+          logo_url?:     string | null
+          hero_image?:   string | null
+          descripcion?:  string | null
+          origen?:       string | null
+          productor?:    string | null
+          certificados?: BrandCertificate[]
+          theme_tokens?: BrandThemeTokens
+          social_links?: Record<string, string>
+          visible?:      boolean
+          updated_at?:   string
+        }
         Relationships: []
       }
 

@@ -4,7 +4,8 @@ import { headers } from "next/headers"
 
 import { getMarcaBySlug, getProductosByMarcaId } from "@/lib/marcas"
 
-import SpirusolHeader from "@/components/spirusol/SpirusolHeader"
+import OrgannicalNavbar from "@/components/spirusol/OrgannicalNavbar"
+import OrgannicalFooter from "@/components/spirusol/OrgannicalFooter"
 import BrandHero from "@/components/spirusol/BrandHero"
 import NutrientStatGrid from "@/components/spirusol/NutrientStatGrid"
 import StorytellingArequipa from "@/components/spirusol/StorytellingArequipa"
@@ -14,7 +15,6 @@ import BrandProductGrid from "@/components/spirusol/BrandProductGrid"
 import CertificateGallery from "@/components/spirusol/CertificateGallery"
 import MedicalConsultCTA from "@/components/spirusol/MedicalConsultCTA"
 import BrandFAQ from "@/components/spirusol/BrandFAQ"
-import SpirusolFooter from "@/components/spirusol/SpirusolFooter"
 import JsonLdScripts from "@/components/spirusol/JsonLdScripts"
 
 interface Props {
@@ -98,7 +98,7 @@ export default async function MarcaPage({ params }: Props) {
     <>
       <JsonLdScripts marca={marca} baseUrl={canonical.replace(/\/$/, "")} />
 
-      <SpirusolHeader marca={marca} />
+      <OrgannicalNavbar />
 
       <main
         className="min-h-screen"
@@ -118,7 +118,7 @@ export default async function MarcaPage({ params }: Props) {
         <BrandFAQ />
       </main>
 
-      <SpirusolFooter />
+      <OrgannicalFooter />
     </>
   )
 }

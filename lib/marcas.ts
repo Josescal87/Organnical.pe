@@ -3,6 +3,7 @@ import { cache } from "react"
 import { createClient } from "@/lib/supabase/server"
 import type { PublicBrand, PublicProduct } from "@/lib/types"
 import { getStockBySkus } from "@/lib/inventory"
+import { resolveAssetUrls } from "@/lib/asset-check"
 
 /**
  * Helpers compartidos entre `app/marcas/[brand]/layout.tsx` y `page.tsx`.
@@ -23,7 +24,21 @@ export const getMarcaBySlug = cache(async (slug: string): Promise<PublicBrand | 
     .maybeSingle()
 
   if (error || !data) return null
-  return data as PublicBrand
+
+  const marca = data as PublicBrand
+
+  // Validamos logo_url y hero_image — si el archivo no está subido a Storage
+  // todavía (HEAD devuelve 4xx) los null-eamos para que los componentes
+  // muestren su fallback decente en vez de un broken image. Self-healing:
+  // cuando se sube el archivo, en 5min vuelven a verse.
+  const resolved = await resolveAssetUrls({
+    logo_url: marca.logo_url,
+    hero_image: marca.hero_image,
+  })
+  marca.logo_url = resolved.logo_url
+  marca.hero_image = resolved.hero_image
+
+  return marca
 })
 
 /**

@@ -1,5 +1,4 @@
 import Image from "next/image"
-import AddToCartButton from "@/components/AddToCartButton"
 import type { PublicProduct } from "@/lib/types"
 import { formatPrice } from "@/lib/utils"
 
@@ -8,8 +7,12 @@ import { formatPrice } from "@/lib/utils"
  *
  * Decisión: no reusamos `<ProductCard>` global porque la skin del catálogo
  * (gradientes pink/purple, fondo oscuro) no encaja con la paleta Spirusol.
- * En cambio diseñamos cards específicas de marca pero usamos el MISMO
- * `<AddToCartButton>` (reutiliza CartContext + analytics existentes).
+ *
+ * IMPORTANTE — sin AddToCartButton local: el `CartContext` usa localStorage
+ * que está aislado por hostname. Si el user añade desde `spirusol.organnical.pe`
+ * y luego va a checkout (`organnical.pe`), pierde el carrito. Para evitar esa
+ * confusión, las cards del subdominio redirigen al PDP en organnical.pe donde
+ * el cart real vive — el AddToCartButton lo agrega ahí.
  *
  * Link "Ver ficha" usa host absoluto a organnical.pe (spec §6) — la PDP global
  * con bloques de marca extendidos vive ahí.
@@ -150,9 +153,16 @@ export default function BrandProductGrid({ productos }: { productos: PublicProdu
                         Agotado
                       </button>
                     ) : (
-                      <div className="flex-1">
-                        <AddToCartButton producto={p} />
-                      </div>
+                      <a
+                        href={fichaUrl}
+                        className="flex-1 px-5 py-2.5 rounded-full text-sm font-semibold text-center transition-all hover:shadow-md hover:-translate-y-0.5"
+                        style={{
+                          background: "var(--brand-green-700)",
+                          color: "var(--brand-cream)",
+                        }}
+                      >
+                        Comprar en tienda →
+                      </a>
                     )}
                     <a
                       href={fichaUrl}
@@ -162,7 +172,7 @@ export default function BrandProductGrid({ productos }: { productos: PublicProdu
                         color: "var(--brand-green-900)",
                       }}
                     >
-                      Ver ficha →
+                      Ver ficha
                     </a>
                   </div>
                 </div>

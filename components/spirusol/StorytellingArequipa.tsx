@@ -1,12 +1,17 @@
 import Image from "next/image"
 import type { PublicBrand } from "@/lib/types"
-import { Sun, Sprout } from "lucide-react"
+import { Sun, Sprout, MapPin } from "lucide-react"
 
 /**
- * Sección 3 — Storytelling Arequipa. Split image/text con `lg:grid-flow-col-dense`
- * para invertir orden en desktop. Copy literal del spec §5.3.
+ * Sección 3 — Storytelling Arequipa. Split image/text. Copy literal del spec §5.3.
+ *
+ * Si `marca.hero_image` existe (asset subido a Supabase Storage), usa la foto.
+ * Si no, renderiza una "data card" hero con los 3 datos clave del IIN sobre un
+ * gradiente verde→sun. Se siente intencional, no un placeholder roto.
  */
 export default function StorytellingArequipa({ marca }: { marca: PublicBrand }) {
+  const hasHero = Boolean(marca.hero_image)
+
   return (
     <section
       className="py-20 md:py-28 relative overflow-hidden"
@@ -14,27 +19,18 @@ export default function StorytellingArequipa({ marca }: { marca: PublicBrand }) 
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-          {/* Imagen — Misti / cultivo */}
+          {/* Imagen o data-card según haya foto subida */}
           <div className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-2xl">
-            {marca.hero_image ? (
+            {hasHero ? (
               <Image
-                src={marca.hero_image}
+                src={marca.hero_image!}
                 alt="Cultivo de espirulina bajo el sol del Misti, Arequipa"
                 fill
                 sizes="(min-width: 1024px) 50vw, 100vw"
                 className="object-cover"
               />
             ) : (
-              /* Fallback decorativo si el asset aún no se subió a Storage */
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{
-                  background:
-                    "linear-gradient(135deg, var(--brand-green-700) 0%, var(--brand-green-500) 50%, var(--brand-sun-500) 100%)",
-                }}
-              >
-                <Sun size={96} className="text-white/40" />
-              </div>
+              <ArequipaDataCard marca={marca} />
             )}
           </div>
 
@@ -83,5 +79,111 @@ export default function StorytellingArequipa({ marca }: { marca: PublicBrand }) 
         </div>
       </div>
     </section>
+  )
+}
+
+/**
+ * "Data card" — reemplazo del placeholder con icono Sun gigante. Usa el mismo
+ * lenguaje visual del hero (gradiente verde→sun + rayos sutiles) pero con
+ * contenido informativo arriba: location chip + 3 stats clave del IIN + footer.
+ * Se siente diseñado, no roto.
+ */
+function ArequipaDataCard({ marca }: { marca: PublicBrand }) {
+  const stats = [
+    { valor: "2,335 m", label: "Altitud Arequipa" },
+    { valor: "8.5 h", label: "Sol diario promedio" },
+    { valor: "67.33%", label: "Proteína verificada IIN" },
+  ]
+
+  return (
+    <div
+      className="absolute inset-0 flex flex-col justify-between p-8 md:p-10"
+      style={{
+        background:
+          "linear-gradient(160deg, var(--brand-green-900) 0%, var(--brand-green-700) 55%, var(--brand-sun-500) 130%)",
+      }}
+    >
+      {/* Rayos del sol decorativos en esquina superior derecha */}
+      <svg
+        aria-hidden="true"
+        className="absolute -top-12 -right-12 w-[280px] h-[280px] opacity-30"
+        viewBox="0 0 400 400"
+        fill="none"
+      >
+        <circle cx="200" cy="200" r="85" fill="var(--brand-sun-100)" fillOpacity="0.25" />
+        {Array.from({ length: 12 }).map((_, i) => {
+          const angle = (i * 30 * Math.PI) / 180
+          const x1 = 200 + Math.cos(angle) * 100
+          const y1 = 200 + Math.sin(angle) * 100
+          const x2 = 200 + Math.cos(angle) * 175
+          const y2 = 200 + Math.sin(angle) * 175
+          return (
+            <line
+              key={i}
+              x1={x1}
+              y1={y1}
+              x2={x2}
+              y2={y2}
+              stroke="var(--brand-sun-100)"
+              strokeOpacity="0.5"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+            />
+          )
+        })}
+      </svg>
+
+      {/* Top — location chip */}
+      <div className="relative">
+        <div
+          className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold"
+          style={{
+            background: "rgba(255,255,255,0.15)",
+            color: "var(--brand-cream)",
+            backdropFilter: "blur(8px)",
+            border: "1px solid rgba(255,255,255,0.2)",
+          }}
+        >
+          <MapPin size={12} aria-hidden="true" />
+          {marca.origen ?? "Arequipa, Perú"}
+        </div>
+      </div>
+
+      {/* Middle — 3 stats verticales */}
+      <div className="relative space-y-6 mt-8">
+        {stats.map((s, i) => (
+          <div key={i}>
+            <p
+              className="font-bold leading-none mb-1.5"
+              style={{
+                fontFamily: "var(--font-fraunces)",
+                color: "var(--brand-cream)",
+                fontSize: "clamp(2rem, 3vw + 0.5rem, 3rem)",
+                fontVariantNumeric: "tabular-nums",
+              }}
+            >
+              {s.valor}
+            </p>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider"
+              style={{ color: "var(--brand-cream)", opacity: 0.75 }}
+            >
+              {s.label}
+            </p>
+          </div>
+        ))}
+      </div>
+
+      {/* Bottom — footer pequeño con productor */}
+      <div className="relative flex items-center gap-2 mt-8">
+        <Sun size={14} style={{ color: "var(--brand-sun-100)" }} aria-hidden="true" />
+        <p
+          className="text-xs font-medium"
+          style={{ color: "var(--brand-cream)", opacity: 0.8 }}
+        >
+          Cultivado por {marca.productor ?? "Greenner SAC"}
+        </p>
+      </div>
+    </div>
   )
 }

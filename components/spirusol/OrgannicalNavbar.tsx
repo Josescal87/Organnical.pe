@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { LogOut, ArrowRight } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
@@ -24,8 +25,6 @@ import { createClient } from "@/lib/supabase/client"
 const NOISE =
   "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E\")"
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
-const SPIRUSOL_AVATAR_BG =
-  "linear-gradient(135deg, #154734 0%, #2c8a4a 55%, #ed9c2b 130%)"
 
 const ORGANNICAL = "https://organnical.pe"
 const UTM = "utm_source=spirusol_subdomain&utm_medium=header"
@@ -131,33 +130,41 @@ export default function OrgannicalNavbar() {
           )}
         </div>
 
-        {/* ── Fila 2: avatar logo Spirusol + título + tagline ──────────── */}
-        <div className="flex items-center gap-3">
-          <div
-            className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0 p-1.5 shadow-md"
-            style={{ background: SPIRUSOL_AVATAR_BG }}
-          >
-            <Image
-              src="/brands/spirusol/logo-white.png"
-              alt=""
-              aria-hidden="true"
-              width={48}
-              height={48}
-              className="w-full h-full object-contain"
-            />
-          </div>
+        {/* Separator sutil entre fila 1 (Organnical chrome) y fila 2 (identidad Spirusol).
+            Refuerza la jerarquía sin imponerse — 1px blanco/5 sobre el dark gradient. */}
+        <div className="h-px w-full bg-white/5 mb-4" aria-hidden="true" />
+
+        {/* ── Fila 2: logo Spirusol grande directo sobre el navy + título + tagline ──
+            Sin contenedor avatar — el blanco del logo respira sobre el dark. Drop-shadow
+            sutil para que el filo blanco no se funda con la noise. Hover scale para
+            invitar al click (linkea al home del subdominio). */}
+        <Link
+          href="/"
+          className="flex items-center gap-4 group"
+          aria-label="Spirusol — home"
+        >
+          <Image
+            src="/brands/spirusol/logo-white.png"
+            alt=""
+            aria-hidden="true"
+            width={64}
+            height={64}
+            priority
+            className="w-16 h-16 object-contain transition-transform duration-300 group-hover:scale-[1.03]"
+            style={{ filter: "drop-shadow(0 4px 12px rgba(0,0,0,0.35))" }}
+          />
           <div className="flex-1 min-w-0">
             <h1
-              className="text-2xl font-black text-white leading-tight tracking-tight"
+              className="text-3xl font-black text-white leading-none tracking-tight"
               style={{ fontFamily: "var(--font-fraunces)" }}
             >
               Spirusol
             </h1>
-            <p className="text-white/40 text-xs">
+            <p className="text-white/50 text-sm mt-1.5 tracking-wide">
               Espirulina del sol del sur · Arequipa
             </p>
           </div>
-        </div>
+        </Link>
 
         {/* Nav mobile — abajo de la fila 2 cuando no hay espacio horizontal */}
         <nav className="sm:hidden mt-4 -mb-1 flex items-center gap-4 overflow-x-auto pb-1 scrollbar-none">

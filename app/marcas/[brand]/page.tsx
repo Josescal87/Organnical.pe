@@ -13,7 +13,6 @@ import NutritionComparison from "@/components/spirusol/NutritionComparison"
 import UsageCards from "@/components/spirusol/UsageCards"
 import BrandProductGrid from "@/components/spirusol/BrandProductGrid"
 import CertificateGallery from "@/components/spirusol/CertificateGallery"
-import MedicalConsultCTA from "@/components/spirusol/MedicalConsultCTA"
 import BrandFAQ from "@/components/spirusol/BrandFAQ"
 import JsonLdScripts from "@/components/spirusol/JsonLdScripts"
 
@@ -114,7 +113,6 @@ export default async function MarcaPage({ params }: Props) {
         <UsageCards />
         <BrandProductGrid productos={productos} />
         <CertificateGallery />
-        <MedicalConsultCTA />
         <BrandFAQ />
       </main>
 

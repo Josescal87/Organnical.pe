@@ -61,7 +61,7 @@ export async function GET(request: Request, { params }: RouteParams) {
       producto?: { sku?: string; descripcion?: string; categoria?: string | null; precio_publico?: number; precio_oferta?: number | null }
       cantidad?: number
     }
-    const items = Array.isArray(orden.items)
+    const itemsRaw = Array.isArray(orden.items)
       ? (orden.items as ItemFila[]).map((it) => ({
           sku: it.producto?.sku ?? "",
           descripcion: it.producto?.descripcion ?? "",
@@ -70,6 +70,25 @@ export async function GET(request: Request, { params }: RouteParams) {
           precio: Number(it.producto?.precio_oferta ?? it.producto?.precio_publico ?? 0),
         }))
       : []
+
+    // Enriquecemos cada item con marca.slug haciendo lookup actual en `productos`.
+    // No tocamos el snapshot histórico (`ordenes_tienda.items`) — esto solo es
+    // para enviar `content_brand` al Pixel cuando el browser dispare Purchase.
+    // Si el SKU desapareció del catálogo, `marca` queda null y el evento no incluye brand.
+    const skus = itemsRaw.map((i) => i.sku).filter(Boolean)
+    let marcaPorSku: Record<string, string | null> = {}
+    if (skus.length > 0) {
+      const { data: prods } = await admin
+        .from("productos")
+        .select("sku, marca:marcas(slug)")
+        .in("sku", skus)
+      marcaPorSku = Object.fromEntries(
+        ((prods ?? []) as Array<{ sku: string; marca: { slug: string } | null }>).map(
+          (p) => [p.sku, p.marca?.slug ?? null]
+        )
+      )
+    }
+    const items = itemsRaw.map((it) => ({ ...it, marca: marcaPorSku[it.sku] ?? null }))
 
     return NextResponse.json({
       id: orden.id,

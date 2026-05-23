@@ -22,6 +22,19 @@ async function getProductSlugs(): Promise<string[]> {
   }
 }
 
+async function getMarcaSlugs(): Promise<string[]> {
+  try {
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
+    const { data } = await supabase.from("marcas").select("slug").eq("visible", true);
+    return (data ?? []).map((r) => r.slug as string).filter(Boolean);
+  } catch {
+    return [];
+  }
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const blogRoutes = getAllSlugs().map((slug) => ({
     url: `${BASE}/blog/${slug}`,
@@ -45,11 +58,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8,
   }));
 
+  // Páginas de marca: tanto la URL canónica del subdominio como la ruta interna
+  // bajo organnical.pe — Google resuelve el duplicado por canonical (que viene
+  // del page.tsx con detección de host).
+  const marcaSlugs = await getMarcaSlugs();
+  const marcaRoutes = marcaSlugs.flatMap((slug) => [
+    {
+      url: `https://${slug}.organnical.pe/`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.85,
+    },
+    {
+      url: `${BASE}/marcas/${slug}`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    },
+  ]);
+
   return [
     { url: BASE, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${BASE}/tienda`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     ...specialtyRoutes,
+    ...marcaRoutes,
     ...productRoutes,
     ...blogRoutes,
     { url: `${BASE}/preguntas-frecuentes`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },

@@ -7,14 +7,19 @@ import ProductGallery from "@/components/ProductGallery"
 import AddToCartButton from "@/components/AddToCartButton"
 import ProductCard from "@/components/ProductCard"
 import TrackViewItem from "@/components/analytics/TrackViewItem"
+import BrandHeaderChip from "@/components/brand/BrandHeaderChip"
+import NutritionTable from "@/components/brand/NutritionTable"
+import CertificateBadges from "@/components/brand/CertificateBadges"
 import { getStockBySkus, LOW_STOCK_THRESHOLD } from "@/lib/inventory"
 import { formatPrice } from "@/lib/utils"
 import type { PublicProduct } from "@/lib/types"
-import { Package, CheckCircle, AlertTriangle } from "lucide-react"
+import { Package, CheckCircle, AlertTriangle, MapPin } from "lucide-react"
 
 const RELATED_LIMIT = 4
+// `marca:marcas(...)` embeds la marca via FK productos.marca_id → marcas.id.
+// Devuelve `marca: null` cuando el producto no tiene marca asignada.
 const PRODUCT_FIELDS =
-  "id, sku, descripcion, descripcion_corta, descripcion_larga, ingredientes, modo_uso, advertencias, presentacion, categoria, precio_publico, precio_oferta, slug_publico, imagen_url, imagenes_galeria, tags, peso_g"
+  "id, sku, descripcion, descripcion_corta, descripcion_larga, ingredientes, modo_uso, advertencias, presentacion, categoria, precio_publico, precio_oferta, slug_publico, imagen_url, imagenes_galeria, tags, peso_g, marca_id, nutrition_facts, registro_sanitario, vida_util_meses, laboratorio, origen, marca:marcas(id, slug, nombre, tagline, logo_url, hero_image, descripcion, origen, productor, certificados, theme_tokens)"
 
 export const dynamic = "force-dynamic"
 
@@ -137,6 +142,58 @@ export default async function ProductoPage({ params }: Props) {
   const supabase = await createClient()
   const relacionados = await getRelacionados(supabase, producto.id, producto.categoria, producto.tags)
 
+  // JSON-LD ampliado con brand + nutrition + additionalProperty para riquecer los
+  // rich results en Google. Spec §6.6 — solo añade campos cuando el producto los tiene.
+  const additionalProperty: Array<{ "@type": "PropertyValue"; name: string; value: string }> = []
+  if (producto.registro_sanitario) {
+    additionalProperty.push({
+      "@type": "PropertyValue",
+      name: "Registro Sanitario MINSA",
+      value: producto.registro_sanitario,
+    })
+  }
+  if (producto.laboratorio) {
+    additionalProperty.push({
+      "@type": "PropertyValue",
+      name: "Análisis de laboratorio",
+      value: producto.laboratorio,
+    })
+  }
+  if (producto.origen) {
+    additionalProperty.push({
+      "@type": "PropertyValue",
+      name: "Origen",
+      value: producto.origen,
+    })
+  }
+
+  const nutritionLd = producto.nutrition_facts
+    ? {
+        "@type": "NutritionInformation",
+        servingSize: producto.nutrition_facts.porcion,
+        ...(producto.nutrition_facts.por_100g.energia_kcal != null && {
+          calories: `${producto.nutrition_facts.por_100g.energia_kcal} kcal`,
+        }),
+        ...(producto.nutrition_facts.por_100g.proteina_g != null && {
+          proteinContent: `${producto.nutrition_facts.por_100g.proteina_g} g`,
+        }),
+        ...(producto.nutrition_facts.por_100g.grasa_g != null && {
+          fatContent: `${producto.nutrition_facts.por_100g.grasa_g} g`,
+        }),
+        ...(producto.nutrition_facts.por_100g.carbohidratos_g != null && {
+          carbohydrateContent: `${producto.nutrition_facts.por_100g.carbohidratos_g} g`,
+        }),
+        ...(producto.nutrition_facts.por_100g.sodio_mg != null && {
+          sodiumContent: `${producto.nutrition_facts.por_100g.sodio_mg} mg`,
+        }),
+      }
+    : undefined
+
+  const stockAvailability =
+    producto.stock != null && producto.stock === 0
+      ? "https://schema.org/OutOfStock"
+      : "https://schema.org/InStock"
+
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -144,11 +201,21 @@ export default async function ProductoPage({ params }: Props) {
     description: producto.descripcion_corta ?? "",
     image: producto.imagen_url ?? "",
     sku: producto.sku,
+    ...(producto.categoria && { category: producto.categoria }),
+    ...(producto.marca && {
+      brand: {
+        "@type": "Brand",
+        name: producto.marca.nombre,
+        ...(producto.marca.logo_url && { logo: producto.marca.logo_url }),
+      },
+    }),
+    ...(nutritionLd && { nutrition: nutritionLd }),
+    ...(additionalProperty.length > 0 && { additionalProperty }),
     offers: {
       "@type": "Offer",
       priceCurrency: "PEN",
       price: precio,
-      availability: "https://schema.org/InStock",
+      availability: stockAvailability,
     },
   }
 
@@ -177,11 +244,15 @@ export default async function ProductoPage({ params }: Props) {
           />
 
           <div className="space-y-6">
-            {producto.categoria && (
-              <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">
-                {producto.categoria}
-              </span>
-            )}
+            {/* Header de marca + categoría. Con marca poblada damos prioridad visual al chip. */}
+            <div className="flex flex-wrap items-center gap-3">
+              {producto.marca && <BrandHeaderChip marca={producto.marca} />}
+              {producto.categoria && (
+                <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">
+                  {producto.categoria}
+                </span>
+              )}
+            </div>
 
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900 leading-snug">
               {producto.descripcion}
@@ -224,12 +295,37 @@ export default async function ProductoPage({ params }: Props) {
               </div>
             )}
 
+            {/* Origen + productor — para productos con marca de procedencia trazada. */}
+            {(producto.origen || producto.marca?.productor) && (
+              <div className="flex items-start gap-2 text-sm text-gray-500 bg-emerald-50/40 px-4 py-2 rounded-xl border border-emerald-100">
+                <MapPin size={16} className="text-emerald-600 mt-0.5 flex-shrink-0" />
+                <div className="flex-1">
+                  {producto.origen && <span>{producto.origen}</span>}
+                  {producto.origen && producto.marca?.productor && <span> · </span>}
+                  {producto.marca?.productor && (
+                    <span className="font-medium text-gray-700">{producto.marca.productor}</span>
+                  )}
+                </div>
+              </div>
+            )}
+
             {producto.modo_uso && (
               <div className="space-y-1">
                 <p className="text-sm font-semibold text-gray-700 flex items-center gap-1.5">
                   <CheckCircle size={16} className="text-purple-600" /> Modo de uso
                 </p>
                 <p className="text-sm text-gray-500 ml-5">{producto.modo_uso}</p>
+              </div>
+            )}
+
+            {producto.nutrition_facts && <NutritionTable facts={producto.nutrition_facts} />}
+
+            {producto.marca?.certificados && producto.marca.certificados.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">
+                  Certificaciones y respaldos
+                </p>
+                <CertificateBadges certificados={producto.marca.certificados} />
               </div>
             )}
 

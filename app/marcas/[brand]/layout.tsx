@@ -11,8 +11,9 @@ import { getMarcaBySlug } from "@/lib/marcas"
  *      contaminar el design system global de Organnical.
  *   3. Definir el `title.template` de la marca (cada page agrega su propio título).
  *
- * No renderiza header global de Organnical aquí — lo arma cada `page.tsx`
- * usando `<SpirusolHeader>` (o el componente equivalente de cada marca).
+ * No renderiza header global aquí — lo arma cada `page.tsx`. Para Spirusol
+ * usa `<OrgannicalNavbar>` + `<OrgannicalFooter>` (paridad visual con la home
+ * de organnical.pe, hrefs absolutos al host principal). Decisión 2026-05-22.
  */
 interface LayoutProps {
   children: React.ReactNode

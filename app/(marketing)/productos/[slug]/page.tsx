@@ -18,6 +18,20 @@ const PRODUCT_FIELDS =
 
 export const dynamic = "force-dynamic"
 
+// Disclaimer al pie del detalle. El texto por defecto (suplemento) se preserva
+// para no alterar categorías existentes; solo se sobreescriben las categorías
+// donde la frase "Suplemento alimenticio" es claramente incorrecta.
+const DEFAULT_DISCLAIMER =
+  "Suplemento alimenticio. No es un medicamento. Consulta a tu médico si tienes condiciones preexistentes."
+const DISCLAIMERS_POR_CATEGORIA: Record<string, string> = {
+  Accesorios: "Producto de uso externo. No es un dispositivo médico. Sigue las instrucciones de uso indicadas.",
+  Topicos: "Producto de uso tópico externo. No es un medicamento. Suspender el uso si se presenta irritación.",
+}
+function getDisclaimer(categoria: string | null | undefined): string {
+  if (!categoria) return DEFAULT_DISCLAIMER
+  return DISCLAIMERS_POR_CATEGORIA[categoria] ?? DEFAULT_DISCLAIMER
+}
+
 interface Props {
   params: Promise<{ slug: string }>
 }
@@ -244,7 +258,7 @@ export default async function ProductoPage({ params }: Props) {
             )}
 
             <p className="text-xs text-gray-400 mt-4">
-              Suplemento alimenticio. No es un medicamento. Consulta a tu médico si tienes condiciones preexistentes.
+              {getDisclaimer(producto.categoria)}
             </p>
           </div>
         </div>

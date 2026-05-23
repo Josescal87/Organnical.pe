@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import Link from "next/link"
 import { Menu, X, ArrowRight, ShoppingCart, Zap } from "lucide-react"
 import { createClient } from "@/lib/supabase/client"
 
@@ -60,18 +61,39 @@ export default function OrgannicalNavbar() {
       className="fixed inset-x-0 top-0 z-50 shadow-lg"
       style={{ background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" }}
     >
-      <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 h-[60px]">
-        {/* Logo Organnical — link absoluto al home global */}
-        <a href={`${ORGANNICAL}/?${UTM}&utm_content=logo`} className="flex-shrink-0">
+      <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 h-[80px]">
+        {/* Cobrand Spirusol primario + atribución a Organnical. La marca del
+            subdominio domina visualmente; Organnical aparece como subline para
+            mantener trazabilidad al ecosistema. Decisión 2026-05-22 con usuario. */}
+        <Link
+          href="/"
+          className="flex-shrink-0 flex items-center gap-3 group"
+          aria-label="Spirusol — por organnical.pe"
+        >
           <Image
-            src="/logo-white.png"
-            alt="organnical.pe"
-            width={100}
-            height={24}
+            src="/brands/spirusol/logo-white.png"
+            alt=""
+            aria-hidden="true"
+            width={48}
+            height={48}
             priority
-            className="opacity-75 hover:opacity-100 transition-opacity"
+            className="w-12 h-12 object-contain"
           />
-        </a>
+          <span className="flex flex-col leading-none">
+            <span
+              className="text-white font-bold tracking-tight"
+              style={{
+                fontFamily: "var(--font-fraunces)",
+                fontSize: "1.375rem",
+              }}
+            >
+              Spirusol
+            </span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-white/45 mt-1">
+              por organnical.pe
+            </span>
+          </span>
+        </Link>
 
         <nav className="hidden sm:flex items-center gap-5 flex-1 justify-center">
           {navLinks.map((l) => (

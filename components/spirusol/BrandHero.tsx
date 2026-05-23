@@ -9,7 +9,7 @@ import type { PublicBrand } from "@/lib/types"
  *
  * Copy literal del spec §5.1 — no inventar afirmaciones nutricionales.
  *
- * `pt-32` para clear el navbar dark de Organnical (`h-[60px]` fixed) + buffer.
+ * `pt-36` para clear el navbar dark de Spirusol (`h-[80px]` fixed) + buffer.
  *
  * Si `marca.hero_image` existe (subida real a Supabase Storage), la usamos como
  * background con opacity 20. Si no, el fallback decorativo (gradiente radial +
@@ -23,7 +23,7 @@ export default function BrandHero({ marca }: { marca: PublicBrand }) {
 
   return (
     <section
-      className="relative overflow-hidden pt-32 pb-20 md:pt-40 md:pb-28"
+      className="relative overflow-hidden pt-36 pb-20 md:pt-44 md:pb-28"
       style={{ background: "var(--brand-cream)" }}
     >
       {/* Background photo — solo si está subida a Storage */}

@@ -37,7 +37,7 @@ export default function BrandFAQ() {
               fontSize: "clamp(1.75rem, 3vw + 0.5rem, 2.5rem)",
             }}
           >
-            Todo lo que querés saber antes de probarla.
+            Todo lo que quieres saber antes de probarla.
           </h2>
         </div>
 

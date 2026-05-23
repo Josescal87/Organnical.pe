@@ -165,8 +165,8 @@ function subtitleFor(e: EstadoUI): string {
   switch (e.kind) {
     case "polling": return `Consultando con la pasarela (intento ${e.intento}/${POLL_MAX_ATTEMPTS})...`
     case "pagado": return "Tu pedido fue recibido y ya está en preparación."
-    case "pendiente": return "Aún no nos confirmaron el pago. Revisá tu email en los próximos minutos."
-    case "rechazado": return "La pasarela no aceptó tu pago. Podés reintentar abajo."
+    case "pendiente": return "Aún no nos confirmaron el pago. Revisa tu email en los próximos minutos."
+    case "rechazado": return "La pasarela no aceptó tu pago. Puedes reintentar abajo."
   }
 }
 

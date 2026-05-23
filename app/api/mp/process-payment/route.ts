@@ -119,7 +119,7 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("process-payment error:", err)
     return NextResponse.json(
-      { error: "Error procesando el pago. Intentá de nuevo o contactá a reservas@organnical.com." },
+      { error: "Error procesando el pago. Intenta de nuevo o contacta a reservas@organnical.com." },
       { status: 500 }
     )
   }

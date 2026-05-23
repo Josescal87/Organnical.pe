@@ -14,7 +14,7 @@ export default function Footer() {
           <div className="md:col-span-1">
             <Image src="/logo-white.png" alt="organnical.pe" width={150} height={36} />
             <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-              Clínica virtual de medicina integrativa en el Perú.
+              Plataforma de telemedicina integrativa en el Perú.
             </p>
             <div className="mt-5 flex flex-col gap-2.5 text-sm">
               <a href="https://wa.me/51952476574" className="hover:text-white transition-colors flex items-center gap-2">

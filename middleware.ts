@@ -208,6 +208,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    // Excluye assets estáticos del middleware. Sin esto, archivos en /public/ que
+    // se piden desde subdominios (sami./medicos./spirusol.) entran al rewrite y
+    // devuelven 404 — pasó con /brands/spirusol/brand-video.mp4 (2026-05-22).
+    //
+    // Cobertura: imágenes (svg/png/jpg/jpeg/gif/webp/avif/ico), video (mp4/webm/mov),
+    // audio (mp3/m4a/ogg/wav), documentos (pdf), fuentes (woff/woff2/ttf/otf),
+    // texto (txt/xml/json/csv) — todo lo que se sirve directo desde /public/.
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|avif|ico|mp4|webm|mov|mp3|m4a|ogg|wav|pdf|woff|woff2|ttf|otf|txt|xml|json|csv)$).*)",
   ],
 }

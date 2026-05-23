@@ -24,7 +24,7 @@ export const dynamic = "force-dynamic"
 const DEFAULT_DISCLAIMER =
   "Suplemento alimenticio. No es un medicamento. Consulta a tu médico si tienes condiciones preexistentes."
 const DISCLAIMERS_POR_CATEGORIA: Record<string, string> = {
-  Accesorios: "Producto de uso externo. No es un dispositivo médico. Sigue las instrucciones de uso y verifica siempre la temperatura antes de aplicar sobre la piel.",
+  Accesorios: "Producto de uso externo. No es un dispositivo médico. Sigue las instrucciones de uso indicadas.",
   Topicos: "Producto de uso tópico externo. No es un medicamento. Suspender el uso si se presenta irritación.",
 }
 function getDisclaimer(categoria: string | null | undefined): string {

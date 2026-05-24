@@ -4,10 +4,10 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, ArrowRight, ShoppingCart, Zap } from "lucide-react";
+import { Menu, X, ArrowRight, Zap, ShoppingCart } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
-import { useCart, CART_ADDED_EVENT } from "@/contexts/CartContext";
-import CartDrawer from "@/components/CartDrawer";
+import { useCart } from "@/contexts/CartContext";
+import HeaderCartButton from "@/components/HeaderCartButton";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 
@@ -24,8 +24,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [cartOpen, setCartOpen] = useState(false);
-  const { totalItems } = useCart();
+  const { totalItems, openCart } = useCart();
 
   useEffect(() => {
     const supabase = createClient();
@@ -48,16 +47,9 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", fn);
   }, [menuOpen]);
 
-  useEffect(() => {
-    const handler = () => setCartOpen(true);
-    window.addEventListener(CART_ADDED_EVENT, handler);
-    return () => window.removeEventListener(CART_ADDED_EVENT, handler);
-  }, []);
-
   const solid = !isLanding || scrolled;
 
   return (
-    <>
     <header
       className={`fixed inset-x-0 z-50 transition-all duration-500 ${
         solid ? "shadow-lg" : "bg-transparent"
@@ -108,18 +100,7 @@ export default function Navbar() {
 
         {/* Derecha — mismo peso visual que LogoutButton */}
         <div className="flex items-center gap-3 flex-shrink-0">
-          <button
-            onClick={() => setCartOpen(true)}
-            aria-label={`Carrito${totalItems > 0 ? ` (${totalItems})` : ""}`}
-            className="flex items-center justify-center relative text-white/35 hover:text-white/70 transition-colors"
-          >
-            <ShoppingCart className="w-4 h-4" />
-            {totalItems > 0 && (
-              <span className="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-[#A78BFA] text-white text-[9px] font-bold flex items-center justify-center leading-none">
-                {totalItems > 9 ? "9+" : totalItems}
-              </span>
-            )}
-          </button>
+          <HeaderCartButton variant="dark" />
 
           {isLoggedIn ? (
             <Link
@@ -183,7 +164,7 @@ export default function Navbar() {
             <Zap className="w-4 h-4" /> Express S/30 — orientación hoy
           </Link>
           <button
-            onClick={() => { setMenuOpen(false); setCartOpen(true); }}
+            onClick={() => { setMenuOpen(false); openCart(); }}
             className="py-3 text-sm font-medium text-white/60 border-b border-white/[0.06] flex items-center gap-2 hover:text-white/90 transition-colors w-full text-left"
           >
             <ShoppingCart className="w-4 h-4" />
@@ -220,8 +201,5 @@ export default function Navbar() {
         </div>
       </div>
     </header>
-
-    <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
-    </>
   );
 }

@@ -5,6 +5,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { BookOpen } from "lucide-react"
 import LogoutButton from "@/components/LogoutButton"
+import HeaderCartButton from "@/components/HeaderCartButton"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 const NOISE = "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E\")"
@@ -77,7 +78,10 @@ export default function BlogPostHeader({ title, category }: Props) {
             <Link href="/tienda" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">Tienda</Link>
             <span className="text-xs font-semibold" style={{ color: "#A78BFA" }}>Blog</span>
           </nav>
-          <LogoutButton />
+          <div className="flex items-center gap-3 flex-shrink-0">
+            <HeaderCartButton variant="dark" />
+            <LogoutButton />
+          </div>
         </div>
 
         {/* Fila 2: Breadcrumb + título — aparece al scrollear */}

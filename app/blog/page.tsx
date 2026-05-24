@@ -4,6 +4,7 @@ import Image from "next/image"
 import { ArrowRight, Clock, BookOpen } from "lucide-react"
 import { posts } from "@/lib/blog"
 import LogoutButton from "@/components/LogoutButton"
+import HeaderCartButton from "@/components/HeaderCartButton"
 
 export const metadata: Metadata = {
   title: "Blog — Organnical | Medicina Integrativa",
@@ -77,7 +78,10 @@ export default function BlogPage() {
               <Link href="/tienda" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">Tienda</Link>
               <span className="text-xs font-semibold" style={{ color: "#A78BFA" }}>Blog</span>
             </nav>
-            <LogoutButton />
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <HeaderCartButton variant="dark" />
+              <LogoutButton />
+            </div>
           </div>
 
           {/* Fila 2: icono + título + subtítulo */}

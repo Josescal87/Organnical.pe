@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ShoppingBag } from "lucide-react"
 import LogoutButton from "@/components/LogoutButton"
+import HeaderCartButton from "@/components/HeaderCartButton"
 import { createClient } from "@/lib/supabase/server"
 import ProductCard from "@/components/ProductCard"
 import { getStockBySkus } from "@/lib/inventory"
@@ -143,7 +144,7 @@ export default async function TiendaPage({ searchParams }: Props) {
 
         <div className="relative max-w-5xl mx-auto px-4 pt-5 pb-5">
 
-          {/* Fila 1: logo + nav central + envío gratis */}
+          {/* Fila 1: logo + nav central + cart + logout */}
           <div className="flex items-center gap-4 mb-4">
             <Link href="/" className="flex-shrink-0">
               <Image
@@ -161,7 +162,10 @@ export default async function TiendaPage({ searchParams }: Props) {
               <span className="text-xs font-semibold" style={{ color: "#A78BFA" }}>Tienda</span>
               <Link href="/blog" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">Blog</Link>
             </nav>
-            <LogoutButton />
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <HeaderCartButton variant="dark" />
+              <LogoutButton />
+            </div>
           </div>
 
           {/* Fila 2: avatar + título + producto count */}

@@ -8,6 +8,7 @@ import AnalyticsScripts from "@/components/AnalyticsScripts";
 import { CartProvider } from "@/contexts/CartContext";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import PromoBanner from "@/components/PromoBanner";
+import GlobalCartDrawer from "@/components/GlobalCartDrawer";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -117,10 +118,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaOrg) }}
         />
       </head>
-      <body className="min-h-full flex flex-col bg-white text-[#1a1a1a]">
+      <body
+        className="min-h-full flex flex-col bg-white text-[#1a1a1a]"
+        style={{ paddingTop: "var(--promo-banner-h, 0px)" }}
+      >
         <PromoBanner />
         <CartProvider>
           <ErrorBoundary>{children}</ErrorBoundary>
+          <GlobalCartDrawer />
         </CartProvider>
         <WhatsAppButton />
         <Toaster position="top-right" richColors closeButton />

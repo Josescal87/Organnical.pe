@@ -3,6 +3,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { ShieldCheck, ShoppingBag } from "lucide-react"
 import LogoutButton from "@/components/LogoutButton"
+import HeaderCartButton from "@/components/HeaderCartButton"
 import { createClient } from "@/lib/supabase/server"
 import BoticaCatalog from "./BoticaCatalog"
 
@@ -54,8 +55,11 @@ export default async function BoticaPage() {
 
       {/* ── Header sticky — mismo look que el dash ──────────────── */}
       <div
-        className="sticky top-0 z-30"
-        style={{ background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" }}
+        className="sticky z-30"
+        style={{
+          top: "var(--promo-banner-h, 0px)",
+          background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)",
+        }}
       >
         {/* Noise */}
         <div
@@ -96,7 +100,10 @@ export default async function BoticaPage() {
               <Link href="/tienda" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">Tienda</Link>
               <Link href="/blog" className="text-white/40 hover:text-white/70 text-xs font-medium transition-colors">Blog</Link>
             </nav>
-            <LogoutButton />
+            <div className="flex items-center gap-3 flex-shrink-0">
+              <HeaderCartButton variant="dark" />
+              <LogoutButton />
+            </div>
           </div>
 
           {/* Fila 2: avatar icono + título + status pill */}

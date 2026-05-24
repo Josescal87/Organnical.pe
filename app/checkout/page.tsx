@@ -147,6 +147,10 @@ export default function CheckoutPage() {
     setCupon({ status: "loading" })
     try {
       const params = new URLSearchParams({ code, subtotal: String(subtotal) })
+      // Pasamos email solo si está completo; cupones one-time-per-email lo necesitan
+      // para detectar uso previo. Sin email el server hace fall-through y revalida
+      // al crear la preferencia, así que el badge inicial puede ser optimista.
+      if (form.email?.trim()) params.set("email", form.email.trim())
       const res = await fetch(`/api/cupones/validate?${params.toString()}`)
       const data = await res.json() as { valid: boolean; error?: string; descuento?: number; descripcion?: string }
       if (data.valid) {
@@ -162,6 +166,25 @@ export default function CheckoutPage() {
   function handleRemoveCoupon() {
     setCupon({ status: "idle" })
   }
+
+  // Revalidar cupón si el email cambia DESPUÉS de aplicarlo — para detectar
+  // "ya usaste este cupón" sin requerir re-aplicar a mano. Usa el code actual
+  // y el email nuevo; si pasa a inválido lo muestra como error.
+  const lastEmailRef = useRef<string | null>(null)
+  useEffect(() => {
+    const email = form.email?.trim() ?? ""
+    if (cupon.status !== "applied") { lastEmailRef.current = email; return }
+    if (lastEmailRef.current === email) return
+    lastEmailRef.current = email
+    if (!email) return
+    const params = new URLSearchParams({ code: cupon.code, subtotal: String(subtotal), email })
+    fetch(`/api/cupones/validate?${params.toString()}`)
+      .then((r) => r.json() as Promise<{ valid: boolean; error?: string }>)
+      .then((data) => {
+        if (!data.valid) setCupon({ status: "error", message: data.error ?? "Cupón no válido para este email" })
+      })
+      .catch(() => { /* falla silenciosa; create-preference revalidará */ })
+  }, [form.email, cupon, subtotal])
 
   if (items.length === 0) {
     return (
@@ -489,6 +512,15 @@ export default function CheckoutPage() {
                     </div>
                     {cupon.status === "error" && (
                       <p className="text-[11px] text-red-600">{cupon.message}</p>
+                    )}
+                    {cupon.status === "idle" && !couponInput.trim() && subtotal >= 50 && (
+                      <button
+                        type="button"
+                        onClick={() => setCouponInput("BIENVENIDO10")}
+                        className="text-[11px] text-violet-600 hover:text-violet-800 transition-colors text-left"
+                      >
+                        ¿Es tu primera compra? Usa <span className="font-bold underline">BIENVENIDO10</span> para 10% off
+                      </button>
                     )}
                   </div>
                 )}

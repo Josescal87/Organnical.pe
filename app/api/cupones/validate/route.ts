@@ -10,12 +10,13 @@ export async function GET(req: NextRequest) {
 
   const code = req.nextUrl.searchParams.get("code") ?? ""
   const subtotal = Number(req.nextUrl.searchParams.get("subtotal") ?? 0)
+  const email = req.nextUrl.searchParams.get("email") ?? null
 
   if (!code.trim()) {
     return NextResponse.json({ valid: false, error: "Código vacío" })
   }
 
   const supabase = createAdminClient()
-  const result = await validarCupon(supabase, code, subtotal)
+  const result = await validarCupon(supabase, code, subtotal, email)
   return NextResponse.json(result)
 }

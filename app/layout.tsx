@@ -7,6 +7,8 @@ import CookieBanner from "@/components/CookieBanner";
 import AnalyticsScripts from "@/components/AnalyticsScripts";
 import { CartProvider } from "@/contexts/CartContext";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import PromoBanner from "@/components/PromoBanner";
+import WelcomeModal from "@/components/WelcomeModal";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -117,9 +119,11 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-white text-[#1a1a1a]">
+        <PromoBanner />
         <CartProvider>
           <ErrorBoundary>{children}</ErrorBoundary>
         </CartProvider>
+        <WelcomeModal />
         <WhatsAppButton />
         <Toaster position="top-right" richColors closeButton />
         <CookieBanner />

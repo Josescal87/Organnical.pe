@@ -671,44 +671,47 @@ export interface Database {
       // ── public.cupones ────────────────────────────────────────────────────
       cupones: {
         Row: {
-          id:             string
-          code:           string
-          descripcion:    string | null
-          tipo:           "porcentaje" | "monto_fijo"
-          valor:          number
-          monto_minimo:   number
-          activo:         boolean
-          fecha_inicio:   string | null
-          fecha_fin:      string | null
-          uso_maximo:     number | null
-          usos_actuales:  number
-          created_at:     string
+          id:                       string
+          code:                     string
+          descripcion:              string | null
+          tipo:                     "porcentaje" | "monto_fijo"
+          valor:                    number
+          monto_minimo:             number
+          activo:                   boolean
+          fecha_inicio:             string | null
+          fecha_fin:                string | null
+          uso_maximo:               number | null
+          usos_actuales:            number
+          uso_maximo_por_usuario:   number | null
+          created_at:               string
         }
         Insert: {
-          id?:            string
-          code:           string
-          descripcion?:   string | null
-          tipo:           "porcentaje" | "monto_fijo"
-          valor:          number
-          monto_minimo?:  number
-          activo?:        boolean
-          fecha_inicio?:  string | null
-          fecha_fin?:     string | null
-          uso_maximo?:    number | null
-          usos_actuales?: number
-          created_at?:    string
+          id?:                      string
+          code:                     string
+          descripcion?:             string | null
+          tipo:                     "porcentaje" | "monto_fijo"
+          valor:                    number
+          monto_minimo?:            number
+          activo?:                  boolean
+          fecha_inicio?:            string | null
+          fecha_fin?:               string | null
+          uso_maximo?:              number | null
+          usos_actuales?:           number
+          uso_maximo_por_usuario?:  number | null
+          created_at?:              string
         }
         Update: {
-          code?:          string
-          descripcion?:   string | null
-          tipo?:          "porcentaje" | "monto_fijo"
-          valor?:         number
-          monto_minimo?:  number
-          activo?:        boolean
-          fecha_inicio?:  string | null
-          fecha_fin?:     string | null
-          uso_maximo?:    number | null
-          usos_actuales?: number
+          code?:                    string
+          descripcion?:             string | null
+          tipo?:                    "porcentaje" | "monto_fijo"
+          valor?:                   number
+          monto_minimo?:            number
+          activo?:                  boolean
+          fecha_inicio?:            string | null
+          fecha_fin?:               string | null
+          uso_maximo?:              number | null
+          usos_actuales?:           number
+          uso_maximo_por_usuario?:  number | null
         }
         Relationships: []
       }

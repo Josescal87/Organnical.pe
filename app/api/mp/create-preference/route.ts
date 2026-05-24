@@ -128,14 +128,21 @@ export async function POST(request: Request) {
     }, 0)
     const deliveryCost = await calculateDeliveryCostAsync(subtotal, direccion.distrito)
 
-    // Validar cupón server-side (nunca confiar en el cliente)
+    // Validar cupón server-side (nunca confiar en el cliente).
+    // Pasamos el email del cliente para que cupones one-time-per-email
+    // bloqueen al mismo email aunque el front haya dejado pasar.
     let descuento = 0
     let cuponCodigo: string | null = null
     if (couponCode?.trim()) {
-      const cuponResult = await validarCupon(supabase, couponCode, subtotal)
+      const cuponResult = await validarCupon(supabase, couponCode, subtotal, direccion.email)
       if (cuponResult.valid) {
         descuento = cuponResult.descuento
         cuponCodigo = couponCode.trim().toUpperCase()
+      } else {
+        return NextResponse.json(
+          { error: cuponResult.error },
+          { status: 400 }
+        )
       }
     }
 

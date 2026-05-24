@@ -8,10 +8,10 @@ con fallback (gradiente o icono) pero el resultado se ve incompleto.
 
 | Archivo | Uso | Estado |
 |---|---|---|
-| `og-image.jpg` | Open Graph cuando se comparte spirusol.organnical.pe (1200×630, JPG/PNG) | **Falta — placeholder en metadata** |
-| `cert-vegan-verified.pdf` | Modal de certificados §5.7 | **Falta** |
-| `registro-sanitario.pdf` | Modal de certificados §5.7 | **Falta** |
-| `informe-iin-2025.pdf` | Modal de certificados §5.7 | **Falta** |
+| `og-image.jpg` | Open Graph cuando se comparte spirusol.organnical.pe (1376×768, 16:9) | ✅ Subido |
+| `cert-vegan-verified.pdf` | Modal de certificados §5.7 | ✅ Subido |
+| `registro-sanitario.pdf` | Modal de certificados §5.7 | ✅ Subido |
+| `informe-iin-2025.pdf` | Modal de certificados §5.7 | ✅ Subido |
 
 ## En bucket Supabase `brands/spirusol/` (público)
 

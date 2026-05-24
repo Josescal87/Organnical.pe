@@ -71,8 +71,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: [
         {
           url: ogImageUrl,
-          width: 1200,
-          height: 630,
+          width: 1376,
+          height: 768,
           alt: `${marca.nombre} — ${marca.tagline ?? ""}`,
         },
       ],

@@ -157,3 +157,11 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .marquee-track { animation: none; }
 }
+/* Mask con fade lateral: el centro (4 cards) es 100% opaco, los bordes
+   (~1.25 card por lado) se desvanecen progresivamente. Usa mask-image
+   en vez de overlay para que sea fade real (no un degradado sobre fondo
+   blanco) y respete cualquier color de sección. */
+.marquee-mask {
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 19%, black 81%, transparent 100%);
+          mask-image: linear-gradient(to right, transparent 0%, black 19%, black 81%, transparent 100%);
+}

@@ -23,9 +23,10 @@ export default function CartDrawer({ open, onClose }: Props) {
       )}
 
       <aside
-        className={`fixed top-0 right-0 h-full w-full max-w-sm bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ${
+        className={`fixed right-0 bottom-0 w-full max-w-sm bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ${
           open ? "translate-x-0" : "translate-x-full"
         }`}
+        style={{ top: "var(--promo-banner-h, 0px)" }}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
           <div className="flex items-center gap-2">

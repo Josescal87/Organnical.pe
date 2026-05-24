@@ -59,10 +59,13 @@ export default function Navbar() {
   return (
     <>
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
+      className={`fixed inset-x-0 z-50 transition-all duration-500 ${
         solid ? "shadow-lg" : "bg-transparent"
       }`}
-      style={solid ? { background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" } : undefined}
+      style={{
+        top: "var(--promo-banner-h, 0px)",
+        ...(solid ? { background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" } : {}),
+      }}
     >
       <div className="mx-auto flex max-w-5xl items-center gap-4 px-4 h-[60px]">
 

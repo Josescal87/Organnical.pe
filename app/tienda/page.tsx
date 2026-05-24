@@ -116,8 +116,11 @@ export default async function TiendaPage({ searchParams }: Props) {
 
       {/* ── Header sticky ───────────────────────────────────────────── */}
       <div
-        className="sticky top-0 z-30"
-        style={{ background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)" }}
+        className="sticky z-30"
+        style={{
+          top: "var(--promo-banner-h, 0px)",
+          background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)",
+        }}
       >
         {/* Noise */}
         <div

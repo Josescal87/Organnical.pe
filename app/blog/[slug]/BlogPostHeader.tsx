@@ -31,8 +31,9 @@ export default function BlogPostHeader({ title, category }: Props) {
 
   return (
     <div
-      className="sticky top-0 z-30"
+      className="sticky z-30"
       style={{
+        top: "var(--promo-banner-h, 0px)",
         background: "linear-gradient(135deg, #0B1D35 0%, #0E2545 100%)",
         boxShadow: scrolled ? "0 4px 32px rgba(0,0,0,0.4)" : "none",
         transition: "box-shadow 0.4s ease",

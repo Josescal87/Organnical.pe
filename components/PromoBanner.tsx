@@ -7,7 +7,17 @@ import { X } from "lucide-react"
 
 const KEY = "welcome_banner_dismissed_until"
 const TTL_MS = 7 * 24 * 60 * 60 * 1000
-const HIDE_ON = ["/checkout", "/dashboard", "/login", "/registro", "/recuperar"]
+const HIDE_ON = [
+  "/checkout",
+  "/dashboard",
+  "/login",
+  "/registro",
+  "/recuperar",
+  "/agendar",
+  "/cuenta",
+  "/sami",
+  "/consulta-express",
+]
 const HEIGHT_PX = 36
 
 /**

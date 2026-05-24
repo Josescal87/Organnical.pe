@@ -325,7 +325,7 @@ export default async function TiendaPage({ searchParams }: Props) {
                     />
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-[#1E5E3D]">Conocé el mundo Spirusol</p>
+                    <p className="text-sm font-bold text-[#1E5E3D]">Conoce el mundo Spirusol</p>
                     <p className="text-xs text-[#1E5E3D]/70">
                       Espirulina del sol del sur · IIN 67% proteína · Vegan Verified
                     </p>

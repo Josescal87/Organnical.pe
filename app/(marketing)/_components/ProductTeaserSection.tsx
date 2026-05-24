@@ -2,7 +2,7 @@ import Link from "next/link"
 import { ArrowRight } from "lucide-react"
 import { createClient } from "@/lib/supabase/server"
 import { getStockBySkus } from "@/lib/inventory"
-import ProductCard from "@/components/ProductCard"
+import ProductCarousel from "./ProductCarousel"
 import type { PublicProduct } from "@/lib/types"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
@@ -17,7 +17,6 @@ export default async function ProductTeaserSection() {
     .eq("visible_publico", true)
     .eq("activo", true)
     .order("orden", { ascending: true })
-    .limit(8)
 
   const productos = (data as PublicProduct[]) ?? []
 
@@ -31,8 +30,8 @@ export default async function ProductTeaserSection() {
   if (productos.length === 0) return null
 
   return (
-    <section className="px-6 py-20 bg-white">
-      <div className="mx-auto max-w-6xl">
+    <section className="py-20 bg-white">
+      <div className="mx-auto max-w-6xl px-6">
         <div className="reveal mb-10 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-[#F472B6] mb-3">
@@ -59,13 +58,15 @@ export default async function ProductTeaserSection() {
             Ver todos <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
+      </div>
 
-        <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {productos.map((p) => (
-            <ProductCard key={p.sku} producto={p} />
-          ))}
-        </div>
+      {/* Carrusel fuera del max-w-6xl para que pueda llegar al edge del viewport
+          y el fade lateral se vea natural. */}
+      <div className="reveal">
+        <ProductCarousel productos={productos} />
+      </div>
 
+      <div className="mx-auto max-w-6xl px-6 mt-8">
         <div className="reveal flex justify-center sm:hidden">
           <Link
             href="/tienda"

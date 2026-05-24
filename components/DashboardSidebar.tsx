@@ -10,8 +10,10 @@ import {
   User, LogOut, Menu, X, Stethoscope, CalendarClock,
   ClipboardList, Users, ShieldCheck, Building2, BookOpen,
   ScrollText, Award, MessageSquare, Bot, Star, Receipt, Zap, ShoppingBag,
+  HelpCircle,
 } from "lucide-react";
 import type { UserRole } from "@/lib/supabase/database.types";
+import { getWaMessage, buildWaUrl } from "@/lib/whatsapp-messages";
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)";
 const NAVY = "#0B1D35";
@@ -121,7 +123,18 @@ export default function DashboardSidebar({ role, fullName, email, basePath }: Pr
       </nav>
 
       {/* User footer */}
-      <div className="p-4 border-t border-white/5">
+      <div className="p-4 border-t border-white/5 space-y-2">
+        <a
+          href={buildWaUrl(getWaMessage(pathname ?? ""))}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-white/50 hover:text-white hover:bg-white/[0.06] transition-all"
+        >
+          <HelpCircle className="w-4 h-4 flex-shrink-0" />
+          Ayuda
+          <span className="ml-auto text-[10px] text-white/30">WhatsApp</span>
+        </a>
         <div className="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-white/[0.06]">
           <div
             className="w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0"

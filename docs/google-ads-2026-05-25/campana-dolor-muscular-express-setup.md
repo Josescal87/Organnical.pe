@@ -106,10 +106,10 @@ https://www.organnical.pe/especialidades/dolor-muscular
 6.  Médico Online S/30 — Perú
 7.  Contractura? Te Orienta Hoy
 8.  Tortícolis Aguda — Atención Hoy
-9.  Receta Válida en Farmacias
+9.  Plan de Manejo Documentado
 10. Médico Certificado MINSA
 11. Atención Sin Agendar Cita
-12. Dra Prialé — Medicina Integrativa
+12. Dra Prialé · Médica MINSA
 13. Dolor Muscular — Médico Online
 14. Pagas Solo Si Confirmas
 15. Lumbalgia — Orientación Médica
@@ -119,7 +119,7 @@ https://www.organnical.pe/especialidades/dolor-muscular
 
 ```
 1. Te duele la espalda o el cuello? Médico te escribe por WhatsApp en menos de 2h. S/30.
-2. Médico certificado MINSA evalúa tu dolor agudo. Receta válida en farmacias. Sin filas.
+2. Médico certificado MINSA evalúa tu dolor agudo. Plan de manejo documentado. Sin filas.
 3. Consulta Express por S/30. Sin agendar. La Dra te contacta cuando tú elijas (hoy o mañana).
 4. Contractura, tortícolis, dolor lumbar. Orientación médica real por WhatsApp. Desde Perú.
 ```
@@ -132,14 +132,14 @@ https://www.organnical.pe/especialidades/dolor-muscular
 | Cómo funciona | `/especialidades/dolor-muscular#como-funciona` | 4 pasos simples | Pagas solo si confirmas |
 | Conocé a tu médica | `/especialidades/dolor-muscular#doctora` | Dra. Mariana Prialé | CMP 63694 · Certificada MINSA |
 | Preguntas frecuentes | `/preguntas-frecuentes` | Resuelve dudas comunes | Sobre la consulta Express |
-| Receta válida en Perú | `/especialidades/dolor-muscular#receta` | Recibe receta digital | Válida en cualquier farmacia |
+| Plan documentado | `/especialidades/dolor-muscular#plan` | Médica te orienta paso a paso | Plan registrado oficialmente |
 | Otras especialidades | `/especialidades/sueno` | También atendemos sueño | Ansiedad, salud femenina |
 
 ### Callouts (extensiones de texto destacado)
 
 ```
 Médico Certificado MINSA
-Receta Válida en Farmacias
+Plan de Manejo Documentado
 Sin Lista de Espera
 Atención Misma Tarde
 Pago por MercadoPago
@@ -149,7 +149,7 @@ Por WhatsApp 9am–9pm
 ### Structured snippets (servicios)
 
 - **Encabezado:** Servicios
-- **Valores:** `Consulta Express por WhatsApp, Receta digital, Orientación Médica, Derivación a Especialista, Seguimiento por Mensaje`
+- **Valores:** `Consulta Express por WhatsApp, Plan de Manejo Documentado, Orientación Médica, Derivación a Especialista, Seguimiento por Mensaje`
 
 ---
 

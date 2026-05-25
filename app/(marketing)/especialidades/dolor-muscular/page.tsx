@@ -47,8 +47,8 @@ const BENEFITS = [
   },
   {
     icon: "📄",
-    title: "Receta y orientación oficial",
-    desc: "Si necesitas medicación, recibes receta válida en cualquier farmacia. Si necesitas examen físico, te derivamos.",
+    title: "Plan de manejo documentado",
+    desc: "Recibes orientación clínica clara, registrada por médica certificada. Si necesitas examen físico, te derivamos al especialista correcto.",
   },
   {
     icon: "💸",
@@ -75,8 +75,8 @@ const STEPS = [
   },
   {
     n: "04",
-    t: "Recibes orientación y receta si aplica",
-    d: "Plan claro, receta válida en farmacias, o derivación a especialidad si lo necesitas.",
+    t: "Recibes orientación y plan de manejo",
+    d: "Plan claro y documentado por la médica, o derivación a especialidad si tu caso lo necesita.",
   },
 ];
 
@@ -91,11 +91,11 @@ const FAQS = [
   },
   {
     q: "¿La consulta es por video o por mensaje?",
-    a: "Por WhatsApp. La Dra te escribe, conversan tu caso, ella puede pedirte fotos o audios si lo necesita, y luego te envía orientación y receta si aplica. Si requiere video, lo coordinan en el momento.",
+    a: "Por WhatsApp. La Dra te escribe, conversan tu caso, ella puede pedirte fotos o audios si lo necesita, y luego te envía un plan de manejo documentado. Si requiere video, lo coordinan en el momento.",
   },
   {
-    q: "¿Me dan receta de relajantes musculares?",
-    a: "Solo si el caso lo amerita. La Dra evalúa primero medidas no farmacológicas (postura, calor local, ejercicios). Si decide medicación, es siempre con criterio médico documentado.",
+    q: "¿Qué incluye la consulta?",
+    a: "Evaluación de tus síntomas, orientación sobre medidas inmediatas (postura, calor local, ejercicios suaves), un plan de manejo documentado por la Dra, y derivación a un especialista si tu caso lo amerita.",
   },
   {
     q: "¿Qué pasa si necesito un especialista (traumatólogo, fisiatra)?",
@@ -381,7 +381,7 @@ export default function DolorMuscularPage() {
             { icon: <Shield size={18} />, text: "Médico certificado MINSA" },
             { icon: <Clock size={18} />, text: "Atención en menos de 2 h" },
             { icon: <MessageCircle size={18} />, text: "WhatsApp directo con la Dra" },
-            { icon: <CheckCircle size={18} />, text: "Receta válida en farmacias" },
+            { icon: <CheckCircle size={18} />, text: "Plan de manejo documentado" },
           ].map((t) => (
             <div key={t.text} style={{ display: "flex", alignItems: "center", gap: 10, color: "rgba(255,255,255,0.75)", fontSize: 14 }}>
               <span style={{ color: "#A78BFA" }}>{t.icon}</span>

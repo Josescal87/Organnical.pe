@@ -1,0 +1,508 @@
+Informe de programación de anuncios por día y hora
+Todo el período
+Día de la semana,Hora del día,Campaña,Clics,Impr.,CTR,Código de moneda,Prom. CPC,Costo,Porcentaje de conv.,Conversiones,Costo/conv.
+Miércoles,21,Organnical — Ansiedad — Búsqueda,8,80,10.00%,PEN,0.26,2.04,0.00%,0.00,0.00
+Miércoles,4,Organnical — Insomnio — Búsqueda,7,90,7.78%,PEN,0.18,1.29,0.00%,0.00,0.00
+Miércoles,23,Organnical — Dolor Crónico — Búsqueda,0,75,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Jueves,5,Organnical — Dolor Crónico — Búsqueda,1,61,1.64%,PEN,0.42,0.42,0.00%,0.00,0.00
+Lunes,19,Organnical — Insomnio — Búsqueda,3,67,4.48%,PEN,0.54,1.63,0.00%,0.00,0.00
+Miércoles,15,Organnical — Ansiedad — Búsqueda,3,124,2.42%,PEN,0.22,0.67,0.00%,0.00,0.00
+Martes,12,Organnical — Dolor Crónico — Búsqueda,0,69,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,11,Organnical — Dolor Crónico — Búsqueda,2,50,4.00%,PEN,0.68,1.35,0.00%,0.00,0.00
+Martes,1,Organnical — Insomnio — Búsqueda,7,164,4.27%,PEN,0.48,3.33,0.00%,0.00,0.00
+Miércoles,0,Organnical — Dolor Crónico — Búsqueda,4,27,14.81%,PEN,0.48,1.93,0.00%,0.00,0.00
+Jueves,23,Organnical — Insomnio — Búsqueda,6,140,4.29%,PEN,0.21,1.28,0.00%,0.00,0.00
+Sábado,1,Organnical — Ansiedad — Búsqueda,4,59,6.78%,PEN,0.38,1.51,0.00%,0.00,0.00
+Miércoles,10,Organnical — Dolor Crónico — Búsqueda,2,56,3.57%,PEN,0.71,1.42,0.00%,0.00,0.00
+Viernes,21,Organnical — Ansiedad — Búsqueda,6,97,6.19%,PEN,0.24,1.43,0.00%,0.00,0.00
+Domingo,9,Organnical — Ansiedad — Búsqueda,4,141,2.84%,PEN,0.25,1.00,0.00%,0.00,0.00
+Miércoles,1,Organnical — Insomnio — Búsqueda,6,158,3.80%,PEN,0.28,1.66,0.00%,0.00,0.00
+Sábado,14,Organnical — Ansiedad — Búsqueda,5,121,4.13%,PEN,0.27,1.35,0.00%,0.00,0.00
+Jueves,6,Organnical — Insomnio — Búsqueda,2,94,2.13%,PEN,0.13,0.26,0.00%,0.00,0.00
+Sábado,11,Organnical — Ansiedad — Búsqueda,6,118,5.08%,PEN,0.24,1.42,0.00%,0.00,0.00
+Martes,6,Organnical — Ansiedad — Búsqueda,4,91,4.40%,PEN,0.30,1.19,0.00%,0.00,0.00
+Miércoles,9,Organnical — Insomnio — Búsqueda,3,49,6.12%,PEN,0.18,0.54,0.00%,0.00,0.00
+Martes,15,Organnical — Dolor Crónico — Búsqueda,2,43,4.65%,PEN,0.19,0.37,0.00%,0.00,0.00
+Martes,7,Organnical — Dolor Crónico — Búsqueda,2,52,3.85%,PEN,0.51,1.02,0.00%,0.00,0.00
+Jueves,18,Organnical — Insomnio — Búsqueda,1,65,1.54%,PEN,0.24,0.24,0.00%,0.00,0.00
+Jueves,14,Organnical — Insomnio — Búsqueda,7,79,8.86%,PEN,0.25,1.73,0.00%,0.00,0.00
+Viernes,5,Organnical — Dolor Crónico — Búsqueda,1,36,2.78%,PEN,0.37,0.37,0.00%,0.00,0.00
+Jueves,2,Organnical — Ansiedad — Búsqueda,0,32,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,3,Organnical — Dolor Crónico — Búsqueda,4,26,15.38%,PEN,0.23,0.92,0.00%,0.00,0.00
+Lunes,4,Organnical — Ansiedad — Búsqueda,2,44,4.55%,PEN,0.40,0.79,0.00%,0.00,0.00
+Sábado,15,Organnical — Dolor Crónico — Búsqueda,2,68,2.94%,PEN,0.30,0.59,0.00%,0.00,0.00
+Martes,14,Organnical — Ansiedad — Búsqueda,5,90,5.56%,PEN,0.22,1.12,0.00%,0.00,0.00
+Miércoles,8,Organnical — Insomnio — Búsqueda,8,42,19.05%,PEN,0.24,1.92,0.00%,0.00,0.00
+Martes,4,Organnical — Dolor Crónico — Búsqueda,1,20,5.00%,PEN,0.82,0.82,0.00%,0.00,0.00
+Domingo,20,Organnical — Ansiedad — Búsqueda,6,163,3.68%,PEN,0.26,1.57,0.00%,0.00,0.00
+Viernes,1,Organnical — Dolor Crónico — Búsqueda,1,19,5.26%,PEN,1.66,1.66,0.00%,0.00,0.00
+Miércoles,12,Organnical — Ansiedad — Búsqueda,2,108,1.85%,PEN,0.31,0.61,0.00%,0.00,0.00
+Viernes,3,Organnical — Dolor Crónico — Búsqueda,1,22,4.55%,PEN,0.31,0.31,0.00%,0.00,0.00
+Sábado,8,Organnical — Dolor Crónico — Búsqueda,5,77,6.49%,PEN,0.63,3.13,0.00%,0.00,0.00
+Jueves,5,Organnical — Insomnio — Búsqueda,4,82,4.88%,PEN,0.18,0.73,0.00%,0.00,0.00
+Viernes,23,Organnical — Insomnio — Búsqueda,2,83,2.41%,PEN,0.22,0.44,0.00%,0.00,0.00
+Domingo,18,Organnical — Ansiedad — Búsqueda,2,127,1.57%,PEN,0.21,0.42,0.00%,0.00,0.00
+Viernes,10,Organnical — Ansiedad — Búsqueda,5,205,2.44%,PEN,0.23,1.15,0.00%,0.00,0.00
+Viernes,14,Organnical — Ansiedad — Búsqueda,2,132,1.52%,PEN,0.18,0.36,0.00%,0.00,0.00
+Viernes,8,Organnical — Ansiedad — Búsqueda,7,174,4.02%,PEN,0.35,2.47,0.00%,0.00,0.00
+Miércoles,16,Organnical — Dolor Crónico — Búsqueda,2,61,3.28%,PEN,0.29,0.58,0.00%,0.00,0.00
+Viernes,8,Organnical — Insomnio — Búsqueda,5,81,6.17%,PEN,0.49,2.45,0.00%,0.00,0.00
+Jueves,15,Organnical — Dolor Crónico — Búsqueda,5,95,5.26%,PEN,0.38,1.89,0.00%,0.00,0.00
+Sábado,18,Organnical — Insomnio — Búsqueda,4,61,6.56%,PEN,0.38,1.53,0.00%,0.00,0.00
+Viernes,0,Organnical — Insomnio — Búsqueda,7,197,3.55%,PEN,0.44,3.10,0.00%,0.00,0.00
+Jueves,0,Organnical — Dolor Crónico — Búsqueda,3,47,6.38%,PEN,0.22,0.67,0.00%,0.00,0.00
+Domingo,9,Organnical — Insomnio — Búsqueda,3,76,3.95%,PEN,0.48,1.45,0.00%,0.00,0.00
+Jueves,22,Organnical — Dolor Crónico — Búsqueda,2,44,4.55%,PEN,0.20,0.39,0.00%,0.00,0.00
+Sábado,8,Organnical — Insomnio — Búsqueda,4,72,5.56%,PEN,0.34,1.37,0.00%,0.00,0.00
+Martes,3,Organnical — Dolor Crónico — Búsqueda,2,19,10.53%,PEN,0.42,0.84,0.00%,0.00,0.00
+Lunes,15,Organnical — Dolor Crónico — Búsqueda,5,47,10.64%,PEN,0.53,2.63,0.00%,0.00,0.00
+Domingo,12,Organnical — Insomnio — Búsqueda,3,108,2.78%,PEN,0.41,1.22,0.00%,0.00,0.00
+Jueves,11,Organnical — Insomnio — Búsqueda,5,80,6.25%,PEN,0.52,2.58,0.00%,0.00,0.00
+Domingo,15,Organnical — Dolor Crónico — Búsqueda,1,66,1.52%,PEN,0.30,0.30,0.00%,0.00,0.00
+Viernes,20,Organnical — Ansiedad — Búsqueda,11,135,8.15%,PEN,0.32,3.52,0.00%,0.00,0.00
+Domingo,5,Organnical — Ansiedad — Búsqueda,6,70,8.57%,PEN,0.26,1.54,0.00%,0.00,0.00
+Sábado,0,Organnical — Dolor Crónico — Búsqueda,4,41,9.76%,PEN,0.29,1.17,0.00%,0.00,0.00
+Viernes,3,Organnical — Insomnio — Búsqueda,10,114,8.77%,PEN,0.26,2.61,0.00%,0.00,0.00
+Domingo,9,Organnical — Dolor Crónico — Búsqueda,2,75,2.67%,PEN,0.28,0.56,0.00%,0.00,0.00
+Martes,12,Organnical — Ansiedad — Búsqueda,7,129,5.43%,PEN,0.35,2.46,0.00%,0.00,0.00
+Sábado,23,Organnical — Insomnio — Búsqueda,8,124,6.45%,PEN,0.17,1.35,0.00%,0.00,0.00
+Miércoles,11,Organnical — Ansiedad — Búsqueda,0,114,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,16,Organnical — Ansiedad — Búsqueda,2,131,1.53%,PEN,0.37,0.73,0.00%,0.00,0.00
+Domingo,16,Organnical — Dolor Crónico — Búsqueda,6,75,8.00%,PEN,0.36,2.16,0.00%,0.00,0.00
+Martes,23,Organnical — Insomnio — Búsqueda,1,27,3.70%,PEN,0.83,0.83,0.00%,0.00,0.00
+Lunes,5,Organnical — Ansiedad — Búsqueda,4,87,4.60%,PEN,0.19,0.76,0.00%,0.00,0.00
+Viernes,2,Organnical — Dolor Crónico — Búsqueda,0,16,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,1,Organnical — Insomnio — Búsqueda,6,203,2.96%,PEN,0.33,1.96,0.00%,0.00,0.00
+Jueves,12,Organnical — Dolor Crónico — Búsqueda,2,80,2.50%,PEN,0.63,1.25,0.00%,0.00,0.00
+Lunes,14,Organnical — Dolor Crónico — Búsqueda,4,54,7.41%,PEN,0.50,1.98,0.00%,0.00,0.00
+Miércoles,20,Organnical — Dolor Crónico — Búsqueda,3,114,2.63%,PEN,0.86,2.59,0.00%,0.00,0.00
+Jueves,18,Organnical — Ansiedad — Búsqueda,4,132,3.03%,PEN,0.19,0.77,0.00%,0.00,0.00
+Lunes,18,Organnical — Dolor Crónico — Búsqueda,0,70,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Sábado,7,Organnical — Dolor Crónico — Búsqueda,5,99,5.05%,PEN,0.64,3.22,0.00%,0.00,0.00
+Domingo,4,Organnical — Dolor Crónico — Búsqueda,0,34,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,15,Organnical — Ansiedad — Búsqueda,2,79,2.53%,PEN,0.34,0.68,0.00%,0.00,0.00
+Viernes,13,Organnical — Dolor Crónico — Búsqueda,0,62,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,22,Organnical — Ansiedad — Búsqueda,4,62,6.45%,PEN,0.22,0.86,0.00%,0.00,0.00
+Jueves,1,Organnical — Ansiedad — Búsqueda,2,44,4.55%,PEN,0.32,0.64,0.00%,0.00,0.00
+Miércoles,0,Organnical — Insomnio — Búsqueda,9,168,5.36%,PEN,0.31,2.83,0.00%,0.00,0.00
+Jueves,22,Organnical — Ansiedad — Búsqueda,3,98,3.06%,PEN,0.34,1.01,0.00%,0.00,0.00
+Domingo,22,Organnical — Dolor Crónico — Búsqueda,1,17,5.88%,PEN,1.01,1.01,0.00%,0.00,0.00
+Sábado,13,Organnical — Dolor Crónico — Búsqueda,1,48,2.08%,PEN,0.48,0.48,0.00%,0.00,0.00
+Miércoles,17,Organnical — Dolor Crónico — Búsqueda,3,50,6.00%,PEN,0.50,1.51,0.00%,0.00,0.00
+Martes,8,Organnical — Dolor Crónico — Búsqueda,1,55,1.82%,PEN,0.46,0.46,0.00%,0.00,0.00
+Sábado,1,Organnical — Insomnio — Búsqueda,12,185,6.49%,PEN,0.25,2.95,0.00%,0.00,0.00
+Domingo,17,Organnical — Dolor Crónico — Búsqueda,4,62,6.45%,PEN,0.44,1.74,0.00%,0.00,0.00
+Domingo,6,Organnical — Insomnio — Búsqueda,2,96,2.08%,PEN,0.15,0.29,0.00%,0.00,0.00
+Martes,14,Organnical — Dolor Crónico — Búsqueda,2,60,3.33%,PEN,0.33,0.66,0.00%,0.00,0.00
+Miércoles,12,Organnical — Dolor Crónico — Búsqueda,1,59,1.69%,PEN,0.49,0.49,0.00%,0.00,0.00
+Lunes,20,Organnical — Insomnio — Búsqueda,4,65,6.15%,PEN,0.59,2.37,0.00%,0.00,0.00
+Domingo,8,Organnical — Insomnio — Búsqueda,6,73,8.22%,PEN,0.26,1.54,0.00%,0.00,0.00
+Jueves,16,Organnical — Dolor Crónico — Búsqueda,3,85,3.53%,PEN,0.42,1.25,0.00%,0.00,0.00
+Viernes,19,Organnical — Dolor Crónico — Búsqueda,3,72,4.17%,PEN,0.35,1.05,0.00%,0.00,0.00
+Domingo,17,Organnical — Ansiedad — Búsqueda,6,149,4.03%,PEN,0.33,1.97,0.00%,0.00,0.00
+Sábado,0,Organnical — Insomnio — Búsqueda,9,186,4.84%,PEN,0.37,3.29,0.00%,0.00,0.00
+Martes,13,Organnical — Ansiedad — Búsqueda,6,108,5.56%,PEN,0.23,1.35,0.00%,0.00,0.00
+Miércoles,4,Organnical — Dolor Crónico — Búsqueda,2,26,7.69%,PEN,0.89,1.78,0.00%,0.00,0.00
+Jueves,9,Organnical — Dolor Crónico — Búsqueda,1,85,1.18%,PEN,1.90,1.90,0.00%,0.00,0.00
+Viernes,10,Organnical — Dolor Crónico — Búsqueda,1,76,1.32%,PEN,0.44,0.44,0.00%,0.00,0.00
+Martes,1,Organnical — Dolor Crónico — Búsqueda,0,31,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,5,Organnical — Dolor Crónico — Búsqueda,1,31,3.23%,PEN,0.83,0.83,0.00%,0.00,0.00
+Miércoles,13,Organnical — Dolor Crónico — Búsqueda,0,43,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Lunes,9,Organnical — Ansiedad — Búsqueda,3,158,1.90%,PEN,0.20,0.61,0.00%,0.00,0.00
+Jueves,22,Organnical — Insomnio — Búsqueda,3,116,2.59%,PEN,0.18,0.53,0.00%,0.00,0.00
+Miércoles,4,Organnical — Ansiedad — Búsqueda,4,46,8.70%,PEN,0.17,0.68,0.00%,0.00,0.00
+Sábado,5,Organnical — Dolor Crónico — Búsqueda,1,44,2.27%,PEN,0.29,0.29,0.00%,0.00,0.00
+Sábado,12,Organnical — Ansiedad — Búsqueda,4,124,3.23%,PEN,0.23,0.92,0.00%,0.00,0.00
+Jueves,15,Organnical — Ansiedad — Búsqueda,4,129,3.10%,PEN,0.26,1.04,0.00%,0.00,0.00
+Martes,11,Organnical — Ansiedad — Búsqueda,3,107,2.80%,PEN,0.52,1.55,0.00%,0.00,0.00
+Jueves,3,Organnical — Dolor Crónico — Búsqueda,3,25,12.00%,PEN,0.90,2.71,0.00%,0.00,0.00
+Miércoles,18,Organnical — Ansiedad — Búsqueda,12,169,7.10%,PEN,0.39,4.66,0.00%,0.00,0.00
+Domingo,20,Organnical — Dolor Crónico — Búsqueda,2,32,6.25%,PEN,0.42,0.84,0.00%,0.00,0.00
+Viernes,0,Organnical — Ansiedad — Búsqueda,2,91,2.20%,PEN,0.24,0.48,0.00%,0.00,0.00
+Jueves,21,Organnical — Dolor Crónico — Búsqueda,3,45,6.67%,PEN,0.29,0.86,0.00%,0.00,0.00
+Sábado,16,Organnical — Dolor Crónico — Búsqueda,1,77,1.30%,PEN,1.21,1.21,0.00%,0.00,0.00
+Jueves,20,Organnical — Ansiedad — Búsqueda,4,153,2.61%,PEN,0.32,1.26,0.00%,0.00,0.00
+Viernes,23,Organnical — Dolor Crónico — Búsqueda,3,34,8.82%,PEN,0.72,2.17,0.00%,0.00,0.00
+Lunes,11,Organnical — Insomnio — Búsqueda,2,68,2.94%,PEN,0.44,0.88,0.00%,0.00,0.00
+Lunes,18,Organnical — Ansiedad — Búsqueda,1,91,1.10%,PEN,0.24,0.24,0.00%,0.00,0.00
+Jueves,19,Organnical — Insomnio — Búsqueda,4,72,5.56%,PEN,0.23,0.92,0.00%,0.00,0.00
+Miércoles,10,Organnical — Insomnio — Búsqueda,3,38,7.89%,PEN,0.63,1.90,0.00%,0.00,0.00
+Lunes,2,Organnical — Dolor Crónico — Búsqueda,2,18,11.11%,PEN,0.20,0.39,0.00%,0.00,0.00
+Sábado,4,Organnical — Insomnio — Búsqueda,6,87,6.90%,PEN,0.28,1.69,0.00%,0.00,0.00
+Sábado,13,Organnical — Ansiedad — Búsqueda,4,125,3.20%,PEN,0.30,1.19,0.00%,0.00,0.00
+Miércoles,9,Organnical — Ansiedad — Búsqueda,3,113,2.65%,PEN,0.43,1.29,0.00%,0.00,0.00
+Lunes,23,Organnical — Ansiedad — Búsqueda,2,44,4.55%,PEN,0.23,0.45,0.00%,0.00,0.00
+Viernes,4,Organnical — Dolor Crónico — Búsqueda,1,16,6.25%,PEN,0.15,0.15,0.00%,0.00,0.00
+Viernes,20,Organnical — Dolor Crónico — Búsqueda,7,74,9.46%,PEN,0.51,3.55,0.00%,0.00,0.00
+Sábado,19,Organnical — Ansiedad — Búsqueda,7,193,3.63%,PEN,0.50,3.50,0.00%,0.00,0.00
+Lunes,12,Organnical — Ansiedad — Búsqueda,5,103,4.85%,PEN,0.23,1.14,0.00%,0.00,0.00
+Sábado,3,Organnical — Dolor Crónico — Búsqueda,1,25,4.00%,PEN,0.35,0.35,0.00%,0.00,0.00
+Miércoles,1,Organnical — Ansiedad — Búsqueda,2,49,4.08%,PEN,0.51,1.01,0.00%,0.00,0.00
+Martes,8,Organnical — Insomnio — Búsqueda,4,76,5.26%,PEN,0.22,0.87,0.00%,0.00,0.00
+Jueves,7,Organnical — Insomnio — Búsqueda,13,82,15.85%,PEN,0.38,4.97,0.00%,0.00,0.00
+Miércoles,2,Organnical — Ansiedad — Búsqueda,3,30,10.00%,PEN,0.22,0.66,0.00%,0.00,0.00
+Lunes,1,Organnical — Insomnio — Búsqueda,16,234,6.84%,PEN,0.34,5.39,0.00%,0.00,0.00
+Domingo,15,Organnical — Ansiedad — Búsqueda,6,122,4.92%,PEN,0.33,1.95,0.00%,0.00,0.00
+Lunes,21,Organnical — Ansiedad — Búsqueda,5,131,3.82%,PEN,0.28,1.42,0.00%,0.00,0.00
+Domingo,19,Organnical — Insomnio — Búsqueda,2,89,2.25%,PEN,0.88,1.75,0.00%,0.00,0.00
+Domingo,20,Organnical — Insomnio — Búsqueda,4,118,3.39%,PEN,0.26,1.05,0.00%,0.00,0.00
+Martes,0,Organnical — Ansiedad — Búsqueda,5,78,6.41%,PEN,0.33,1.67,0.00%,0.00,0.00
+Lunes,1,Organnical — Ansiedad — Búsqueda,1,56,1.79%,PEN,0.18,0.18,0.00%,0.00,0.00
+Viernes,14,Organnical — Insomnio — Búsqueda,0,58,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,7,Organnical — Insomnio — Búsqueda,9,100,9.00%,PEN,0.33,2.96,0.00%,0.00,0.00
+Martes,22,Organnical — Dolor Crónico — Búsqueda,1,80,1.25%,PEN,0.74,0.74,0.00%,0.00,0.00
+Miércoles,1,Organnical — Dolor Crónico — Búsqueda,1,15,6.67%,PEN,0.40,0.40,0.00%,0.00,0.00
+Martes,20,Organnical — Insomnio — Búsqueda,1,69,1.45%,PEN,0.28,0.28,0.00%,0.00,0.00
+Sábado,8,Organnical — Ansiedad — Búsqueda,4,125,3.20%,PEN,0.20,0.79,0.00%,0.00,0.00
+Miércoles,15,Organnical — Insomnio — Búsqueda,1,66,1.52%,PEN,0.25,0.25,0.00%,0.00,0.00
+Jueves,11,Organnical — Ansiedad — Búsqueda,6,135,4.44%,PEN,0.27,1.59,0.00%,0.00,0.00
+Sábado,21,Organnical — Ansiedad — Búsqueda,4,129,3.10%,PEN,0.30,1.20,0.00%,0.00,0.00
+Sábado,11,Organnical — Insomnio — Búsqueda,8,63,12.70%,PEN,0.30,2.43,0.00%,0.00,0.00
+Domingo,21,Organnical — Dolor Crónico — Búsqueda,1,34,2.94%,PEN,0.20,0.20,0.00%,0.00,0.00
+Miércoles,7,Organnical — Insomnio — Búsqueda,8,77,10.39%,PEN,0.60,4.82,0.00%,0.00,0.00
+Miércoles,14,Organnical — Dolor Crónico — Búsqueda,3,62,4.84%,PEN,0.37,1.11,0.00%,0.00,0.00
+Domingo,4,Organnical — Ansiedad — Búsqueda,3,30,10.00%,PEN,0.22,0.67,0.00%,0.00,0.00
+Sábado,17,Organnical — Dolor Crónico — Búsqueda,3,48,6.25%,PEN,0.58,1.75,0.00%,0.00,0.00
+Martes,22,Organnical — Insomnio — Búsqueda,2,35,5.71%,PEN,0.61,1.22,0.00%,0.00,0.00
+Miércoles,0,Organnical — Ansiedad — Búsqueda,3,81,3.70%,PEN,0.24,0.71,0.00%,0.00,0.00
+Domingo,14,Organnical — Insomnio — Búsqueda,0,105,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,19,Organnical — Insomnio — Búsqueda,5,74,6.76%,PEN,0.27,1.36,0.00%,0.00,0.00
+Domingo,6,Organnical — Dolor Crónico — Búsqueda,2,65,3.08%,PEN,0.44,0.88,0.00%,0.00,0.00
+Domingo,21,Organnical — Insomnio — Búsqueda,13,164,7.93%,PEN,0.39,5.05,0.00%,0.00,0.00
+Sábado,7,Organnical — Insomnio — Búsqueda,2,88,2.27%,PEN,0.50,0.99,0.00%,0.00,0.00
+Lunes,2,Organnical — Insomnio — Búsqueda,11,193,5.70%,PEN,0.25,2.72,0.00%,0.00,0.00
+Domingo,7,Organnical — Ansiedad — Búsqueda,7,119,5.88%,PEN,0.35,2.44,0.00%,0.00,0.00
+Lunes,10,Organnical — Dolor Crónico — Búsqueda,0,49,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,18,Organnical — Ansiedad — Búsqueda,8,137,5.84%,PEN,0.23,1.87,0.00%,0.00,0.00
+Jueves,4,Organnical — Ansiedad — Búsqueda,0,46,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,7,Organnical — Dolor Crónico — Búsqueda,3,87,3.45%,PEN,0.41,1.24,0.00%,0.00,0.00
+Jueves,12,Organnical — Insomnio — Búsqueda,4,83,4.82%,PEN,0.28,1.12,0.00%,0.00,0.00
+Martes,11,Organnical — Insomnio — Búsqueda,2,66,3.03%,PEN,0.15,0.30,0.00%,0.00,0.00
+Jueves,17,Organnical — Insomnio — Búsqueda,6,81,7.41%,PEN,0.26,1.56,0.00%,0.00,0.00
+Domingo,0,Organnical — Dolor Crónico — Búsqueda,2,53,3.77%,PEN,0.35,0.70,0.00%,0.00,0.00
+Viernes,17,Organnical — Dolor Crónico — Búsqueda,2,58,3.45%,PEN,0.65,1.31,0.00%,0.00,0.00
+Miércoles,6,Organnical — Dolor Crónico — Búsqueda,2,34,5.88%,PEN,0.24,0.48,0.00%,0.00,0.00
+Lunes,9,Organnical — Insomnio — Búsqueda,8,91,8.79%,PEN,0.32,2.57,0.00%,0.00,0.00
+Sábado,15,Organnical — Insomnio — Búsqueda,0,78,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Lunes,22,Organnical — Ansiedad — Búsqueda,3,66,4.55%,PEN,0.49,1.46,0.00%,0.00,0.00
+Lunes,7,Organnical — Insomnio — Búsqueda,6,130,4.62%,PEN,0.47,2.81,0.00%,0.00,0.00
+Domingo,18,Organnical — Dolor Crónico — Búsqueda,6,68,8.82%,PEN,0.36,2.18,0.00%,0.00,0.00
+Jueves,0,Organnical — Ansiedad — Búsqueda,2,70,2.86%,PEN,0.21,0.42,0.00%,0.00,0.00
+Lunes,1,Organnical — Dolor Crónico — Búsqueda,1,6,16.67%,PEN,0.34,0.34,0.00%,0.00,0.00
+Martes,14,Organnical — Insomnio — Búsqueda,5,93,5.38%,PEN,0.52,2.59,0.00%,0.00,0.00
+Domingo,12,Organnical — Ansiedad — Búsqueda,3,118,2.54%,PEN,0.39,1.17,0.00%,0.00,0.00
+Viernes,5,Organnical — Insomnio — Búsqueda,5,97,5.15%,PEN,0.26,1.29,0.00%,0.00,0.00
+Martes,10,Organnical — Dolor Crónico — Búsqueda,1,66,1.52%,PEN,0.37,0.37,0.00%,0.00,0.00
+Viernes,7,Organnical — Dolor Crónico — Búsqueda,2,83,2.41%,PEN,0.94,1.89,0.00%,0.00,0.00
+Lunes,0,Organnical — Dolor Crónico — Búsqueda,2,25,8.00%,PEN,0.40,0.79,0.00%,0.00,0.00
+Viernes,4,Organnical — Ansiedad — Búsqueda,3,42,7.14%,PEN,0.17,0.50,0.00%,0.00,0.00
+Domingo,21,Organnical — Ansiedad — Búsqueda,6,92,6.52%,PEN,0.34,2.01,0.00%,0.00,0.00
+Lunes,16,Organnical — Ansiedad — Búsqueda,7,94,7.45%,PEN,0.43,3.04,0.00%,0.00,0.00
+Domingo,5,Organnical — Insomnio — Búsqueda,7,115,6.09%,PEN,0.34,2.36,0.00%,0.00,0.00
+Domingo,14,Organnical — Ansiedad — Búsqueda,11,143,7.69%,PEN,0.17,1.87,0.00%,0.00,0.00
+Viernes,23,Organnical — Ansiedad — Búsqueda,5,27,18.52%,PEN,0.28,1.39,0.00%,0.00,0.00
+Sábado,14,Organnical — Dolor Crónico — Búsqueda,4,73,5.48%,PEN,0.32,1.28,0.00%,0.00,0.00
+Martes,12,Organnical — Insomnio — Búsqueda,3,78,3.85%,PEN,0.63,1.90,0.00%,0.00,0.00
+Jueves,4,Organnical — Insomnio — Búsqueda,9,87,10.34%,PEN,0.25,2.26,0.00%,0.00,0.00
+Martes,16,Organnical — Ansiedad — Búsqueda,3,86,3.49%,PEN,0.21,0.62,0.00%,0.00,0.00
+Jueves,15,Organnical — Insomnio — Búsqueda,5,70,7.14%,PEN,0.26,1.28,0.00%,0.00,0.00
+Viernes,9,Organnical — Dolor Crónico — Búsqueda,5,100,5.00%,PEN,0.39,1.93,0.00%,0.00,0.00
+Lunes,15,Organnical — Ansiedad — Búsqueda,5,109,4.59%,PEN,0.21,1.06,0.00%,0.00,0.00
+Lunes,17,Organnical — Ansiedad — Búsqueda,1,87,1.15%,PEN,0.59,0.59,0.00%,0.00,0.00
+Miércoles,22,Organnical — Insomnio — Búsqueda,9,185,4.86%,PEN,0.44,3.99,0.00%,0.00,0.00
+Miércoles,20,Organnical — Ansiedad — Búsqueda,12,192,6.25%,PEN,0.50,6.00,0.00%,0.00,0.00
+Miércoles,19,Organnical — Ansiedad — Búsqueda,7,165,4.24%,PEN,0.52,3.63,0.00%,0.00,0.00
+Lunes,5,Organnical — Dolor Crónico — Búsqueda,0,27,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Sábado,17,Organnical — Ansiedad — Búsqueda,7,154,4.55%,PEN,0.23,1.62,0.00%,0.00,0.00
+Sábado,15,Organnical — Ansiedad — Búsqueda,7,131,5.34%,PEN,0.15,1.02,0.00%,0.00,0.00
+Domingo,11,Organnical — Insomnio — Búsqueda,5,74,6.76%,PEN,0.55,2.74,0.00%,0.00,0.00
+Sábado,22,Organnical — Insomnio — Búsqueda,2,103,1.94%,PEN,0.23,0.46,0.00%,0.00,0.00
+Lunes,3,Organnical — Insomnio — Búsqueda,6,135,4.44%,PEN,0.38,2.25,0.00%,0.00,0.00
+Jueves,20,Organnical — Insomnio — Búsqueda,3,82,3.66%,PEN,0.45,1.36,0.00%,0.00,0.00
+Viernes,7,Organnical — Insomnio — Búsqueda,7,60,11.67%,PEN,0.29,2.00,0.00%,0.00,0.00
+Domingo,12,Organnical — Dolor Crónico — Búsqueda,3,80,3.75%,PEN,0.31,0.93,0.00%,0.00,0.00
+Sábado,6,Organnical — Ansiedad — Búsqueda,1,88,1.14%,PEN,0.17,0.17,0.00%,0.00,0.00
+Viernes,6,Organnical — Insomnio — Búsqueda,3,66,4.55%,PEN,0.65,1.94,0.00%,0.00,0.00
+Miércoles,15,Organnical — Dolor Crónico — Búsqueda,2,64,3.13%,PEN,0.28,0.55,0.00%,0.00,0.00
+Sábado,4,Organnical — Dolor Crónico — Búsqueda,1,42,2.38%,PEN,0.44,0.44,0.00%,0.00,0.00
+Domingo,10,Organnical — Dolor Crónico — Búsqueda,3,66,4.55%,PEN,0.62,1.87,0.00%,0.00,0.00
+Lunes,11,Organnical — Dolor Crónico — Búsqueda,2,49,4.08%,PEN,0.37,0.74,0.00%,0.00,0.00
+Martes,7,Organnical — Insomnio — Búsqueda,3,69,4.35%,PEN,0.29,0.86,0.00%,0.00,0.00
+Martes,8,Organnical — Ansiedad — Búsqueda,7,105,6.67%,PEN,0.35,2.46,0.00%,0.00,0.00
+Viernes,20,Organnical — Insomnio — Búsqueda,3,86,3.49%,PEN,0.32,0.97,33.33%,1.00,0.97
+Lunes,8,Organnical — Ansiedad — Búsqueda,7,141,4.96%,PEN,0.41,2.84,0.00%,0.00,0.00
+Viernes,10,Organnical — Insomnio — Búsqueda,1,51,1.96%,PEN,0.22,0.22,0.00%,0.00,0.00
+Jueves,13,Organnical — Dolor Crónico — Búsqueda,8,94,8.51%,PEN,0.35,2.82,0.00%,0.00,0.00
+Sábado,13,Organnical — Insomnio — Búsqueda,1,68,1.47%,PEN,0.13,0.13,0.00%,0.00,0.00
+Sábado,2,Organnical — Insomnio — Búsqueda,11,141,7.80%,PEN,0.27,2.93,0.00%,0.00,0.00
+Lunes,19,Organnical — Ansiedad — Búsqueda,6,126,4.76%,PEN,0.38,2.29,0.00%,0.00,0.00
+Miércoles,5,Organnical — Insomnio — Búsqueda,9,107,8.41%,PEN,0.28,2.49,0.00%,0.00,0.00
+Viernes,5,Organnical — Ansiedad — Búsqueda,7,86,8.14%,PEN,0.26,1.82,0.00%,0.00,0.00
+Sábado,14,Organnical — Insomnio — Búsqueda,1,48,2.08%,PEN,0.16,0.16,0.00%,0.00,0.00
+Sábado,20,Organnical — Dolor Crónico — Búsqueda,1,65,1.54%,PEN,0.17,0.17,0.00%,0.00,0.00
+Miércoles,17,Organnical — Ansiedad — Búsqueda,5,122,4.10%,PEN,0.28,1.42,0.00%,0.00,0.00
+Sábado,0,Organnical — Ansiedad — Búsqueda,3,102,2.94%,PEN,0.14,0.41,0.00%,0.00,0.00
+Martes,23,Organnical — Ansiedad — Búsqueda,1,31,3.23%,PEN,0.21,0.21,0.00%,0.00,0.00
+Jueves,17,Organnical — Ansiedad — Búsqueda,3,129,2.33%,PEN,0.22,0.65,0.00%,0.00,0.00
+Domingo,13,Organnical — Dolor Crónico — Búsqueda,0,64,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,12,Organnical — Ansiedad — Búsqueda,5,153,3.27%,PEN,0.37,1.83,40.00%,2.00,0.92
+Martes,18,Organnical — Insomnio — Búsqueda,6,81,7.41%,PEN,0.30,1.78,0.00%,0.00,0.00
+Viernes,3,Organnical — Ansiedad — Búsqueda,3,55,5.45%,PEN,0.41,1.22,0.00%,0.00,0.00
+Martes,17,Organnical — Dolor Crónico — Búsqueda,3,67,4.48%,PEN,0.33,0.99,0.00%,0.00,0.00
+Miércoles,7,Organnical — Ansiedad — Búsqueda,6,99,6.06%,PEN,0.27,1.60,0.00%,0.00,0.00
+Viernes,2,Organnical — Insomnio — Búsqueda,10,173,5.78%,PEN,0.31,3.13,0.00%,0.00,0.00
+Martes,4,Organnical — Ansiedad — Búsqueda,1,26,3.85%,PEN,0.16,0.16,0.00%,0.00,0.00
+Jueves,13,Organnical — Ansiedad — Búsqueda,4,139,2.88%,PEN,0.45,1.78,0.00%,0.00,0.00
+Martes,5,Organnical — Ansiedad — Búsqueda,4,52,7.69%,PEN,0.18,0.71,0.00%,0.00,0.00
+Sábado,11,Organnical — Dolor Crónico — Búsqueda,2,65,3.08%,PEN,0.35,0.69,0.00%,0.00,0.00
+Sábado,4,Organnical — Ansiedad — Búsqueda,3,37,8.11%,PEN,0.29,0.86,0.00%,0.00,0.00
+Domingo,14,Organnical — Dolor Crónico — Búsqueda,7,70,10.00%,PEN,0.57,3.98,0.00%,0.00,0.00
+Viernes,16,Organnical — Dolor Crónico — Búsqueda,0,36,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,1,Organnical — Ansiedad — Búsqueda,5,68,7.35%,PEN,0.38,1.90,0.00%,0.00,0.00
+Jueves,16,Organnical — Insomnio — Búsqueda,3,61,4.92%,PEN,0.24,0.73,0.00%,0.00,0.00
+Martes,10,Organnical — Ansiedad — Búsqueda,6,130,4.62%,PEN,0.31,1.87,0.00%,0.00,0.00
+Sábado,9,Organnical — Dolor Crónico — Búsqueda,3,59,5.08%,PEN,0.39,1.16,0.00%,0.00,0.00
+Miércoles,21,Organnical — Insomnio — Búsqueda,8,205,3.90%,PEN,0.34,2.72,0.00%,0.00,0.00
+Sábado,19,Organnical — Insomnio — Búsqueda,2,47,4.26%,PEN,0.46,0.92,0.00%,0.00,0.00
+Domingo,22,Organnical — Insomnio — Búsqueda,10,236,4.24%,PEN,0.27,2.69,0.00%,0.00,0.00
+Sábado,5,Organnical — Ansiedad — Búsqueda,3,59,5.08%,PEN,0.19,0.58,0.00%,0.00,0.00
+Miércoles,12,Organnical — Insomnio — Búsqueda,3,52,5.77%,PEN,0.24,0.72,0.00%,0.00,0.00
+Martes,23,Organnical — Dolor Crónico — Búsqueda,5,59,8.47%,PEN,0.59,2.95,0.00%,0.00,0.00
+Lunes,4,Organnical — Insomnio — Búsqueda,7,135,5.19%,PEN,0.21,1.46,0.00%,0.00,0.00
+Lunes,12,Organnical — Dolor Crónico — Búsqueda,3,60,5.00%,PEN,0.93,2.80,0.00%,0.00,0.00
+Jueves,20,Organnical — Dolor Crónico — Búsqueda,4,81,4.94%,PEN,0.99,3.94,0.00%,0.00,0.00
+Sábado,21,Organnical — Dolor Crónico — Búsqueda,0,83,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Jueves,19,Organnical — Ansiedad — Búsqueda,5,155,3.23%,PEN,0.24,1.19,0.00%,0.00,0.00
+Jueves,8,Organnical — Insomnio — Búsqueda,4,61,6.56%,PEN,0.33,1.30,0.00%,0.00,0.00
+Miércoles,2,Organnical — Insomnio — Búsqueda,11,136,8.09%,PEN,0.34,3.71,0.00%,0.00,0.00
+Jueves,7,Organnical — Dolor Crónico — Búsqueda,2,95,2.11%,PEN,1.39,2.77,0.00%,0.00,0.00
+Lunes,21,Organnical — Insomnio — Búsqueda,1,63,1.59%,PEN,0.23,0.23,0.00%,0.00,0.00
+Sábado,2,Organnical — Ansiedad — Búsqueda,3,63,4.76%,PEN,0.18,0.53,0.00%,0.00,0.00
+Martes,11,Organnical — Dolor Crónico — Búsqueda,0,71,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,4,Organnical — Insomnio — Búsqueda,3,69,4.35%,PEN,0.49,1.47,0.00%,0.00,0.00
+Martes,17,Organnical — Insomnio — Búsqueda,7,78,8.97%,PEN,0.24,1.67,0.00%,0.00,0.00
+Jueves,2,Organnical — Dolor Crónico — Búsqueda,0,28,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Lunes,20,Organnical — Dolor Crónico — Búsqueda,5,80,6.25%,PEN,0.50,2.51,0.00%,0.00,0.00
+Jueves,2,Organnical — Insomnio — Búsqueda,10,136,7.35%,PEN,0.27,2.66,0.00%,0.00,0.00
+Domingo,4,Organnical — Insomnio — Búsqueda,5,122,4.10%,PEN,0.28,1.40,0.00%,0.00,0.00
+Sábado,18,Organnical — Dolor Crónico — Búsqueda,1,61,1.64%,PEN,0.23,0.23,0.00%,0.00,0.00
+Sábado,12,Organnical — Dolor Crónico — Búsqueda,2,46,4.35%,PEN,0.72,1.43,0.00%,0.00,0.00
+Sábado,5,Organnical — Insomnio — Búsqueda,5,112,4.46%,PEN,0.33,1.67,0.00%,0.00,0.00
+Sábado,22,Organnical — Dolor Crónico — Búsqueda,3,66,4.55%,PEN,0.60,1.79,0.00%,0.00,0.00
+Jueves,6,Organnical — Ansiedad — Búsqueda,6,117,5.13%,PEN,0.31,1.83,0.00%,0.00,0.00
+Lunes,7,Organnical — Ansiedad — Búsqueda,7,140,5.00%,PEN,0.39,2.72,0.00%,0.00,0.00
+Jueves,10,Organnical — Insomnio — Búsqueda,6,61,9.84%,PEN,0.36,2.15,0.00%,0.00,0.00
+Martes,16,Organnical — Dolor Crónico — Búsqueda,1,43,2.33%,PEN,0.50,0.50,0.00%,0.00,0.00
+Sábado,23,Organnical — Dolor Crónico — Búsqueda,1,13,7.69%,PEN,0.33,0.33,0.00%,0.00,0.00
+Lunes,6,Organnical — Insomnio — Búsqueda,6,125,4.80%,PEN,0.18,1.07,0.00%,0.00,0.00
+Lunes,0,Organnical — Ansiedad — Búsqueda,1,87,1.15%,PEN,0.10,0.10,0.00%,0.00,0.00
+Domingo,8,Organnical — Dolor Crónico — Búsqueda,3,74,4.05%,PEN,0.81,2.44,0.00%,0.00,0.00
+Martes,18,Organnical — Ansiedad — Búsqueda,3,100,3.00%,PEN,0.34,1.02,0.00%,0.00,0.00
+Domingo,11,Organnical — Ansiedad — Búsqueda,8,150,5.33%,PEN,0.28,2.25,0.00%,0.00,0.00
+Viernes,13,Organnical — Insomnio — Búsqueda,1,49,2.04%,PEN,0.14,0.14,0.00%,0.00,0.00
+Martes,21,Organnical — Insomnio — Búsqueda,6,76,7.89%,PEN,0.25,1.48,0.00%,0.00,0.00
+Lunes,7,Organnical — Dolor Crónico — Búsqueda,2,60,3.33%,PEN,0.29,0.57,0.00%,0.00,0.00
+Domingo,2,Organnical — Ansiedad — Búsqueda,0,57,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Lunes,2,Organnical — Ansiedad — Búsqueda,3,41,7.32%,PEN,0.22,0.67,0.00%,0.00,0.00
+Lunes,22,Organnical — Insomnio — Búsqueda,1,101,0.99%,PEN,0.11,0.11,0.00%,0.00,0.00
+Lunes,12,Organnical — Insomnio — Búsqueda,3,81,3.70%,PEN,0.92,2.77,0.00%,0.00,0.00
+Martes,19,Organnical — Ansiedad — Búsqueda,6,126,4.76%,PEN,0.24,1.45,0.00%,0.00,0.00
+Viernes,19,Organnical — Ansiedad — Búsqueda,4,115,3.48%,PEN,0.20,0.80,0.00%,0.00,0.00
+Viernes,11,Organnical — Ansiedad — Búsqueda,6,152,3.95%,PEN,0.37,2.21,0.00%,0.00,0.00
+Jueves,11,Organnical — Dolor Crónico — Búsqueda,3,78,3.85%,PEN,0.89,2.68,0.00%,0.00,0.00
+Jueves,21,Organnical — Insomnio — Búsqueda,6,118,5.08%,PEN,0.20,1.17,0.00%,0.00,0.00
+Miércoles,13,Organnical — Insomnio — Búsqueda,3,64,4.69%,PEN,0.18,0.55,0.00%,0.00,0.00
+Sábado,1,Organnical — Dolor Crónico — Búsqueda,0,22,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,13,Organnical — Ansiedad — Búsqueda,2,122,1.64%,PEN,0.21,0.42,0.00%,0.00,0.00
+Miércoles,14,Organnical — Insomnio — Búsqueda,1,69,1.45%,PEN,0.17,0.17,0.00%,0.00,0.00
+Sábado,22,Organnical — Ansiedad — Búsqueda,5,85,5.88%,PEN,0.41,2.05,0.00%,0.00,0.00
+Jueves,18,Organnical — Dolor Crónico — Búsqueda,2,77,2.60%,PEN,0.40,0.80,0.00%,0.00,0.00
+Lunes,10,Organnical — Ansiedad — Búsqueda,7,187,3.74%,PEN,0.36,2.49,0.00%,0.00,0.00
+Martes,19,Organnical — Insomnio — Búsqueda,6,69,8.70%,PEN,0.27,1.59,0.00%,0.00,0.00
+Viernes,6,Organnical — Ansiedad — Búsqueda,4,106,3.77%,PEN,0.24,0.97,0.00%,0.00,0.00
+Domingo,3,Organnical — Ansiedad — Búsqueda,3,36,8.33%,PEN,0.20,0.60,0.00%,0.00,0.00
+Martes,2,Organnical — Insomnio — Búsqueda,9,127,7.09%,PEN,0.21,1.87,0.00%,0.00,0.00
+Martes,9,Organnical — Insomnio — Búsqueda,5,75,6.67%,PEN,0.52,2.59,0.00%,0.00,0.00
+Viernes,7,Organnical — Ansiedad — Búsqueda,4,141,2.84%,PEN,0.29,1.17,0.00%,0.00,0.00
+Jueves,14,Organnical — Dolor Crónico — Búsqueda,1,90,1.11%,PEN,1.00,1.00,0.00%,0.00,0.00
+Viernes,13,Organnical — Ansiedad — Búsqueda,5,128,3.91%,PEN,0.43,2.14,0.00%,0.00,0.00
+Domingo,10,Organnical — Ansiedad — Búsqueda,7,117,5.98%,PEN,0.19,1.31,0.00%,0.00,0.00
+Miércoles,16,Organnical — Insomnio — Búsqueda,4,82,4.88%,PEN,0.21,0.84,0.00%,0.00,0.00
+Jueves,23,Organnical — Ansiedad — Búsqueda,1,106,0.94%,PEN,0.20,0.20,0.00%,0.00,0.00
+Miércoles,2,Organnical — Dolor Crónico — Búsqueda,1,15,6.67%,PEN,0.32,0.32,0.00%,0.00,0.00
+Miércoles,16,Organnical — Ansiedad — Búsqueda,9,139,6.47%,PEN,0.30,2.74,0.00%,0.00,0.00
+Viernes,17,Organnical — Ansiedad — Búsqueda,14,160,8.75%,PEN,0.22,3.06,0.00%,0.00,0.00
+Lunes,23,Organnical — Insomnio — Búsqueda,2,48,4.17%,PEN,0.60,1.19,0.00%,0.00,0.00
+Viernes,11,Organnical — Insomnio — Búsqueda,6,69,8.70%,PEN,0.19,1.15,0.00%,0.00,0.00
+Miércoles,11,Organnical — Insomnio — Búsqueda,3,38,7.89%,PEN,0.19,0.56,0.00%,0.00,0.00
+Sábado,17,Organnical — Insomnio — Búsqueda,2,66,3.03%,PEN,0.24,0.48,0.00%,0.00,0.00
+Jueves,14,Organnical — Ansiedad — Búsqueda,7,147,4.76%,PEN,0.45,3.13,0.00%,0.00,0.00
+Viernes,6,Organnical — Dolor Crónico — Búsqueda,5,85,5.88%,PEN,0.29,1.47,0.00%,0.00,0.00
+Viernes,12,Organnical — Insomnio — Búsqueda,3,58,5.17%,PEN,0.48,1.44,0.00%,0.00,0.00
+Domingo,11,Organnical — Dolor Crónico — Búsqueda,3,67,4.48%,PEN,0.29,0.88,0.00%,0.00,0.00
+Miércoles,8,Organnical — Ansiedad — Búsqueda,4,135,2.96%,PEN,0.25,1.00,0.00%,0.00,0.00
+Domingo,19,Organnical — Ansiedad — Búsqueda,5,122,4.10%,PEN,0.32,1.59,0.00%,0.00,0.00
+Martes,1,Organnical — Ansiedad — Búsqueda,1,50,2.00%,PEN,0.47,0.47,0.00%,0.00,0.00
+Martes,21,Organnical — Dolor Crónico — Búsqueda,1,58,1.72%,PEN,0.49,0.49,0.00%,0.00,0.00
+Martes,13,Organnical — Insomnio — Búsqueda,4,61,6.56%,PEN,0.30,1.20,0.00%,0.00,0.00
+Jueves,9,Organnical — Ansiedad — Búsqueda,7,157,4.46%,PEN,0.41,2.86,0.00%,0.00,0.00
+Lunes,16,Organnical — Insomnio — Búsqueda,2,66,3.03%,PEN,0.23,0.45,0.00%,0.00,0.00
+Martes,2,Organnical — Ansiedad — Búsqueda,1,34,2.94%,PEN,0.19,0.19,0.00%,0.00,0.00
+Sábado,10,Organnical — Dolor Crónico — Búsqueda,8,73,10.96%,PEN,0.48,3.87,0.00%,0.00,0.00
+Jueves,6,Organnical — Dolor Crónico — Búsqueda,0,98,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Viernes,14,Organnical — Dolor Crónico — Búsqueda,2,86,2.33%,PEN,0.80,1.60,0.00%,0.00,0.00
+Lunes,19,Organnical — Dolor Crónico — Búsqueda,1,102,0.98%,PEN,0.97,0.97,0.00%,0.00,0.00
+Sábado,23,Organnical — Ansiedad — Búsqueda,2,72,2.78%,PEN,0.47,0.94,0.00%,0.00,0.00
+Jueves,5,Organnical — Ansiedad — Búsqueda,4,91,4.40%,PEN,0.24,0.94,0.00%,0.00,0.00
+Sábado,6,Organnical — Insomnio — Búsqueda,8,93,8.60%,PEN,0.29,2.28,0.00%,0.00,0.00
+Miércoles,17,Organnical — Insomnio — Búsqueda,5,85,5.88%,PEN,0.22,1.11,0.00%,0.00,0.00
+Martes,6,Organnical — Dolor Crónico — Búsqueda,2,64,3.13%,PEN,0.26,0.51,0.00%,0.00,0.00
+Lunes,16,Organnical — Dolor Crónico — Búsqueda,3,52,5.77%,PEN,0.47,1.42,0.00%,0.00,0.00
+Lunes,20,Organnical — Ansiedad — Búsqueda,4,119,3.36%,PEN,0.50,2.01,0.00%,0.00,0.00
+Lunes,5,Organnical — Insomnio — Búsqueda,6,125,4.80%,PEN,0.20,1.22,0.00%,0.00,0.00
+Viernes,22,Organnical — Insomnio — Búsqueda,3,100,3.00%,PEN,0.28,0.84,0.00%,0.00,0.00
+Lunes,11,Organnical — Ansiedad — Búsqueda,5,118,4.24%,PEN,0.33,1.67,0.00%,0.00,0.00
+Martes,20,Organnical — Ansiedad — Búsqueda,4,118,3.39%,PEN,0.52,2.06,0.00%,0.00,0.00
+Martes,5,Organnical — Insomnio — Búsqueda,7,98,7.14%,PEN,0.41,2.88,14.29%,1.00,2.88
+Lunes,6,Organnical — Dolor Crónico — Búsqueda,1,43,2.33%,PEN,0.59,0.59,0.00%,0.00,0.00
+Jueves,1,Organnical — Insomnio — Búsqueda,8,199,4.02%,PEN,0.31,2.47,0.00%,0.00,0.00
+Domingo,17,Organnical — Insomnio — Búsqueda,7,82,8.54%,PEN,0.34,2.39,0.00%,0.00,0.00
+Miércoles,3,Organnical — Insomnio — Búsqueda,8,116,6.90%,PEN,0.23,1.83,0.00%,0.00,0.00
+Jueves,21,Organnical — Ansiedad — Búsqueda,8,144,5.56%,PEN,0.22,1.75,0.00%,0.00,0.00
+Domingo,15,Organnical — Insomnio — Búsqueda,6,100,6.00%,PEN,0.37,2.22,0.00%,0.00,0.00
+Martes,20,Organnical — Dolor Crónico — Búsqueda,0,83,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,2,Organnical — Dolor Crónico — Búsqueda,1,21,4.76%,PEN,0.15,0.15,0.00%,0.00,0.00
+Jueves,17,Organnical — Dolor Crónico — Búsqueda,2,81,2.47%,PEN,0.49,0.98,0.00%,0.00,0.00
+Domingo,8,Organnical — Ansiedad — Búsqueda,2,117,1.71%,PEN,0.39,0.78,0.00%,0.00,0.00
+Domingo,16,Organnical — Ansiedad — Búsqueda,6,133,4.51%,PEN,0.40,2.41,0.00%,0.00,0.00
+Sábado,3,Organnical — Ansiedad — Búsqueda,1,27,3.70%,PEN,0.44,0.44,0.00%,0.00,0.00
+Jueves,10,Organnical — Ansiedad — Búsqueda,6,154,3.90%,PEN,0.30,1.82,0.00%,0.00,0.00
+Sábado,19,Organnical — Dolor Crónico — Búsqueda,2,77,2.60%,PEN,0.47,0.93,0.00%,0.00,0.00
+Viernes,8,Organnical — Dolor Crónico — Búsqueda,3,83,3.61%,PEN,0.72,2.15,0.00%,0.00,0.00
+Miércoles,20,Organnical — Insomnio — Búsqueda,3,113,2.65%,PEN,0.35,1.06,0.00%,0.00,0.00
+Jueves,9,Organnical — Insomnio — Búsqueda,3,66,4.55%,PEN,0.56,1.68,0.00%,0.00,0.00
+Sábado,10,Organnical — Insomnio — Búsqueda,2,69,2.90%,PEN,0.31,0.62,0.00%,0.00,0.00
+Domingo,16,Organnical — Insomnio — Búsqueda,7,71,9.86%,PEN,0.32,2.26,0.00%,0.00,0.00
+Domingo,18,Organnical — Insomnio — Búsqueda,4,84,4.76%,PEN,0.26,1.02,0.00%,0.00,0.00
+Sábado,16,Organnical — Insomnio — Búsqueda,5,63,7.94%,PEN,0.25,1.24,0.00%,0.00,0.00
+Sábado,6,Organnical — Dolor Crónico — Búsqueda,7,109,6.42%,PEN,0.40,2.77,0.00%,0.00,0.00
+Domingo,13,Organnical — Insomnio — Búsqueda,6,92,6.52%,PEN,0.51,3.06,0.00%,0.00,0.00
+Viernes,4,Organnical — Insomnio — Búsqueda,6,121,4.96%,PEN,0.17,1.01,0.00%,0.00,0.00
+Viernes,17,Organnical — Insomnio — Búsqueda,0,51,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,10,Organnical — Insomnio — Búsqueda,4,87,4.60%,PEN,0.32,1.26,0.00%,0.00,0.00
+Domingo,3,Organnical — Insomnio — Búsqueda,7,153,4.58%,PEN,0.23,1.64,0.00%,0.00,0.00
+Miércoles,22,Organnical — Ansiedad — Búsqueda,2,30,6.67%,PEN,0.41,0.81,0.00%,0.00,0.00
+Lunes,10,Organnical — Insomnio — Búsqueda,2,81,2.47%,PEN,0.65,1.29,0.00%,0.00,0.00
+Lunes,8,Organnical — Dolor Crónico — Búsqueda,3,65,4.62%,PEN,0.39,1.17,0.00%,0.00,0.00
+Martes,3,Organnical — Ansiedad — Búsqueda,4,23,17.39%,PEN,0.23,0.92,0.00%,0.00,0.00
+Martes,15,Organnical — Insomnio — Búsqueda,3,82,3.66%,PEN,0.35,1.04,0.00%,0.00,0.00
+Viernes,12,Organnical — Dolor Crónico — Búsqueda,2,65,3.08%,PEN,0.42,0.83,0.00%,0.00,0.00
+Lunes,14,Organnical — Insomnio — Búsqueda,1,85,1.18%,PEN,0.17,0.17,0.00%,0.00,0.00
+Miércoles,7,Organnical — Dolor Crónico — Búsqueda,0,61,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,9,Organnical — Ansiedad — Búsqueda,0,120,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,19,Organnical — Dolor Crónico — Búsqueda,2,97,2.06%,PEN,0.35,0.69,0.00%,0.00,0.00
+Martes,6,Organnical — Insomnio — Búsqueda,1,70,1.43%,PEN,0.31,0.31,0.00%,0.00,0.00
+Martes,17,Organnical — Ansiedad — Búsqueda,5,125,4.00%,PEN,0.34,1.68,0.00%,0.00,0.00
+Viernes,1,Organnical — Ansiedad — Búsqueda,4,59,6.78%,PEN,0.32,1.29,0.00%,0.00,0.00
+Viernes,9,Organnical — Ansiedad — Búsqueda,2,144,1.39%,PEN,0.50,0.99,0.00%,0.00,0.00
+Miércoles,21,Organnical — Dolor Crónico — Búsqueda,1,105,0.95%,PEN,0.39,0.39,0.00%,0.00,0.00
+Viernes,1,Organnical — Insomnio — Búsqueda,7,171,4.09%,PEN,0.55,3.85,0.00%,0.00,0.00
+Martes,10,Organnical — Insomnio — Búsqueda,5,67,7.46%,PEN,0.28,1.39,0.00%,0.00,0.00
+Jueves,16,Organnical — Ansiedad — Búsqueda,3,129,2.33%,PEN,0.14,0.43,0.00%,0.00,0.00
+Domingo,19,Organnical — Dolor Crónico — Búsqueda,3,57,5.26%,PEN,0.65,1.96,0.00%,0.00,0.00
+Miércoles,5,Organnical — Ansiedad — Búsqueda,5,69,7.25%,PEN,0.26,1.28,0.00%,0.00,0.00
+Jueves,10,Organnical — Dolor Crónico — Búsqueda,5,78,6.41%,PEN,0.82,4.10,0.00%,0.00,0.00
+Sábado,20,Organnical — Ansiedad — Búsqueda,5,165,3.03%,PEN,0.41,2.06,0.00%,0.00,0.00
+Lunes,3,Organnical — Dolor Crónico — Búsqueda,0,12,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,22,Organnical — Ansiedad — Búsqueda,7,92,7.61%,PEN,0.23,1.63,0.00%,0.00,0.00
+Miércoles,10,Organnical — Ansiedad — Búsqueda,5,148,3.38%,PEN,0.20,1.00,0.00%,0.00,0.00
+Viernes,9,Organnical — Insomnio — Búsqueda,2,55,3.64%,PEN,0.49,0.98,0.00%,0.00,0.00
+Sábado,9,Organnical — Ansiedad — Búsqueda,8,142,5.63%,PEN,0.24,1.94,0.00%,0.00,0.00
+Lunes,6,Organnical — Ansiedad — Búsqueda,5,120,4.17%,PEN,0.22,1.08,0.00%,0.00,0.00
+Domingo,5,Organnical — Dolor Crónico — Búsqueda,4,52,7.69%,PEN,0.50,1.98,0.00%,0.00,0.00
+Miércoles,8,Organnical — Dolor Crónico — Búsqueda,0,56,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,23,Organnical — Ansiedad — Búsqueda,4,37,10.81%,PEN,0.28,1.13,0.00%,0.00,0.00
+Jueves,23,Organnical — Dolor Crónico — Búsqueda,1,30,3.33%,PEN,0.20,0.20,0.00%,0.00,0.00
+Sábado,10,Organnical — Ansiedad — Búsqueda,7,122,5.74%,PEN,0.21,1.47,0.00%,0.00,0.00
+Miércoles,9,Organnical — Dolor Crónico — Búsqueda,0,52,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,3,Organnical — Ansiedad — Búsqueda,3,33,9.09%,PEN,0.21,0.62,0.00%,0.00,0.00
+Lunes,0,Organnical — Insomnio — Búsqueda,10,247,4.05%,PEN,0.36,3.57,0.00%,0.00,0.00
+Sábado,3,Organnical — Insomnio — Búsqueda,5,163,3.07%,PEN,0.23,1.15,0.00%,0.00,0.00
+Martes,21,Organnical — Ansiedad — Búsqueda,4,98,4.08%,PEN,0.31,1.22,0.00%,0.00,0.00
+Jueves,3,Organnical — Ansiedad — Búsqueda,2,40,5.00%,PEN,0.17,0.34,0.00%,0.00,0.00
+Jueves,8,Organnical — Dolor Crónico — Búsqueda,2,95,2.11%,PEN,0.22,0.44,0.00%,0.00,0.00
+Sábado,21,Organnical — Insomnio — Búsqueda,5,86,5.81%,PEN,0.24,1.19,0.00%,0.00,0.00
+Viernes,2,Organnical — Ansiedad — Búsqueda,0,47,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,6,Organnical — Insomnio — Búsqueda,4,74,5.41%,PEN,0.28,1.11,0.00%,0.00,0.00
+Domingo,0,Organnical — Insomnio — Búsqueda,9,152,5.92%,PEN,0.40,3.59,0.00%,0.00,0.00
+Lunes,21,Organnical — Dolor Crónico — Búsqueda,1,47,2.13%,PEN,0.19,0.19,0.00%,0.00,0.00
+Viernes,16,Organnical — Insomnio — Búsqueda,1,67,1.49%,PEN,0.15,0.15,0.00%,0.00,0.00
+Miércoles,18,Organnical — Dolor Crónico — Búsqueda,3,64,4.69%,PEN,0.53,1.59,0.00%,0.00,0.00
+Jueves,13,Organnical — Insomnio — Búsqueda,7,76,9.21%,PEN,0.36,2.54,0.00%,0.00,0.00
+Lunes,4,Organnical — Dolor Crónico — Búsqueda,0,15,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Domingo,23,Organnical — Ansiedad — Búsqueda,4,57,7.02%,PEN,0.36,1.43,0.00%,0.00,0.00
+Miércoles,3,Organnical — Dolor Crónico — Búsqueda,0,9,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Sábado,12,Organnical — Insomnio — Búsqueda,4,66,6.06%,PEN,0.20,0.80,0.00%,0.00,0.00
+Jueves,12,Organnical — Ansiedad — Búsqueda,2,134,1.49%,PEN,0.22,0.44,0.00%,0.00,0.00
+Martes,7,Organnical — Ansiedad — Búsqueda,4,117,3.42%,PEN,0.33,1.30,0.00%,0.00,0.00
+Martes,13,Organnical — Dolor Crónico — Búsqueda,2,68,2.94%,PEN,0.67,1.33,0.00%,0.00,0.00
+Lunes,9,Organnical — Dolor Crónico — Búsqueda,3,64,4.69%,PEN,0.71,2.13,0.00%,0.00,0.00
+Jueves,7,Organnical — Ansiedad — Búsqueda,4,124,3.23%,PEN,0.32,1.28,0.00%,0.00,0.00
+Viernes,15,Organnical — Dolor Crónico — Búsqueda,1,68,1.47%,PEN,1.70,1.70,0.00%,0.00,0.00
+Sábado,16,Organnical — Ansiedad — Búsqueda,7,152,4.61%,PEN,0.42,2.91,0.00%,0.00,0.00
+Viernes,18,Organnical — Insomnio — Búsqueda,2,52,3.85%,PEN,0.31,0.62,0.00%,0.00,0.00
+Domingo,2,Organnical — Dolor Crónico — Búsqueda,0,26,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,19,Organnical — Dolor Crónico — Búsqueda,2,74,2.70%,PEN,0.69,1.38,0.00%,0.00,0.00
+Jueves,3,Organnical — Insomnio — Búsqueda,9,110,8.18%,PEN,0.28,2.53,0.00%,0.00,0.00
+Viernes,22,Organnical — Dolor Crónico — Búsqueda,1,41,2.44%,PEN,0.27,0.27,0.00%,0.00,0.00
+Sábado,9,Organnical — Insomnio — Búsqueda,9,69,13.04%,PEN,0.23,2.05,0.00%,0.00,0.00
+Domingo,1,Organnical — Dolor Crónico — Búsqueda,1,33,3.03%,PEN,0.40,0.40,0.00%,0.00,0.00
+Viernes,0,Organnical — Dolor Crónico — Búsqueda,1,44,2.27%,PEN,0.42,0.42,0.00%,0.00,0.00
+Jueves,1,Organnical — Dolor Crónico — Búsqueda,1,20,5.00%,PEN,0.43,0.43,0.00%,0.00,0.00
+Domingo,23,Organnical — Insomnio — Búsqueda,5,216,2.31%,PEN,0.21,1.04,0.00%,0.00,0.00
+Lunes,8,Organnical — Insomnio — Búsqueda,8,92,8.70%,PEN,0.35,2.78,0.00%,0.00,0.00
+Lunes,22,Organnical — Dolor Crónico — Búsqueda,1,18,5.56%,PEN,0.46,0.46,0.00%,0.00,0.00
+Miércoles,23,Organnical — Insomnio — Búsqueda,1,89,1.12%,PEN,0.08,0.08,0.00%,0.00,0.00
+Martes,0,Organnical — Dolor Crónico — Búsqueda,1,30,3.33%,PEN,1.05,1.05,0.00%,0.00,0.00
+Lunes,13,Organnical — Insomnio — Búsqueda,2,79,2.53%,PEN,0.31,0.62,0.00%,0.00,0.00
+Martes,22,Organnical — Ansiedad — Búsqueda,2,58,3.45%,PEN,0.39,0.78,0.00%,0.00,0.00
+Lunes,17,Organnical — Insomnio — Búsqueda,3,70,4.29%,PEN,0.24,0.71,0.00%,0.00,0.00
+Miércoles,18,Organnical — Insomnio — Búsqueda,4,95,4.21%,PEN,0.18,0.70,0.00%,0.00,0.00
+Sábado,18,Organnical — Ansiedad — Búsqueda,4,184,2.17%,PEN,0.32,1.28,0.00%,0.00,0.00
+Sábado,7,Organnical — Ansiedad — Búsqueda,9,144,6.25%,PEN,0.22,1.99,0.00%,0.00,0.00
+Viernes,15,Organnical — Insomnio — Búsqueda,3,62,4.84%,PEN,0.22,0.65,0.00%,0.00,0.00
+Lunes,14,Organnical — Ansiedad — Búsqueda,6,109,5.50%,PEN,0.21,1.27,0.00%,0.00,0.00
+Viernes,18,Organnical — Dolor Crónico — Búsqueda,4,61,6.56%,PEN,0.44,1.76,0.00%,0.00,0.00
+Domingo,6,Organnical — Ansiedad — Búsqueda,5,113,4.42%,PEN,0.19,0.95,0.00%,0.00,0.00
+Martes,16,Organnical — Insomnio — Búsqueda,4,83,4.82%,PEN,0.24,0.94,0.00%,0.00,0.00
+Jueves,8,Organnical — Ansiedad — Búsqueda,9,144,6.25%,PEN,0.31,2.77,0.00%,0.00,0.00
+Miércoles,6,Organnical — Ansiedad — Búsqueda,4,101,3.96%,PEN,0.31,1.24,0.00%,0.00,0.00
+Viernes,21,Organnical — Dolor Crónico — Búsqueda,1,55,1.82%,PEN,0.44,0.44,0.00%,0.00,0.00
+Martes,9,Organnical — Dolor Crónico — Búsqueda,1,65,1.54%,PEN,0.46,0.46,0.00%,0.00,0.00
+Miércoles,14,Organnical — Ansiedad — Búsqueda,7,113,6.19%,PEN,0.29,2.04,0.00%,0.00,0.00
+Sábado,2,Organnical — Dolor Crónico — Búsqueda,0,16,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Martes,0,Organnical — Insomnio — Búsqueda,7,161,4.35%,PEN,0.30,2.10,0.00%,0.00,0.00
+Lunes,15,Organnical — Insomnio — Búsqueda,5,75,6.67%,PEN,0.33,1.67,0.00%,0.00,0.00
+Viernes,21,Organnical — Insomnio — Búsqueda,5,87,5.75%,PEN,0.30,1.52,0.00%,0.00,0.00
+Martes,5,Organnical — Dolor Crónico — Búsqueda,4,42,9.52%,PEN,0.23,0.92,0.00%,0.00,0.00
+Lunes,13,Organnical — Dolor Crónico — Búsqueda,3,68,4.41%,PEN,0.55,1.65,0.00%,0.00,0.00
+Viernes,15,Organnical — Ansiedad — Búsqueda,8,149,5.37%,PEN,0.21,1.69,0.00%,0.00,0.00
+Domingo,0,Organnical — Ansiedad — Búsqueda,5,87,5.75%,PEN,0.34,1.72,0.00%,0.00,0.00
+Jueves,4,Organnical — Dolor Crónico — Búsqueda,3,32,9.38%,PEN,0.30,0.90,0.00%,0.00,0.00
+Viernes,11,Organnical — Dolor Crónico — Búsqueda,4,68,5.88%,PEN,0.56,2.23,0.00%,0.00,0.00
+Martes,18,Organnical — Dolor Crónico — Búsqueda,0,86,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Lunes,18,Organnical — Insomnio — Búsqueda,4,88,4.55%,PEN,0.41,1.65,0.00%,0.00,0.00
+Lunes,13,Organnical — Ansiedad — Búsqueda,3,76,3.95%,PEN,0.16,0.48,0.00%,0.00,0.00
+Miércoles,13,Organnical — Ansiedad — Búsqueda,5,102,4.90%,PEN,0.41,2.04,0.00%,0.00,0.00
+Domingo,2,Organnical — Insomnio — Búsqueda,11,160,6.88%,PEN,0.31,3.40,0.00%,0.00,0.00
+Sábado,20,Organnical — Insomnio — Búsqueda,3,65,4.62%,PEN,0.39,1.17,0.00%,0.00,0.00
+Lunes,17,Organnical — Dolor Crónico — Búsqueda,0,77,0.00%,PEN,0,0.00,0.00%,0.00,0.00
+Miércoles,19,Organnical — Insomnio — Búsqueda,11,115,9.57%,PEN,0.57,6.30,0.00%,0.00,0.00
+Jueves,0,Organnical — Insomnio — Búsqueda,7,244,2.87%,PEN,0.35,2.46,0.00%,0.00,0.00
+Martes,3,Organnical — Insomnio — Búsqueda,7,106,6.60%,PEN,0.45,3.15,0.00%,0.00,0.00
+Miércoles,22,Organnical — Dolor Crónico — Búsqueda,1,115,0.87%,PEN,0.23,0.23,0.00%,0.00,0.00
+Jueves,19,Organnical — Dolor Crónico — Búsqueda,1,88,1.14%,PEN,0.20,0.20,0.00%,0.00,0.00
+Lunes,3,Organnical — Ansiedad — Búsqueda,4,43,9.30%,PEN,0.29,1.17,0.00%,0.00,0.00
+,,Total: Campañas,"1,943","43,391",4.48%,PEN,0.35,670.65,0.21%,4.00,167.66
+,,Total: Cuenta,"1,943","43,391",4.48%,PEN,0.35,670.65,0.21%,4.00,167.66
+,,Total: Búsqueda,"1,943","43,391",4.48%,PEN,0.35,670.65,0.21%,4.00,167.66

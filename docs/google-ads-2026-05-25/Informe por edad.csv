@@ -1,0 +1,27 @@
+Informe por edad
+Todo el período
+Estado de los datos demográficos,Edad,Campaña,Grupo de anuncios,Estado,Ajuste de oferta,Clics,Impr.,CTR,Código de moneda,Prom. CPC,Costo,Porcentaje de conv.,Conversiones,Costo/conv.
+Habilitado,25-34,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,27,"1,561",1.73%,PEN,0.57,15.38,0.00%,0.00,0.00
+Habilitado,55-64,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,57,"1,227",4.65%,PEN,0.54,30.89,0.00%,0.00,0.00
+Habilitado,45-54,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,48,"1,585",3.03%,PEN,0.61,29.37,0.00%,0.00,0.00
+Habilitado,18-24,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,7,406,1.72%,PEN,0.61,4.28,0.00%,0.00,0.00
+Habilitado,65+,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,39,943,4.14%,PEN,0.58,22.62,0.00%,0.00,0.00
+Habilitado,35-44,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,29,"1,675",1.73%,PEN,0.66,19.25,0.00%,0.00,0.00
+Habilitado,Desconocido,Organnical — Dolor Crónico — Búsqueda,Grupo de anuncios 1,Campaña detenida, --,134,"2,050",6.54%,PEN,0.36,48.54,0.00%,0.00,0.00
+Habilitado,65+,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,52,843,6.17%,PEN,0.35,18.18,0.00%,0.00,0.00
+Habilitado,35-44,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,84,"2,745",3.06%,PEN,0.33,27.89,0.00%,0.00,0.00
+Habilitado,25-34,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,77,"2,747",2.80%,PEN,0.39,29.79,0.00%,0.00,0.00
+Habilitado,55-64,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,87,"1,535",5.67%,PEN,0.36,31.40,0.00%,0.00,0.00
+Habilitado,18-24,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,26,799,3.25%,PEN,0.42,10.96,0.00%,0.00,0.00
+Habilitado,Desconocido,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,321,"6,684",4.80%,PEN,0.22,71.12,0.62%,2.00,35.56
+Habilitado,45-54,Organnical — Ansiedad — Búsqueda,Grupo de anuncios 1,Apto, --,106,"2,250",4.71%,PEN,0.33,35.32,0.00%,0.00,0.00
+Habilitado,55-64,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,93,"1,409",6.60%,PEN,0.45,41.57,0.00%,0.00,0.00
+Habilitado,35-44,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,57,"1,774",3.21%,PEN,0.37,21.12,0.00%,0.00,0.00
+Habilitado,25-34,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,73,"1,924",3.79%,PEN,0.38,27.95,1.37%,1.00,27.95
+Habilitado,18-24,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,14,612,2.29%,PEN,0.54,7.59,0.00%,0.00,0.00
+Habilitado,65+,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,84,"1,176",7.14%,PEN,0.43,36.00,0.00%,0.00,0.00
+Habilitado,Desconocido,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,434,"7,758",5.59%,PEN,0.24,105.53,0.00%,0.00,0.00
+Habilitado,45-54,Organnical — Insomnio — Búsqueda,Grupo de anuncios 1,Apto, --,95,"1,691",5.62%,PEN,0.38,36.16,1.05%,1.00,36.16
+Total: Edad,,,,,,"1,944","43,394",4.48%,PEN,0.35,670.92,0.21%,4.00,167.73
+Total: Cuenta,,,,,,"1,944","43,394",4.48%,PEN,0.35,670.92,0.21%,4.00,167.73
+Total: Búsqueda,,,,,,"1,944","43,394",4.48%,PEN,0.35,670.92,0.21%,4.00,167.73

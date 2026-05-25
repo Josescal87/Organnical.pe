@@ -53,6 +53,13 @@ export default function ConsultaExpressPage() {
   const [motivo, setMotivo] = useState("");
   const [dataErrors, setDataErrors] = useState<Record<string, string>>({});
 
+  // Pre-rellena motivo si llega vía query string (?motivo=Dolor+muscular)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const m = new URLSearchParams(window.location.search).get("motivo");
+    if (m) setMotivo(m);
+  }, []);
+
   // Reniec validation
   type ReniecStatus = null | "loading" | "valid" | "invalid";
   const [reniecStatus, setReniecStatus] = useState<ReniecStatus>(null);

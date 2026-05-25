@@ -2,9 +2,12 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, User } from "lucide-react"
-import { getPost, getAllSlugs, posts, type ContentBlock } from "@/lib/blog"
+import { getPost, getAllSlugs, posts, type ContentBlock, type BlogPost } from "@/lib/blog"
 import TrackEvent from "@/components/TrackEvent"
 import BlogPostHeader from "./BlogPostHeader"
+import Sources from "@/components/blog/Sources"
+import MedicalDisclaimer from "@/components/blog/MedicalDisclaimer"
+import RelatedProducts from "@/components/blog/RelatedProducts"
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 const NAVY = "#0B1D35"
@@ -130,15 +133,36 @@ function renderBlock(block: ContentBlock, index: number) {
   }
 }
 
+type ResolvedCta =
+  | { kind: "teleconsulta"; href: string; label: string }
+  | { kind: "product"; href: string; label: string }
+
+function resolveCta(post: BlogPost): ResolvedCta {
+  const cta = post.primaryCta
+  if (cta?.kind === "product") {
+    return {
+      kind: "product",
+      href: `/productos/${cta.slug}`,
+      label: cta.label ?? "Ver producto",
+    }
+  }
+  const specialty = cta?.kind === "teleconsulta" ? cta.specialty : undefined
+  const verticalId = specialty ?? CATEGORY_TO_VERTICAL[post.category] ?? ""
+  return {
+    kind: "teleconsulta",
+    href: verticalId ? `/agendar?v=${verticalId}` : "/registro",
+    label: (cta?.kind === "teleconsulta" && cta.label) || "Agendar consulta",
+  }
+}
+
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const post = getPost(slug)
   if (!post) notFound()
 
-  const verticalId = CATEGORY_TO_VERTICAL[post.category] ?? ""
   const specialtySlug = CATEGORY_TO_SPECIALTY[post.category] ?? ""
-  const bookingHref = verticalId ? `/agendar?v=${verticalId}` : "/registro"
   const specialtyHref = specialtySlug ? `/especialidades/${specialtySlug}` : "/registro"
+  const cta = resolveCta(post)
 
   const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe"
   const articleSchema = {
@@ -247,21 +271,33 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                     className="my-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl p-5 bg-violet-50 border border-violet-100"
                   >
                     <div className="flex-1">
-                      <p className="font-bold text-[#0B1D35] text-sm mb-1">¿Esto resuena contigo?</p>
+                      <p className="font-bold text-[#0B1D35] text-sm mb-1">
+                        {cta.kind === "product" ? "¿Te interesa probarlo?" : "¿Esto resuena contigo?"}
+                      </p>
                       <p className="text-sm text-zinc-500 leading-snug">
-                        Nuestros médicos especializados en {post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.
+                        {cta.kind === "product"
+                          ? "El suplemento que mencionamos en este artículo, listo para tu rutina. Envío a todo Perú."
+                          : `Nuestros médicos especializados en ${post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.`}
                       </p>
                     </div>
                     <Link
-                      href={bookingHref}
+                      href={cta.href}
                       className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
                       style={{ background: G }}
                     >
-                      Agendar consulta <ArrowRight className="w-3.5 h-3.5" />
+                      {cta.label} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
                   </div>,
                 ]
               })}
+
+              {post.relatedProducts && post.relatedProducts.length > 0 && (
+                <RelatedProducts products={post.relatedProducts} />
+              )}
+
+              {post.sources && post.sources.length > 0 && <Sources sources={post.sources} />}
+
+              <MedicalDisclaimer />
 
               <div className="mt-10 pt-8 border-t border-zinc-100">
                 <p className="text-xs font-bold uppercase tracking-widest text-zinc-400 mb-3">Etiquetas</p>
@@ -285,18 +321,22 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                 className="rounded-2xl p-6 text-white"
                 style={{ background: `linear-gradient(135deg, ${NAVY} 0%, #1a3a6e 100%)` }}
               >
-                <h3 className="font-display font-black text-lg mb-2">¿Te identificas con esto?</h3>
+                <h3 className="font-display font-black text-lg mb-2">
+                  {cta.kind === "product" ? "Lo que recomendamos" : "¿Te identificas con esto?"}
+                </h3>
                 <p className="text-white/60 text-sm mb-5 leading-relaxed">
-                  Nuestros médicos especializados en {post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.
+                  {cta.kind === "product"
+                    ? "El suplemento mencionado en este artículo, listo para empezar hoy."
+                    : `Nuestros médicos especializados en ${post.category} pueden ayudarte con un plan personalizado. Desde S/ 60.`}
                 </p>
                 <Link
-                  href={bookingHref}
+                  href={cta.href}
                   className="block w-full text-center rounded-full py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ background: G }}
                 >
-                  Agendar consulta de {post.category}
+                  {cta.kind === "product" ? cta.label : `Agendar consulta de ${post.category}`}
                 </Link>
-                {specialtyHref && (
+                {cta.kind === "teleconsulta" && specialtyHref && (
                   <Link
                     href={specialtyHref}
                     className="block w-full text-center rounded-full py-2.5 text-sm font-medium text-white/50 hover:text-white/80 transition-colors mt-2"
@@ -355,11 +395,11 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               <ArrowLeft className="w-4 h-4" /> Todos los artículos
             </Link>
             <Link
-              href={bookingHref}
+              href={cta.href}
               className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
             >
-              Agendar consulta <ArrowRight className="w-4 h-4" />
+              {cta.label} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>

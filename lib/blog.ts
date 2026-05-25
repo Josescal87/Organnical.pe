@@ -6,6 +6,23 @@ export type ContentBlock =
   | { type: "ol"; items: string[] }
   | { type: "quote"; text: string }
 
+export type SourceType = "pubmed" | "examine" | "nhs" | "mayo" | "minsa" | "cochrane" | "other"
+
+export interface BlogSource {
+  label: string
+  url: string
+  type: SourceType
+}
+
+export interface BlogRelatedProduct {
+  slug: string
+  reason: string
+}
+
+export type BlogPrimaryCta =
+  | { kind: "teleconsulta"; specialty?: string; label?: string }
+  | { kind: "product"; slug: string; label?: string }
+
 export interface BlogPost {
   slug: string
   title: string
@@ -19,6 +36,9 @@ export interface BlogPost {
   image: string
   readTime: number
   content: ContentBlock[]
+  sources?: BlogSource[]
+  relatedProducts?: BlogRelatedProduct[]
+  primaryCta?: BlogPrimaryCta
 }
 
 const u = (id: string) =>

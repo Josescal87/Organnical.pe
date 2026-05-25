@@ -673,7 +673,7 @@ export const posts: BlogPost[] = [
 // `date: "2026-05-25"` queda invisible hasta 2026-05-25T05:00:00-05:00 (= 10:00 UTC).
 // Vercel + Next.js ISR (revalidate = 60s en /blog y /blog/[slug]) hacen que el post
 // aparezca en a más tardar ~60s después de su publishTimestamp.
-function publishTimestamp(post: BlogPost): Date {
+export function publishTimestamp(post: BlogPost): Date {
   return new Date(`${post.date}T05:00:00-05:00`)
 }
 

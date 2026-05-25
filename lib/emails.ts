@@ -545,3 +545,51 @@ export async function sendExpressPatientConfirm({
     html,
   });
 }
+
+export async function sendBlogPublishedNotification({
+  toEmail,
+  postTitle,
+  postExcerpt,
+  postSlug,
+  postImage,
+  postDateFormatted,
+  postAuthor,
+  postCategory,
+}: {
+  toEmail: string;
+  postTitle: string;
+  postExcerpt: string;
+  postSlug: string;
+  postImage: string;
+  postDateFormatted: string;
+  postAuthor: string;
+  postCategory: string;
+}): Promise<void> {
+  const url = `${BASE_URL}/blog/${postSlug}`;
+  const heroUrl = postImage.startsWith("http") ? postImage : `${BASE_URL}${postImage}`;
+
+  const content = `
+    <p style="margin:0 0 24px;color:#71717A;font-size:13px;letter-spacing:.08em;text-transform:uppercase;font-weight:700">📝 Post publicado en el blog</p>
+    <h1 style="margin:0 0 12px;color:#0B1D35;font-size:24px;line-height:1.25;font-weight:900">${postTitle}</h1>
+    <p style="margin:0 0 20px;color:#A1A1AA;font-size:13px">
+      ${postDateFormatted} · ${postCategory} · por ${postAuthor}
+    </p>
+    <img src="${heroUrl}" alt="${postTitle}" width="520" style="display:block;width:100%;max-width:520px;height:auto;border-radius:12px;margin:0 0 24px" />
+    <p style="margin:0 0 24px;color:#52525B;font-size:15px;line-height:1.6">${postExcerpt}</p>
+    <p style="margin:0 0 8px">
+      <a href="${url}" style="display:inline-block;background:linear-gradient(135deg,#F472B6 0%,#A78BFA 50%,#38BDF8 100%);color:white;text-decoration:none;padding:14px 28px;border-radius:999px;font-weight:700;font-size:14px">
+        Ver post en el blog →
+      </a>
+    </p>
+    <p style="margin:32px 0 0;color:#A1A1AA;font-size:12px;line-height:1.5">
+      Este aviso se dispara automáticamente cuando un post programado cruza su fecha de publicación (05:00 Lima del día configurado en <code>date</code>).
+    </p>
+  `;
+
+  return sendWithRetry({
+    from: FROM,
+    to: toEmail,
+    subject: `📝 Publicado: ${postTitle}`,
+    html: baseTemplate(content),
+  });
+}

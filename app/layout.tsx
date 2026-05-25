@@ -9,6 +9,8 @@ import { CartProvider } from "@/contexts/CartContext";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import PromoBanner from "@/components/PromoBanner";
 import GlobalCartDrawer from "@/components/GlobalCartDrawer";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const dmSans = DM_Sans({
   variable: "--font-dm-sans",
@@ -131,6 +133,10 @@ export default function RootLayout({
         <Toaster position="top-right" richColors closeButton />
         <CookieBanner />
         <AnalyticsScripts />
+        {/* Vercel Analytics + Speed Insights: sin cookies, no requieren consent.
+            Auto-deshabilitados en dev — solo se cargan en producción. */}
+        <VercelAnalytics />
+        <SpeedInsights />
       </body>
     </html>
   );

@@ -51,6 +51,10 @@ export default function Sources({ sources }: { sources: BlogSource[] }) {
                 target="_blank"
                 rel="noopener noreferrer nofollow"
                 className="inline-flex items-baseline gap-1.5 text-zinc-700 hover:text-[#7c6fed] transition-colors leading-snug"
+                data-track="source"
+                data-source-type={s.type}
+                data-source-index={i + 1}
+                data-source-url={s.url}
               >
                 <span>{s.label}</span>
                 <ExternalLink className="w-3 h-3 flex-shrink-0 translate-y-0.5" />

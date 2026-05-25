@@ -64,6 +64,8 @@ export default async function RelatedProducts({
               key={rp.slug}
               href={`/productos/${product.slug_publico}`}
               className="group flex gap-4 rounded-2xl border border-zinc-100 bg-white p-4 transition-all hover:border-violet-200 hover:shadow-sm"
+              data-track="related-product"
+              data-product-slug={product.slug_publico}
             >
               <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-zinc-50">
                 {product.imagen_url ? (

@@ -8,6 +8,7 @@ import BlogPostHeader from "./BlogPostHeader"
 import Sources from "@/components/blog/Sources"
 import MedicalDisclaimer from "@/components/blog/MedicalDisclaimer"
 import RelatedProducts from "@/components/blog/RelatedProducts"
+import BlogPostTracking from "@/components/blog/BlogPostTracking"
 
 // ISR: revalidar cada 60s para que los posts scheduled aparezcan en máximo ~1min
 // después de su publishTimestamp (05:00 Lima). Hasta que la fecha pasa,
@@ -205,6 +206,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         metaEvent="ViewContent"
         metaParams={{ content_ids: [post.slug], content_name: post.title, content_type: "article" }}
       />
+      <BlogPostTracking postSlug={post.slug} postCategory={post.category} />
 
       <BlogPostHeader title={post.title} category={post.category} />
 
@@ -289,6 +291,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                       href={cta.href}
                       className="flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90 whitespace-nowrap"
                       style={{ background: G }}
+                      data-track="cta"
+                      data-cta-position="mid"
+                      data-cta-kind={cta.kind}
+                      data-cta-destination={cta.href}
                     >
                       {cta.label} <ArrowRight className="w-3.5 h-3.5" />
                     </Link>
@@ -338,6 +344,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
                   href={cta.href}
                   className="block w-full text-center rounded-full py-3 text-sm font-semibold text-white transition-all hover:opacity-90"
                   style={{ background: G }}
+                  data-track="cta"
+                  data-cta-position="sidebar"
+                  data-cta-kind={cta.kind}
+                  data-cta-destination={cta.href}
                 >
                   {cta.kind === "product" ? cta.label : `Agendar consulta de ${post.category}`}
                 </Link>
@@ -403,6 +413,10 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
               href={cta.href}
               className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-90"
               style={{ background: G }}
+              data-track="cta"
+              data-cta-position="bottom"
+              data-cta-kind={cta.kind}
+              data-cta-destination={cta.href}
             >
               {cta.label} <ArrowRight className="w-4 h-4" />
             </Link>

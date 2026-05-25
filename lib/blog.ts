@@ -47,6 +47,113 @@ const u = (id: string) =>
 export const posts: BlogPost[] = [
   // Mayo 2026 ───────────────────────────────────────────────────────────────
   {
+    slug: "cansancio-nutricional-vs-descanso",
+    title: "Cansancio nutricional vs cansancio de descanso: cómo saber cuál es el tuyo",
+    excerpt: "Duermes 8 horas y te despiertas cansada. El café ya no aguanta hasta las 11. Lo más probable: tu cansancio no es de descanso — es nutricional. Y es muy distinto.",
+    date: "2026-05-25",
+    dateFormatted: "25 de mayo de 2026",
+    author: "Mary Keting",
+    authorRole: "Medicina Integrativa",
+    category: "Salud Femenina",
+    tags: ["cansancio", "fatiga", "hierro", "espirulina", "nutrición"],
+    image: "/images/blog/cansancio-nutricional-vs-descanso.jpg",
+    readTime: 9,
+    primaryCta: { kind: "product", slug: "spirusol-en-polvo", label: "Probar Spirusol" },
+    relatedProducts: [
+      { slug: "spirusol-en-polvo", reason: "Una cucharadita al día disuelta en agua, jugo o smoothie. El formato más versátil para empezar." },
+      { slug: "spirusol-crunchie", reason: "Misma espirulina, formato crocante. Para topping de yogur, ensaladas o snack puro." },
+    ],
+    sources: [
+      {
+        label: "Krayenbuehl P-A et al. — Intravenous iron for the treatment of fatigue in nonanemic, premenopausal women with low serum ferritin. Blood, 2011.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/21436073/",
+        type: "pubmed",
+      },
+      {
+        label: "Karkos PD et al. — Spirulina in Clinical Practice: Evidence-Based Human Applications. Evid Based Complement Alternat Med, 2011.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/18955364/",
+        type: "pubmed",
+      },
+      {
+        label: "Vitamin B12 or folate deficiency anaemia — symptoms, causes and treatment.",
+        url: "https://www.nhs.uk/conditions/vitamin-b12-or-folate-deficiency-anaemia/",
+        type: "nhs",
+      },
+      {
+        label: "Iron in your diet — heme vs non-heme sources and absorption.",
+        url: "https://www.nhs.uk/live-well/eat-well/food-types/iron-in-your-diet/",
+        type: "nhs",
+      },
+      {
+        label: "Magnesium — health benefits, evidence, dosage and food sources.",
+        url: "https://examine.com/supplements/magnesium/",
+        type: "examine",
+      },
+      {
+        label: "Perimenopause — symptoms, causes and management.",
+        url: "https://www.mayoclinic.org/diseases-conditions/perimenopause/symptoms-causes/syc-20354666",
+        type: "mayo",
+      },
+    ],
+    content: [
+      { type: "p", text: "Dormiste siete u ocho horas. Comes razonablemente bien. No estás enferma — los análisis básicos salen normales. Y aun así, te despiertas con la sensación de que el cuerpo no terminó de cargar. El café aguanta hasta las once; después, nada. Si esto te suena familiar, lo más probable es que llevas meses tratando de resolver el problema durmiendo más, descansando más, bajando el ritmo — y no funciona." },
+      { type: "p", text: "El motivo casi siempre es el mismo: no todo el cansancio es de descanso. Hay un tipo distinto, mucho más común de lo que parece, que no se resuelve durmiendo. Y entender la diferencia es lo que separa a alguien que sigue cansada durante años de alguien que en unas semanas empieza a sentir el cuerpo otra vez." },
+
+      { type: "h2", text: "La diferencia que casi nadie hace" },
+      { type: "p", text: "El cansancio de descanso es el que tiene todo el mundo en mente: dormiste poco, descansas, te recuperas. Responde a horas y calidad de sueño. Es agudo y autolimitado." },
+      { type: "p", text: "El cansancio nutricional es otra cosa. Es la sensación de que el cuerpo no tiene combustible disponible aunque hayas descansado. Las mitocondrias — las fábricas de energía dentro de cada célula — necesitan ciertos nutrientes para producir ATP, que es la moneda de energía corporal. Si esos nutrientes están en déficit, no importa cuántas horas duermas: el sistema no tiene con qué encender." },
+      { type: "p", text: "Ambos pueden coexistir, y de hecho suelen hacerlo. Pero confundir uno con otro es la razón por la que llevas meses sintiéndote igual a pesar de dormir 'lo que debes'. Si lo único que cambia es la duración del sueño y la energía no vuelve, el problema está en otro lado." },
+
+      { type: "h2", text: "Cómo reconocer cuál es el tuyo" },
+      { type: "p", text: "El cansancio nutricional tiene huellas reconocibles. No son diagnóstico — son señales para sospecharlo." },
+      { type: "ul", items: [
+        "Dormiste siete horas o más y te despiertas igual que cuando dormiste cinco.",
+        "Mejora momentáneamente cuando comes y vuelve al rato.",
+        "Niebla mental por la tarde, especialmente después del almuerzo.",
+        "Mareo o vista borrosa cuando te paras rápido.",
+        "Uñas frágiles, caída de cabello más visible, palidez en mucosas.",
+        "Esfuerzos físicos moderados (subir escaleras, cargar bolsas) se sienten desproporcionadamente pesados.",
+        "Análisis de hemoglobina normales — pero nunca te midieron ferritina.",
+      ]},
+      { type: "p", text: "Marina tiene 42 años, es contadora. Duerme 7 a 8 horas, come razonablemente bien, no fuma. No está enferma — los análisis básicos salen normales. Y aun así se despierta con la sensación de no haber descansado. El café aguanta hasta las once; después, nada. Marina no necesita más sueño. Necesita revisar qué le está faltando." },
+      { type: "p", text: "Un detalle clave: las reservas de hierro (ferritina) pueden estar agotadas mucho antes de que la hemoglobina caiga. Esto se llama deficiencia de hierro sin anemia y es una causa muy frecuente de fatiga sostenida en mujeres premenopáusicas — y está subdiagnosticada porque el análisis estándar (hemoglobina sola) no la detecta. Un ensayo clínico publicado en Blood mostró que mujeres con ferritina baja sin anemia mejoraron significativamente su fatiga tras restaurar las reservas de hierro." },
+
+      { type: "h2", text: "Lo que el cansancio nutricional necesita" },
+      { type: "p", text: "Cinco nutrientes hacen la mayor parte del trabajo en la producción de energía celular. Cuando uno o varios faltan, el sistema funciona en modo de baja potencia." },
+      { type: "ul", items: [
+        "Hierro biodisponible — transporta oxígeno en sangre y es cofactor en la cadena respiratoria mitocondrial. Hierro hemo (carne, pescado) se absorbe más fácil que el no-hemo (vegetales). La vitamina C aumenta la absorción del no-hemo.",
+        "B12 — esencial para producción de glóbulos rojos y función neurológica. Solo está en alimentos de origen animal (huevo, lácteo, pescado, carne) o en suplemento. Las dietas vegetarianas estrictas la pierden.",
+        "Proteína completa — los aminoácidos esenciales no se almacenan; el cuerpo los necesita todos los días para mantener y reparar tejido. Sin proteína suficiente, la sensación de cansancio se cronifica.",
+        "Antioxidantes — el estrés crónico genera radicales libres que dañan mitocondrias. Vitamina C, E, selenio y compuestos vegetales como ficocianina actúan de contrapeso.",
+        "Magnesio — cofactor en más de 300 reacciones enzimáticas, incluida la producción de ATP. Se pierde más con estrés. Las estimaciones sugieren que la mayoría de la población tiene ingesta insuficiente.",
+      ]},
+      { type: "p", text: "Hay un problema con la dieta moderna: pierde estos cinco sistemáticamente. Granos refinados pierden hasta el 85% del magnesio del grano entero. Vegetales cultivados en suelos empobrecidos tienen menos hierro y zinc que los de hace 50 años. Los ultraprocesados aportan calorías pero pocos micronutrientes. Comer 'normal' hoy ya no garantiza la base que el cuerpo asume." },
+
+      { type: "h2", text: "Por qué los alimentos densos son la primera línea" },
+      { type: "p", text: "Densidad nutricional es la cantidad de nutrientes por caloría. Un alimento denso aporta mucho con poco — la opción más eficiente para llenar déficits sin sumar carga calórica ni depender de suplementos sintéticos desde el inicio." },
+      { type: "p", text: "Un ejemplo concreto: la espirulina (Arthrospira platensis) es una microalga acuática que la FAO ha llamado 'uno de los alimentos más completos del siglo XXI'. Aporta entre 60 y 70 por ciento de proteína completa con todos los aminoácidos esenciales, hierro biodisponible (en formato no-hemo, pero acompañado por compuestos que facilitan su absorción), antioxidantes como la ficocianina, B-complex y clorofila. Una cucharadita (5 g) aporta lo equivalente a varias porciones de hojas verdes en hierro y antioxidantes." },
+      { type: "p", text: "Una aclaración importante, porque hay marketing engañoso al respecto: la espirulina aporta hierro biodisponible, proteína completa, antioxidantes y minerales. No aporta B12 utilizable — lo que figura como 'B12' en la mayoría de etiquetas de espirulina es un análogo inactivo en humanos (pseudovitamina B12). Si necesitas B12, las fuentes son huevo, lácteo, pescado, carne, o suplemento de cianocobalamina o metilcobalamina." },
+
+      { type: "quote", text: "El cansancio nutricional no se cura durmiendo más. Se cura comiendo distinto." },
+
+      { type: "p", text: "Spirusol se cultiva en Arequipa, donde la radiación solar excepcionalmente alta favorece la densidad de pigmentos y antioxidantes. El Informe IIN 000114-2025 verifica 67,33% de proteína, 9,69 mg de hierro por 100 g y 13.648 µmol Trolox de capacidad antioxidante por 100 g. Tiene Registro Sanitario MINSA vigente y certificación Vegan Verified internacional. El uso habitual es una cucharadita al día — en agua de limón por la mañana, en un jugo verde, o en un smoothie." },
+
+      { type: "h2", text: "Cuándo el cansancio no es esto" },
+      { type: "p", text: "Antes de asumir que el cansancio es nutricional, hay señales que requieren evaluación médica antes que cualquier ajuste alimentario." },
+      { type: "ul", items: [
+        "Cansancio severo de más de tres meses sin ninguna mejora.",
+        "Pérdida de peso involuntaria.",
+        "Fiebre persistente o sudores nocturnos.",
+        "Dolor articular nuevo o cambios en piel.",
+        "Cambios menstruales drásticos (sangrados muy abundantes, ausencia inexplicada).",
+        "Ánimo persistentemente bajo o pérdida de interés por cosas que antes disfrutabas.",
+      ]},
+      { type: "p", text: "Las causas que la alimentación no resuelve incluyen anemia severa que requiere suplementación bajo control, hipotiroidismo (la glándula tiroides regula el metabolismo entero — si funciona lento, ningún alimento compensa), depresión clínica, fatiga crónica idiopática y deficiencias profundas que necesitan protocolo médico. En todos estos casos, lo primero es la evaluación, no el suplemento." },
+
+      { type: "p", text: "Para el cansancio nutricional, en cambio, el camino es más simple. Empezar por densidad: agregar alimentos que aporten mucho por porción. Una cucharadita al día e ir observando. Los cambios en niveles de hierro y reservas nutricionales toman semanas, no días — paciencia con el cuerpo. Y si después de seis a ocho semanas no notas ningún cambio, ese es el momento de consultar con un médico para revisar qué más puede estar pasando." },
+    ],
+  },
+  {
     slug: "melatonina-cuando-funciona",
     title: "Melatonina: cuándo funciona, cuándo no, y por qué la dosis importa menos de lo que crees",
     excerpt: "Todo el mundo la toma. Pocos entienden qué hace realmente. La melatonina no es un somnífero — y esa confusión explica por qué a tantas personas no les funciona.",

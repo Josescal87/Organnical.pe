@@ -669,10 +669,28 @@ export const posts: BlogPost[] = [
   },
 ]
 
+// Hora de publicación por defecto: 05:00 Lima (UTC-5, sin DST). Un post con
+// `date: "2026-05-25"` queda invisible hasta 2026-05-25T05:00:00-05:00 (= 10:00 UTC).
+// Vercel + Next.js ISR (revalidate = 60s en /blog y /blog/[slug]) hacen que el post
+// aparezca en a más tardar ~60s después de su publishTimestamp.
+function publishTimestamp(post: BlogPost): Date {
+  return new Date(`${post.date}T05:00:00-05:00`)
+}
+
+export function isPublished(post: BlogPost, now: Date = new Date()): boolean {
+  return publishTimestamp(post) <= now
+}
+
+export function getPublishedPosts(now: Date = new Date()): BlogPost[] {
+  return posts.filter((p) => isPublished(p, now))
+}
+
 export function getAllSlugs(): string[] {
-  return posts.map((p) => p.slug)
+  return getPublishedPosts().map((p) => p.slug)
 }
 
 export function getPost(slug: string): BlogPost | undefined {
-  return posts.find((p) => p.slug === slug)
+  const post = posts.find((p) => p.slug === slug)
+  if (!post || !isPublished(post)) return undefined
+  return post
 }

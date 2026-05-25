@@ -2,12 +2,17 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, User } from "lucide-react"
-import { getPost, getAllSlugs, posts, type ContentBlock, type BlogPost } from "@/lib/blog"
+import { getPost, getAllSlugs, getPublishedPosts, type ContentBlock, type BlogPost } from "@/lib/blog"
 import TrackEvent from "@/components/TrackEvent"
 import BlogPostHeader from "./BlogPostHeader"
 import Sources from "@/components/blog/Sources"
 import MedicalDisclaimer from "@/components/blog/MedicalDisclaimer"
 import RelatedProducts from "@/components/blog/RelatedProducts"
+
+// ISR: revalidar cada 60s para que los posts scheduled aparezcan en máximo ~1min
+// después de su publishTimestamp (05:00 Lima). Hasta que la fecha pasa,
+// getPost() devuelve undefined → notFound() → 404.
+export const revalidate = 60
 
 const G = "linear-gradient(135deg, #F472B6 0%, #A78BFA 50%, #38BDF8 100%)"
 const NAVY = "#0B1D35"
@@ -183,7 +188,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     mainEntityOfPage: { "@type": "WebPage", "@id": `${BASE}/blog/${post.slug}` },
   }
 
-  const related = posts
+  const related = getPublishedPosts()
     .filter((p) => p.slug !== post.slug)
     .sort((a) => (a.category === post.category ? -1 : 1))
     .slice(0, 2)

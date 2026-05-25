@@ -3,7 +3,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Star, ArrowRight, Phone, Zap } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
-import { posts } from "@/lib/blog";
+import { getPublishedPosts } from "@/lib/blog";
 import ScrollReveal from "./_components/ScrollReveal";
 import AuthRedirect from "./_components/AuthRedirect";
 import ProductTeaserSection from "./_components/ProductTeaserSection";
@@ -42,7 +42,7 @@ const testimonials = [
 ];
 
 export default async function HomePage() {
-  const recentPosts = posts.slice(0, 3);
+  const recentPosts = getPublishedPosts().slice(0, 3);
 
   let doctorCount = 2;
   try {

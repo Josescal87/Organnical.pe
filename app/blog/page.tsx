@@ -2,9 +2,13 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowRight, Clock, BookOpen } from "lucide-react"
-import { posts } from "@/lib/blog"
+import { getPublishedPosts } from "@/lib/blog"
 import LogoutButton from "@/components/LogoutButton"
 import HeaderCartButton from "@/components/HeaderCartButton"
+
+// ISR: revalidar cada 60s para que los posts scheduled aparezcan en máximo ~1min
+// después de su publishTimestamp (05:00 Lima del día del `date`).
+export const revalidate = 60
 
 export const metadata: Metadata = {
   title: "Blog — Organnical | Medicina Integrativa",
@@ -26,7 +30,7 @@ const CATEGORY_COLORS: Record<string, string> = {
 }
 
 export default function BlogPage() {
-  const [featured, ...rest] = posts
+  const [featured, ...rest] = getPublishedPosts()
 
   return (
     <main className="min-h-screen" style={{ background: "#F8FAFC" }}>

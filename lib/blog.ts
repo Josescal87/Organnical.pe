@@ -45,6 +45,347 @@ const u = (id: string) =>
   `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=1200&h=630&q=85`
 
 export const posts: BlogPost[] = [
+  // Junio 2026 ──────────────────────────────────────────────────────────────
+  {
+    slug: "calor-o-frio-para-el-cuello-como-usarlos-bien",
+    title: "Calor o frío para el cuello: cuándo cada uno y cómo usarlos sin errores",
+    excerpt: "La cuellera térmica funciona — pero muchos la usan mal: la calientan de más, la dejan puesta media hora, o eligen calor cuando el cuerpo pedía frío. Guía rápida para que la termoterapia rinda en serio.",
+    date: "2026-06-04",
+    dateFormatted: "4 de junio de 2026",
+    author: "Mary Keting",
+    authorRole: "Medicina Integrativa",
+    category: "Dolor Crónico",
+    tags: ["cuello", "dolor cervical", "warmy", "termoterapia", "tensión"],
+    image: "/images/blog/calor-o-frio-para-el-cuello-como-usarlos-bien.jpg",
+    readTime: 7,
+    primaryCta: { kind: "product", slug: "warmy", label: "Ver Warmy" },
+    relatedProducts: [
+      { slug: "warmy", reason: "Cuellera artesanal de semillas naturales. Calor en microondas o frío del refrigerador con la misma pieza, adaptable a la curva de la nuca." },
+      { slug: "yumi-gumi-cero-drama-90", reason: "Si la tensión del cuello viene principalmente del estrés laboral o emocional, trabajar el componente nervioso acelera la recuperación física." },
+    ],
+    sources: [
+      {
+        label: "Garra G et al. — Heat or Cold Packs for Neck and Back Strain: A Randomized Controlled Trial of Efficacy. Academic Emergency Medicine, 2010.",
+        url: "https://onlinelibrary.wiley.com/doi/10.1111/j.1553-2712.2010.00735.x",
+        type: "pubmed",
+      },
+      {
+        label: "Cervical Myofascial Pain — etiology, clinical presentation, management. StatPearls.",
+        url: "https://www.ncbi.nlm.nih.gov/books/NBK507825/",
+        type: "pubmed",
+      },
+      {
+        label: "Neck pain — symptoms, causes and self-care.",
+        url: "https://www.nhs.uk/conditions/neck-pain/",
+        type: "nhs",
+      },
+      {
+        label: "Neck pain — symptoms and causes.",
+        url: "https://www.mayoclinic.org/diseases-conditions/neck-pain/symptoms-causes/syc-20375581",
+        type: "mayo",
+      },
+    ],
+    content: [
+      { type: "p", text: "Daniel compró una cuellera térmica el viernes. La probó tres veces el sábado y le pareció increíble — el cuello se sentía liviano por primera vez en meses. El lunes la usó otra vez y casi no notó cambio. El martes le pareció que le daba más rigidez. Para el jueves la guardó en un cajón pensando que 'no le había funcionado'." },
+      { type: "p", text: "Lo que pasó con Daniel no es que la termoterapia no sirve. Es que la usó mal en cuatro detalles seguidos: la calentó demasiado, la dejó puesta media hora, la aplicó en el momento incorrecto del día, y eligió calor cuando el cuerpo le estaba pidiendo frío. Cada uno parece menor; sumados, neutralizan el efecto." },
+
+      { type: "h2", text: "Calor o frío: la decisión que muchos hacen al revés" },
+      { type: "p", text: "Un ensayo clínico controlado publicado en Academic Emergency Medicine comparó calor versus frío en pacientes con dolor agudo de cuello y espalda. El resultado: ambos producen alivio leve a moderado, sin diferencia estadística significativa entre uno y otro. La conclusión clínica importante no es 'da lo mismo' — es 'la elección depende del tipo de dolor, no de la moda'." },
+      { type: "p", text: "La regla práctica, simplificada:" },
+      { type: "ul", items: [
+        "Calor — para tensión muscular crónica, contractura, dolor que aparece sin trauma específico, rigidez al despertar, dolor que empeora con frío ambiental.",
+        "Frío — para inflamación aguda con calor o hinchazón visible, dolor después de un golpe o movimiento brusco (primeras 24 a 48 horas), dolor de cabeza tensional que empeora con calor, dolor pulsátil.",
+      ]},
+      { type: "p", text: "Cuando hay duda, una buena pregunta: ¿el dolor mejora cuando el ambiente está más cálido? Sí → calor. ¿Empeora con calor y mejora cuando me echo agua fría? → frío. El cuerpo suele dar la pista." },
+
+      { type: "h2", text: "Calor: cómo hacerlo bien (y por qué la mayoría lo hace mal)" },
+      { type: "p", text: "El calor funciona por dos mecanismos: vasodilatación local (más sangre, más oxígeno, más limpieza metabólica) y modulación del reflejo de contracción muscular. Pero ambos efectos tienen una ventana de respuesta limitada. Pasada esa ventana, el tejido se vuelve refractario — y peor, puede irritarse." },
+      { type: "p", text: "Las reglas que cambian todo:" },
+      { type: "ul", items: [
+        "Calentar en intervalos cortos. Si usas microondas, 1 a 2 minutos máximo, en tramos de 30 segundos, verificando la temperatura con el dorso de la mano entre cada tramo. Calentar de un solo tirón es la forma más rápida de quemar la piel y dejar la cuellera caliente por fuera y fría por dentro.",
+        "Aplicar 15 a 20 minutos máximo por sesión. No 30. No 'lo que aguante'. Pasada esa ventana, el músculo se acostumbra y los receptores cutáneos dejan de responder.",
+        "Esperar mínimo una hora entre aplicaciones. El tejido necesita recuperar circulación basal.",
+        "Postura sentada o reclinada, nunca acostado totalmente plano. La cuellera necesita apoyarse de forma uniforme; acostada presiona las cervicales inferiores asimétricamente.",
+        "Sobre piel sana, sin lesiones, sin enrojecimiento previo. Si la piel ya está caliente al tacto, frío — no calor.",
+      ]},
+
+      { type: "h2", text: "Frío: cuándo y cómo" },
+      { type: "p", text: "El frío reduce inflamación y enlentece la conducción nerviosa del dolor. Funciona muy bien para dolor agudo y para dolor de cabeza tensional. Las reglas:" },
+      { type: "ul", items: [
+        "Refrigerador, no freezer. Una temperatura entre 4 y 10°C es suficiente. El freezer congela las semillas y crea áreas demasiado frías que pueden producir quemadura por frío.",
+        "Una tela fina entre la cuellera y la piel. Nunca contacto directo prolongado.",
+        "10 a 15 minutos máximo. Más tiempo no aumenta el beneficio y aumenta el riesgo de irritación.",
+        "No si la piel está enrojecida, con erupción o pérdida de sensibilidad.",
+        "No en personas con Raynaud, neuropatía periférica o hipersensibilidad al frío sin consultar primero con un médico.",
+      ]},
+
+      { type: "h2", text: "El timing del día también importa" },
+      { type: "p", text: "Algo que poca gente considera: cuándo aplicar la termoterapia cambia el resultado." },
+      { type: "ul", items: [
+        "Rigidez matutina al despertar — calor 15 minutos al levantarse, antes de empezar el día. Prepara el músculo para movimiento.",
+        "Tensión por trabajo de oficina — calor entre las 5 y 7 de la tarde, cuando la jornada está terminando y el músculo lleva horas contraído. No esperar a las 11 de la noche cuando ya estás agotado.",
+        "Antes de dormir — calor 10 minutos máximo, no más. Suficiente para relajar; demasiado puede activar la circulación y dificultar conciliar el sueño.",
+        "Después de un episodio de estrés agudo (reunión difícil, mala noticia, esfuerzo) — calor 15 minutos en cuanto sea posible. La intervención temprana evita que la contractura se instale.",
+        "Después de un movimiento brusco o golpe — frío en las primeras 24-48 horas, luego calor cuando la inflamación aguda baje.",
+      ]},
+
+      { type: "h2", text: "Errores que vuelven inútil la termoterapia" },
+      { type: "ul", items: [
+        "Calentar de más para 'que dure'. Crea diferencia térmica peligrosa: superficie quemante, núcleo aún tibio. La piel sufre antes de que el efecto llegue al músculo.",
+        "Sesiones de 40 minutos o más. La fisiología muscular no responde proporcionalmente al tiempo. Pasado un punto, hay solo desgaste.",
+        "Combinar calor con compresión fuerte (apretar la cuellera contra el cuello). La presión sostenida + calor puede generar más inflamación.",
+        "Usar calor en la fase aguda de un traumatismo. Si te diste un golpe ayer y el cuello duele al moverlo, primero frío durante 24-48 horas, después calor.",
+        "Olvidar la postura mientras se usa. Si la cuellera te queda bien colocada pero estás encorvado sobre el laptop, el efecto se cancela.",
+      ]},
+
+      { type: "h2", text: "Combinaciones que potencian el efecto" },
+      { type: "p", text: "La termoterapia no actúa sola, y combinada bien puede multiplicar su efecto." },
+      { type: "ul", items: [
+        "Calor 15 minutos + estiramiento suave 5 minutos. El calor prepara el tejido; el estiramiento lo redistribuye. Esta combinación tiene mejor evidencia que cualquiera de las dos por separado.",
+        "Calor + respiración diafragmática lenta (4 segundos inhalar, 6 segundos exhalar, durante 5 minutos). Trabaja el componente físico y el nervioso al mismo tiempo. Especialmente útil cuando la tensión viene mayormente del estrés.",
+        "Caminata 10 minutos antes de aplicar calor. Mejora oxigenación local; el calor encuentra mejor terreno.",
+        "Hidratación adecuada el día previo. Tejido bien hidratado responde mejor a calor que tejido deshidratado.",
+      ]},
+
+      { type: "h2", text: "Cuándo la termoterapia no es suficiente" },
+      { type: "p", text: "El calor (o el frío) baja el síntoma. No resuelve la causa. Si el dolor lleva más de dos semanas sin mejora a pesar de uso constante y bien hecho, o si aparecen señales que sugieren algo más, necesitas evaluación médica. Banderas claras:" },
+      { type: "ul", items: [
+        "Dolor que irradia hacia un brazo o mano (puede indicar compresión nerviosa).",
+        "Hormigueos persistentes, pérdida de fuerza en una mano o brazo.",
+        "Dolor que te despierta de noche.",
+        "Dolor de cabeza severo nuevo, sobre todo con rigidez de nuca.",
+        "Fiebre asociada al dolor cervical.",
+        "Después de un accidente o caída significativa.",
+        "Vértigo o pérdida de equilibrio.",
+      ]},
+      { type: "p", text: "En cualquiera de esos casos, la prioridad es diagnóstico — no termoterapia. Una consulta médica general resuelve la mayoría de los casos sin necesidad de imágenes. Si requieres derivación a fisioterapia o traumatología, el médico te la indica." },
+
+      { type: "quote", text: "La termoterapia no cura el origen. Pero bien usada, baja la intensidad lo suficiente para que tu cuerpo deje de pelear contra el dolor y empiece a recuperarse." },
+
+      { type: "p", text: "Daniel cambió tres cosas. Calienta 90 segundos verificando con el dorso de la mano (no 3 minutos a ciegas). Usa 15 minutos y descansa una hora antes de repetir. Aplica entre las 5 y 7 de la tarde, cuando vuelve del trabajo, no a las 11 de la noche. A la semana siguiente, el primer alivio real desde hacía meses. Pequeñas decisiones — el resultado, distinto." },
+    ],
+  },
+  {
+    slug: "dolor-cervical-por-estres-y-postura",
+    title: "Dolor de cuello por estrés y postura: por qué se instala y qué realmente lo alivia",
+    excerpt: "El cuello concentra la tensión que no expresas. Y la postura frente al laptop o el celular la cronifica. La buena noticia: el patrón es predecible — y por lo tanto, reversible.",
+    date: "2026-06-01",
+    dateFormatted: "1 de junio de 2026",
+    author: "Mary Keting",
+    authorRole: "Medicina Integrativa",
+    category: "Dolor Crónico",
+    tags: ["dolor cervical", "cuello", "estrés", "postura", "tech neck", "termoterapia"],
+    image: "/images/blog/dolor-cervical-por-estres-y-postura.jpg",
+    readTime: 11,
+    primaryCta: { kind: "product", slug: "warmy", label: "Ver Warmy" },
+    relatedProducts: [
+      { slug: "warmy", reason: "Cuellera de semillas para terapia de calor o frío. Adaptable a la curva de la nuca, retiene la temperatura el tiempo justo para una sesión efectiva." },
+      { slug: "yumi-gumi-cero-drama-90", reason: "Cuando la tensión del cuello viene principalmente del estrés y la ansiedad, trabajar el componente nervioso es parte del tratamiento, no un extra." },
+    ],
+    sources: [
+      {
+        label: "Cervical Myofascial Pain — etiology, presentation and treatment. StatPearls.",
+        url: "https://www.ncbi.nlm.nih.gov/books/NBK507825/",
+        type: "pubmed",
+      },
+      {
+        label: "Alshahrani A et al. — Prevalence of text neck posture, smartphone addiction, and its association with neck disorders among university students. Healthcare, 2022.",
+        url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9760021/",
+        type: "pubmed",
+      },
+      {
+        label: "Garra G et al. — Heat or Cold Packs for Neck and Back Strain: A Randomized Controlled Trial of Efficacy. Academic Emergency Medicine, 2010.",
+        url: "https://onlinelibrary.wiley.com/doi/10.1111/j.1553-2712.2010.00735.x",
+        type: "pubmed",
+      },
+      {
+        label: "Bazzichi L et al. — Trapezius activity of fibromyalgia patients is enhanced in stressful situations. BMC Musculoskelet Disord.",
+        url: "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3606617/",
+        type: "pubmed",
+      },
+      {
+        label: "Neck pain — overview, causes, self-care and when to seek help.",
+        url: "https://www.nhs.uk/conditions/neck-pain/",
+        type: "nhs",
+      },
+      {
+        label: "Neck pain — symptoms, causes and diagnosis.",
+        url: "https://www.mayoclinic.org/diseases-conditions/neck-pain/symptoms-causes/syc-20375581",
+        type: "mayo",
+      },
+    ],
+    content: [
+      { type: "p", text: "Carmen tiene 36 años, es project manager. Hace cuatro meses empezó a sentir el cuello rígido al despertar. Al principio era 'ya se pasará con un buen estiramiento'. A las pocas semanas, el dolor subía hasta la nuca y bajaba hasta los hombros. Para el tercer mes, había un punto específico bajo el omoplato derecho que pulsaba después de cinco o seis horas frente a la laptop. Tomó analgésico tres veces seguidas. Le funcionó las dos primeras y nada la tercera." },
+      { type: "p", text: "Lo que tiene Carmen no es una lesión. Tampoco es una mala suerte. Es un patrón que el cuerpo arma cuando se cruzan tres cosas a la vez: estrés sostenido, postura que no cambia, y falta de movimiento que descomprima. El cuello es el músculo donde más se acumula esa combinación. Y cuando se instala, no se va sola — pero tampoco es complicada de revertir, una vez que entiendes qué la sostiene." },
+
+      { type: "h2", text: "Por qué el cuello y los hombros son donde 'guardas' el estrés" },
+      { type: "p", text: "Cuando hay estrés sostenido, el sistema nervioso simpático queda en estado de alerta crónica. Es el mismo sistema que se activa cuando hay un peligro real — solo que ahora se activa por reuniones, deadlines, conflictos interpersonales o ruido digital constante. El cuerpo no distingue: la respuesta es idéntica." },
+      { type: "p", text: "Esa respuesta incluye una secuencia automática: aumento de cortisol y adrenalina, frecuencia cardíaca elevada, respiración más superficial, atención focal estrecha, y un aumento generalizado del tono muscular. La meta evolutiva era preparar el cuerpo para pelear o huir. El problema es que hoy el peligro no se libera con acción física — se queda. Y los músculos que más sostienen esa preparación son los del cuello, los hombros, la mandíbula y el suelo pélvico." },
+      { type: "p", text: "Un estudio publicado en BMC Musculoskeletal Disorders mostró, en pacientes con fibromialgia, que la actividad eléctrica del trapecio superior aumenta significativamente durante situaciones estresantes, incluso cuando la persona está físicamente quieta. La tensión no necesita movimiento — necesita estado nervioso. Y cuando ese estado se cronifica, el músculo termina apretado las 24 horas, sin que la persona pueda relajarlo a voluntad." },
+
+      { type: "h2", text: "Tech neck: la postura que el smartphone está creando" },
+      { type: "p", text: "Encima del estrés, la postura. La cabeza adulta pesa entre 4 y 5 kilos cuando está alineada sobre los hombros. Cada 2.5 centímetros que se proyecta hacia adelante — la postura típica frente al celular o el laptop — suma unos 4 kilos de carga aparente sobre los músculos cervicales posteriores. A 45 grados de flexión (mirar el celular en la mano), el cuello carga el equivalente a unos 22 kilos." },
+      { type: "p", text: "Estudios recientes han llamado a este patrón 'text neck' o 'tech neck'. Una revisión sistemática en una población universitaria encontró prevalencias de entre 17% y 68% de algún grado de text neck en usuarios de smartphone, con tasas de postura adelantada de cabeza alcanzando el 67% en usuarios intensivos comparado con un 25% en grupos control. Un 28% de los participantes reportaba discapacidad por dolor cervical asociada al uso del dispositivo." },
+      { type: "p", text: "El término es discutido en la literatura — algunos investigadores señalan que el cuadro clínico no es radicalmente distinto al dolor cervical crónico mecánico. Lo que sí es claro es la mecánica: la combinación de pantalla baja, cuello flexionado y horas continuas crea un patrón muscular que el cuerpo eventualmente cronifica." },
+
+      { type: "h2", text: "Los músculos clave (y por qué duelen ahí)" },
+      { type: "p", text: "El cuello no es un músculo único. Es un sistema con varios actores principales que rara vez trabajan solos:" },
+      { type: "ul", items: [
+        "Trapecio superior — el músculo que va de la base del cráneo hasta el hombro. Es el primero en contraerse con estrés y postura adelantada. Cuando duele, el dolor sube hacia la cabeza y baja hacia el hombro.",
+        "Levator scapulae — conecta las vértebras cervicales con el omóplato. Suele alojar trigger points (puntos sensibles que refieren dolor a distancia). El dolor típico se siente en la parte alta del omóplato y sube hacia el cuello.",
+        "Suboccipitales — pequeños músculos en la base del cráneo. Sostenidos contraídos producen dolor de cabeza tensional, sensación de presión en las sienes y rigidez al girar el cuello.",
+        "Romboides — entre los omóplatos, en la espalda alta. Cuando los hombros se proyectan hacia adelante (postura digital típica), los romboides quedan estirados y débiles, lo que produce dolor 'a punto fijo' entre las paletas.",
+        "Esternocleidomastoideo — el músculo lateral del cuello. Suele estar acortado en personas con respiración torácica superficial. Su tensión genera dolor irradiado a sien y oído.",
+      ]},
+      { type: "p", text: "Cuando uno se contrae crónicamente, los demás compensan. Es por eso que el dolor migra: empieza en el trapecio, después aparece en el omóplato, luego en la cabeza. No estás teniendo varios problemas — tienes un solo problema que se está extendiendo." },
+
+      { type: "h2", text: "Lo que NO funciona (o funciona menos de lo que crees)" },
+      { type: "ul", items: [
+        "Solo analgésicos en serie. Reducen el dolor, no la causa. Útiles para un episodio agudo; contraproducentes como estrategia mensual — enmascaran señales que necesitas escuchar.",
+        "Aparatos vibratorios de masaje sin estrategia. Pueden dar alivio temporal pero no corrigen postura ni manejo de estrés. Después de tres semanas el efecto se diluye.",
+        "Almohadas 'milagro' o sillas 'ergonómicas perfectas'. La evidencia es débil. Importa más cómo te mueves a lo largo del día que el objeto específico.",
+        "Estiramiento aislado sin movimiento. Estirar dos minutos por la mañana y pasar diez horas sentado sin moverse no compensa.",
+        "Esperar a que se vaya sola. El dolor crónico no es paciente: cuanto más se instala el patrón muscular, más difícil revertirlo después.",
+      ]},
+
+      { type: "h2", text: "Lo que SÍ tiene evidencia" },
+      { type: "p", text: "Cinco intervenciones con respaldo razonable que, combinadas, hacen la mayor parte del trabajo:" },
+      { type: "h3", text: "1. Movimiento regular — la regla de los 45 minutos" },
+      { type: "p", text: "Cada 45 minutos como máximo, una pausa de movimiento de 30 a 60 segundos. Levantarse, rotar el cuello suavemente, girar los hombros hacia atrás, mirar al horizonte (relaja los músculos extraoculares y por reflejo el cuello). No es 'cuando me acuerde' — es cronómetro. La diferencia entre quien hace esto y quien no, después de un mes, es notable." },
+      { type: "h3", text: "2. Ejercicio aeróbico moderado, 3 a 4 veces por semana" },
+      { type: "p", text: "Reduce cortisol basal, baja el tono simpático crónico, mejora la calidad del sueño. No tiene que ser intenso: 25 a 40 minutos de caminata rápida, bicicleta o natación. La evidencia para dolor crónico cervical es consistente." },
+      { type: "h3", text: "3. Termoterapia local — calor o frío según contexto" },
+      { type: "p", text: "Un ensayo clínico controlado publicado en Academic Emergency Medicine encontró que tanto calor como frío producen alivio leve a moderado en dolor agudo de cuello y espalda, sin diferencia significativa entre los dos. La elección depende del tipo de dolor: calor para tensión crónica, contractura, rigidez al despertar; frío para inflamación aguda, dolor de cabeza tensional, después de un movimiento brusco. Aplicar 15 a 20 minutos por sesión — no más. Más tiempo no aumenta el beneficio." },
+      { type: "h3", text: "4. Estiramientos específicos, no genéricos" },
+      { type: "p", text: "Tres movimientos por la mañana y tres por la tarde, sostenidos 20 a 30 segundos cada uno: inclinación lateral del cuello (oreja al hombro), rotación lenta hasta 80% del rango (no forzar), y retracción cervical (llevar el mentón hacia atrás, manteniendo la mirada al frente — el movimiento del 'doble mentón'). Sumar uno semanal de movilidad torácica también ayuda porque la columna alta libera carga del cuello." },
+      { type: "h3", text: "5. Manejo del componente nervioso" },
+      { type: "p", text: "No opcional. Si la tensión cervical viene mayormente de estrés sostenido, ningún masaje ni termoterapia hace el trabajo solo. Cinco minutos de respiración diafragmática lenta antes de dormir (4 segundos inhalar, 6 segundos exhalar), una práctica regular de mindfulness o meditación guiada de 10 minutos, terapia psicológica cuando el estrés excede la capacidad personal de manejarlo. Esto no es 'pensamiento positivo' — es trabajo concreto sobre el sistema nervioso que mantiene los músculos contraídos." },
+
+      { type: "h2", text: "Cuándo no es solo tensión muscular" },
+      { type: "p", text: "Hay señales que no se deben aguantar buscando que pasen solas. Si aparece cualquiera de estas, evaluación médica antes que más estiramientos:" },
+      { type: "ul", items: [
+        "Dolor irradiado hacia un brazo o mano, especialmente con hormigueos o sensación de electricidad.",
+        "Pérdida de fuerza en una mano o brazo (te cuesta agarrar objetos, abrir frascos).",
+        "Dolor que te despierta de noche o no cede con cambios de posición.",
+        "Dolor de cabeza nuevo, severo, con rigidez de nuca o fiebre.",
+        "Vértigo, pérdida de equilibrio o visión borrosa asociada al dolor cervical.",
+        "Dolor que apareció después de un accidente, caída o golpe directo.",
+        "Pérdida de peso involuntaria, sudores nocturnos o fiebre persistente junto al dolor.",
+      ]},
+      { type: "p", text: "La mayoría del dolor cervical no entra en ninguno de estos cuadros. Pero cuando uno está presente, la consulta médica es no negociable — el médico decide si necesitas imágenes, si requieres derivación a traumatólogo, neurólogo o reumatólogo, y descarta causas serias antes de seguir buscando alivio sintomático." },
+
+      { type: "h2", text: "Una rutina diaria que cubre todo" },
+      { type: "p", text: "Combinando los elementos con respaldo, una semana típica podría verse así, sin que requiera más de 35 a 45 minutos diarios totales:" },
+      { type: "ul", items: [
+        "Mañana — 5 minutos de estiramientos cervicales suaves + check postural (¿dónde está mi pantalla?, ¿dónde están mis hombros?).",
+        "Durante el trabajo — micro-pausa de 30 segundos cada 45 minutos. Levantarse, mirar lejos, girar los hombros.",
+        "Tarde-noche (idealmente entre 5 y 7 pm) — 15 a 20 minutos de termoterapia con calor si hay tensión acumulada. Postura sentada o reclinada, no acostada plana.",
+        "Antes de dormir — 5 minutos de respiración diafragmática lenta. Reduce activación simpática y mejora la calidad del primer ciclo de sueño.",
+        "3 a 4 veces por semana — 30 minutos de ejercicio aeróbico moderado.",
+        "Una vez por semana — 15 minutos de movilidad torácica más larga (puentes, rotaciones, apertura de pecho).",
+      ]},
+
+      { type: "quote", text: "El cuello no es un músculo que se pueda 'aguantar'. O lo cuidas activamente, o se cobra solo." },
+
+      { type: "p", text: "Carmen no resolvió todo con estiramientos. Bajó dos horas semanales de pantalla recreativa, agregó caminata diaria de 30 minutos, compró una cuellera térmica para usar entre las 5 y 7 de la tarde, y empezó terapia psicológica para el estrés laboral. A las seis semanas, el dolor de hombros era aproximadamente la mitad. A los tres meses, el punto bajo el omóplato derecho casi no aparecía. La diferencia: dejó de tratar el síntoma y empezó a tratar el contexto. El dolor crónico se va igual que llegó — por capas. Pero se va." },
+    ],
+  },
+  // Mayo 2026 ───────────────────────────────────────────────────────────────
+  {
+    slug: "espirulina-energia-que-esperar-por-semana",
+    title: "Espirulina: qué esperar semana a semana",
+    excerpt: "Empezaste a tomar espirulina y a las dos semanas no notas nada. ¿Es normal? Sí — y entender la curva real evita que abandones justo antes de que empiece a funcionar.",
+    date: "2026-05-28",
+    dateFormatted: "28 de mayo de 2026",
+    author: "Mary Keting",
+    authorRole: "Medicina Integrativa",
+    category: "Nutrición",
+    tags: ["espirulina", "energía", "cansancio", "spirusol", "suplementación"],
+    image: "/images/blog/espirulina-energia-que-esperar-por-semana.jpg",
+    readTime: 7,
+    primaryCta: { kind: "product", slug: "spirusol-en-polvo", label: "Probar Spirusol" },
+    relatedProducts: [
+      { slug: "spirusol-en-polvo", reason: "Formato más versátil para empezar. Una cucharadita disuelta en agua de limón por la mañana es la rutina con mejor cumplimiento." },
+      { slug: "spirusol-crunchie", reason: "Misma espirulina arequipeña, formato crocante. Para quienes no toleran el sabor del polvo en bebida." },
+    ],
+    sources: [
+      {
+        label: "Johnson M et al. — A randomized, double blind, placebo controlled study of spirulina supplementation on indices of mental and physical fatigue in men. Int J Food Sci Nutr, 2016.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/26888417/",
+        type: "pubmed",
+      },
+      {
+        label: "Karkos PD et al. — Spirulina in Clinical Practice: Evidence-Based Human Applications. Evid Based Complement Alternat Med, 2011.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/18955364/",
+        type: "pubmed",
+      },
+      {
+        label: "Baicus C et al. — Spirulina did not ameliorate idiopathic chronic fatigue in four N-of-1 randomized controlled trials. Phytother Res, 2007.",
+        url: "https://pubmed.ncbi.nlm.nih.gov/17335116/",
+        type: "pubmed",
+      },
+      {
+        label: "Spirulina — health benefits, evidence, dosage and food sources.",
+        url: "https://examine.com/supplements/spirulina/",
+        type: "examine",
+      },
+      {
+        label: "Iron in your diet — heme vs non-heme sources and absorption.",
+        url: "https://www.nhs.uk/live-well/eat-well/food-types/iron-in-your-diet/",
+        type: "nhs",
+      },
+    ],
+    content: [
+      { type: "p", text: "Lucía tiene 38 años, es diseñadora freelance. Compró espirulina porque le hablaron muy bien de su efecto en la energía. Llevaba tres semanas tomándola cada mañana, religiosamente, y a la cuarta empezó a sospechar que era humo. No notaba nada. La cucharadita seguía sabiendo a hierba mojada y seguía bajándole el ánimo cada vez que la metía en su jugo. A las cinco semanas estaba a punto de tirar el frasco." },
+      { type: "p", text: "Lo que Lucía no sabía es que estaba justo en el punto donde casi todo el mundo abandona — y justo a una o dos semanas de que empezara a sentir la diferencia. La curva real de la espirulina no se parece en nada a la del café." },
+
+      { type: "h2", text: "Por qué la espirulina no te 'despierta' como el café" },
+      { type: "p", text: "El café da una sensación de energía porque la cafeína bloquea los receptores de adenosina, la molécula que el cerebro acumula durante el día como señal de cansancio. El efecto es rápido — 20 a 40 minutos — y agudo. Sentís el cambio." },
+      { type: "p", text: "La espirulina no funciona así. Es un alimento denso en nutrientes: hierro biodisponible, proteína completa, antioxidantes como la ficocianina, B-complex, clorofila. Lo que aporta entra a sistemas que tardan en moverse — las reservas de ferritina, la capacidad antioxidante celular, la integridad de las mitocondrias. Esos sistemas no responden en horas. Responden en semanas." },
+      { type: "p", text: "Por eso buscar el efecto de la espirulina como si fuera un estimulante es perder antes de empezar. Lo que hace es otra cosa: corregir déficits que producen cansancio sostenido. Y los déficits no se rellenan en dos días." },
+
+      { type: "h2", text: "Lo que pasa cada semana — y lo que no" },
+      { type: "p", text: "Vale ser específico, porque la ansiedad de no notar nada es la primera causa de abandono." },
+      { type: "h3", text: "Semanas 1 a 2" },
+      { type: "p", text: "Casi nadie nota cambios subjetivos en este rango. Lo que pasa internamente es que el cuerpo empieza a recibir un aporte estable de hierro no-hemo, antioxidantes y B-complex, pero las reservas aún no se mueven significativamente. Si alguien dice que sintió 'una energía nueva' a la semana, lo más probable es un efecto placebo o la diferencia psicológica de tener una rutina nueva. No le creas a tu cuerpo todavía — el efecto real no llegó." },
+      { type: "p", text: "Lo único que sí puede notarse aquí: una mejora leve en función cognitiva y disminución de fatiga mental aguda. Un ensayo controlado en hombres jóvenes que tomaron 3 gramos diarios mostró que, ya a las 4 horas de la primera dosis, había mejora medible en pruebas de fatiga mental — un efecto de los componentes B-complex y antioxidantes inmediatos. Pero esto es sutil, no transformador." },
+      { type: "h3", text: "Semanas 3 a 4" },
+      { type: "p", text: "Es el momento en que la mayoría de la gente abandona. La curva fisiológica está empezando a moverse — el hierro está siendo absorbido, las reservas hepáticas empiezan a recibir aporte — pero las personas con fatiga crónica idiopática (causa no clara) no muestran diferencia con placebo en este rango, según un ensayo N-of-1 publicado en Phytotherapy Research. Si tu cansancio es nutricional (el caso más común en mujeres en edad reproductiva), aquí puede asomar el primer cambio: te despiertas un día sintiéndote un poco más liviana, o aguantas mejor una tarde larga sin café. Casi siempre el cambio es tan gradual que solo lo notas después de un par de días, no en el momento." },
+      { type: "h3", text: "Semanas 5 a 8" },
+      { type: "p", text: "Aquí está donde el ensayo de Johnson et al., publicado en International Journal of Food Sciences and Nutrition, mostró el efecto más claro. Con 3 gramos diarios de espirulina durante 8 semanas, los hombres del estudio reportaron mejora significativa en fatiga física y mental, mejor rendimiento en ejercicio submáximo y mejor recuperación post-esfuerzo. Es la ventana donde las reservas de hierro y la capacidad antioxidante celular muestran cambios medibles." },
+      { type: "p", text: "Para Lucía, esta es la semana en que volvió a hacer un pilates después de meses sin ir y, al día siguiente, no sintió la fatiga aplastante de antes. No es magia. Es que el cuerpo finalmente tiene combustible y antioxidantes para procesar el esfuerzo." },
+      { type: "h3", text: "Semanas 9 a 12 y más" },
+      { type: "p", text: "El efecto se consolida. Estudios en poblaciones con enfermedad inflamatoria crónica (colitis ulcerativa, esclerosis múltiple remitente-recurrente) han mostrado, con tratamientos de 8 a 12 semanas, mejoras significativas en calidad de vida, marcadores inflamatorios y energía percibida. La espirulina no cura ninguna de estas condiciones, pero el aporte sostenido cambia el contexto fisiológico." },
+      { type: "p", text: "Para una persona sana con cansancio nutricional, a los tres meses la línea base es claramente distinta a la de partida. Hay quien dice 'no me acuerdo de la última vez que dependí del café a las cuatro de la tarde'. Esa frase es típica del corte de los tres meses, no de las dos semanas." },
+
+      { type: "h2", text: "Qué NO va a hacer la espirulina (importante)" },
+      { type: "p", text: "Aclarar esto evita decepciones costosas y, peor, retrasar consultas médicas necesarias." },
+      { type: "ul", items: [
+        "No reemplaza vitamina B12. La B12 que aparece en las etiquetas de espirulina convencional es mayoritariamente pseudo-B12, un análogo inactivo en humanos. Si sigues una dieta sin alimentos de origen animal o tienes gastritis atrófica, necesitas suplemento específico de B12 o controles de niveles en sangre.",
+        "No cura anemia clínica. Si tu hemoglobina está claramente baja (por debajo de 12 g/dL en mujeres, 13 g/dL en hombres), eso requiere diagnóstico médico y muy probablemente suplementación con dosis terapéuticas de hierro, no un alimento denso.",
+        "No reemplaza tratamiento médico para hipotiroidismo, depresión clínica, apnea del sueño, fatiga crónica idiopática o enfermedades autoinmunes. Si tu cansancio es por alguna de estas causas, los suplementos pueden complementar — nunca reemplazar — el tratamiento.",
+        "No 'despierta' agudamente como un estimulante. Si necesitas un empujón puntual para una reunión a las cuatro de la tarde, la espirulina no es la herramienta. Es para construir un piso de energía, no para picos.",
+      ]},
+
+      { type: "h2", text: "Cómo tomarla para que rinda más rápido" },
+      { type: "p", text: "Hay detalles de uso que afectan claramente el resultado." },
+      { type: "ul", items: [
+        "Una cucharadita (5 g) al día como mínimo para una persona sana. Los estudios con efectos clínicos usan 3 a 6 gramos diarios. La dosis de 'mantenimiento' es más para acompañar una dieta, no para corregir déficit.",
+        "Tomarla por la mañana, en agua con jugo de limón o con un licuado que tenga frutas cítricas. La vitamina C aumenta la absorción de hierro no-hemo (el tipo que tiene la espirulina) entre 3 y 4 veces.",
+        "Evitar tomarla junto con café, té negro, té verde o vino tinto. Los taninos y polifenoles de estas bebidas se unen al hierro y bloquean su absorción. Mínimo dos horas de distancia entre ambos.",
+        "Constancia diaria. La espirulina no funciona en días de 'sí, hoy me siento como tomarla'. Funciona porque el cuerpo recibe el aporte sin saltos. Cinco días sí, dos no, rompe la curva.",
+        "Mínimo seis a ocho semanas antes de evaluar. Si después de ese tiempo, con uso constante, no notas ningún cambio, vale revisar otras causas con un médico.",
+      ]},
+
+      { type: "h2", text: "Cuándo hablar con un médico antes de seguir" },
+      { type: "p", text: "Si después de seis a ocho semanas con uso diario y técnica correcta no sientes nada de cambio, hay que abrir el rango. Las causas que la espirulina no resuelve por sí sola incluyen: deficiencia profunda de hierro o B12 que requiere protocolo médico, hipotiroidismo, depresión, apnea del sueño, y enfermedades autoinmunes. Cualquiera de estas se beneficia de una consulta médica con un análisis completo (hemograma, ferritina, TSH, B12, vitamina D)." },
+      { type: "p", text: "Y hay banderas que no esperan seis semanas: cansancio severo de más de tres meses sin mejora alguna, pérdida de peso no buscada, sudores nocturnos, fiebres persistentes, sangrados anormales. Eso es consulta médica primero, suplemento después." },
+
+      { type: "quote", text: "La espirulina no falla. Falla la expectativa de que actúe como café." },
+
+      { type: "p", text: "Lucía no tiró el frasco. A las seis semanas — justo cuando lo iba a hacer — notó que llegaba a las seis de la tarde sin sentir que el cuerpo pesaba. No era un cambio espectacular: era discreto, casi imperceptible. A las diez semanas, en cambio, ya no necesitaba ese café de las cuatro que llevaba años bebiendo. Esa fue la primera vez que se permitió decir 'sí, está funcionando'. La diferencia entre abandonar y descubrir que funciona suele ser una sola semana de paciencia más." },
+    ],
+  },
   // Mayo 2026 ───────────────────────────────────────────────────────────────
   {
     slug: "cansancio-nutricional-vs-descanso",

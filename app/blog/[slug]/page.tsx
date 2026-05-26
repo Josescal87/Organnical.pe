@@ -2,7 +2,7 @@ import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, ArrowRight, Clock, Calendar, Tag, User } from "lucide-react"
-import { getPost, getAllSlugs, getPublishedPosts, type ContentBlock, type BlogPost } from "@/lib/blog"
+import { getPost, getAllSlugs, getPublishedPosts, posts, type ContentBlock, type BlogPost } from "@/lib/blog"
 import TrackEvent from "@/components/TrackEvent"
 import BlogPostHeader from "./BlogPostHeader"
 import Sources from "@/components/blog/Sources"
@@ -44,9 +44,17 @@ export async function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+export async function generateMetadata({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ preview?: string }>
+}) {
   const { slug } = await params
-  const post = getPost(slug)
+  const { preview } = await searchParams
+  const devPreview = preview === "1" && process.env.NODE_ENV !== "production"
+  const post = devPreview ? posts.find((p) => p.slug === slug) : getPost(slug)
   if (!post) return {}
 
   const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? "https://organnical.pe"
@@ -161,9 +169,17 @@ function resolveCta(post: BlogPost): ResolvedCta {
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function BlogPostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>
+  searchParams: Promise<{ preview?: string }>
+}) {
   const { slug } = await params
-  const post = getPost(slug)
+  const { preview } = await searchParams
+  const devPreview = preview === "1" && process.env.NODE_ENV !== "production"
+  const post = devPreview ? posts.find((p) => p.slug === slug) : getPost(slug)
   if (!post) notFound()
 
   const specialtySlug = CATEGORY_TO_SPECIALTY[post.category] ?? ""

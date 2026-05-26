@@ -29,43 +29,27 @@ const securityHeaders = [
 const nextConfig: NextConfig = {
   async redirects() {
     return [
-      // Old WordPress product pages → current catalog
-      { source: "/producto/:path*",          destination: "/",          permanent: true },
-      { source: "/product-tag/:path*",       destination: "/",          permanent: true },
-      { source: "/product-category/:path*",  destination: "/",          permanent: true },
-      { source: "/c/:path*",                 destination: "/",          permanent: true },
-      // Old WordPress-specific pages
-      { source: "/cita-medica",              destination: "/",          permanent: true },
-      { source: "/prescripciones-antiguas",  destination: "/",          permanent: true },
-      { source: "/sisven-2-0",               destination: "/",          permanent: true },
-      { source: "/themencode-pdf-viewer-sc", destination: "/",          permanent: true },
-      { source: "/suscripcion-al-erp",       destination: "/",          permanent: true },
-      // Old WordPress core files (prevent 404 noise)
+      // ── Catálogo store viejo: ahora se sirve 410 Gone vía route handlers
+      // en app/{producto,product-tag,product-category,c,marca,catalogos-post}/[...slug]/route.ts
+      // Antes redirigía con 301 a "/" — Google lo leía como soft-404 y desindexaba lento.
+      // 410 acelera la desindexación limpia. Decisión 2026-05-26: descontinuar cannabis SEO.
+      //
+      // Old WordPress core files (Google ya los entiende como junk; mantenemos redirect simple)
       { source: "/wp-content/:path*",        destination: "/",          permanent: true },
       { source: "/wp-admin/:path*",          destination: "/",          permanent: true },
       { source: "/wp-includes/:path*",       destination: "/",          permanent: true },
       { source: "/wp-json/:path*",           destination: "/",          permanent: true },
       { source: "/wp-login.php",             destination: "/",          permanent: true },
       { source: "/wp-cron.php",              destination: "/",          permanent: true },
-      // Old WooCommerce taxonomy pages → catalog
-      { source: "/marca/:path*",             destination: "/",          permanent: true },
-      { source: "/catalogos-post/:path*",    destination: "/",          permanent: true },
-      // Old WordPress blog taxonomy → blog
+      // Old WordPress blog taxonomy → blog (destino legítimo, OK)
       { source: "/tag/:path*",               destination: "/blog",      permanent: true },
       { source: "/category/:path*",          destination: "/blog",      permanent: true },
-      { source: "/author/:path*",            destination: "/",          permanent: true },
-      // Old WordPress patient/doctor profile pages → home
-      { source: "/pacientes/:path*",         destination: "/",          permanent: true },
-      { source: "/citas-medicas",            destination: "/",          permanent: true },
-      { source: "/citas-medicas/:path*",     destination: "/",          permanent: true },
-      // Old URL pattern with /p suffix (e.g. /producto-nombre-8337/p)
-      { source: "/:slug/p",                  destination: "/",          permanent: true },
-      // Old WordPress misc pages
-      { source: "/embed",                    destination: "/",          permanent: true },
-      { source: "/sysven",                   destination: "/",          permanent: true },
-      { source: "/sysven/:path*",            destination: "/",          permanent: true },
-      { source: "/coming",                   destination: "/",          permanent: true },
-      { source: "/coming/:path*",            destination: "/",          permanent: true },
+      // Old WordPress patient/doctor profile pages → /cuenta (destino legítimo)
+      { source: "/pacientes/:path*",         destination: "/cuenta",    permanent: true },
+      // Old citas-médicas URLs → /agendar (destino legítimo)
+      { source: "/cita-medica",              destination: "/agendar",   permanent: true },
+      { source: "/citas-medicas",            destination: "/agendar",   permanent: true },
+      { source: "/citas-medicas/:path*",     destination: "/agendar",   permanent: true },
       // Old blog post URLs (migrated slugs → current blog)
       { source: "/que-son-los-cannabinoides",                                                               destination: "/blog",      permanent: true },
       { source: "/inteligencia-artificial-en-la-medicina-del-peru-una-nueva-era-de-salud-personalizada",    destination: "/blog",      permanent: true },

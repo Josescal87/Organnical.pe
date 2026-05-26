@@ -119,15 +119,53 @@ async function getRelacionados(
   return collected.slice(0, RELATED_LIMIT)
 }
 
+function truncate(text: string, max: number): string {
+  if (text.length <= max) return text
+  const cut = text.slice(0, max)
+  const lastSpace = cut.lastIndexOf(" ")
+  return (lastSpace > max * 0.6 ? cut.slice(0, lastSpace) : cut).trimEnd() + "…"
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
   const producto = await getProducto(slug)
   if (!producto) return { title: "Producto no encontrado" }
+
+  const canonical = `https://organnical.pe/productos/${slug}`
+  const title = `${producto.descripcion} | Organnical`
+  const description =
+    producto.descripcion_corta ||
+    (producto.descripcion_larga ? truncate(producto.descripcion_larga.replace(/\s+/g, " ").trim(), 155) : null) ||
+    `Compra ${producto.descripcion} en Organnical. Envío a todo Lima y Perú.`
+
   return {
-    title: producto.descripcion,
-    description: producto.descripcion_corta ?? `Compra ${producto.descripcion} en Organnical. Suplementos naturales con envío a Lima.`,
-    alternates: { canonical: `https://organnical.pe/productos/${slug}` },
-    ...(producto.imagen_url ? { openGraph: { images: [producto.imagen_url] } } : {}),
+    title,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title,
+      description,
+      url: canonical,
+      siteName: "Organnical",
+      type: "website",
+      locale: "es_PE",
+      ...(producto.imagen_url && {
+        images: [
+          {
+            url: producto.imagen_url,
+            width: 1200,
+            height: 1200,
+            alt: producto.descripcion,
+          },
+        ],
+      }),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      ...(producto.imagen_url && { images: [producto.imagen_url] }),
+    },
   }
 }
 
@@ -194,6 +232,8 @@ export default async function ProductoPage({ params }: Props) {
       ? "https://schema.org/OutOfStock"
       : "https://schema.org/InStock"
 
+  const canonical = `https://organnical.pe/productos/${producto.slug_publico}`
+
   const jsonLd: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -201,6 +241,7 @@ export default async function ProductoPage({ params }: Props) {
     description: producto.descripcion_corta ?? "",
     image: producto.imagen_url ?? "",
     sku: producto.sku,
+    url: canonical,
     ...(producto.categoria && { category: producto.categoria }),
     ...(producto.marca && {
       brand: {
@@ -216,7 +257,18 @@ export default async function ProductoPage({ params }: Props) {
       priceCurrency: "PEN",
       price: precio,
       availability: stockAvailability,
+      url: canonical,
     },
+  }
+
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio",  item: "https://organnical.pe/" },
+      { "@type": "ListItem", position: 2, name: "Tienda",  item: "https://organnical.pe/tienda" },
+      { "@type": "ListItem", position: 3, name: producto.descripcion, item: canonical },
+    ],
   }
 
   return (
@@ -224,6 +276,10 @@ export default async function ProductoPage({ params }: Props) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
       <TrackViewItem producto={producto} />
 

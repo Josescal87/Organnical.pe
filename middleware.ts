@@ -180,6 +180,30 @@ export async function middleware(request: NextRequest) {
     }
   }
 
+  // Catch-all: en medicos.organnical.pe, redirigir bookmarks viejos a la home
+  // del subdomain. Cubre /cuenta, /tienda, /dashboard, etc., que de otra forma
+  // se reescribirían a /medicos/{path} → 404. Solo se reescriben paths que
+  // mapean a páginas reales bajo /medicos/*.
+  const MEDICOS_SUBDOMAIN_PREFIXES = ["/consultas", "/express", "/pacientes", "/recetas", "/horario", "/perfil"]
+  const isValidMedicosSubdomainPath =
+    pathname === "/" ||
+    MEDICOS_SUBDOMAIN_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`))
+
+  if (
+    isMedicos &&
+    !pathname.startsWith("/medicos") &&
+    !pathname.startsWith("/api/") &&
+    pathname !== "/login" &&
+    pathname !== "/login-medicos" &&
+    pathname !== "/dashboard/cambiar-contrasena" &&
+    !isValidMedicosSubdomainPath
+  ) {
+    const url = request.nextUrl.clone()
+    url.pathname = "/"
+    url.search = ""
+    return NextResponse.redirect(url)
+  }
+
   if (isMedicos && !pathname.startsWith("/medicos") && !pathname.startsWith("/api/") && pathname !== "/login" && pathname !== "/login-medicos" && pathname !== "/dashboard/cambiar-contrasena") {
     const url = request.nextUrl.clone()
     url.pathname = `/medicos${pathname === "/" ? "" : pathname}`

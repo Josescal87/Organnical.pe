@@ -73,6 +73,7 @@ export default function DashboardSidebar({ role, fullName, email, basePath }: Pr
 
   const doctorLinks = basePath !== undefined ? getDoctorLinks(basePath) : DOCTOR_LINKS_DEFAULT;
   const links = role === "admin" ? ADMIN_LINKS : role === "doctor" ? doctorLinks : PATIENT_LINKS;
+  const logoHref = links[0]?.href || "/dashboard";
 
   // Home hrefs that should not use startsWith for active detection
   const homeHrefs = new Set(["/", "/dashboard/medico", "/dashboard/paciente"]);
@@ -94,7 +95,7 @@ export default function DashboardSidebar({ role, fullName, email, basePath }: Pr
     <>
       {/* Logo */}
       <div className="p-6 border-b border-white/5">
-        <Link href="/dashboard" onClick={() => setOpen(false)}>
+        <Link href={logoHref} onClick={() => setOpen(false)}>
           <Image src="/logo-white.png" alt="Organnical" width={130} height={32} />
         </Link>
       </div>
@@ -173,7 +174,7 @@ export default function DashboardSidebar({ role, fullName, email, basePath }: Pr
         className="md:hidden fixed inset-x-0 top-0 z-40 flex items-center justify-between px-4 h-14 border-b border-white/5"
         style={{ background: NAVY }}
       >
-        <Link href="/dashboard">
+        <Link href={logoHref}>
           <Image src="/logo-white.png" alt="Organnical" width={110} height={28} />
         </Link>
         {activeLabel && (

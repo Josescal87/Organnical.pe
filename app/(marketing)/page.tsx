@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Star, ArrowRight, Phone, Zap } from "lucide-react";
-import { createClient } from "@/lib/supabase/server";
 import { getPublishedPosts } from "@/lib/blog";
 import ScrollReveal from "./_components/ScrollReveal";
 import AuthRedirect from "./_components/AuthRedirect";
@@ -44,19 +43,6 @@ const testimonials = [
 export default async function HomePage() {
   const recentPosts = getPublishedPosts().slice(0, 3);
 
-  let doctorCount = 2;
-  try {
-    const supabase = await createClient();
-    const { count } = await supabase
-      .schema("medical")
-      .from("profiles")
-      .select("*", { count: "exact", head: true })
-      .eq("role", "doctor");
-    if (count && count > 0) doctorCount = count;
-  } catch {
-    // use default
-  }
-
   return (
     <>
       <AuthRedirect />
@@ -82,27 +68,12 @@ export default async function HomePage() {
         {/* ══════════ BRIDGE TELEMEDICINA ══════════ */}
         <section style={{ background: `linear-gradient(135deg, ${NAVY}, #1a3a6e)` }} className="py-20 px-6">
           <div className="mx-auto max-w-4xl text-center">
-            <p className="text-xs font-bold uppercase tracking-widest text-[#A78BFA] mb-4">
-              🩺 ¿No sabes qué necesitas?
-            </p>
             <h2 className="font-display text-3xl font-black text-white mb-4 md:text-4xl">
-              Habla con un médico especialista
+              El catálogo completo de botica se abre al iniciar sesión
             </h2>
             <p className="text-white/70 text-base mb-8 max-w-xl mx-auto">
-              Consultas online con médicos certificados CMP. Resultados en menos de 48h. Desde S/60.
+              Acceso para pacientes con receta médica vigente. ¿Aún no tienes receta? Empieza por una Consulta Express.
             </p>
-            <div className="flex flex-wrap justify-center gap-3 mb-10">
-              {specialties.map((s) => (
-                <Link
-                  key={s.slug}
-                  href={`/especialidades/${s.slug}`}
-                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-80"
-                  style={{ background: "rgba(167,139,250,0.25)", border: "1px solid rgba(167,139,250,0.5)" }}
-                >
-                  <span>{s.icon}</span> {s.label}
-                </Link>
-              ))}
-            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/consulta-express"
@@ -111,15 +82,12 @@ export default async function HomePage() {
                 <Zap className="w-4 h-4" /> Express S/30 — hoy mismo
               </Link>
               <Link
-                href="/agendar"
+                href="/login"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-8 py-3.5 text-sm font-semibold text-white transition-all hover:bg-white/10"
               >
-                Agendar consulta <ArrowRight className="w-4 h-4" />
+                Iniciar sesión <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-            <p className="text-white/40 text-xs mt-4">
-              Express: orientación por WhatsApp · Consulta formal: cita agendada · <Link href="/servicios" className="hover:text-white/60 transition-colors underline underline-offset-2">{doctorCount} especialistas disponibles</Link>
-            </p>
           </div>
         </section>
 
@@ -224,9 +192,21 @@ export default async function HomePage() {
             <h2 className="font-display text-3xl font-black text-white mb-4 md:text-4xl">
               Empieza tu bienestar hoy
             </h2>
-            <p className="text-white/85 text-base mb-10">
+            <p className="text-white/85 text-base mb-8">
               Crea tu cuenta gratis y accede a la tienda, consultas médicas y tu historial en un solo lugar.
             </p>
+            <div className="flex flex-wrap justify-center gap-3 mb-10">
+              {specialties.map((s) => (
+                <Link
+                  key={s.slug}
+                  href={`/especialidades/${s.slug}`}
+                  className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-all hover:opacity-80"
+                  style={{ background: "rgba(167,139,250,0.25)", border: "1px solid rgba(167,139,250,0.5)" }}
+                >
+                  <span>{s.icon}</span> {s.label}
+                </Link>
+              ))}
+            </div>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/registro"

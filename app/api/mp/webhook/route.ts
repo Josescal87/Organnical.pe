@@ -2,7 +2,7 @@ import { NextResponse } from "next/server"
 import crypto from "node:crypto"
 import { createAdminClient } from "@/lib/supabase/server"
 import { getPayment } from "@/lib/mercadopago"
-import { createVentaAndDespacho } from "@/lib/ruby-integration"
+import { fulfillPaidOrder } from "@/lib/store-fulfillment"
 
 function verifyMpSignature(
   signatureHeader: string | null,
@@ -117,22 +117,9 @@ export async function POST(request: Request) {
     }
 
     try {
-      const idVentaRuby = await createVentaAndDespacho(
-        ordenId,
-        orden.items as unknown as import("@/lib/types").CartItem[],
-        orden.cliente_snapshot as unknown as import("@/lib/types").DireccionEntrega,
-        dataId,
-        Number(orden.total),
-        Number(orden.delivery)
-      )
-      if (idVentaRuby) {
-        await supabase
-          .from("ordenes_tienda")
-          .update({ id_venta_ruby: idVentaRuby })
-          .eq("id", ordenId)
-      }
-    } catch (rubyErr) {
-      console.error("webhook: Ruby integration error (non-fatal):", rubyErr)
+      await fulfillPaidOrder(ordenId)
+    } catch (err) {
+      console.error("webhook: fulfillPaidOrder error (non-fatal):", err)
     }
 
     return NextResponse.json({ ok: true })

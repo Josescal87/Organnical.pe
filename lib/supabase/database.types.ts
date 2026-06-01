@@ -248,6 +248,7 @@ export interface Database {
           boleta_hash:        string | null
           boleta_emitida_at:  string | null
           boleta_error:       string | null
+          fulfillment_claimed_at: string | null
           tipo:               "tienda" | "botica"
           receta_id:          string | null
           created_at:         string
@@ -274,6 +275,7 @@ export interface Database {
           boleta_hash?:       string | null
           boleta_emitida_at?: string | null
           boleta_error?:      string | null
+          fulfillment_claimed_at?: string | null
           tipo?:              "tienda" | "botica"
           receta_id?:         string | null
           created_at?:        string
@@ -299,6 +301,7 @@ export interface Database {
           boleta_hash?:       string | null
           boleta_emitida_at?: string | null
           boleta_error?:      string | null
+          fulfillment_claimed_at?: string | null
           tipo?:              "tienda" | "botica"
           receta_id?:         string | null
           updated_at?:        string
@@ -744,6 +747,10 @@ export interface Database {
       increment_cupon_uso: {
         Args:    { p_code: string }
         Returns: void
+      }
+      siguiente_num_orden_ruby: {
+        Args:    Record<string, never>
+        Returns: string
       }
     }
 

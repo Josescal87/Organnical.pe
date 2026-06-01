@@ -87,7 +87,7 @@ Solo si ese UPDATE afectó 1 fila, el proceso continúa. (Columna exacta a defin
 
 NO usar `getAdminEmails()` (lee `medical.profiles role='admin'`; mezcla "admin del sistema" con "coordinador de despacho", y cambia en silencio si alguien cambia de rol).
 
-En su lugar: **lista explícita configurable** de destinatarios de notificación de venta de producto. Default: jose, raul, michel @futura-farms.com. Fuente a decidir en el plan: env var (`STORE_SALE_NOTIFY_EMAILS`) vs. tabla `app_config` (Ruby la creó el 2026-06-02 en `20260602_app_config.sql`). Preferencia inicial: env var por simplicidad; evaluar `app_config` si se quiere editable sin deploy.
+En su lugar: **lista explícita configurable** de destinatarios de notificación de venta de producto. Default: `jose`, `raul`, `michel` @futura-farms.com (Michel Llontop, socio — persona distinta del paciente "Mitchel Sztrancman" del repo). Fuente a decidir en el plan: env var (`STORE_SALE_NOTIFY_EMAILS`) vs. tabla `app_config` (Ruby la creó el 2026-06-02 en `20260602_app_config.sql`). Preferencia inicial: env var por simplicidad; evaluar `app_config` si se quiere editable sin deploy.
 
 El correo reutiliza `sendAdminSaleNotification({ saleType: "product" })` de `lib/emails.ts`, idealmente enriquecido con `num_orden` de Ruby y link de boleta para facilitar la coordinación.
 
@@ -126,7 +126,7 @@ Estos no cambian el diseño, pero deben confirmarse contra la base de datos real
 
 1. **Esquema exacto de `ventas`**: columnas, NOT NULL, y especialmente el **PK** — ¿UUID propio o `num_orden`? Define qué se guarda en `ordenes_tienda.id_venta_ruby` (es UUID por P0-4).
 2. **Generación de `num_orden`**: ¿`max+1` (como `kommo-parser`) o secuencia (`20260512_p0_5_ventas_num_orden_sequence.sql`)? Usar el mismo mecanismo vivo para no colisionar con las ventas manuales de Ruby.
-3. **Webhook de MP**: confirmar que el `notification_url` de la preference apunta a `app/api/mp/webhook` en producción; si no, el fulfillment nunca se dispara.
+3. **Webhook de MP**: ✅ verificado en código (2026-06-02) — `lib/mercadopago.ts` setea `notification_url = ${siteUrl}/api/mp/webhook` en Checkout Pro y Brick; token `APP_USR-` (producción). **Residual (panel MP, lado usuario):** confirmar que no exista un webhook global viejo apuntando a `/api/mercadopago/webhook` (legacy) que cause avisos duplicados.
 
 ## Dependencia externa
 

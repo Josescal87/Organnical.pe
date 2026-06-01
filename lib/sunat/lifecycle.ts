@@ -27,7 +27,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createAdminClient } from "@/lib/supabase/server"
 import type { CartItem, DireccionEntrega } from "@/lib/types"
-import { calcularItem } from "./types"
+import { calcularItem, aplicarDescuentoProrrateado } from "./types"
 import type {
   BoletaCliente,
   BoletaItem,
@@ -154,7 +154,7 @@ export async function registrarYEmitirBoleta(
   // 1. Cargar orden
   const { data: orden, error: ordenErr } = await supabase
     .from("ordenes_tienda")
-    .select("id, items, cliente_snapshot, estado, total")
+    .select("id, items, cliente_snapshot, estado, total, descuento")
     .eq("id", ordenId)
     .single()
 
@@ -192,7 +192,10 @@ export async function registrarYEmitirBoleta(
   }
 
   // Snapshot común
-  const sunatItems = itemsFromCart(items)
+  const sunatItems = aplicarDescuentoProrrateado(
+    itemsFromCart(items),
+    Number(orden.descuento ?? 0)
+  )
   const cli = clienteFromDireccion(cliente)
   const total_gravada = round2(sunatItems.reduce((a, x) => a + x.base_imponible, 0))
   const total_igv = round2(sunatItems.reduce((a, x) => a + x.igv, 0))

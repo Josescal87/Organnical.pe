@@ -1,6 +1,12 @@
-import { describe, it, expect } from "vitest"
+import { describe, it, expect, vi, beforeEach } from "vitest"
 import { calcularItem, aplicarDescuentoProrrateado } from "@/lib/sunat/types"
 import type { BoletaItem } from "@/lib/sunat/types"
+
+const emitirMock = vi.fn()
+vi.mock("@/lib/sunat/nubefact", () => ({
+  emitirBoletaNubefact: (...a: unknown[]) => emitirMock(...a),
+  emitirNotaCreditoNubefact: vi.fn(),
+}))
 
 // Helper: arma un ítem a precio de lista vía el mismo motor de producción.
 function item(codigo: string, precio: number, cantidad = 1): BoletaItem {
@@ -55,5 +61,70 @@ describe("aplicarDescuentoProrrateado", () => {
 
   it("ítems vacíos → devuelve igual", () => {
     expect(aplicarDescuentoProrrateado([], 10)).toEqual([])
+  })
+})
+
+// Stub mínimo y encadenable de Supabase para el camino feliz de emisión.
+function makeSupabase(orden: Record<string, unknown>) {
+  const captured: { boletaInsert?: Record<string, unknown> } = {}
+  return {
+    captured,
+    from(table: string) {
+      if (table === "ordenes_tienda") {
+        return {
+          select: () => ({ eq: () => ({ single: () => Promise.resolve({ data: orden, error: null }) }) }),
+          update: () => ({ eq: () => Promise.resolve({ data: null, error: null }) }),
+        }
+      }
+      if (table === "boletas") {
+        return {
+          select: () => ({ eq: () => ({ eq: () => ({ order: () => ({ limit: () => ({ maybeSingle: () => Promise.resolve({ data: null, error: null }) }) }) }) }) }),
+          insert: (vals: Record<string, unknown>) => {
+            captured.boletaInsert = vals
+            return { select: () => ({ single: () => Promise.resolve({ data: { id: "bol-1", intentos: 0, serie: vals.serie, numero: null, ...vals }, error: null }) }) }
+          },
+          update: () => ({ eq: () => ({ select: () => ({ single: () => Promise.resolve({ data: { id: "bol-1", estado: "emitida" }, error: null }) }) }) }),
+        }
+      }
+      if (table === "ventas") {
+        return { update: () => ({ eq: () => ({ then: (res: (v: unknown) => unknown) => Promise.resolve().then(res) }) }) }
+      }
+      throw new Error("tabla inesperada: " + table)
+    },
+  }
+}
+
+describe("registrarYEmitirBoleta — descuento integrado", () => {
+  beforeEach(() => {
+    emitirMock.mockReset()
+    emitirMock.mockResolvedValue({
+      ok: true, id: "BBB1-9", serie: "BBB1", numero: 9,
+      link: "http://x/pdf", hash: "h", aceptada_por_sunat: false, proveedor: "nubefact",
+    })
+  })
+
+  it("orden con descuento → boleta prorrateada (total 5, no 50)", async () => {
+    const { registrarYEmitirBoleta } = await import("@/lib/sunat/lifecycle")
+    const orden = {
+      id: "ord-1",
+      estado: "pagado",
+      total: 5,
+      descuento: 45,
+      items: [{ producto: { sku: "SPIRCRU0001", descripcion: "Spirusol crunchie", precio_publico: 55, precio_oferta: 50 }, cantidad: 1 }],
+      cliente_snapshot: { nombre: "Jose", apellido: "Escalante", dni: "", email: "j@x.com", distrito: "Recojo en tienda", direccion: "Av. La Mar 750" },
+    }
+    const sb = makeSupabase(orden)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await registrarYEmitirBoleta("ord-1", sb as any)
+
+    expect(res.ok).toBe(true)
+    expect(emitirMock).toHaveBeenCalledTimes(1)
+    const payload = emitirMock.mock.calls[0][0]
+    expect(payload.total).toBe(5)
+    expect(payload.total_gravada).toBe(4.24)
+    expect(payload.total_igv).toBe(0.76)
+    expect(payload.items[0].total).toBe(5)
+    // la fila persistida también lleva el total prorrateado
+    expect(sb.captured.boletaInsert?.total).toBe(5)
   })
 })

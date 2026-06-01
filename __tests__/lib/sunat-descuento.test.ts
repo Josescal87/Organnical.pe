@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
-import { calcularItem, aplicarDescuentoProrrateado } from "@/lib/sunat/types"
+import { calcularItem, aplicarDescuentoProrrateado, agregarLineaDelivery } from "@/lib/sunat/types"
 import type { BoletaItem } from "@/lib/sunat/types"
 
 const emitirMock = vi.fn()
@@ -61,6 +61,39 @@ describe("aplicarDescuentoProrrateado", () => {
 
   it("ítems vacíos → devuelve igual", () => {
     expect(aplicarDescuentoProrrateado([], 10)).toEqual([])
+  })
+})
+
+describe("agregarLineaDelivery", () => {
+  it("delivery=0 es no-op", () => {
+    const items = [item("A", 50)]
+    expect(agregarLineaDelivery(items, 0)).toEqual(items)
+  })
+
+  it("delivery negativo es no-op", () => {
+    const items = [item("A", 50)]
+    expect(agregarLineaDelivery(items, -5)).toEqual(items)
+  })
+
+  it("delivery=15 → agrega línea ENVIO gravada (total 15, base 12.71, igv 2.29)", () => {
+    const out = agregarLineaDelivery([item("A", 50)], 15)
+    expect(out).toHaveLength(2)
+    const envio = out[1]
+    expect(envio.codigo).toBe("ENVIO")
+    expect(envio.descripcion).toBe("Envío a domicilio")
+    expect(envio.cantidad).toBe(1)
+    expect(envio.total).toBe(15)
+    expect(envio.base_imponible).toBe(12.71)
+    expect(envio.igv).toBe(2.29)
+  })
+
+  it("composición: productos con descuento (5) + delivery (15) → suma 20, delivery sin descuento", () => {
+    const conDescuento = aplicarDescuentoProrrateado([item("SPIRCRU0001", 50)], 45)
+    const out = agregarLineaDelivery(conDescuento, 15)
+    expect(out).toHaveLength(2)
+    expect(out[0].total).toBe(5)   // producto prorrateado
+    expect(out[1].total).toBe(15)  // delivery a precio completo
+    expect(sum2(out.map((x) => x.total))).toBe(20)
   })
 })
 
@@ -126,5 +159,29 @@ describe("registrarYEmitirBoleta — descuento integrado", () => {
     expect(payload.items[0].total).toBe(5)
     // la fila persistida también lleva el total prorrateado
     expect(sb.captured.boletaInsert?.total).toBe(5)
+  })
+
+  it("orden con descuento + delivery → boleta = (subtotal−desc) + delivery", async () => {
+    const { registrarYEmitirBoleta } = await import("@/lib/sunat/lifecycle")
+    const orden = {
+      id: "ord-2",
+      estado: "pagado",
+      total: 20,
+      descuento: 45,
+      delivery: 15,
+      items: [{ producto: { sku: "SPIRCRU0001", descripcion: "Spirusol crunchie", precio_publico: 55, precio_oferta: 50 }, cantidad: 1 }],
+      cliente_snapshot: { nombre: "Jose", apellido: "Escalante", dni: "", email: "j@x.com", distrito: "Miraflores", direccion: "Av. Lima 123" },
+    }
+    const sb = makeSupabase(orden)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const res = await registrarYEmitirBoleta("ord-2", sb as any)
+
+    expect(res.ok).toBe(true)
+    const payload = emitirMock.mock.calls[0][0]
+    expect(payload.total).toBe(20)
+    expect(payload.items).toHaveLength(2)
+    expect(payload.items[0].total).toBe(5)   // producto con descuento
+    expect(payload.items[1].codigo).toBe("ENVIO")
+    expect(payload.items[1].total).toBe(15)  // delivery completo
   })
 })

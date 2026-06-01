@@ -140,3 +140,26 @@ export function aplicarDescuentoProrrateado(
   }
   return result
 }
+
+/**
+ * Agrega una línea gravada de envío a la boleta cuando hay costo de delivery.
+ * El delivery NO lleva descuento (el cupón se calcula solo sobre el subtotal de
+ * productos), así que se factura a precio completo.
+ *
+ * - `delivery <= 0` → no-op (recojo en tienda / envío gratis = sin línea).
+ */
+export function agregarLineaDelivery(
+  items: BoletaItem[],
+  delivery: number
+): BoletaItem[] {
+  if (delivery <= 0) return items
+  return [
+    ...items,
+    calcularItem({
+      codigo: "ENVIO",
+      descripcion: "Envío a domicilio",
+      cantidad: 1,
+      precio_con_igv: delivery,
+    }),
+  ]
+}

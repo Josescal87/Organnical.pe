@@ -593,3 +593,88 @@ export async function sendBlogPublishedNotification({
     html: baseTemplate(content),
   });
 }
+
+export async function sendStoreSaleNotification({
+  to,
+  numOrden,
+  clienteNombre,
+  celular,
+  distrito,
+  direccion,
+  items,
+  total,
+  boletaLink,
+}: {
+  to: string[];
+  numOrden: number | string;
+  clienteNombre: string;
+  celular: string;
+  distrito: string;
+  direccion: string;
+  items: { descripcion: string; qty: number; precio: number }[];
+  total: number;
+  boletaLink: string | null;
+}) {
+  if (!to.length) return;
+
+  const itemsHtml = items.map((i) => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5">
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:600">${i.descripcion} <span style="color:#A1A1AA;font-weight:400">×${i.qty}</span></p>
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #F4F4F5;text-align:right">
+        <p style="margin:0;color:#1A1A1A;font-size:14px;font-weight:700">S/ ${(i.precio * i.qty).toFixed(2)}</p>
+      </td>
+    </tr>`).join("");
+
+  const html = baseTemplate(`
+    <h1 style="margin:0 0 8px;color:#1A1A1A;font-size:22px;font-weight:900">🛍 Nueva venta — Productos · Orden #${numOrden}</h1>
+    <p style="margin:0 0 28px;color:#71717A;font-size:15px">Coordinar despacho con los datos de envío.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="background:#F8FAFC;border-radius:12px;padding:20px;margin-bottom:24px;border-left:3px solid #00DBB1">
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Cliente</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${clienteNombre}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Celular</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${celular}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Distrito</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${distrito}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0;border-bottom:1px solid #E4E4E7">
+        <p style="margin:0;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Dirección</p>
+        <p style="margin:4px 0 0;color:#1A1A1A;font-size:14px;font-weight:600">${direccion}</p>
+      </td></tr>
+      <tr><td style="padding:8px 0">
+        <p style="margin:0 0 12px;color:#A1A1AA;font-size:11px;font-weight:700;text-transform:uppercase">Detalle</p>
+        <table width="100%" cellpadding="0" cellspacing="0">${itemsHtml}</table>
+        <table width="100%" cellpadding="0" cellspacing="0" style="margin-top:12px">
+          <tr>
+            <td style="color:#71717A;font-size:13px;font-weight:700;text-transform:uppercase">Total</td>
+            <td style="text-align:right;color:#1A1A1A;font-size:18px;font-weight:900">S/ ${total.toFixed(2)}</td>
+          </tr>
+        </table>
+      </td></tr>
+    </table>
+
+    ${boletaLink ? `<p style="margin:0 0 24px"><a href="${boletaLink}" style="color:#968DEF;font-weight:600">Ver boleta</a></p>` : ""}
+
+    <table width="100%" cellpadding="0" cellspacing="0">
+      <tr><td align="center">
+        <a href="${BASE_URL}/dashboard" style="display:inline-block;background:#1A1A1A;color:white;text-decoration:none;padding:14px 32px;border-radius:100px;font-weight:700;font-size:15px;font-family:'Inter','Helvetica Neue',Arial,sans-serif">
+          Ver en Ruby
+        </a>
+      </td></tr>
+    </table>
+  `);
+
+  return sendWithRetry({
+    from: FROM,
+    to,
+    subject: `🛍 Nueva venta #${numOrden} — ${clienteNombre} · S/ ${total.toFixed(2)}`,
+    html,
+  });
+}

@@ -76,15 +76,18 @@ Registrar y confirmar:
 - **Semántica de `total` por fila** en ventas multi-ítem: ¿cada fila lleva su total de línea, o el total de la orden replicado? Mirar filas existentes con mismo `num_orden`. Esto define el mapeo en Task 5.
 - **`ordenes_tienda`**: confirmar que `fulfillment_claimed_at` NO existe aún (Task 2 lo crea).
 
-- [ ] **Step 3: Borrar el script temporal y commitear los hallazgos en el plan**
+- [ ] **Step 3: Borrar el script temporal**
 
 ```bash
 rm scripts/introspect-ventas.ts
 ```
 
-Anotar los 4 hallazgos como comentario al inicio de `lib/store-fulfillment.ts` cuando se cree (Task 5), p.ej. `// ventas PK = id (uuid); num_orden = max+1 int; total por fila = línea`. No se commitea el script temporal.
-
-> **Si algún hallazgo contradice los supuestos** (PK distinto, `num_orden` por secuencia obligatoria, `total` = total de orden replicado), ajustar el código concreto de Task 5/6 antes de seguir. El resto del plan no cambia.
+**HALLAZGOS (ejecutado 2026-06-02, prod):**
+- ✅ PK de `ventas` = `id` (uuid) → es lo que va en `ordenes_tienda.id_venta_ruby`.
+- ⚠️ `num_orden` es **TEXT**, no entero. `max+1` lexicográfico está roto. **Solución viva: RPC `siguiente_num_orden_ruby()`** (atómica, text, auto-resync). Task 5 la usa en vez de max+1.
+- ℹ️ Constraint `UNIQUE (num_orden, item)` en `ventas`. El carrito agrega por producto → 1 fila por descripción distinta; no colisiona.
+- ℹ️ `ventas` tiene columna `sku` (la seteamos) + `doctor_id`/`location_id` (null para tienda).
+- ✅ `ordenes_tienda` NO tiene `fulfillment_claimed_at` (Task 2 lo crea). SÍ tiene `boleta_link`/`boleta_id`/`boleta_emitida_at` → Task 6 lee `boleta_link` de la orden (no del retorno de `registrarYEmitirBoleta`).
 
 ---
 
@@ -374,16 +377,14 @@ Reemplaza la llamada a la RPC inexistente por un insert directo (patrón `kommo-
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
 const insertMock = vi.fn().mockResolvedValue({ data: [{ id: "venta-uuid-1" }], error: null })
-const maxSelectMock = vi.fn().mockResolvedValue({ data: [{ num_orden: 99 }], error: null })
+const rpcMock = vi.fn().mockResolvedValue({ data: "100", error: null })
 
 vi.mock("@/lib/supabase/server", () => ({
   createAdminClient: () => ({
+    rpc: (fn: string) => rpcMock(fn),
     from: (table: string) => {
       if (table === "ventas") {
-        return {
-          select: () => ({ order: () => ({ limit: () => maxSelectMock() }) }),
-          insert: (rows: unknown) => ({ select: () => insertMock(rows) }),
-        }
+        return { insert: (rows: unknown) => ({ select: () => insertMock(rows) }) }
       }
       throw new Error("tabla inesperada: " + table)
     },
@@ -402,17 +403,18 @@ const items: CartItem[] = [
 ]
 
 describe("createVentaEnRuby", () => {
-  beforeEach(() => { insertMock.mockClear(); maxSelectMock.mockClear() })
+  beforeEach(() => { insertMock.mockClear(); rpcMock.mockClear() })
 
-  it("inserta una fila por item con num_orden = max+1 y devuelve {ventaId, numOrden}", async () => {
+  it("pide num_orden a la RPC, inserta una fila por item y devuelve {ventaId, numOrden}", async () => {
     const res = await createVentaEnRuby({
-      items, direccion, total: 110, deliveryCost: 10, boletaLink: "https://b.pe/1",
+      items, direccion, deliveryCost: 10, boletaLink: "https://b.pe/1",
     })
-    expect(res).toEqual({ ventaId: "venta-uuid-1", numOrden: 100 })
+    expect(rpcMock).toHaveBeenCalledWith("siguiente_num_orden_ruby")
+    expect(res).toEqual({ ventaId: "venta-uuid-1", numOrden: "100" })
     const rows = insertMock.mock.calls[0][0] as Record<string, unknown>[]
     expect(rows).toHaveLength(1)
     expect(rows[0]).toMatchObject({
-      num_orden: 100, item: "Spirusol", unidades: 2, precio_item: 50,
+      num_orden: "100", item: "Spirusol", sku: "SP1", unidades: 2, precio_item: 50,
       precio_delivery: 10, nombre: "Ana", celular: "987654321",
       distrito: "Miraflores", direccion: "Av. Lima 123",
       vendedor: "Tienda Web", metodo_pago: "MercadoPago (web)",
@@ -430,46 +432,44 @@ Expected: FAIL — `createVentaEnRuby` no existe (hoy el archivo exporta `create
 - [ ] **Step 3: Reescribir `lib/ruby-integration.ts`**
 
 ```typescript
-// ventas: PK = id (uuid); num_orden = max+1 (int); una fila por item.
-// Confirmado vivo en Task 1. Patrón espejo de supabase/functions/kommo-parser-ruby.
+// ventas: PK = id (uuid); num_orden = TEXT, asignado por RPC siguiente_num_orden_ruby()
+// (atómica, maneja la columna text + auto-resync; evita el constraint UNIQUE(num_orden,item)).
+// Confirmado vivo en Task 1. Una fila por item (patrón espejo de kommo-parser-ruby).
 import { createAdminClient } from "@/lib/supabase/server"
 import type { CartItem, DireccionEntrega } from "@/lib/types"
 
 export async function createVentaEnRuby({
   items,
   direccion,
-  total,
   deliveryCost,
   boletaLink,
 }: {
   items: CartItem[]
   direccion: DireccionEntrega
-  total: number
   deliveryCost: number
   boletaLink: string | null
-}): Promise<{ ventaId: string; numOrden: number }> {
+}): Promise<{ ventaId: string; numOrden: string }> {
   const supabase = createAdminClient()
 
-  // num_orden = max+1 (mismo mecanismo que kommo-parser-ruby)
-  const { data: maxRows } = await supabase
-    .from("ventas")
-    .select("num_orden")
-    .order("num_orden", { ascending: false })
-    .limit(1)
-  const numOrden = Number(maxRows?.[0]?.num_orden ?? 0) + 1
+  // num_orden atómico vía la función de Ruby (la columna es TEXT; max+1 en JS está roto)
+  const { data: numOrden, error: numErr } = await supabase.rpc("siguiente_num_orden_ruby")
+  if (numErr || !numOrden) {
+    throw new Error(`siguiente_num_orden_ruby: ${numErr?.message ?? "sin valor"}`)
+  }
   const hoy = new Date().toISOString().split("T")[0]
 
   // Una fila por item. precio_delivery solo en la primera fila para no duplicar.
   const rows = items.map((it, idx) => {
     const unitPrice = it.producto.precio_oferta ?? it.producto.precio_publico
     return {
-      num_orden:        numOrden,
+      num_orden:        numOrden as string,
       nombre:           direccion.nombre ?? null,
       apellido:         direccion.apellido ?? null,
       dni:              direccion.dni ?? null,
       celular:          direccion.celular ?? null,
       farmacia:         null,
       item:             it.producto.descripcion,
+      sku:              it.producto.sku ?? null,
       unidades:         it.cantidad,
       fecha_compra:     hoy,
       fecha_entrega:    null,
@@ -491,11 +491,11 @@ export async function createVentaEnRuby({
   const { data, error } = await supabase.from("ventas").insert(rows).select("id")
   if (error) throw new Error(`ventas insert: ${error.message}`)
 
-  return { ventaId: (data as { id: string }[])[0].id, numOrden }
+  return { ventaId: (data as { id: string }[])[0].id, numOrden: numOrden as string }
 }
 ```
 
-> Nota: se elimina la export anterior `createVentaAndDespacho` (llamaba la RPC inexistente). Los call-sites se actualizan en Tasks 6/7. El parámetro `total` se mantiene en la firma del orquestador por si Task 1 reveló que el `total` por fila debe ser el de la orden; con la convención por-línea de arriba no se usa directamente aquí (se calcula por fila).
+> Nota: se elimina la export anterior `createVentaAndDespacho` (llamaba la RPC inexistente). Los call-sites se actualizan en Task 7. `total` por fila = total de línea + delivery (solo primera fila), para no duplicar el delivery entre filas.
 
 - [ ] **Step 4: Correr el test y verificar que pasa**
 
@@ -524,10 +524,10 @@ git commit -m "feat(checkout): createVentaEnRuby inserta directo en ventas (sin 
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
 // --- mocks de dependencias ---
-const boletaMock = vi.fn().mockResolvedValue({ link: "https://b.pe/1" })
+const boletaMock = vi.fn().mockResolvedValue(undefined) // el link se lee de la orden, no del retorno
 vi.mock("@/lib/sunat", () => ({ registrarYEmitirBoleta: (...a: unknown[]) => boletaMock(...a) }))
 
-const createVentaMock = vi.fn().mockResolvedValue({ ventaId: "venta-1", numOrden: 100 })
+const createVentaMock = vi.fn().mockResolvedValue({ ventaId: "venta-1", numOrden: "100" })
 vi.mock("@/lib/ruby-integration", () => ({ createVentaEnRuby: (...a: unknown[]) => createVentaMock(...a) }))
 
 const emailMock = vi.fn().mockResolvedValue(undefined)
@@ -537,9 +537,9 @@ vi.mock("@/lib/store-notify", () => ({ getStoreSaleNotifyEmails: () => ["a@x.com
 // --- mock supabase: claim + lectura de orden + update id_venta_ruby ---
 const claimResult = { rowsClaimed: 1 }
 const ordenRow = {
-  id: "ord-1", items: [{ producto: { descripcion: "Spirusol", precio_publico: 50, precio_oferta: null }, cantidad: 2 }],
+  id: "ord-1", items: [{ producto: { descripcion: "Spirusol", sku: "SP1", precio_publico: 50, precio_oferta: null }, cantidad: 2 }],
   cliente_snapshot: { nombre: "Ana", apellido: "Pérez", celular: "987654321", distrito: "Miraflores", direccion: "Av. Lima 123", dni: "12345678" },
-  total: 110, delivery: 10,
+  total: 110, delivery: 10, boleta_link: "https://b.pe/1",
 }
 const updateIdVentaMock = vi.fn().mockResolvedValue({ error: null })
 vi.mock("@/lib/supabase/server", () => ({
@@ -571,8 +571,9 @@ describe("fulfillPaidOrder", () => {
     expect(createVentaMock).toHaveBeenCalledTimes(1)
     expect(emailMock).toHaveBeenCalledTimes(1)
     const emailArg = emailMock.mock.calls[0][0]
-    expect(emailArg.numOrden).toBe(100)
+    expect(emailArg.numOrden).toBe("100")
     expect(emailArg.direccion).toBe("Av. Lima 123")
+    expect(emailArg.boletaLink).toBe("https://b.pe/1")
   })
 
   it("si NO gana el claim, igual emite boleta pero NO crea venta ni correo", async () => {
@@ -617,11 +618,10 @@ import type { CartItem, DireccionEntrega } from "@/lib/types"
 export async function fulfillPaidOrder(ordenId: string): Promise<void> {
   const supabase = createAdminClient()
 
-  // 1. Boleta — independiente, idempotente por su lifecycle. Devuelve link si hay.
-  let boletaLink: string | null = null
+  // 1. Boleta — independiente, idempotente por su propio lifecycle. El link
+  //    queda persistido en ordenes_tienda.boleta_link; lo leemos abajo.
   try {
-    const res = await registrarYEmitirBoleta(ordenId, supabase)
-    boletaLink = (res as { link?: string } | null)?.link ?? null
+    await registrarYEmitirBoleta(ordenId, supabase)
   } catch (err) {
     console.error("fulfillPaidOrder: boleta error (non-fatal):", err)
   }
@@ -635,10 +635,10 @@ export async function fulfillPaidOrder(ordenId: string): Promise<void> {
     .select("id")
   if (!claimed || claimed.length === 0) return // ya procesada por el otro runner
 
-  // Leer la orden para mapear venta + correo
+  // Leer la orden para mapear venta + correo (incluye boleta_link ya persistido)
   const { data: orden, error: ordenErr } = await supabase
     .from("ordenes_tienda")
-    .select("id, items, cliente_snapshot, total, delivery")
+    .select("id, items, cliente_snapshot, total, delivery, boleta_link")
     .eq("id", ordenId)
     .single()
   if (ordenErr || !orden) {
@@ -648,12 +648,13 @@ export async function fulfillPaidOrder(ordenId: string): Promise<void> {
 
   const items = orden.items as unknown as CartItem[]
   const direccion = orden.cliente_snapshot as unknown as DireccionEntrega
+  const boletaLink = (orden.boleta_link as string | null) ?? null
 
   // 3. Crear venta en Ruby
   let numOrden: number | string = ""
   try {
     const venta = await createVentaEnRuby({
-      items, direccion, total: Number(orden.total), deliveryCost: Number(orden.delivery), boletaLink,
+      items, direccion, deliveryCost: Number(orden.delivery), boletaLink,
     })
     numOrden = venta.numOrden
     await supabase.from("ordenes_tienda").update({ id_venta_ruby: venta.ventaId }).eq("id", ordenId)
@@ -684,7 +685,7 @@ export async function fulfillPaidOrder(ordenId: string): Promise<void> {
 }
 ```
 
-> **Verificar contra `lib/sunat`** el valor de retorno real de `registrarYEmitirBoleta` (¿devuelve un objeto con `link`?). Si la firma difiere, ajustar la extracción de `boletaLink` (Task 1/lectura de `lib/sunat/lifecycle.ts`). Si no devuelve link, dejar `boletaLink = null` y leerlo de `ordenes_tienda.boleta_link` tras emitir.
+> **Confirmar en `lib/sunat/lifecycle.ts`** que `registrarYEmitirBoleta(ordenId, supabase)` persiste el link en `ordenes_tienda.boleta_link` (el smoke-test-boleta lo invoca con esa firma). Si el nombre de columna difiere, ajustar el `select`.
 
 - [ ] **Step 4: Correr el test y verificar que pasa**
 

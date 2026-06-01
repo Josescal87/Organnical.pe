@@ -758,34 +758,32 @@ git commit -m "feat(checkout): mp/webhook y process-payment llaman fulfillPaidOr
 
 ## Task 8: Neutralizar la rama de producto del árbol legacy `mercadopago/*`
 
-Evita doble-disparo si quedó un webhook fantasma en el panel de MP apuntando a `/api/mercadopago/webhook`. NO tocar las rutas de citas (`process-appointment`/`process-express`/`confirm-express`).
+Evita doble-disparo si quedó un webhook fantasma en el panel de MP apuntando a `/api/mercadopago/webhook`.
+
+> **AJUSTE EN EJECUCIÓN (2026-06-02):** al revisar los call-sites se confirmó que
+> `mercadopago/process-payment` **NO es un duplicado muerto** — lo usa el checkout
+> autenticado del catálogo del paciente/botica (`app/dashboard/paciente/catalogo/checkout/page.tsx:131`).
+> Es un flujo VIVO y distinto del store público. **No se toca.** Solo se neutraliza
+> `mercadopago/webhook`, que no tiene ningún caller en código (solo lo alcanzaría un
+> webhook fantasma del panel MP).
 
 **Files:**
-- Modify: `app/api/mercadopago/webhook/route.ts:155-161` (bloque de `sendAdminSaleNotification` saleType product)
-- Modify: `app/api/mercadopago/process-payment/route.ts:122-130` (idem)
+- Modify (gut a no-op): `app/api/mercadopago/webhook/route.ts`
+- ~~`app/api/mercadopago/process-payment/route.ts`~~ → NO se toca (flujo botica vivo).
 
-- [ ] **Step 1: Neutralizar en `app/api/mercadopago/webhook/route.ts`**
+- [ ] **Step 1: Gutear `app/api/mercadopago/webhook/route.ts` a no-op deprecado**
 
-Reemplazar el bloque que llama `getAdminEmails()` + `sendAdminSaleNotification({ saleType: "product" })` por:
+Reemplazar TODO el archivo (era 100% fulfillment de producto: insertaba `ventas` + correo) por un handler que solo responde 200 OK con un warning, más un comentario explicando que el camino vivo es `mp/webhook` y que la botica usa `mercadopago/process-payment` (no esta ruta).
 
-```typescript
-    // DEPRECADO: el fulfillment de producto vive ahora en el árbol mp/* vía
-    // fulfillPaidOrder. Esta rama legacy se neutraliza para evitar doble-disparo
-    // (correos duplicados a la lista vieja) si MP tiene un webhook fantasma aquí.
-    console.warn("mercadopago/webhook: rama de producto legacy deshabilitada (ver mp/* + fulfillPaidOrder)")
-    return NextResponse.json({ ok: true })
-```
+- [ ] **Step 2 (ex-process-payment): OMITIDO**
 
-- [ ] **Step 2: Neutralizar en `app/api/mercadopago/process-payment/route.ts`**
+`mercadopago/process-payment` queda intacto. Su flujo de botica (compra autenticada con `receta_id`) es legítimo y separado.
 
-Reemplazar el bloque equivalente (`getAdminEmails` + `sendAdminSaleNotification` product) por:
-
-```typescript
-      // DEPRECADO: fulfillment de producto en mp/* vía fulfillPaidOrder.
-      console.warn("mercadopago/process-payment: rama de producto legacy deshabilitada")
-```
-
-(Quitar el llamado a `sendAdminSaleNotification`/`getAdminEmails` de esa ruta; dejar el resto del flujo intacto.)
+> **Follow-up fuera de scope (anotar, no arreglar aquí):** el flujo de botica
+> (`mercadopago/process-payment`) inserta en `ventas` con el `max+1` lexicográfico
+> roto sobre `num_orden` TEXT y notifica vía `getAdminEmails()` (lista vieja). Mismos
+> dos problemas que arreglamos para el store. Vale migrarlo a `siguiente_num_orden_ruby()`
+> + lista explícita en un PR aparte.
 
 - [ ] **Step 3: Typecheck**
 

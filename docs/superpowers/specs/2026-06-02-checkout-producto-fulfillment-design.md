@@ -40,7 +40,7 @@ Decisión de scope (confirmada con el usuario): **solo registrar la venta**. El 
 
 - Descuento automático de inventario.
 - Registro de despacho/entrega con tracking.
-- Fusionar o borrar el árbol legacy `app/api/mercadopago/*` (citas viven ahí; es un proyecto aparte). Solo se marca como deuda técnica; no se agrega lógica nueva de producto ahí.
+- Fusionar o borrar el árbol legacy `app/api/mercadopago/*` completo (las **citas** viven ahí: `process-appointment`/`process-express`/`confirm-express`; borrarlo las rompe). Es un proyecto aparte; aquí solo se marca como deuda técnica y no se agrega lógica nueva de producto ahí. **PERO sí entra en v1** neutralizar la rama de **producto** del legacy (`mercadopago/webhook` + `mercadopago/process-payment`, parte `saleType:"product"`): si en el panel de MP quedó un webhook global → `/api/mercadopago/webhook`, esa rama llamaría `sendAdminSaleNotification` con `getAdminEmails()` (lista vieja) → correos duplicados y a destinatarios distintos. v1 hace que esa rama de producto sea no-op (early return) para evitar doble-disparo, independientemente de que el usuario borre o no el webhook fantasma.
 - Recrear la RPC `crear_venta_y_despacho` en Postgres.
 
 ## Enfoque elegido
@@ -59,29 +59,36 @@ Una sola función que ejecuta las 3 acciones post-pago, en orden, cada una **no-
 
 ```
 fulfillPaidOrder(ordenId):
-  1. Claim atómico de la orden (ver Idempotencia). Si no se gana el claim → return (ya procesada).
-  2. Emitir boleta SUNAT (registrarYEmitirBoleta). Falla → log, sigue.
-  3. Insertar venta(s) en `ventas`. Falla → log, sigue.
-  4. Enviar correo a coordinadores. Falla → log, sigue.
+  1. Emitir boleta SUNAT (registrarYEmitirBoleta). Idempotencia propia del
+     lifecycle SUNAT (boleta_id en la orden + cron de reintento). Falla → log, sigue.
+  2. Claim atómico SOLO de venta+correo (ver Idempotencia). Si no se gana → return.
+  3. Insertar venta(s) en `ventas`; guardar referencia en id_venta_ruby.
+  4. Enviar correo a coordinadores (con dirección/distrito/celular + num_orden). Falla → log.
 ```
+
+**Por qué la boleta queda FUERA del claim:** la emisión SUNAT ya es idempotente por su propio lifecycle (no re-emite si ya hay `boleta_id`; el cron reintenta las fallidas). Si la metiéramos bajo el mismo candado que venta+correo, un fallo al insertar la venta dejaría el candado tomado y el reintento del webhook de MP **no volvería a intentar la boleta**. Por eso se dispara aparte; el claim gobierna únicamente venta + correo.
 
 Ambos puntos de entrada del camino vivo — `app/api/mp/webhook/route.ts` y `app/api/mp/process-payment/route.ts` — solo llaman `fulfillPaidOrder(ordenId)`. No duplican lógica.
 
 **Desacople deliberado:** boleta (fiscal) y venta (operativa) son independientes. Un fallo operativo nunca debe impedir la emisión del comprobante legal, ni viceversa.
 
-### Idempotencia (atómica)
+### Idempotencia (atómica) — solo venta + correo
+
+La boleta NO entra aquí (tiene su propia idempotencia; ver arriba). Este claim protege **venta + correo**.
 
 Webhook y process-payment pueden dispararse casi simultáneamente para la misma orden. Un chequeo `if id_venta_ruby == null` NO es atómico (ambos leen null, ambos insertan → venta duplicada + correo doble).
 
-Mecanismo: **claim por UPDATE condicional**. Se usa una columna como candado (p.ej. `fulfillment_started_at` o reusar el estado de la orden) con:
+Mecanismo: **claim por UPDATE condicional** sobre una columna candado dedicada (p.ej. `fulfillment_claimed_at`):
 
 ```sql
 UPDATE ordenes_tienda
-SET <columna-candado> = NOW()
-WHERE id = :ordenId AND <columna-candado> IS NULL
+SET fulfillment_claimed_at = NOW()
+WHERE id = :ordenId AND fulfillment_claimed_at IS NULL
 ```
 
-Solo si ese UPDATE afectó 1 fila, el proceso continúa. (Columna exacta a definir en el plan: nueva columna de candado vs. reusar `estado`/`id_venta_ruby`. Verificar en paso 0.)
+Solo si ese UPDATE afectó 1 fila, se procede a insertar venta + enviar correo. (Columna exacta y su tipo se confirman en paso 0; preferencia: columna dedicada, no reusar `estado`/`id_venta_ruby`, porque venta y correo deben quedar bajo el mismo candado y `id_venta_ruby` recién existe tras insertar la venta.)
+
+**Tradeoff conocido (aceptable en v1):** si tras ganar el claim falla la inserción de la venta, el candado queda tomado y el reintento del webhook no reprocesa venta+correo → requiere atención manual. A volumen v1 es aceptable; si más adelante duele, se mueve a idempotencia por-paso. La boleta NO sufre esto (su lifecycle reintenta aparte).
 
 ### Notificación a coordinadores (lista explícita)
 
@@ -89,7 +96,7 @@ NO usar `getAdminEmails()` (lee `medical.profiles role='admin'`; mezcla "admin d
 
 En su lugar: **lista explícita configurable** de destinatarios de notificación de venta de producto. Default: `jose`, `raul`, `michel` @futura-farms.com (Michel Llontop, socio — persona distinta del paciente "Mitchel Sztrancman" del repo). Fuente a decidir en el plan: env var (`STORE_SALE_NOTIFY_EMAILS`) vs. tabla `app_config` (Ruby la creó el 2026-06-02 en `20260602_app_config.sql`). Preferencia inicial: env var por simplicidad; evaluar `app_config` si se quiere editable sin deploy.
 
-El correo reutiliza `sendAdminSaleNotification({ saleType: "product" })` de `lib/emails.ts`, idealmente enriquecido con `num_orden` de Ruby y link de boleta para facilitar la coordinación.
+El correo se basa en `sendAdminSaleNotification({ saleType: "product" })` de `lib/emails.ts`, pero la plantilla actual se diseñó para **citas** (muestra paciente, items, total, método de pago) y **no incluye datos de envío**. Para venta de producto es **requisito** (no "ideal") que el correo lleve: **dirección, distrito y celular del cliente**, más `num_orden` de Ruby y link de boleta. Sin esos campos el correo llega pero no sirve para coordinar el despacho. El plan debe extender la plantilla/variante de producto para incluirlos.
 
 ### Datos de la venta (mapeo orden → `ventas`)
 
@@ -102,6 +109,8 @@ Por cada item del carrito (`ordenes_tienda.items`), una fila en `ventas`:
 - `link_comprobante` = link de la boleta si ya se emitió.
 
 Tras insertar, guardar la referencia de Ruby en `ordenes_tienda.id_venta_ruby` (tipo/valor a confirmar en paso 0: UUID del PK de `ventas` vs. `num_orden`).
+
+**Estado de la orden en v1:** tras el fulfillment, `ordenes_tienda.estado` se queda en `pagado`. El equipo lo mueve a `en_despacho`/`entregado` manualmente desde Ruby (el correo es la señal de arranque). El fulfillment no toca `estado`.
 
 ## Supersesión del parche previo
 
@@ -118,7 +127,7 @@ El parche aplicado en sesión (`lib/ruby-integration.ts`: `throw` → `console.w
 - Unit test de `fulfillPaidOrder` con mocks de Supabase + `lib/emails` + `lib/sunat`: verifica (a) las 3 acciones se invocan, (b) idempotencia — segunda llamada no reinserta ni reenvía, (c) un fallo en una acción no impide las otras.
 - Test del mapeo orden → filas `ventas` (N items → N filas, total/delivery correctos).
 - Reusar el patrón de mocks de `__tests__/api/appointments.test.ts`.
-- Smoke test manual: orden de prueba (con `PAYMENT_BYPASS` local si se re-agrega) → verificar fila(s) en `ventas`, correo a los 3, y (con tokens prod de NubeFact) boleta en SUNAT.
+- Smoke test manual (e2e local): script que llama `fulfillPaidOrder(ordenId)` directo sobre una orden de prueba (estilo `scripts/smoke-test-boleta.ts`), sin necesidad de reactivar `PAYMENT_BYPASS` ni pasar por MercadoPago → verificar fila(s) en `ventas`, correo a los 3, y (con tokens prod de NubeFact) boleta en SUNAT.
 
 ## VERIFICAR PRIMERO (paso 0 del plan — introspección de la DB viva)
 

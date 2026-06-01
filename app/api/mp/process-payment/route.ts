@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { createAdminClient } from "@/lib/supabase/server"
 import { createPayment } from "@/lib/mercadopago"
-import { createVentaAndDespacho } from "@/lib/ruby-integration"
+import { fulfillPaidOrder } from "@/lib/store-fulfillment"
 import { rateLimit, getClientIp, tooManyRequestsResponse } from "@/lib/rate-limit"
 
 export async function POST(request: Request) {
@@ -82,22 +82,9 @@ export async function POST(request: Request) {
 
       if (updated) {
         try {
-          const idVentaRuby = await createVentaAndDespacho(
-            ordenId,
-            orden.items as unknown as import("@/lib/types").CartItem[],
-            orden.cliente_snapshot as unknown as import("@/lib/types").DireccionEntrega,
-            paymentId,
-            orden.total,
-            orden.delivery
-          )
-          if (idVentaRuby) {
-            await supabase
-              .from("ordenes_tienda")
-              .update({ id_venta_ruby: idVentaRuby })
-              .eq("id", ordenId)
-          }
-        } catch (rubyErr) {
-          console.error("Ruby sync error (non-fatal):", rubyErr)
+          await fulfillPaidOrder(ordenId)
+        } catch (err) {
+          console.error("process-payment: fulfillPaidOrder error (non-fatal):", err)
         }
       }
 

@@ -748,6 +748,10 @@ export interface Database {
         Args:    { p_code: string }
         Returns: void
       }
+      siguiente_num_orden_ruby: {
+        Args:    Record<string, never>
+        Returns: string
+      }
     }
 
     Enums: {
